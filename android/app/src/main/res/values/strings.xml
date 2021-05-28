@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">infapp</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">8286xMrGcGP8Gx6zzzzLkRc6Eiy4Zj14xQny-</string>
+</resources>
