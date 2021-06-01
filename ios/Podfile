@@ -8,7 +8,6 @@ target 'infapp' do
 
   use_react_native!(:path => config["reactNativePath"])
 
-  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
   target 'infappTests' do
     inherit! :complete
@@ -16,7 +15,6 @@ target 'infapp' do
   end
   
   pod 'RNInputMask', :path => '../node_modules/react-native-text-input-mask/ios/InputMask'
-  pod 'CodePush', :path => '../node_modules/react-native-code-push'
 
   # Enables Flipper.
   #
