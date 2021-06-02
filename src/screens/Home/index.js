@@ -24,7 +24,7 @@ import {
 } from '../../services';
 import Store from '../../store/Store';
 import {followerCount} from '../../lib';
-import appTheme, {COLORS} from '../../resources/theme';
+import {COLORS} from '../../resources/theme';
 
 const {width} = Dimensions.get('window');
 
