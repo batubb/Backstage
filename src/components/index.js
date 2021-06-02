@@ -7,7 +7,7 @@ import MyImage from './MyImage';
 import Label from './Label';
 import Options from './Options';
 import SearchBar from './SearchBar';
-import StoriesCircle from './StoriesCircle/StoriesCircle';
+import {StoryImage, StoryCircle} from './Story/Story';
 
 module.exports = {
   Button,
@@ -18,5 +18,6 @@ module.exports = {
   Label,
   Options,
   SearchBar,
-  StoriesCircle,
+  StoryImage,
+  StoryCircle,
 };

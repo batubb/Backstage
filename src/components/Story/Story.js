@@ -3,8 +3,9 @@ import React from 'react';
 import {View} from 'react-native';
 import {constants} from '../../resources';
 import {COLORS, SIZES} from '../../resources/theme';
+import MyImage from '../MyImage';
 
-function StoriesCircle(props) {
+function StoryCircle(props) {
   return (
     <View
       style={{
@@ -23,4 +24,19 @@ function StoriesCircle(props) {
   );
 }
 
-export default StoriesCircle;
+function StoryImage(props) {
+  return (
+    <MyImage
+      style={{
+        width: SIZES.storyCircleWidth,
+        height: SIZES.storyCircleWidth,
+        borderRadius: SIZES.storyCircleWidth / 2,
+        borderWidth: 2,
+        borderColor: '#FFF',
+      }}
+      photo={props.photo}
+    />
+  );
+}
+
+export {StoryCircle, StoryImage};

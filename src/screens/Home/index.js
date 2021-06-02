@@ -15,7 +15,7 @@ import {observer} from 'mobx-react';
 import LinearGradient from 'react-native-linear-gradient';
 import {Icon, Header} from 'react-native-elements';
 import {StackActions} from '@react-navigation/native';
-import {Loading, Text, MyImage, StoriesCircle} from '../../components';
+import {Loading, Text, MyImage} from '../../components';
 import {constants} from '../../resources';
 import {
   getFollowingLiveData,
@@ -25,6 +25,7 @@ import {
 import Store from '../../store/Store';
 import {followerCount} from '../../lib';
 import {SIZES} from '../../resources/theme';
+import {StoryCircle, StoryImage} from '../../components/Story/Story';
 
 const {width} = Dimensions.get('window');
 
@@ -140,7 +141,7 @@ class Home extends Component {
               width: 32,
               height: 32,
               borderRadius: 16,
-              marginRight: 10,
+              marginRight: SIZES.spacing * 2,
             }}
             photo={user.photo}
           />
@@ -239,7 +240,7 @@ class Home extends Component {
           {this.captionBar(influencer.username, false, influencer)}
         </TouchableOpacity>
         <FlatList
-          data={influencer.posts}
+          data={influencer.posts.slice(0, constants.NUM_POSTS_TO_VIEW_IN_HOME)}
           keyExtractor={(item) => item.uid}
           horizontal
           ListFooterComponent={() => {
@@ -281,9 +282,9 @@ class Home extends Component {
           renderItem={({item}) => (
             <View
               style={{
-                width: width / 2.5,
+                width: width / constants.NUM_CARDS_IN_SCREEN,
                 alignItems: 'center',
-                marginBottom: 10,
+                marginBottom: SIZES.spacing * 4,
               }}>
               <TouchableOpacity onPress={() => this.goTo('WatchVideo', item)}>
                 <View
@@ -400,26 +401,18 @@ class Home extends Component {
           width: width,
           borderBottomWidth: SIZES.separatorWidth,
           paddingBottom: SIZES.spacing * 3,
+          borderBottomColor: constants.BAR_COLOR,
         }}>
         <ScrollView horizontal>
           {this.state.loading ? (
-            Array.from({length: 5}).map((x) => <StoriesCircle loading={true} />)
+            Array.from({length: 5}).map((x) => <StoryCircle loading={true} />)
           ) : this.state.myStoriesArray.length !== 0 ? (
             <TouchableOpacity
               onPress={() => this.goTo('WatchStory', this.state.myStoriesArray)}
               style={{alignItems: 'center'}}>
-              <StoriesCircle myStory={true}>
-                <MyImage
-                  style={{
-                    width: 60,
-                    height: 60,
-                    borderRadius: 30,
-                    borderWidth: 2,
-                    borderColor: '#FFF',
-                  }}
-                  photo={Store.user.photo}
-                />
-              </StoriesCircle>
+              <StoryCircle myStory={true}>
+                <StoryImage photo={Store.user.photo} />
+              </StoryCircle>
               <Text
                 text="Your Stories"
                 style={{fontSize: 10, marginTop: 5, fontWeight: 'normal'}}
@@ -429,14 +422,14 @@ class Home extends Component {
             <TouchableOpacity
               onPress={() => this.goTo('AddContent')}
               style={{alignItems: 'center'}}>
-              <StoriesCircle myStory={true}>
+              <StoryCircle myStory={true}>
                 <Icon
                   name="plus"
                   color="#FFF"
                   type="material-community"
                   size={32}
                 />
-              </StoriesCircle>
+              </StoryCircle>
               <Text
                 text="Add Story"
                 style={{fontSize: 10, marginTop: 5, fontWeight: 'normal'}}
@@ -453,18 +446,9 @@ class Home extends Component {
               <TouchableOpacity
                 onPress={() => this.goTo('WatchStory', item.stories)}
                 style={{alignItems: 'center'}}>
-                <StoriesCircle>
-                  <MyImage
-                    style={{
-                      width: 60,
-                      height: 60,
-                      borderRadius: 30,
-                      borderWidth: 2,
-                      borderColor: '#FFF',
-                    }}
-                    photo={item.photo}
-                  />
-                </StoriesCircle>
+                <StoryCircle>
+                  <StoryImage photo={item.photo} />
+                </StoryCircle>
                 <Text
                   text={item.username}
                   style={{fontSize: 10, marginTop: 5, fontWeight: 'normal'}}

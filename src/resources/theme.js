@@ -26,7 +26,7 @@ export const SIZES = {
   padding: 10,
   padding2: 12,
   spacing: 3,
-  separatorWidth: 2,
+  separatorWidth: 0.5,
   storyCircleWidth: 60,
 
   // font sizes
