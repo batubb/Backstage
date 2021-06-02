@@ -394,11 +394,16 @@ class Home extends Component {
   };
 
   renderStories = () => {
-    if (this.state.loading) {
-      return (
-        <View style={{width: width}}>
-          <ScrollView horizontal>
-            {Array.from({length: 5}).map((x) => (
+    return (
+      <View
+        style={{
+          width: width,
+          borderBottomWidth: SIZES.separatorWidth,
+          paddingBottom: SIZES.spacing * 3,
+        }}>
+        <ScrollView horizontal>
+          {this.state.loading ? (
+            Array.from({length: 5}).map((x) => (
               <View
                 style={{
                   width: 60,
@@ -410,22 +415,8 @@ class Home extends Component {
                   backgroundColor: constants.BAR_COLOR,
                 }}
               />
-            ))}
-          </ScrollView>
-        </View>
-      );
-    }
-
-    return (
-      <View
-        style={{
-          width: width,
-          paddingLeft: SIZES.spacing * 3,
-          borderBottomWidth: SIZES.separatorWidth,
-          paddingBottom: SIZES.spacing * 3,
-        }}>
-        <ScrollView horizontal>
-          {this.state.myStoriesArray.length !== 0 ? (
+            ))
+          ) : this.state.myStoriesArray.length !== 0 ? (
             <TouchableOpacity
               onPress={() => this.goTo('WatchStory', this.state.myStoriesArray)}
               style={{alignItems: 'center'}}>
