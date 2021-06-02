@@ -7,14 +7,16 @@ import MyImage from './MyImage';
 import Label from './Label';
 import Options from './Options';
 import SearchBar from './SearchBar';
+import StoriesCircle from './StoriesCircle/StoriesCircle';
 
 module.exports = {
-    Button,
-    Loading,
-    Header,
-    Text,
-    MyImage,
-    Label,
-    Options,
-    SearchBar,
+  Button,
+  Loading,
+  Header,
+  Text,
+  MyImage,
+  Label,
+  Options,
+  SearchBar,
+  StoriesCircle,
 };

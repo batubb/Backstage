@@ -15,7 +15,7 @@ import {observer} from 'mobx-react';
 import LinearGradient from 'react-native-linear-gradient';
 import {Icon, Header} from 'react-native-elements';
 import {StackActions} from '@react-navigation/native';
-import {Loading, Text, MyImage} from '../../components';
+import {Loading, Text, MyImage, StoriesCircle} from '../../components';
 import {constants} from '../../resources';
 import {
   getFollowingLiveData,
@@ -403,34 +403,12 @@ class Home extends Component {
         }}>
         <ScrollView horizontal>
           {this.state.loading ? (
-            Array.from({length: 5}).map((x) => (
-              <View
-                style={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: 30,
-                  marginHorizontal: 5,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: constants.BAR_COLOR,
-                }}
-              />
-            ))
+            Array.from({length: 5}).map((x) => <StoriesCircle loading={true} />)
           ) : this.state.myStoriesArray.length !== 0 ? (
             <TouchableOpacity
               onPress={() => this.goTo('WatchStory', this.state.myStoriesArray)}
               style={{alignItems: 'center'}}>
-              <View
-                style={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: 30,
-                  marginHorizontal: 5,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderWidth: 2,
-                  borderColor: '#FFF',
-                }}>
+              <StoriesCircle myStory={true}>
                 <MyImage
                   style={{
                     width: 60,
@@ -441,7 +419,7 @@ class Home extends Component {
                   }}
                   photo={Store.user.photo}
                 />
-              </View>
+              </StoriesCircle>
               <Text
                 text="Your Stories"
                 style={{fontSize: 10, marginTop: 5, fontWeight: 'normal'}}
@@ -451,30 +429,21 @@ class Home extends Component {
             <TouchableOpacity
               onPress={() => this.goTo('AddContent')}
               style={{alignItems: 'center'}}>
-              <View
-                style={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: 30,
-                  marginHorizontal: 5,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderWidth: 2,
-                  borderColor: '#FFF',
-                }}>
+              <StoriesCircle myStory={true}>
                 <Icon
                   name="plus"
                   color="#FFF"
                   type="material-community"
                   size={32}
                 />
-              </View>
+              </StoriesCircle>
               <Text
                 text="Add Story"
                 style={{fontSize: 10, marginTop: 5, fontWeight: 'normal'}}
               />
             </TouchableOpacity>
           )}
+
           <FlatList
             data={this.state.userStoriesArray}
             keyExtractor={(item) => item.uid}
@@ -484,15 +453,7 @@ class Home extends Component {
               <TouchableOpacity
                 onPress={() => this.goTo('WatchStory', item.stories)}
                 style={{alignItems: 'center'}}>
-                <View
-                  style={{
-                    width: 60,
-                    height: 60,
-                    borderRadius: 30,
-                    marginHorizontal: 5,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
+                <StoriesCircle>
                   <MyImage
                     style={{
                       width: 60,
@@ -503,7 +464,7 @@ class Home extends Component {
                     }}
                     photo={item.photo}
                   />
-                </View>
+                </StoriesCircle>
                 <Text
                   text={item.username}
                   style={{fontSize: 10, marginTop: 5, fontWeight: 'normal'}}

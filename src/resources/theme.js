@@ -4,7 +4,7 @@ const {width, height} = Dimensions.get('window');
 export const COLORS = {
   // base colors
   primary: '#FC6D3F', // orange
-  secondary: '#CDCDD2', // gray
+  secondary: '#FFFFFF', // gray
 
   // colors
   black: '#1E1F20',
@@ -27,6 +27,7 @@ export const SIZES = {
   padding2: 12,
   spacing: 3,
   separatorWidth: 2,
+  storyCircleWidth: 60,
 
   // font sizes
   largeTitle: 50,
