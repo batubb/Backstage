@@ -233,9 +233,15 @@ class Home extends Component {
     );
   };
 
-  userPostsArrayCard = (influencer) => {
+  userPostsArrayCard = (influencer, index) => {
     return (
-      <View>
+      <View
+        style={{
+          marginTop: index === 0 ? null : SIZES.spacing * 5,
+          borderBottomWidth: SIZES.separatorWidth,
+          borderBottomColor: constants.BAR_COLOR,
+          paddingBottom: SIZES.spacing * 2,
+        }}>
         <TouchableOpacity onPress={() => this.goTo('UserProfile', influencer)}>
           {this.captionBar(influencer.username, false, influencer)}
         </TouchableOpacity>
@@ -270,10 +276,7 @@ class Home extends Component {
                       type="material-community"
                     />
                   </View>
-                  <Text
-                    text="More Posts"
-                    style={{fontSize: 12, marginTop: 10}}
-                  />
+                  <Text text="More" style={{fontSize: 12, marginTop: 10}} />
                 </TouchableOpacity>
               </View>
             );
@@ -515,7 +518,9 @@ class Home extends Component {
               <FlatList
                 data={userPostsArray}
                 keyExtractor={(item) => item.uid}
-                renderItem={({item}) => this.userPostsArrayCard(item)}
+                renderItem={({item, index}) =>
+                  this.userPostsArrayCard(item, index)
+                }
               />
             ) : null}
           </ScrollView>
