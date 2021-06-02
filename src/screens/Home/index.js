@@ -24,7 +24,7 @@ import {
 } from '../../services';
 import Store from '../../store/Store';
 import {followerCount} from '../../lib';
-import {COLORS} from '../../resources/theme';
+import {SIZES} from '../../resources/theme';
 
 const {width} = Dimensions.get('window');
 
@@ -118,7 +118,7 @@ class Home extends Component {
       <View
         style={{
           width: width,
-          paddingHorizontal: 15,
+          paddingHorizontal: 10,
           paddingVertical: 5,
           flexDirection: 'row',
           alignItems: 'center',
@@ -126,7 +126,7 @@ class Home extends Component {
         {live ? (
           <View
             style={{
-              paddingHorizontal: 15,
+              paddingHorizontal: 10,
               paddingVertical: 5,
               borderRadius: 4,
               marginRight: 10,
@@ -259,7 +259,7 @@ class Home extends Component {
                       width: 50,
                       height: 50,
                       borderRadius: 25,
-                      backgroundColor: COLORS.secondary,
+                      backgroundColor: 'red',
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}>
@@ -417,7 +417,13 @@ class Home extends Component {
     }
 
     return (
-      <View style={{width: width}}>
+      <View
+        style={{
+          width: width,
+          paddingLeft: SIZES.spacing * 3,
+          borderBottomWidth: SIZES.separatorWidth,
+          paddingBottom: SIZES.spacing * 3,
+        }}>
         <ScrollView horizontal>
           {this.state.myStoriesArray.length !== 0 ? (
             <TouchableOpacity
@@ -528,6 +534,7 @@ class Home extends Component {
           flex: 1,
           backgroundColor: constants.BACKGROUND_COLOR,
           justifyContent: 'space-around',
+          paddingLeft: SIZES.spacing,
         }}>
         <Header
           statusBarProps={{
@@ -559,6 +566,7 @@ class Home extends Component {
           />
         ) : (
           <ScrollView
+            style={{paddingTop: SIZES.spacing * 3}}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
