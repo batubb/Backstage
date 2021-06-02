@@ -250,6 +250,9 @@ class Home extends Component {
           keyExtractor={(item) => item.uid}
           horizontal
           ListFooterComponent={() => {
+            if (influencer.posts.length < constants.NUM_POSTS_TO_VIEW_IN_HOME) {
+              return null;
+            }
             return (
               <View
                 style={{
@@ -266,7 +269,7 @@ class Home extends Component {
                       width: 50,
                       height: 50,
                       borderRadius: 25,
-                      backgroundColor: 'red',
+                      backgroundColor: '#f26522',
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}>
@@ -276,7 +279,10 @@ class Home extends Component {
                       type="material-community"
                     />
                   </View>
-                  <Text text="More" style={{fontSize: 12, marginTop: 10}} />
+                  <Text
+                    text="More"
+                    style={{fontSize: 12, marginTop: SIZES.spacing * 2}}
+                  />
                 </TouchableOpacity>
               </View>
             );
@@ -412,7 +418,7 @@ class Home extends Component {
           ) : this.state.myStoriesArray.length !== 0 ? (
             <TouchableOpacity
               onPress={() => this.goTo('WatchStory', this.state.myStoriesArray)}
-              style={{alignItems: 'center'}}>
+              style={{alignItems: 'center', marginRight: SIZES.spacing * 3}}>
               <StoryCircle myStory={true}>
                 <StoryImage photo={Store.user.photo} />
               </StoryCircle>
@@ -454,7 +460,11 @@ class Home extends Component {
                 </StoryCircle>
                 <Text
                   text={item.username}
-                  style={{fontSize: 10, marginTop: 5, fontWeight: 'normal'}}
+                  style={{
+                    fontSize: 12,
+                    marginTop: SIZES.spacing * 1,
+                    fontWeight: '400',
+                  }}
                 />
               </TouchableOpacity>
             )}

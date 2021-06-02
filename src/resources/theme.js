@@ -27,7 +27,7 @@ export const SIZES = {
   padding2: 12,
   spacing: 3,
   separatorWidth: 0.5,
-  storyCircleWidth: 60,
+  storyCircleWidth: 66,
 
   // font sizes
   largeTitle: 50,
