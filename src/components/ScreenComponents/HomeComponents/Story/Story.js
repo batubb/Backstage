@@ -13,7 +13,6 @@ function StoryCircle(props) {
         width: SIZES.storyCircleWidth,
         height: SIZES.storyCircleWidth,
         borderRadius: SIZES.storyCircleWidth / 2,
-        //marginHorizontal: 5,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: props.loading ? constants.BAR_COLOR : null,
@@ -49,7 +48,9 @@ function StoryImage(props) {
 // 4. others' stories
 export default function Story(props) {
   return (
-    <TouchableOpacity onPress={props.onPress} style={{alignItems: 'center'}}>
+    <TouchableOpacity
+      onPress={props.onPress}
+      style={{alignItems: 'center', marginRight: SIZES.spacing * 7}}>
       <StoryCircle loading={props.loading}>
         {!props.loading && !props.addStory ? (
           <StoryImage photo={props.photo} />

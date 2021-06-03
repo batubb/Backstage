@@ -7,6 +7,11 @@ import {MyImage, Text} from '../../../../components';
 import LinearGradient from 'react-native-linear-gradient';
 import {followerCount} from '../../../../lib';
 
+const NUM_CARDS_IN_SCREEN = 2.5;
+const DISTANCE_BETWEEN_CARDS = SIZES.spacing * 3;
+const HEIGHT_MULTIPLIER = 1.5;
+const BORDER_RADIUS = 16;
+
 function PostingCardCaption(props) {
   const limit = props.longVersion ? 17 : 10;
   return (
@@ -33,37 +38,41 @@ function PostingCardSmallCaption(props) {
 // props:
 // width, item, showProfilePicInCard, onPress
 export default function PostingCard(props) {
+  const widthOfElement =
+    (props.width -
+      (Math.ceil(NUM_CARDS_IN_SCREEN) - 1) * DISTANCE_BETWEEN_CARDS) /
+    NUM_CARDS_IN_SCREEN;
   return (
     <View
       style={{
-        width: props.width / constants.NUM_CARDS_IN_SCREEN,
+        width: widthOfElement,
         alignItems: 'center',
-        marginBottom: SIZES.spacing * 4,
+        marginRight: DISTANCE_BETWEEN_CARDS,
       }}>
       <TouchableOpacity onPress={props.onPress}>
         <View
           style={{
-            borderRadius: 16,
-            width: props.width / 2.5 - 10,
-            height: 1.5 * (props.width / 2.5 - 10),
+            borderRadius: BORDER_RADIUS,
+            width: widthOfElement,
+            height: HEIGHT_MULTIPLIER * widthOfElement,
             backgroundColor: '#4d4d4d',
             alignItems: 'center',
             justifyContent: 'center',
           }}>
           <MyImage
             style={{
-              width: props.width / 2.5 - 10,
-              height: 1.5 * (props.width / 2.5 - 10),
-              borderRadius: 16,
+              width: widthOfElement,
+              height: HEIGHT_MULTIPLIER * widthOfElement,
+              borderRadius: BORDER_RADIUS,
             }}
             photo={props.item.photo}
           />
           <LinearGradient
             colors={['transparent', 'transparent', constants.BACKGROUND_COLOR]}
             style={{
-              width: props.width / 2.5 - 10,
-              height: 1.5 * (props.width / 2.5 - 10),
-              borderRadius: 16,
+              width: widthOfElement,
+              height: HEIGHT_MULTIPLIER * widthOfElement,
+              borderRadius: BORDER_RADIUS,
               position: 'absolute',
             }}
           />
@@ -73,7 +82,7 @@ export default function PostingCard(props) {
               bottom: 0,
               paddingVertical: 5,
               paddingHorizontal: 10,
-              width: props.width / 2.5 - 10,
+              width: widthOfElement,
               justifyContent: props.showProfilePicInCard
                 ? 'space-between'
                 : null,

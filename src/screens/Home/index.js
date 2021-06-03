@@ -340,7 +340,7 @@ class Home extends Component {
           flex: 1,
           backgroundColor: constants.BACKGROUND_COLOR,
           justifyContent: 'space-around',
-          //paddingLeft: SIZES.spacing,
+          paddingLeft: SIZES.spacing * 2,
         }}>
         <Header
           statusBarProps={{
