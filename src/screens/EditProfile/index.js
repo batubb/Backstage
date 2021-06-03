@@ -29,7 +29,6 @@ const {width} = Dimensions.get('window');
 
 class EditProfile extends Component {
   constructor(props) {
-    console.log('in constructor');
     super(props);
     this.state = {
       loading: true,
@@ -118,12 +117,10 @@ class EditProfile extends Component {
     );
   }
 
-  removeImage() {}
-
   choosePhotoType = () => {
     Alert.alert('Choose', 'Where would you like to select the photo?', [
       {text: 'Gallery', onPress: () => this.pickImage()},
-      {text: 'Remove Picture', onPress: () => this.removeImage()},
+      {text: 'Remove Picture', onPress: () => this.updateUserInfo()},
       {text: 'Cancel', style: 'cancel'},
     ]);
   };
@@ -135,8 +132,6 @@ class EditProfile extends Component {
         base64: true,
       },
       (result) => {
-        console.log('in image lub');
-        console.log();
         if (!result.didCancel) {
           this.handleImagePicked(result.uri);
         }
@@ -145,13 +140,10 @@ class EditProfile extends Component {
   };
 
   takeImage = async () => {
-    console.log('in take image');
     const result = await launchCamera({
       quality: 0.4,
       base64: true,
     });
-    console.log('after take image', result);
-
     if (!result.didCancel) {
       this.handleImagePicked(result.uri);
     }
@@ -164,9 +156,24 @@ class EditProfile extends Component {
     return await ref.getDownloadURL();
   };
 
+  updateUserInfo = async () => {
+    this.setState({loading: true});
+    var updates = {};
+    updates[`users/${Store.user.uid}/photo`] = constants.DEFAULT_PHOTO;
+    try {
+      await database().ref().update(updates);
+      await checkUserInfo(Store.uid, true);
+      this.setState({photo: constants.DEFAULT_PHOTO});
+    } catch (error) {
+      return Alert.alert('Oops', 'Something unexpected happens.', [
+        {text: 'Okay'},
+      ]);
+    }
+    this.setState({loading: false});
+  };
+
   handleImagePicked = async (url) => {
     this.setState({loading: true});
-    console.log('post that');
 
     const onname = `${makeid(8)}-${makeid(4)}-${makeid(4)}-${makeid(
       4,
@@ -183,14 +190,12 @@ class EditProfile extends Component {
     try {
       await database().ref().update(updates);
       await checkUserInfo(Store.uid, true);
-      console.log('in image picked');
       this.setState({photo: data});
     } catch (error) {
       return Alert.alert('Oops', 'Something unexpected happens.', [
         {text: 'Okay'},
       ]);
     }
-    console.log('in image picked post try');
     this.setState({loading: false});
   };
 
