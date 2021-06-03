@@ -1,10 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {View, TouchableOpacity} from 'react-native';
-import {constants} from '../../resources';
-import {COLORS, SIZES} from '../../resources/theme';
-import MyImage from '../MyImage';
-import Text from '../Text';
+import {constants} from '../../../../resources';
+import {COLORS, SIZES} from '../../../../resources/theme';
+import MyImage from '../../../MyImage';
+import Text from '../../../Text';
 import {Icon} from 'react-native-elements';
 
 function StoryCircle(props) {

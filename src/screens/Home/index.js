@@ -25,7 +25,7 @@ import {
 import Store from '../../store/Store';
 import {followerCount} from '../../lib';
 import {SIZES} from '../../resources/theme';
-import Story from '../../components/ScreenComponents/HomeComponents/Story';
+import Story from '../../components/ScreenComponents/HomeComponents/Story/Story';
 
 const {width} = Dimensions.get('window');
 
