@@ -120,15 +120,14 @@ class Home extends Component {
       <View
         style={{
           width: width,
-          //paddingHorizontal: 10,
-          paddingVertical: 5,
           flexDirection: 'row',
           alignItems: 'center',
+          marginBottom: SIZES.spacing * 3,
+          marginTop: SIZES.spacing * 3,
         }}>
         {live ? (
           <View
             style={{
-              //paddingHorizontal: 10,
               paddingVertical: 5,
               borderRadius: 4,
               marginRight: 10,
@@ -178,13 +177,12 @@ class Home extends Component {
     return (
       <View
         style={{
-          marginTop: index === 0 ? null : SIZES.spacing * 5,
           borderBottomWidth: SIZES.separatorWidth,
           borderBottomColor: constants.BAR_COLOR,
-          paddingBottom: SIZES.spacing * 2,
+          paddingBottom: SIZES.spacing * 6,
         }}>
         <TouchableOpacity onPress={() => this.goTo('UserProfile', influencer)}>
-          {this.captionBar(influencer.username, false, influencer)}
+          {this.captionBar(influencer.username, false, influencer, index)}
         </TouchableOpacity>
         <FlatList
           data={influencer.posts.slice(0, constants.NUM_POSTS_TO_VIEW_IN_HOME)}
@@ -293,8 +291,8 @@ class Home extends Component {
         style={{
           width: width,
           borderBottomWidth: SIZES.separatorWidth,
-          paddingBottom: SIZES.spacing * 3,
           borderBottomColor: constants.BAR_COLOR,
+          paddingBottom: SIZES.spacing * 3,
         }}>
         <ScrollView horizontal>
           {this.state.loading ? (
@@ -372,7 +370,6 @@ class Home extends Component {
           />
         ) : (
           <ScrollView
-            style={{paddingTop: SIZES.spacing * 3}}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
