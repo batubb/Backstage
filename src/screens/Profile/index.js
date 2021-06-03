@@ -88,6 +88,10 @@ class Profile extends Component {
             typeof Store.user.biography === 'undefined'
               ? 'No Biography'
               : Store.user.biography,
+          photo:
+            typeof Store.user.photo === 'undefined'
+              ? 'https://www.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg'
+              : Store.user.photo,
         });
       });
     } else if (Store.user.type === 'influencer') {
@@ -113,6 +117,10 @@ class Profile extends Component {
             typeof Store.user.biography === 'undefined'
               ? 'No Biography'
               : Store.user.biography,
+          photo:
+            typeof Store.user.photo === 'undefined'
+              ? 'https://www.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg'
+              : Store.user.photo,
         });
       });
     }
@@ -159,6 +167,9 @@ class Profile extends Component {
       });
       return this.props.navigation.dispatch(replaceActions);
     } else if (route === 'MyInfo') {
+      const replaceActions = StackActions.push(route, {type: info});
+      return this.props.navigation.dispatch(replaceActions);
+    } else if (route === 'EditProfile') {
       const replaceActions = StackActions.push(route, {type: info});
       return this.props.navigation.dispatch(replaceActions);
     }
@@ -321,7 +332,7 @@ class Profile extends Component {
             style={{flexDirection: 'row', alignItems: 'center', marginTop: 5}}>
             <Text
               text={biography}
-              style={{fontSize: 12, color: 'gray', marginRight: 5}}
+              style={{fontSize: 12, color: 'white', marginRight: 5}}
             />
             <Icon
               name="square-edit-outline"
@@ -487,11 +498,10 @@ class Profile extends Component {
       refreshing,
       optionsVisible,
     } = this.state;
-
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
         <Header
-          title={`@${Store.user.username}`}
+          title={`${Store.user.username}`}
           rightButtonPress={() => this.goTo('Settings')}
           rightButtonIcon="cog-outline"
         />
@@ -516,6 +526,19 @@ class Profile extends Component {
             }>
             <View style={{width: width, alignItems: 'center'}}>
               {this.renderProfileTop(name, biography, photo)}
+              <Button
+                onPress={() => this.goTo('EditProfile')}
+                text="Edit Profile"
+                buttonStyle={{
+                  backgroundColor: 'transparent',
+                  borderColor: constants.BAR_COLOR,
+                  borderWidth: 1,
+                }}
+                textStyle={{
+                  fontSize: 12,
+                  fontWeight: 'bold',
+                }}
+              />
             </View>
             {Store.user.type === 'user'
               ? this.renderUserSection(followingArray)

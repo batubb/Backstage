@@ -28,6 +28,7 @@ import PrivacyPolicy from './screens/PrivacyPolicy';
 import Notifications from './screens/Notifications';
 import Subscribe from './screens/Subscribe';
 import MyBanks from './screens/MyBanks';
+import EditProfile from './screens/EditProfile';
 
 LogBox.ignoreAllLogs();
 
@@ -114,6 +115,7 @@ class ProfileMenu extends React.Component {
         <Stack.Screen name="UserProfile" component={UserProfile} />
         <Stack.Screen name="Rooms" component={Rooms} />
         <Stack.Screen name="MyBanks" component={MyBanks} />
+        <Stack.Screen name="EditProfile" component={EditProfile} />
       </Stack.Navigator>
     );
   }
