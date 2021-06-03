@@ -3,8 +3,7 @@ import React from 'react';
 import {View, TouchableOpacity} from 'react-native';
 import {constants} from '../../../../resources';
 import {COLORS, SIZES} from '../../../../resources/theme';
-import MyImage from '../../../MyImage';
-import Text from '../../../Text';
+import {MyImage, Text} from '../../../../components';
 import {Icon} from 'react-native-elements';
 
 function StoryCircle(props) {
@@ -14,7 +13,7 @@ function StoryCircle(props) {
         width: SIZES.storyCircleWidth,
         height: SIZES.storyCircleWidth,
         borderRadius: SIZES.storyCircleWidth / 2,
-        marginHorizontal: 5,
+        //marginHorizontal: 5,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: props.loading ? constants.BAR_COLOR : null,

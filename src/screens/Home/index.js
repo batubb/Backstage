@@ -26,6 +26,7 @@ import Store from '../../store/Store';
 import {followerCount} from '../../lib';
 import {SIZES} from '../../resources/theme';
 import Story from '../../components/ScreenComponents/HomeComponents/Story/Story';
+import PostingCard from '../../components/ScreenComponents/HomeComponents/PostingCard/PostingCard';
 
 const {width} = Dimensions.get('window');
 
@@ -119,7 +120,7 @@ class Home extends Component {
       <View
         style={{
           width: width,
-          paddingHorizontal: 10,
+          //paddingHorizontal: 10,
           paddingVertical: 5,
           flexDirection: 'row',
           alignItems: 'center',
@@ -127,7 +128,7 @@ class Home extends Component {
         {live ? (
           <View
             style={{
-              paddingHorizontal: 10,
+              //paddingHorizontal: 10,
               paddingVertical: 5,
               borderRadius: 4,
               marginRight: 10,
@@ -161,72 +162,12 @@ class Home extends Component {
           horizontal
           showsHorizontalScrollIndicator={false}
           renderItem={({item}) => (
-            <View style={{width: width / 2.5, alignItems: 'center'}}>
-              <TouchableOpacity onPress={() => this.goTo('WatchVideo', item)}>
-                <View
-                  style={{
-                    borderRadius: 16,
-                    width: width / 2.5 - 10,
-                    height: 1.5 * (width / 2.5 - 10),
-                    backgroundColor: '#4d4d4d',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <MyImage
-                    style={{
-                      width: width / 2.5 - 10,
-                      height: 1.5 * (width / 2.5 - 10),
-                      borderRadius: 16,
-                    }}
-                    photo={item.photo}
-                  />
-                  <LinearGradient
-                    colors={[
-                      'transparent',
-                      'transparent',
-                      constants.BACKGROUND_COLOR,
-                    ]}
-                    style={{
-                      width: width / 2.5 - 10,
-                      height: 1.5 * (width / 2.5 - 10),
-                      borderRadius: 16,
-                      position: 'absolute',
-                    }}
-                  />
-                  <View
-                    style={{
-                      position: 'absolute',
-                      bottom: 0,
-                      paddingVertical: 5,
-                      paddingHorizontal: 10,
-                      flexDirection: 'row',
-                      width: width / 2.5 - 10,
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}>
-                    <MyImage
-                      style={{width: 40, height: 40, borderRadius: 20}}
-                      photo={item.user.photo}
-                    />
-                    <View style={{width: width / 2.5 - 80}}>
-                      <Text
-                        text={
-                          item.user.name.length >= 10
-                            ? `${item.user.name.substring(0, 10)}...`
-                            : item.user.name
-                        }
-                        style={{fontSize: 12}}
-                      />
-                      <Text
-                        text={`${followerCount(item.view)} viewer`}
-                        style={{fontSize: 12, fontWeight: 'normal'}}
-                      />
-                    </View>
-                  </View>
-                </View>
-              </TouchableOpacity>
-              {item.expired ? this.expiredCard(item) : null}
-            </View>
+            <PostingCard
+              onPress={() => this.goTo('WatchVideo', item)}
+              width={width}
+              item={item}
+              showProfilePicInCard
+            />
           )}
         />
       </>
@@ -262,7 +203,7 @@ class Home extends Component {
                   marginBottom: 10,
                 }}>
                 <TouchableOpacity
-                  style={{alignItems: 'center', marginHorizontal: 20}}
+                  style={{alignItems: 'center'}} //marginHorizontal: 20}}
                   onPress={() => this.goTo('UserProfile', influencer)}>
                   <View
                     style={{
@@ -289,68 +230,11 @@ class Home extends Component {
           }}
           showsHorizontalScrollIndicator={false}
           renderItem={({item}) => (
-            <View
-              style={{
-                width: width / constants.NUM_CARDS_IN_SCREEN,
-                alignItems: 'center',
-                marginBottom: SIZES.spacing * 4,
-              }}>
-              <TouchableOpacity onPress={() => this.goTo('WatchVideo', item)}>
-                <View
-                  style={{
-                    borderRadius: 16,
-                    width: width / 2.5 - 10,
-                    height: 1.5 * (width / 2.5 - 10),
-                    backgroundColor: '#4d4d4d',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <MyImage
-                    style={{
-                      width: width / 2.5 - 10,
-                      height: 1.5 * (width / 2.5 - 10),
-                      borderRadius: 16,
-                    }}
-                    photo={item.photo}
-                  />
-                  <LinearGradient
-                    colors={[
-                      'transparent',
-                      'transparent',
-                      constants.BACKGROUND_COLOR,
-                    ]}
-                    style={{
-                      width: width / 2.5 - 10,
-                      height: 1.5 * (width / 2.5 - 10),
-                      borderRadius: 16,
-                      position: 'absolute',
-                    }}
-                  />
-                  <View
-                    style={{
-                      position: 'absolute',
-                      bottom: 0,
-                      paddingVertical: 5,
-                      paddingHorizontal: 10,
-                      width: width / 2.5 - 10,
-                    }}>
-                    <Text
-                      text={
-                        item.title.length >= 17
-                          ? `${item.title.substring(0, 17)}...`
-                          : item.title
-                      }
-                      style={{fontSize: 12}}
-                    />
-                    <Text
-                      text={`${followerCount(item.view)} views`}
-                      style={{fontSize: 12, fontWeight: 'normal'}}
-                    />
-                  </View>
-                </View>
-              </TouchableOpacity>
-              {influencer.expired ? this.expiredCard(influencer) : null}
-            </View>
+            <PostingCard
+              onPress={() => this.goTo('WatchVideo', item)}
+              width={width}
+              item={item}
+            />
           )}
         />
       </View>
@@ -456,7 +340,7 @@ class Home extends Component {
           flex: 1,
           backgroundColor: constants.BACKGROUND_COLOR,
           justifyContent: 'space-around',
-          paddingLeft: SIZES.spacing,
+          //paddingLeft: SIZES.spacing,
         }}>
         <Header
           statusBarProps={{
