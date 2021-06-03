@@ -297,7 +297,7 @@ class Home extends Component {
         }}>
         <ScrollView horizontal>
           {this.state.loading ? (
-            Array.from({length: 5}).map((x) => <Story loading />)
+            Array.from({length: 3}).map((x) => <Story loading />)
           ) : this.state.myStoriesArray.length !== 0 ? (
             <Story
               onPress={() => this.goTo('WatchStory', this.state.myStoriesArray)}
