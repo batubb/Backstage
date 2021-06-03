@@ -28,7 +28,8 @@ import {SIZES} from '../../resources/theme';
 import Story from '../../components/ScreenComponents/HomeComponents/Story/Story';
 import PostingCard from '../../components/ScreenComponents/HomeComponents/PostingCard/PostingCard';
 
-const {width} = Dimensions.get('window');
+//const {width} = Dimensions.get('window');
+const width = Dimensions.get('window')['width'] - constants.PAGE_LEFT_PADDING;
 
 class Home extends Component {
   constructor(props) {
@@ -338,7 +339,7 @@ class Home extends Component {
           flex: 1,
           backgroundColor: constants.BACKGROUND_COLOR,
           justifyContent: 'space-around',
-          paddingLeft: SIZES.spacing * 2,
+          paddingLeft: constants.PAGE_LEFT_PADDING,
         }}>
         <Header
           statusBarProps={{

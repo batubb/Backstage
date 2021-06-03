@@ -1,3 +1,5 @@
+const {SIZES} = require('./theme');
+
 /* eslint-disable prettier/prettier */
 const constants = {
   APP_NAME: 'INFAPP',
@@ -12,6 +14,7 @@ const constants = {
   BAR_COLOR: '#272727',
   BLUE: '#00ACED',
   RED: '#FF5733',
+  PAGE_LEFT_PADDING: SIZES.spacing * 2,
 
   DEFAULT_PHOTO:
     'http://newgatehotel.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png',
