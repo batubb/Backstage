@@ -25,7 +25,7 @@ import {
 import Store from '../../store/Store';
 import {followerCount} from '../../lib';
 import {SIZES} from '../../resources/theme';
-import {StoryCircle, StoryImage} from '../../components/Story/Story';
+import Story from '../../components/ScreenComponents/HomeComponents/Story';
 
 const {width} = Dimensions.get('window');
 
@@ -414,36 +414,19 @@ class Home extends Component {
         }}>
         <ScrollView horizontal>
           {this.state.loading ? (
-            Array.from({length: 5}).map((x) => <StoryCircle loading={true} />)
+            Array.from({length: 5}).map((x) => <Story loading />)
           ) : this.state.myStoriesArray.length !== 0 ? (
-            <TouchableOpacity
+            <Story
               onPress={() => this.goTo('WatchStory', this.state.myStoriesArray)}
-              style={{alignItems: 'center', marginRight: SIZES.spacing * 3}}>
-              <StoryCircle myStory={true}>
-                <StoryImage photo={Store.user.photo} />
-              </StoryCircle>
-              <Text
-                text="Your Stories"
-                style={{fontSize: 10, marginTop: 5, fontWeight: 'normal'}}
-              />
-            </TouchableOpacity>
+              photo={Store.user.photo}
+              text={'Your Stories'}
+            />
           ) : (
-            <TouchableOpacity
+            <Story
               onPress={() => this.goTo('AddContent')}
-              style={{alignItems: 'center'}}>
-              <StoryCircle myStory={true}>
-                <Icon
-                  name="plus"
-                  color="#FFF"
-                  type="material-community"
-                  size={32}
-                />
-              </StoryCircle>
-              <Text
-                text="Add Story"
-                style={{fontSize: 10, marginTop: 5, fontWeight: 'normal'}}
-              />
-            </TouchableOpacity>
+              addStory
+              text={'Add Story'}
+            />
           )}
 
           <FlatList
@@ -452,21 +435,11 @@ class Home extends Component {
             horizontal
             showsHorizontalScrollIndicator={false}
             renderItem={({item}) => (
-              <TouchableOpacity
+              <Story
                 onPress={() => this.goTo('WatchStory', item.stories)}
-                style={{alignItems: 'center'}}>
-                <StoryCircle>
-                  <StoryImage photo={item.photo} />
-                </StoryCircle>
-                <Text
-                  text={item.username}
-                  style={{
-                    fontSize: 12,
-                    marginTop: SIZES.spacing * 1,
-                    fontWeight: '400',
-                  }}
-                />
-              </TouchableOpacity>
+                photo={item.photo}
+                text={item.username}
+              />
             )}
           />
         </ScrollView>
