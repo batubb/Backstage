@@ -468,7 +468,11 @@ class UserProfile extends Component {
           <ScrollView
             refreshControl={
               <RefreshControl refreshing={refreshing} tintColor="white" />
-            }>
+            }
+            contentContainerStyle={{
+              width: constants.DEFAULT_PAGE_WIDTH,
+              alignSelf: 'center',
+            }}>
             <ProfileTop
               name={user.name}
               photo={user.photo}
