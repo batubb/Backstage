@@ -481,9 +481,10 @@ class UserProfile extends Component {
                   ? this.unsubscribeInf()
                   : this.goTo('Subscribe', this.state.user)
               }
+              databarVisible
+              followerNumber={this.state.followerNumber}
+              onChatPress={() => this.goTo('Chat', this.state.user)}
             />
-
-            {this.renderDataBar(user)}
             <View>{daily.length !== 0 ? this.renderPosts(daily) : null}</View>
           </ScrollView>
         )}

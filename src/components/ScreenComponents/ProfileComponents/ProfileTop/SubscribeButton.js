@@ -11,10 +11,9 @@ export default function SubscribeButton(props) {
         width: '100%',
         backgroundColor: '#FFF',
         padding: 10,
-        marginTop: 10,
         borderRadius: 24,
       }}
-      textStyle={{fontSize: 12, color: 'black'}}
+      textStyle={{color: 'black'}}
       text={
         !props.subscribtion.cancel
           ? props.subscribtion.subscribtion
