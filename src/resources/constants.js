@@ -15,7 +15,8 @@ const constants = {
   BLUE: '#00ACED',
   RED: '#FF5733',
   PAGE_LEFT_PADDING: SIZES.spacing * 2,
-  PROFILE_PIC_SIZE: 130,
+  PROFILE_PIC_SIZE: 100,
+  DEFAULT_PAGE_WIDTH: '95%',
 
   DEFAULT_PHOTO:
     'http://newgatehotel.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png',

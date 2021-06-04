@@ -106,6 +106,7 @@ class EditProfile extends Component {
             paddingBottom: SIZES.spacing * 5,
           }}>
           <Text
+            numberOfLines={1}
             text={value}
             style={{
               fontSize: 18,

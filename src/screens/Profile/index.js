@@ -34,9 +34,11 @@ import LinearGradient from 'react-native-linear-gradient';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
+import moment from 'moment';
 
 import Store from '../../store/Store';
 import {SIZES} from '../../resources/theme';
+import ProfileTop from '../../components/ScreenComponents/ProfileComponents/ProfileTop/ProfileTop';
 
 const {width} = Dimensions.get('window');
 
@@ -271,80 +273,80 @@ class Profile extends Component {
     }
   };
 
-  renderProfileTop = (name, biography, photo) => {
-    const constWidth = width / 3;
+  static renderProfileTop(
+    name,
+    biography,
+    photo,
+    subscribeButtonVisible = false,
+    user = null,
+    subscribtion = null,
+  ) {
     return (
       <View
         style={{
-          width: width,
           flexDirection: 'row',
-          padding: 15,
-          alignItems: 'center',
+          height: constants.PROFILE_PIC_SIZE,
         }}>
-        <TouchableOpacity onPress={() => this.choosePhotoType()}>
-          <MyImage
-            style={{
-              width: constWidth,
-              height: constWidth,
-              borderRadius: constWidth / 2,
-            }}
-            photo={photo}
-          />
-          <View
-            style={{
-              position: 'absolute',
-              right: 5,
-              top: 5,
-              width: 30,
-              height: 30,
-              backgroundColor: '#000',
-              borderRadius: 15,
-              alignItems: 'center',
-              justifyContent: 'center',
-              opacity: 0.6,
-            }}>
-            <Icon
-              name="square-edit-outline"
-              color="#FFF"
-              type="material-community"
-              size={16}
-            />
-          </View>
-        </TouchableOpacity>
+        <MyImage
+          style={{
+            width: constants.PROFILE_PIC_SIZE,
+            height: constants.PROFILE_PIC_SIZE,
+            borderRadius: constants.PROFILE_PIC_SIZE / 2,
+          }}
+          photo={photo}
+        />
         <View
           style={{
-            marginLeft: SIZES.spacing * 4,
-            width: width - constWidth - 50,
+            flex: 1,
+            marginLeft: SIZES.spacing * 5,
           }}>
-          <TouchableOpacity
-            onPress={() => this.goTo('MyInfo', 'name')}
-            style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text text={name} style={{fontSize: 20, marginRight: 5}} />
-            <Icon
-              name="square-edit-outline"
-              color="gray"
-              type="material-community"
-              size={20}
+          <Text text={name} numberOfLines={1} style={{fontSize: 20}} />
+          <Text
+            numberOfLines={2}
+            text={biography}
+            style={{fontSize: 12, color: 'white', marginTop: SIZES.spacing * 2}}
+          />
+          {!subscribeButtonVisible ? null : user.uid !== Store.user.uid &&
+            !subscribtion.cancel ? (
+            <Button
+              buttonStyle={{
+                width: '100%',
+                backgroundColor: '#FFF',
+                padding: 10,
+                marginTop: 10,
+                borderRadius: 24,
+              }}
+              textStyle={{fontSize: 12, color: 'black'}}
+              text={
+                subscribtion.subscribtion
+                  ? 'Unsubscribe'
+                  : `Subscribe / ${user.price.toFixed(2)} $`
+              }
+              onPress={() =>
+                subscribtion.subscribtion
+                  ? this.unsubscribeInf()
+                  : this.goTo('Subscribe', this.state.user)
+              }
             />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => this.goTo('MyInfo', 'biography')}
-            style={{flexDirection: 'row', alignItems: 'center', marginTop: 5}}>
-            <Text
-              text={biography}
-              style={{fontSize: 12, color: 'white', marginRight: 5}}
+          ) : user.uid !== Store.user.uid && subscribtion.cancel ? (
+            <Button
+              buttonStyle={{
+                width: '100%',
+                backgroundColor: '#FFF',
+                padding: 10,
+                marginTop: 10,
+                borderRadius: 24,
+              }}
+              textStyle={{fontSize: 12, color: 'black'}}
+              text={`Last date is ${moment(
+                this.state.subscribtion.endTimestamp,
+              ).format('L')}.`}
             />
-            <Icon
-              name="square-edit-outline"
-              color="gray"
-              type="material-community"
-              size={12}
-            />
-          </TouchableOpacity>
+          ) : null}
         </View>
       </View>
     );
-  };
+  }
 
   renderPosts = (posts) => {
     return (
@@ -523,9 +525,13 @@ class Profile extends Component {
                 onRefresh={() => this.onRefresh()}
                 tintColor="white"
               />
-            }>
-            <View style={{width: width, alignItems: 'center'}}>
-              {this.renderProfileTop(name, biography, photo)}
+            }
+            contentContainerStyle={{
+              width: constants.DEFAULT_PAGE_WIDTH,
+              alignSelf: 'center',
+            }}>
+            <View style={{display: 'flex'}}>
+              <ProfileTop name={name} photo={photo} biography={biography} />
               <Button
                 onPress={() => this.goTo('EditProfile')}
                 text="Edit Profile"
@@ -533,6 +539,8 @@ class Profile extends Component {
                   backgroundColor: 'transparent',
                   borderColor: constants.BAR_COLOR,
                   borderWidth: 1,
+                  width: '100%',
+                  marginTop: SIZES.spacing * 5,
                 }}
                 textStyle={{
                   fontSize: 12,
@@ -544,7 +552,9 @@ class Profile extends Component {
               ? this.renderUserSection(followingArray)
               : null}
             {Store.user.type === 'influencer' ? (
-              <View>{daily.length !== 0 ? this.renderPosts(daily) : null}</View>
+              <View style={{alignSelf: 'center'}}>
+                {daily.length !== 0 ? this.renderPosts(daily) : null}
+              </View>
             ) : null}
           </ScrollView>
         )}

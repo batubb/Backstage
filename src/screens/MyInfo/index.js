@@ -12,7 +12,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import {observer} from 'mobx-react';
-import {Loading, Header, Button, MyImage} from '../../components';
+import {Loading, Header, Button, MyImage, Text} from '../../components';
 import {constants} from '../../resources';
 import {checkUserInfo, checkUsernameValid} from '../../services';
 import Store from '../../store/Store';
@@ -21,6 +21,7 @@ import {StackActions} from '@react-navigation/native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
+import {SIZES} from '../../resources/theme';
 
 const {width} = Dimensions.get('window');
 
@@ -32,6 +33,12 @@ class MyInfo extends Component {
       refreshing: false,
       input: '',
       type: this.props.route.params.type,
+      maxInputLen:
+        this.props.route.params.type === 'username'
+          ? 20
+          : this.props.route.params.type === 'name'
+          ? 25
+          : 65,
     };
   }
 
@@ -100,12 +107,11 @@ class MyInfo extends Component {
       await checkUserInfo(Store.uid, true);
       this.props.navigation.dispatch(StackActions.pop());
     } catch (error) {
+      this.setState({loading: false});
       return Alert.alert('Oops', 'Something unexpected happens.', [
         {text: 'Okay'},
       ]);
     }
-
-    this.setState({loading: false});
   };
 
   setInput = (text) => {
@@ -117,7 +123,7 @@ class MyInfo extends Component {
   };
 
   render() {
-    const {loading, refreshing, type, input} = this.state;
+    const {loading, refreshing, type, input, maxInputLen} = this.state;
     var placeholder = '';
 
     if (type === 'name') {
@@ -150,31 +156,46 @@ class MyInfo extends Component {
             text="Loading"
           />
         ) : (
-          <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={refreshing} tintColor="white" />
-            }>
+          <View
+            style={{
+              display: 'flex',
+              width: '95%',
+              alignSelf: 'center',
+              marginTop: SIZES.spacing * 8,
+            }}>
             <TextInput
               placeholder={placeholder}
               style={{
                 fontFamily:
                   Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
-                margin: 10,
-                width: width - 20,
+                //margin: 10,
+                //width: width - 20,
                 padding: 13,
                 color: 'white',
-                fontWeight: 'bold',
-                fontSize: 14,
+                //fontWeight: 'bold',
+                fontSize: 16,
                 borderRadius: 4,
-                backgroundColor: '#424242',
+                //backgroundColor: '#424242',
+                borderWidth: SIZES.separatorWidth,
+                borderColor: constants.BAR_COLOR,
               }}
               underlineColorAndroid="transparent"
               onChangeText={(textInput) => this.setInput(textInput)}
               value={input}
-              maxLength={type === 'username' ? 20 : 50}
+              maxLength={maxInputLen}
               placeholderTextColor="gray"
+              autoFocus
+              multiline={type === 'biography' ? true : false}
             />
-          </ScrollView>
+            <Text
+              style={{
+                alignSelf: 'flex-end',
+                marginTop: SIZES.spacing * 3,
+                fontWeight: 'normal',
+              }}
+              text={`${maxInputLen - input.length}/${maxInputLen}`}
+            />
+          </View>
         )}
       </View>
     );
