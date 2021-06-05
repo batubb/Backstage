@@ -207,6 +207,90 @@ class Profile extends Component {
 
   renderPosts = (posts) => {
     return (
+      <FlatList
+        data={posts}
+        keyExtractor={(item) => item.uid}
+        extraData={Store.posts}
+        numColumns={2}
+        renderItem={({item, index}) => (
+          <View
+            style={{
+              alignItems: 'center',
+              flex: 1 / 2,
+              aspectRatio: 2 / 3,
+              marginRight: index % 2 === 0 ? SIZES.spacing * 5 : null,
+            }}>
+            <TouchableOpacity onPress={() => this.goTo('WatchVideo', item)}>
+              <View
+                style={{
+                  borderRadius: 16,
+                  backgroundColor: '#4d4d4d',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  width: '100%',
+                }}>
+                <MyImage
+                  style={{
+                    borderRadius: 16,
+                    height: '100%',
+                    width: '100%',
+                  }}
+                  photo={item.photo}
+                />
+                <LinearGradient
+                  colors={[
+                    'transparent',
+                    'transparent',
+                    constants.BACKGROUND_COLOR,
+                  ]}
+                  style={{
+                    borderRadius: 16,
+                    position: 'absolute',
+                    height: '100%',
+                    width: '100%',
+                  }}
+                />
+                <View
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    paddingVertical: 5,
+                    paddingHorizontal: 10,
+                  }}>
+                  <Text
+                    text={
+                      item.title.length >= 17
+                        ? `${item.title.substring(0, 17)}...`
+                        : item.title
+                    }
+                    style={{fontSize: 12}}
+                  />
+                  <Text
+                    text={`${followerCount(item.view)} views`}
+                    style={{fontSize: 12, fontWeight: 'normal'}}
+                  />
+                </View>
+              </View>
+            </TouchableOpacity>
+          </View>
+        )}
+        renderItem2={({item}) => (
+          <MyImage
+            style={{
+              borderRadius: 16,
+              flex: 1 / 2,
+              aspectRatio: 1.5,
+            }}
+            photo={item.photo}
+          />
+        )}
+      />
+    );
+  };
+
+  renderPosts2 = (posts) => {
+    return (
       <>
         <FlatList
           data={posts}
@@ -409,9 +493,7 @@ class Profile extends Component {
               ? this.renderUserSection(followingArray)
               : null}
             {Store.user.type === 'influencer' ? (
-              <View style={{alignSelf: 'center'}}>
-                {daily.length !== 0 ? this.renderPosts(daily) : null}
-              </View>
+              <View>{daily.length !== 0 ? this.renderPosts(daily) : null}</View>
             ) : null}
           </ScrollView>
         )}
