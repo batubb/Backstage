@@ -5,6 +5,7 @@ import {View, TouchableOpacity, Dimensions} from 'react-native';
 import PropTypes from 'prop-types';
 import Text from '../Text';
 import {constants} from '../../resources';
+import {Icon} from 'react-native-elements';
 
 const {width} = Dimensions.get('screen');
 
@@ -22,7 +23,8 @@ const secondaryTextStyle = {
 
 export default class Button extends Component {
   render() {
-    const {buttonStyle, textStyle, text, onPress} = this.props;
+    const {buttonStyle, textStyle, text, onPress, rightIconProps} = this.props;
+    console.log(rightIconProps);
     return (
       <TouchableOpacity
         onPress={() => onPress()}
@@ -32,6 +34,8 @@ export default class Button extends Component {
             padding: 10,
             borderRadius: 6,
             alignItems: 'center',
+            flexDirection: 'row',
+            justifyContent: 'center',
           },
           buttonStyle,
           this.props.secondary ? secondaryStyle : null,
@@ -40,6 +44,7 @@ export default class Button extends Component {
           text={text}
           style={this.props.secondary ? secondaryTextStyle : textStyle}
         />
+        {rightIconProps ? <Icon {...rightIconProps} /> : null}
       </TouchableOpacity>
     );
   }

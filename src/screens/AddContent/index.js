@@ -36,6 +36,7 @@ import {KeyboardAvoidingView} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import database from '@react-native-firebase/database';
 import MyImage from '../../components/MyImage';
+import {SIZES} from '../../resources/theme';
 
 const {width, height} = Dimensions.get('window');
 const TOP_PADDING = height >= 812 ? 60 : 40;
@@ -495,6 +496,7 @@ export default class App extends Component {
   };
 
   renderVideo = () => {
+    const PLAY_BUTTON_SIZE = width / 3;
     return (
       <SafeAreaView
         style={{
@@ -535,13 +537,15 @@ export default class App extends Component {
               opacity: 0.6,
             }}
           />
-          <TouchableOpacity
-            onPress={() => this.setState({paused: !this.state.paused})}>
-            <View
+          <View
+            style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <TouchableOpacity
+              onPress={() => this.setState({paused: !this.state.paused})}>
+              {/* <View
               style={{
-                width: width / 2,
-                height: width / 2,
-                borderRadius: width / 4,
+                width: PLAY_BUTTON_SIZE,
+                height: PLAY_BUTTON_SIZE,
+                borderRadius: PLAY_BUTTON_SIZE / 2,
                 borderColor: 'white',
                 borderWidth: 2,
                 alignItems: 'center',
@@ -549,52 +553,72 @@ export default class App extends Component {
               }}>
               <View
                 style={{
-                  width: width / 2,
-                  height: width / 2,
-                  borderRadius: width / 4,
+                  width: PLAY_BUTTON_SIZE,
+                  height: PLAY_BUTTON_SIZE,
+                  borderRadius: PLAY_BUTTON_SIZE / 2,
                   borderColor: 'white',
                   borderWidth: 2,
                   position: 'absolute',
                   backgroundColor: 'white',
                   opacity: 0.5,
                 }}
-              />
+              /> */}
               <Icon
                 name={this.state.paused ? 'play' : 'pause'}
                 color="#FFF"
-                type="material-community"
-                size={64}
+                //type="material-community"
+                type="font-awesome-5"
+                size={72}
               />
-            </View>
-          </TouchableOpacity>
-          <TextInput
-            placeholder="Title"
-            style={{
-              fontFamily:
-                Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
-              margin: 10,
-              padding: 15,
-              color: 'white',
-              fontSize: 14,
-            }}
-            underlineColorAndroid="transparent"
-            onChangeText={(textInput) => this.setState({title: textInput})}
-            value={this.state.title}
-            maxLength={50}
-            placeholderTextColor="whitesmoke"
-          />
-          <Button
-            text="POST"
-            buttonStyle={{
-              backgroundColor: '#FFF',
-              width: width / 2,
-              borderRadius: 24,
-              padding: 13,
-            }}
-            textStyle={{color: '#000', fontSize: 16, fontWeight: 'normal'}}
-            onPress={() => this.handlevideoPicked(this.state.url)}
-          />
+              {/* </View> */}
+            </TouchableOpacity>
+            <TextInput
+              placeholder="Title"
+              style={{
+                fontFamily:
+                  Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
+                margin: 10,
+                padding: 15,
+                color: 'white',
+                fontSize: 14,
+                //marginBottom: 'auto',
+              }}
+              underlineColorAndroid="transparent"
+              onChangeText={(textInput) => this.setState({title: textInput})}
+              value={this.state.title}
+              maxLength={50}
+              placeholderTextColor="whitesmoke"
+            />
+          </View>
         </KeyboardAvoidingView>
+        <Button
+          text="Post"
+          buttonStyle={{
+            position: 'absolute',
+            backgroundColor: '#FFF',
+            width: '30%',
+            borderRadius: 24,
+            padding: 10,
+            alignSelf: 'flex-end',
+            bottom: 0,
+            right: 0,
+            marginBottom: SIZES.spacing * 5,
+            marginRight: SIZES.spacing * 5,
+          }}
+          rightIconProps={{
+            name: 'chevron-right',
+            color: 'black',
+            type: 'material-community',
+          }}
+          textStyle={{
+            color: '#000',
+            fontSize: 16,
+            fontWeight: 'normal',
+            flex: 1,
+            textAlign: 'center',
+          }}
+          onPress={() => this.handlevideoPicked(this.state.url)}
+        />
       </SafeAreaView>
     );
   };
