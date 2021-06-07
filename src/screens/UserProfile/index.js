@@ -327,6 +327,7 @@ class UserProfile extends Component {
             contentContainerStyle={{
               width: constants.DEFAULT_PAGE_WIDTH,
               alignSelf: 'center',
+              marginTop: SIZES.spacing * 5,
             }}>
             <ProfileTop
               name={user.name}

@@ -11,7 +11,7 @@ const constants = {
   MUX_BASE_URL: 'https://api.mux.com',
 
   BACKGROUND_COLOR: '#0a0b09',
-  BAR_COLOR: '#272727',
+  BAR_COLOR: '#333333',
   BLUE: '#00ACED',
   RED: '#FF5733',
   PAGE_LEFT_PADDING: SIZES.spacing * 2,

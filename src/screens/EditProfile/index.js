@@ -5,7 +5,7 @@ import React, {Component} from 'react';
 import {
   View,
   Dimensions,
-  Platform,
+  PlatformColor,
   Alert,
   TextInput,
   ScrollView,
@@ -265,7 +265,8 @@ class EditProfile extends Component {
                   style={{
                     fontWeight: 'bold',
                     marginTop: SIZES.spacing * 5,
-                    color: constants.BAR_COLOR,
+                    //color: PlatformColor('systemBlue'),
+                    color: '#0a84ff',
                   }}
                 />
               </TouchableOpacity>

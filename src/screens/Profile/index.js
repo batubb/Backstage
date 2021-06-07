@@ -395,6 +395,7 @@ class Profile extends Component {
             contentContainerStyle={{
               width: constants.DEFAULT_PAGE_WIDTH,
               alignSelf: 'center',
+              marginTop: SIZES.spacing * 5,
             }}>
             <View
               style={{
@@ -408,11 +409,11 @@ class Profile extends Component {
                 buttonStyle={{
                   backgroundColor: 'transparent',
                   borderColor: constants.BAR_COLOR,
-                  borderWidth: 1,
+                  borderWidth: 1.5,
                   width: '100%',
                 }}
                 textStyle={{
-                  fontSize: 12,
+                  fontSize: 14,
                   fontWeight: 'bold',
                 }}
               />

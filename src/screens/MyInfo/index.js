@@ -144,6 +144,7 @@ class MyInfo extends Component {
           leftButtonIcon="chevron-left"
           rightButtonPress={() => this.saveInfo()}
           rightButtonIcon="check"
+          rightButtonColor="#0a84ff"
         />
         {loading ? (
           <Loading

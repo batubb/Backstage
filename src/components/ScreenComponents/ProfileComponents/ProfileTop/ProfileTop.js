@@ -37,16 +37,17 @@ export default function ProfileTop(props) {
               numberOfLines={2}
               text={props.biography}
               style={{
-                fontSize: 12,
+                fontSize: 14,
                 color: 'white',
                 marginTop: SIZES.spacing * 3,
+                fontWeight: 'normal',
               }}
             />
           </View>
           <View style={{marginTop: 'auto'}}>
             <Text
               text={'27.5k views'}
-              style={{fontWeight: 'normal', fontSize: 12}}
+              style={{fontWeight: 'bold', fontSize: 10}}
             />
           </View>
         </View>
