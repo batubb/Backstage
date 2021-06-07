@@ -33,8 +33,6 @@ import {followerCount, timeDifference} from '../../lib';
 import {SafeAreaView} from 'react-native';
 import {KeyboardAvoidingView} from 'react-native';
 import database from '@react-native-firebase/database';
-import WatchVideoIcon from '../../components/ScreenComponents/WatchVideoComponents/WatchVideoIcon/WatchVideoIcon';
-import {SIZES} from '../../resources/theme';
 
 const {width, height} = Dimensions.get('window');
 const BOTTOM_PADDING = height >= 812 ? 40 : 20;
@@ -221,7 +219,7 @@ class WatchVideo extends Component {
     this.setState({comment: ''});
   };
 
-  renderVideoPlayer2 = (video, paused, videoInfo, dk, sn) => {
+  renderVideoPlayer = (video, paused, videoInfo, dk, sn) => {
     return (
       <View style={{flex: 1, position: 'absolute'}}>
         <Video
@@ -294,80 +292,6 @@ class WatchVideo extends Component {
             </View>
           </View>
         </View>
-      </View>
-    );
-  };
-
-  renderVideoPlayer = (video, paused, videoInfo, dk, sn) => {
-    return (
-      <View style={{flex: 1, position: 'absolute'}}>
-        <Video
-          source={{uri: video.url}}
-          ref={(ref) => {
-            this.player = ref;
-          }}
-          onLoadStart={() => this.setState({videoLoading: true})}
-          onLoad={() => this.setState({videoLoading: false})}
-          onProgress={(data) => this.setTime(data)}
-          onEnd={() => this.setState({paused: true})}
-          style={{flex: 1, width: width, height: height}}
-          paused={paused}
-          repeat
-          poster={video.photo}
-        />
-        <View
-          style={{
-            position: 'absolute',
-            right: 10,
-            bottom: 100,
-            alignItems: 'center',
-            display: 'flex',
-            height: '25%',
-            justifyContent: 'space-between',
-          }}>
-          <View style={{alignItems: 'center'}}>
-            <WatchVideoIcon name="eye-outline" type="ionicon" />
-            <Text text={'1.25k'} />
-          </View>
-          <View style={{alignItems: 'center'}}>
-            <WatchVideoIcon name="chatbubble-outline" type="ionicon" />
-
-            <Text text={'200'} />
-          </View>
-          <WatchVideoIcon name="dots-horizontal" type="material-community" />
-        </View>
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            width: width,
-            alignItems: 'center',
-            paddingVertical: BOTTOM_PADDING,
-          }}>
-          <Text text={'asdasds'} />
-        </View>
-      </View>
-    );
-  };
-
-  renderVideoPlayer2 = (video, paused, videoInfo, dk, sn) => {
-    return (
-      <View style={{flex: 1, position: 'absolute'}}>
-        <Video
-          source={{uri: video.url}}
-          ref={(ref) => {
-            this.player = ref;
-          }}
-          onLoadStart={() => this.setState({videoLoading: true})}
-          onLoad={() => this.setState({videoLoading: false})}
-          onProgress={(data) => this.setTime(data)}
-          onEnd={() => this.setState({paused: true})}
-          style={{flex: 1, width: width, height: height}}
-          paused={paused}
-          repeat
-          poster={video.photo}
-          controls
-        />
       </View>
     );
   };
