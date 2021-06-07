@@ -474,10 +474,6 @@ export default class App extends Component {
     return (
       <TouchableOpacity
         onPress={() => {
-          if (index === 0) {
-            return this.selectVideoFromRoll();
-          }
-
           if (!isPublishing && !isRecording) {
             this.carousel.snapToItem(index);
             this.setState({indexButton: index});
