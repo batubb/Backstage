@@ -489,8 +489,8 @@ export default class App extends Component {
             alignItems: 'center',
             alignSelf: 'center',
             backgroundColor: 'transparent',
-            elevation: 4,
-            padding: 20,
+            //elevation: 4,
+            //paddingVertical: 5,
           }}>
           <Text text={item.name} style={styles.btnText} />
         </View>
@@ -1058,12 +1058,16 @@ export default class App extends Component {
             }}
             data={[{name: 'Video'}, {name: 'Live'}, {name: 'Story'}]}
             renderItem={this.renderItem}
-            sliderWidth={width * 0.8}
-            itemWidth={width / 3}
+            sliderWidth={width * 0.7}
+            itemWidth={width / 6}
             activeAnimationType={'spring'}
             activeAnimationOptions={{
               friction: 4,
               tension: 40,
+            }}
+            containerCustomStyle={{borderRadius: 16}}
+            contentContainerCustomStyle={{
+              paddingVertical: 5,
             }}
             removeClippedSubviews={false}
             inactiveSlideScale={0.6}
@@ -1258,7 +1262,12 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  btnText: {color: '#FFF', fontSize: 20, fontWeight: 'bold'},
+  btnText: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
   uploadText: {color: '#FFF', fontSize: 18},
 
   flipButton: {
