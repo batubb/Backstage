@@ -26,6 +26,7 @@ const constants = {
     'https://firebasestorage.googleapis.com/v0/b/backstage-ceb27.appspot.com/o/thumbnails%2Fthumbs%2F',
 
   DEALS_LIMIT: 5,
+  NUM_POSTS_PER_ROW_PROFILE: 2,
 
   NUM_CARDS_IN_SCREEN: 2.5,
   NUM_POSTS_TO_VIEW_IN_HOME: 3,

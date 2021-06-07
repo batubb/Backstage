@@ -211,24 +211,26 @@ class Profile extends Component {
         data={posts}
         keyExtractor={(item) => item.uid}
         extraData={Store.posts}
-        numColumns={2}
+        numColumns={constants.NUM_POSTS_PER_ROW_PROFILE}
         renderItem={({item, index}) => (
           <View
             style={{
-              alignItems: 'center',
-              flex: 1 / 2,
+              flex: 1 / constants.NUM_POSTS_PER_ROW_PROFILE,
               aspectRatio: 2 / 3,
-              marginRight: index % 2 === 0 ? SIZES.spacing * 5 : null,
+              marginRight:
+                index % constants.NUM_POSTS_PER_ROW_PROFILE !==
+                constants.NUM_POSTS_PER_ROW_PROFILE - 1
+                  ? SIZES.spacing * 5
+                  : null,
+              marginBottom: SIZES.spacing * 5,
             }}>
-            <TouchableOpacity onPress={() => this.goTo('WatchVideo', item)}>
+            <TouchableOpacity
+              onPress={() => this.goTo('WatchVideo', item)}
+              style={{width: '100%'}}>
               <View
                 style={{
                   borderRadius: 16,
                   backgroundColor: '#4d4d4d',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  width: '100%',
                 }}>
                 <MyImage
                   style={{
@@ -274,16 +276,6 @@ class Profile extends Component {
               </View>
             </TouchableOpacity>
           </View>
-        )}
-        renderItem2={({item}) => (
-          <MyImage
-            style={{
-              borderRadius: 16,
-              flex: 1 / 2,
-              aspectRatio: 1.5,
-            }}
-            photo={item.photo}
-          />
         )}
       />
     );
@@ -471,7 +463,7 @@ class Profile extends Component {
               width: constants.DEFAULT_PAGE_WIDTH,
               alignSelf: 'center',
             }}>
-            <View style={{display: 'flex'}}>
+            <View style={{display: 'flex', marginBottom: SIZES.spacing * 5}}>
               <ProfileTop name={name} photo={photo} biography={biography} />
               <Button
                 onPress={() => this.goTo('EditProfile')}
