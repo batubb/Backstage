@@ -283,7 +283,7 @@ class Profile extends Component {
   };
 
   renderPosts2 = (posts) => {
-    return <PostsCard posts={posts} />;
+    return <PostsCard posts={posts} navigation={this.props.navigation} />;
   };
 
   renderUserSection = (data) => {
@@ -396,7 +396,11 @@ class Profile extends Component {
               width: constants.DEFAULT_PAGE_WIDTH,
               alignSelf: 'center',
             }}>
-            <View style={{display: 'flex', marginBottom: SIZES.spacing * 5}}>
+            <View
+              style={{
+                display: 'flex',
+                marginBottom: SIZES.spacing * 5,
+              }}>
               <ProfileTop name={name} photo={photo} biography={biography} />
               <Button
                 onPress={() => this.goTo('EditProfile')}
@@ -406,7 +410,6 @@ class Profile extends Component {
                   borderColor: constants.BAR_COLOR,
                   borderWidth: 1,
                   width: '100%',
-                  marginTop: SIZES.spacing * 5,
                 }}
                 textStyle={{
                   fontSize: 12,

@@ -14,7 +14,7 @@ export default function PostsCard(props) {
   const goTo = (route, info = null) => {
     if (route === 'WatchVideo') {
       const replaceActions = StackActions.push(route, {video: info});
-      return this.props.navigation.dispatch(replaceActions);
+      return props.navigation.dispatch(replaceActions);
     }
   };
   return (
@@ -31,9 +31,9 @@ export default function PostsCard(props) {
             marginRight:
               index % constants.NUM_POSTS_PER_ROW_PROFILE !==
               constants.NUM_POSTS_PER_ROW_PROFILE - 1
-                ? SIZES.spacing * 5
+                ? SIZES.spacing * 3
                 : null,
-            marginBottom: SIZES.spacing * 5,
+            marginBottom: SIZES.spacing * 3,
           }}>
           <TouchableOpacity
             onPress={() => goTo('WatchVideo', item)}

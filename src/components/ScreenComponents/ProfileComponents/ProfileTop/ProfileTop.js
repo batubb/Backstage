@@ -31,12 +31,24 @@ export default function ProfileTop(props) {
             flex: 1,
             marginLeft: SIZES.spacing * 8,
           }}>
-          <Text text={props.name} numberOfLines={1} style={{fontSize: 20}} />
-          <Text
-            numberOfLines={2}
-            text={props.biography}
-            style={{fontSize: 12, color: 'white', marginTop: SIZES.spacing * 3}}
-          />
+          <View>
+            <Text text={props.name} numberOfLines={1} style={{fontSize: 20}} />
+            <Text
+              numberOfLines={2}
+              text={props.biography}
+              style={{
+                fontSize: 12,
+                color: 'white',
+                marginTop: SIZES.spacing * 3,
+              }}
+            />
+          </View>
+          <View style={{marginTop: 'auto'}}>
+            <Text
+              text={'27.5k views'}
+              style={{fontWeight: 'normal', fontSize: 12}}
+            />
+          </View>
         </View>
       </View>
       {!props.subscribeButtonVisible ? null : (
