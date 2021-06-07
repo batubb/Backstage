@@ -190,7 +190,9 @@ class Home extends Component {
           keyExtractor={(item) => item.uid}
           horizontal
           ListFooterComponent={() => {
-            if (influencer.posts.length < constants.NUM_POSTS_TO_VIEW_IN_HOME) {
+            if (
+              influencer.posts.length <= constants.NUM_POSTS_TO_VIEW_IN_HOME
+            ) {
               return null;
             }
             return (

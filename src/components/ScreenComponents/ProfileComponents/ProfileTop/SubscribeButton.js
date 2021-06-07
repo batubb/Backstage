@@ -3,25 +3,29 @@ import React from 'react';
 import Store from '../../../../store/Store';
 import moment from 'moment';
 import {Button} from '../../../../components';
+import constants from '../../../../resources/constants';
 
 export default function SubscribeButton(props) {
   return props.user.uid !== Store.user.uid ? (
     <Button
-      buttonStyle={{
-        width: '100%',
-        backgroundColor: '#FFF',
-        padding: 10,
-        borderRadius: 24,
-      }}
-      textStyle={{color: 'black'}}
+      buttonStyle={[
+        {
+          backgroundColor: constants.BLUE,
+          padding: 10,
+        },
+        props.style,
+      ]}
+      textStyle={[{color: 'black'}, props.textStyle]}
       text={
-        !props.subscribtion.cancel
+        props.text
+          ? props.text
+          : !props.subscribtion.cancel
           ? props.subscribtion.subscribtion
             ? 'Unsubscribe'
-            : `Subscribe / ${props.user.price.toFixed(2)} $`
-          : `Last date is ${moment(props.subscribtion.endTimestamp).format(
+            : 'Subscribe'
+          : `Active until ${moment(props.subscribtion.endTimestamp).format(
               'L',
-            )}.`
+            )}`
       }
       onPress={props.onSubscribePress}
     />

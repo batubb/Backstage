@@ -12,7 +12,7 @@ const constants = {
 
   BACKGROUND_COLOR: '#0a0b09',
   BAR_COLOR: '#333333',
-  BLUE: '#00ACED',
+  BLUE: '#0a84ff',
   RED: '#FF5733',
   PAGE_LEFT_PADDING: SIZES.spacing * 2,
   PROFILE_PIC_SIZE: 100,

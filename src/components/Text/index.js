@@ -34,6 +34,6 @@ TextComponent.propTypes = {
 
 TextComponent.defaultProps = {
   style: {},
-  text: 'Örnek Buton',
+  text: '',
   numberOfLines: 0,
 };

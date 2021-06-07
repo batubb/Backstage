@@ -10,6 +10,8 @@ import {followerCount} from '../../../../lib';
 import Store from '../../../../store/Store';
 import {StackActions} from '@react-navigation/native';
 
+const CARD_BORDER_RADIUS = 6;
+
 export default function PostsCard(props) {
   const goTo = (route, info = null) => {
     if (route === 'WatchVideo') {
@@ -40,12 +42,12 @@ export default function PostsCard(props) {
             style={{width: '100%'}}>
             <View
               style={{
-                borderRadius: 16,
+                borderRadius: CARD_BORDER_RADIUS,
                 backgroundColor: '#4d4d4d',
               }}>
               <MyImage
                 style={{
-                  borderRadius: 16,
+                  borderRadius: CARD_BORDER_RADIUS,
                   height: '100%',
                   width: '100%',
                 }}
@@ -58,7 +60,7 @@ export default function PostsCard(props) {
                   constants.BACKGROUND_COLOR,
                 ]}
                 style={{
-                  borderRadius: 16,
+                  borderRadius: CARD_BORDER_RADIUS,
                   position: 'absolute',
                   height: '100%',
                   width: '100%',

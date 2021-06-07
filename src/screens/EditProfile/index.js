@@ -265,8 +265,7 @@ class EditProfile extends Component {
                   style={{
                     fontWeight: 'bold',
                     marginTop: SIZES.spacing * 5,
-                    //color: PlatformColor('systemBlue'),
-                    color: '#0a84ff',
+                    color: constants.BLUE,
                   }}
                 />
               </TouchableOpacity>

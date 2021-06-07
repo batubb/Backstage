@@ -72,7 +72,12 @@ export default class HeaderComponent extends React.Component {
           backgroundColor: backgroundColor,
           borderColor: borderColor,
           alignItems: 'stretch',
-          //justifyContent: 'space-around',
+        }}
+        rightContainerStyle={{
+          justifyContent: 'center',
+        }}
+        leftContainerStyle={{
+          justifyContent: 'center',
         }}
       />
     );

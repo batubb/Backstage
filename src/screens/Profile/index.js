@@ -405,17 +405,8 @@ class Profile extends Component {
               <ProfileTop name={name} photo={photo} biography={biography} />
               <Button
                 onPress={() => this.goTo('EditProfile')}
-                text="Edit Profile"
-                buttonStyle={{
-                  backgroundColor: 'transparent',
-                  borderColor: constants.BAR_COLOR,
-                  borderWidth: 1.5,
-                  width: '100%',
-                }}
-                textStyle={{
-                  fontSize: 14,
-                  fontWeight: 'bold',
-                }}
+                text={'Edit Profile'}
+                secondary
               />
             </View>
             {Store.user.type === 'user'

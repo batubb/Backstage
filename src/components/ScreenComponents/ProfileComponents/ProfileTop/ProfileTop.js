@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {constants} from '../../../../resources';
-import {MyImage, Text} from '../../../../components';
+import {MyImage, Text, Button} from '../../../../components';
 import {View} from 'react-native';
 import {SIZES} from '../../../../resources/theme';
 import SubscribeButton from './SubscribeButton';
@@ -11,12 +11,12 @@ import Databar from './Databar';
 
 export default function ProfileTop(props) {
   return (
-    <View>
+    <View style={{marginBottom: SIZES.spacing * 8}}>
       <View
         style={{
           flexDirection: 'row',
           height: constants.PROFILE_PIC_SIZE,
-          marginBottom: SIZES.spacing * 5,
+          marginBottom: SIZES.spacing * 8,
         }}>
         <MyImage
           style={{
@@ -53,11 +53,19 @@ export default function ProfileTop(props) {
         </View>
       </View>
       {!props.subscribeButtonVisible ? null : (
-        <SubscribeButton
-          user={props.user}
-          subscribtion={props.subscribtion}
-          onSubscribePress={props.onSubscribePress}
-        />
+        <View style={{flexDirection: 'row', width: '100%'}}>
+          <View style={{flex: 1, marginRight: SIZES.spacing * 3}}>
+            <SubscribeButton
+              user={props.user}
+              subscribtion={props.subscribtion}
+              onSubscribePress={props.onSubscribePress}
+              textStyle={{fontSize: 14, fontWeight: 'bold', color: 'white'}}
+            />
+          </View>
+          <View style={{flex: 1}}>
+            <Button secondary text={'Room'} onPress={props.onChatPress} />
+          </View>
+        </View>
       )}
       {!props.databarVisible ? null : (
         <Databar
