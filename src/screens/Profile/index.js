@@ -39,6 +39,7 @@ import moment from 'moment';
 import Store from '../../store/Store';
 import {SIZES} from '../../resources/theme';
 import ProfileTop from '../../components/ScreenComponents/ProfileComponents/ProfileTop/ProfileTop';
+import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
 
 const {width} = Dimensions.get('window');
 
@@ -282,75 +283,7 @@ class Profile extends Component {
   };
 
   renderPosts2 = (posts) => {
-    return (
-      <>
-        <FlatList
-          data={posts}
-          keyExtractor={(item) => item.uid}
-          extraData={Store.posts}
-          numColumns={2}
-          renderItem={({item}) => (
-            <View
-              style={{width: width / 2, alignItems: 'center', marginTop: 10}}>
-              <TouchableOpacity onPress={() => this.goTo('WatchVideo', item)}>
-                <View
-                  style={{
-                    borderRadius: 16,
-                    width: width / 2 - 10,
-                    height: 1.5 * (width / 2 - 10),
-                    backgroundColor: '#4d4d4d',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <MyImage
-                    style={{
-                      width: width / 2 - 10,
-                      height: 1.5 * (width / 2 - 10),
-                      borderRadius: 16,
-                    }}
-                    photo={item.photo}
-                  />
-                  <LinearGradient
-                    colors={[
-                      'transparent',
-                      'transparent',
-                      constants.BACKGROUND_COLOR,
-                    ]}
-                    style={{
-                      width: width / 2 - 10,
-                      height: 1.5 * (width / 2 - 10),
-                      borderRadius: 16,
-                      position: 'absolute',
-                    }}
-                  />
-                  <View
-                    style={{
-                      position: 'absolute',
-                      bottom: 0,
-                      paddingVertical: 5,
-                      paddingHorizontal: 10,
-                      width: width / 2 - 10,
-                    }}>
-                    <Text
-                      text={
-                        item.title.length >= 17
-                          ? `${item.title.substring(0, 17)}...`
-                          : item.title
-                      }
-                      style={{fontSize: 12}}
-                    />
-                    <Text
-                      text={`${followerCount(item.view)} views`}
-                      style={{fontSize: 12, fontWeight: 'normal'}}
-                    />
-                  </View>
-                </View>
-              </TouchableOpacity>
-            </View>
-          )}
-        />
-      </>
-    );
+    return <PostsCard posts={posts} />;
   };
 
   renderUserSection = (data) => {
@@ -485,7 +418,9 @@ class Profile extends Component {
               ? this.renderUserSection(followingArray)
               : null}
             {Store.user.type === 'influencer' ? (
-              <View>{daily.length !== 0 ? this.renderPosts(daily) : null}</View>
+              <View>
+                {daily.length !== 0 ? this.renderPosts2(daily) : null}
+              </View>
             ) : null}
           </ScrollView>
         )}
