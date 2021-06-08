@@ -1230,10 +1230,15 @@ export default class App extends Component {
         ) : null}
         {!isPublishing && !isRecording ? (
           <TouchableOpacity
-            style={{position: 'absolute', left: 0, top: TOP_PADDING}}
+            style={{position: 'absolute', right: 0, top: TOP_PADDING}}
             onPress={() => this.props.navigation.dispatch(StackActions.pop())}>
             <View style={{paddingHorizontal: 10}}>
-              <Icon name="close" color="#FFF" type="material-community" />
+              <Icon
+                name="close"
+                color="#FFF"
+                type="material-community"
+                size={36}
+              />
             </View>
           </TouchableOpacity>
         ) : null}
