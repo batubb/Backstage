@@ -1148,56 +1148,6 @@ export default class App extends Component {
             </View>
           </TouchableOpacity>
         ) : null}
-        {indexButton === 1 && isPublishing ? (
-          <View style={{position: 'absolute', left: 0, bottom: height / 2}}>
-            <View
-              style={{
-                paddingHorizontal: 10,
-                paddingVertical: 3,
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <Icon name="clock" color="#FFF" type="material-community" />
-              <Text
-                text={`${
-                  Math.floor(seconds / 60) < 10
-                    ? '0' + Math.floor(seconds / 60)
-                    : Math.floor(seconds / 60)
-                }:${
-                  Math.floor(seconds % 60) < 10
-                    ? '0' + Math.floor(seconds % 60)
-                    : Math.floor(seconds % 60)
-                }`}
-                style={{marginLeft: 5}}
-              />
-            </View>
-          </View>
-        ) : null}
-        {indexButton === 2 && isRecording ? (
-          <View style={{position: 'absolute', left: 0, bottom: height / 2}}>
-            <View
-              style={{
-                paddingHorizontal: 10,
-                paddingVertical: 3,
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <Icon name="clock" color="#FFF" type="material-community" />
-              <Text
-                text={`${
-                  Math.floor(seconds / 60) < 10
-                    ? '0' + Math.floor(seconds / 60)
-                    : Math.floor(seconds / 60)
-                }:${
-                  Math.floor(seconds % 60) < 10
-                    ? '0' + Math.floor(seconds % 60)
-                    : Math.floor(seconds % 60)
-                }`}
-                style={{marginLeft: 5}}
-              />
-            </View>
-          </View>
-        ) : null}
         <TouchableOpacity
           style={{position: 'absolute', right: 0, bottom: 40}}
           onPress={() => {
