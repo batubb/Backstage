@@ -1128,27 +1128,7 @@ export default class App extends Component {
             </TouchableOpacity>
           ) : null}
         </View>
-        {indexButton === 1 ? (
-          <TouchableOpacity
-            style={{position: 'absolute', right: 0, top: TOP_PADDING}}>
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                alignSelf: 'center',
-                backgroundColor: '#FFF',
-                borderTopLeftRadius: 12,
-                borderBottomLeftRadius: 12,
-                paddingVertical: 10,
-                paddingHorizontal: 20,
-              }}>
-              <Text
-                text={isPublishing ? 'Live' : 'Ready'}
-                style={{color: isPublishing ? constants.RED : '#000'}}
-              />
-            </View>
-          </TouchableOpacity>
-        ) : null}
+
         {indexButton === 1 && !isPublishing ? (
           <TouchableOpacity
             style={{position: 'absolute', left: 0, bottom: height / 2}}
