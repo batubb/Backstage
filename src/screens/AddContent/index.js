@@ -37,6 +37,7 @@ import {RNCamera} from 'react-native-camera';
 import database from '@react-native-firebase/database';
 import MyImage from '../../components/MyImage';
 import {SIZES} from '../../resources/theme';
+import PostButton from '../../components/ScreenComponents/AddContentComponents/PostButton/PostButton';
 
 const {width, height} = Dimensions.get('window');
 const TOP_PADDING = height >= 812 ? 60 : 40;
@@ -591,34 +592,7 @@ export default class App extends Component {
             />
           </View>
         </KeyboardAvoidingView>
-        <Button
-          text="Post"
-          buttonStyle={{
-            position: 'absolute',
-            backgroundColor: '#FFF',
-            width: '30%',
-            borderRadius: 24,
-            padding: 10,
-            alignSelf: 'flex-end',
-            bottom: 0,
-            right: 0,
-            marginBottom: SIZES.spacing * 5,
-            marginRight: SIZES.spacing * 5,
-          }}
-          rightIconProps={{
-            name: 'chevron-right',
-            color: 'black',
-            type: 'material-community',
-          }}
-          textStyle={{
-            color: '#000',
-            fontSize: 16,
-            fontWeight: 'normal',
-            flex: 1,
-            textAlign: 'center',
-          }}
-          onPress={() => this.handlevideoPicked(this.state.url)}
-        />
+        <PostButton onPress={() => this.handlevideoPicked(this.state.url)} />
       </SafeAreaView>
     );
   };
@@ -809,16 +783,7 @@ export default class App extends Component {
             />
           </View>
         </TouchableOpacity>
-        <Button
-          text="POST"
-          buttonStyle={{
-            backgroundColor: '#FFF',
-            width: width / 2,
-            borderRadius: 24,
-            padding: 13,
-            marginBottom: 20,
-          }}
-          textStyle={{color: '#000', fontSize: 16, fontWeight: 'normal'}}
+        <PostButton
           onPress={() => this.handleStoryPicked(this.state.url, 'video')}
         />
       </SafeAreaView>
@@ -858,16 +823,7 @@ export default class App extends Component {
             />
           </View>
         </TouchableOpacity>
-        <Button
-          text="POST"
-          buttonStyle={{
-            backgroundColor: '#FFF',
-            width: width / 2,
-            borderRadius: 24,
-            padding: 13,
-            marginBottom: 20,
-          }}
-          textStyle={{color: '#000', fontSize: 16, fontWeight: 'normal'}}
+        <PostButton
           onPress={() => this.handleStoryPicked(this.state.url, 'photo')}
         />
       </SafeAreaView>
