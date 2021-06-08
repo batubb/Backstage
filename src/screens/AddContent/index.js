@@ -1066,10 +1066,12 @@ export default class App extends Component {
                 width: 70,
                 height: 70,
                 borderRadius: 35,
-                borderWidth: 1,
+                borderWidth: buttonColor === constants.RED ? 5 : 1,
                 borderColor: buttonColor,
               }}>
-              <Icon name={icon} color={iconColor} type="material-community" />
+              {icon === 'camera' || icon === 'camera-off' ? null : (
+                <Icon name={icon} color={iconColor} type="material-community" />
+              )}
             </View>
           </TouchableOpacity>
           <Carousel
