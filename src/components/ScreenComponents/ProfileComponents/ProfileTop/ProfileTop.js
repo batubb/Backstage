@@ -6,6 +6,7 @@ import {View} from 'react-native';
 import {SIZES} from '../../../../resources/theme';
 import SubscribeButton from './SubscribeButton';
 import Databar from './Databar';
+import Store from '../../../../store/Store';
 
 // photo, name, biograohy, subscribeButtonVisible, user, subscribtion
 
@@ -72,6 +73,13 @@ export default function ProfileTop(props) {
           onChatPress={props.onChatPress}
         />
       )}
+      {props.editProfileVisible ? (
+        <Button
+          onPress={() => this.goTo('EditProfile')}
+          text={'Edit Profile'}
+          secondary
+        />
+      ) : null}
     </View>
   );
 }

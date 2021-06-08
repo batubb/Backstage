@@ -400,13 +400,12 @@ class Profile extends Component {
             <View
               style={{
                 display: 'flex',
-                marginBottom: SIZES.spacing * 5,
               }}>
-              <ProfileTop name={name} photo={photo} biography={biography} />
-              <Button
-                onPress={() => this.goTo('EditProfile')}
-                text={'Edit Profile'}
-                secondary
+              <ProfileTop
+                name={name}
+                photo={photo}
+                biography={biography}
+                editProfileVisible
               />
             </View>
             {Store.user.type === 'user'

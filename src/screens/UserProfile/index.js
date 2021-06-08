@@ -344,6 +344,7 @@ class UserProfile extends Component {
               //databarVisible
               followerNumber={this.state.followerNumber}
               onChatPress={() => this.goTo('Chat', this.state.user)}
+              editProfileVisible={user.uid === Store.user.uid}
             />
             <View>{daily.length !== 0 ? this.renderPosts(daily) : null}</View>
           </ScrollView>
