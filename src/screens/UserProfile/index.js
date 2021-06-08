@@ -333,7 +333,7 @@ class UserProfile extends Component {
               name={user.name}
               photo={user.photo}
               biography={user.biography}
-              subscribeButtonVisible
+              subscribeButtonVisible={user.uid !== Store.user.uid}
               subscribtion={subscribtion}
               user={user}
               onSubscribePress={() =>

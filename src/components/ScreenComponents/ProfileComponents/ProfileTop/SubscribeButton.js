@@ -6,28 +6,20 @@ import {Button} from '../../../../components';
 import constants from '../../../../resources/constants';
 
 export default function SubscribeButton(props) {
-  return props.user.uid !== Store.user.uid ? (
+  return (
     <Button
-      buttonStyle={[
-        {
-          backgroundColor: constants.BLUE,
-          padding: 10,
-        },
-        props.style,
-      ]}
-      textStyle={[{color: 'black'}, props.textStyle]}
       text={
-        props.text
-          ? props.text
-          : !props.subscribtion.cancel
+        !props.subscribtion.cancel
           ? props.subscribtion.subscribtion
-            ? 'Unsubscribe'
+            ? 'Subscribed'
             : 'Subscribe'
           : `Active until ${moment(props.subscribtion.endTimestamp).format(
               'L',
             )}`
       }
+      secondary={!props.subscribtion.cancel && props.subscribtion.subscribtion}
       onPress={props.onSubscribePress}
+      disabled={props.subscribtion.cancel}
     />
-  ) : null;
+  );
 }

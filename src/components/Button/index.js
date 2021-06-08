@@ -15,35 +15,45 @@ const secondaryStyle = {
   borderWidth: 1.5,
 };
 
-const secondaryTextStyle = {
-  fontSize: 14,
-  fontWeight: 'bold',
-  color: 'white',
-};
+const secondaryTextStyle = {};
 
 export default class Button extends Component {
   render() {
-    const {buttonStyle, textStyle, text, onPress, rightIconProps} = this.props;
-    console.log(rightIconProps);
+    const {
+      buttonStyle,
+      textStyle,
+      text,
+      onPress,
+      rightIconProps,
+      disabled,
+    } = this.props;
     return (
       <TouchableOpacity
         onPress={() => onPress()}
+        disabled={disabled}
         style={[
           {
-            backgroundColor: '#ffa700',
-            padding: 10,
+            backgroundColor: constants.BLUE,
+            padding: this.props.secondary
+              ? 10
+              : 10 + secondaryStyle.borderWidth,
             borderRadius: 6,
             alignItems: 'center',
             flexDirection: 'row',
             justifyContent: 'center',
           },
-          buttonStyle,
           this.props.secondary ? secondaryStyle : null,
+          buttonStyle,
         ]}>
         <Text
           text={text}
-          style={this.props.secondary ? secondaryTextStyle : textStyle}
+          style={[
+            {fontSize: 14, fontWeight: 'bold', color: 'white'},
+            this.props.secondary ? secondaryTextStyle : null,
+            textStyle,
+          ]}
         />
+
         {rightIconProps ? <Icon {...rightIconProps} /> : null}
       </TouchableOpacity>
     );

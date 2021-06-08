@@ -59,7 +59,6 @@ export default function ProfileTop(props) {
               user={props.user}
               subscribtion={props.subscribtion}
               onSubscribePress={props.onSubscribePress}
-              textStyle={{fontSize: 14, fontWeight: 'bold', color: 'white'}}
             />
           </View>
           <View style={{flex: 1}}>
