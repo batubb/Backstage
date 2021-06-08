@@ -6,11 +6,18 @@ import {View} from 'react-native';
 import {SIZES} from '../../../../resources/theme';
 import SubscribeButton from './SubscribeButton';
 import Databar from './Databar';
-import Store from '../../../../store/Store';
+import {StackActions} from '@react-navigation/native';
 
 // photo, name, biograohy, subscribeButtonVisible, user, subscribtion
 
 export default function ProfileTop(props) {
+  const goTo = (route, info = null) => {
+    if (route === 'EditProfile') {
+      const replaceActions = StackActions.push(route, {type: info});
+      return props.navigation.dispatch(replaceActions);
+    }
+  };
+
   return (
     <View style={{marginBottom: SIZES.spacing * 8}}>
       <View
@@ -75,7 +82,7 @@ export default function ProfileTop(props) {
       )}
       {props.editProfileVisible ? (
         <Button
-          onPress={() => this.goTo('EditProfile')}
+          onPress={() => goTo('EditProfile')}
           text={'Edit Profile'}
           secondary
         />

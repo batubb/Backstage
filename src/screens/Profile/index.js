@@ -406,6 +406,7 @@ class Profile extends Component {
                 photo={photo}
                 biography={biography}
                 editProfileVisible
+                navigation={this.props.navigation}
               />
             </View>
             {Store.user.type === 'user'
