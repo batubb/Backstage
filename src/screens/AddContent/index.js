@@ -40,6 +40,10 @@ import {SIZES} from '../../resources/theme';
 
 const {width, height} = Dimensions.get('window');
 const TOP_PADDING = height >= 812 ? 60 : 40;
+// const CAROUSEL_WIDTH =
+//   (width * parseFloat(constants.DEFAULT_PAGE_WIDTH)) / 100.0 - 2 * 32.3;
+const CAROUSEL_WIDTH =
+  (width * parseFloat(constants.DEFAULT_PAGE_WIDTH)) / 100.0 - 2 * 45;
 
 export default class App extends Component {
   constructor(props) {
@@ -580,7 +584,7 @@ export default class App extends Component {
                 margin: 10,
                 padding: 15,
                 color: 'white',
-                fontSize: 14,
+                fontSize: 24,
                 //marginBottom: 'auto',
               }}
               underlineColorAndroid="transparent"
@@ -746,7 +750,7 @@ export default class App extends Component {
               margin: 10,
               padding: 15,
               color: 'white',
-              fontSize: 14,
+              fontSize: 32,
               fontWeight: 'bold',
             }}
             underlineColorAndroid="transparent"
@@ -1037,7 +1041,8 @@ export default class App extends Component {
             bottom: 30,
             justifyContent: 'center',
             alignItems: 'center',
-            width: width,
+            width: constants.DEFAULT_PAGE_WIDTH,
+            alignSelf: 'center',
           }}>
           <TouchableOpacity
             style={{margin: 10}}
@@ -1072,36 +1077,81 @@ export default class App extends Component {
               <Icon name={icon} color={iconColor} type="material-community" />
             </View>
           </TouchableOpacity>
-          <Carousel
-            ref={(c) => {
-              this.carousel = c;
-            }}
-            data={[{name: 'Video'}, {name: 'Live'}, {name: 'Story'}]}
-            renderItem={this.renderItem}
-            sliderWidth={width * 0.7}
-            itemWidth={width / 6}
-            activeAnimationType={'spring'}
-            activeAnimationOptions={{
-              friction: 4,
-              tension: 40,
-            }}
-            containerCustomStyle={{borderRadius: 16}}
-            contentContainerCustomStyle={{
-              paddingVertical: 5,
-            }}
-            removeClippedSubviews={false}
-            inactiveSlideScale={0.6}
-            inactiveSlideOpacity={0.6}
-            scrollEnabled={!isPublishing && !isRecording}
-            enableMomentum
-            firstItem={1}
-            activeSlideAlignment={'center'}
-            onSnapToItem={(index) =>
-              !isPublishing && !isRecording
-                ? this.setState({indexButton: index})
-                : null
-            }
-          />
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+            }}>
+            {indexButton === 0 ? (
+              <View
+                style={{
+                  borderColor: '#FFF',
+                  borderWidth: 1,
+                  borderRadius: 6,
+                  flex: 0.2,
+                }}>
+                <Icon
+                  name="upload"
+                  color="#FFF"
+                  type="material-community"
+                  size={32}
+                />
+              </View>
+            ) : (
+              <View style={{flex: 0.2}} />
+            )}
+            <Carousel
+              ref={(c) => {
+                this.carousel = c;
+              }}
+              data={[{name: 'Video'}, {name: 'Live'}, {name: 'Story'}]}
+              renderItem={this.renderItem}
+              sliderWidth={CAROUSEL_WIDTH}
+              itemWidth={CAROUSEL_WIDTH / 3}
+              activeAnimationType={'spring'}
+              activeAnimationOptions={{
+                friction: 4,
+                tension: 40,
+              }}
+              containerCustomStyle={{
+                borderRadius: 16,
+                flex: 1,
+              }}
+              contentContainerCustomStyle={{
+                paddingVertical: 5,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              removeClippedSubviews={false}
+              inactiveSlideScale={0.8}
+              inactiveSlideOpacity={0.8}
+              scrollEnabled={!isPublishing && !isRecording}
+              enableMomentum
+              firstItem={1}
+              activeSlideAlignment={'center'}
+              onSnapToItem={(index) =>
+                !isPublishing && !isRecording
+                  ? this.setState({indexButton: index})
+                  : null
+              }
+            />
+            <TouchableOpacity
+              onPress={() => {
+                this.setState({camera: this.state.camera === 1 ? 0 : 1});
+
+                if (indexButton === 1) {
+                  this.vb.switchCamera();
+                }
+              }}
+              style={{flex: 0.2}}>
+              <Icon
+                name="camera-party-mode"
+                color="#FFF"
+                type="material-community"
+                size={32}
+              />
+            </TouchableOpacity>
+          </View>
           {indexButton === 0 ? (
             <TouchableOpacity
               style={{position: 'absolute', left: 0, top: 10}}
@@ -1222,19 +1272,7 @@ export default class App extends Component {
             </View>
           </View>
         ) : null}
-        <TouchableOpacity
-          style={{position: 'absolute', right: 0, bottom: 40}}
-          onPress={() => {
-            this.setState({camera: this.state.camera === 1 ? 0 : 1});
 
-            if (indexButton === 1) {
-              this.vb.switchCamera();
-            }
-          }}>
-          <View style={{padding: 10}}>
-            <Icon name="camera-reverse" color="#FFF" type="ionicon" size={32} />
-          </View>
-        </TouchableOpacity>
         {url !== '' && type === 'video' ? this.renderVideo() : null}
         {url !== '' && type === 'storyPhoto' ? this.renderStoryPhoto() : null}
         {url !== '' && type === 'storyVideo' ? this.renderStoryVideo() : null}
