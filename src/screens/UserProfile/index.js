@@ -172,7 +172,13 @@ class UserProfile extends Component {
   };
 
   renderPosts = (posts) => {
-    return <PostsCard posts={posts} navigation={this.props.navigation} />;
+    return (
+      <PostsCard
+        posts={posts}
+        navigation={this.props.navigation}
+        expired={!this.state.subscribtion.subscribtion}
+      />
+    );
   };
 
   expiredCard = () => {

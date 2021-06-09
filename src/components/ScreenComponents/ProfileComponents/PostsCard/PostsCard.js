@@ -9,6 +9,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {followerCount} from '../../../../lib';
 import Store from '../../../../store/Store';
 import {StackActions} from '@react-navigation/native';
+import {Icon} from 'react-native-elements';
 
 const CARD_BORDER_RADIUS = 6;
 
@@ -88,6 +89,25 @@ export default function PostsCard(props) {
               </View>
             </View>
           </TouchableOpacity>
+          {props.expired ? (
+            <View
+              style={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'black',
+                opacity: 0.8,
+              }}>
+              <Icon
+                name="lock-outline"
+                color="#FFF"
+                type="material-community"
+                size={48}
+              />
+            </View>
+          ) : null}
         </View>
       )}
     />
