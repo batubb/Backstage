@@ -97,7 +97,7 @@ class Rooms extends Component {
                 alignItems: 'center',
               }}>
               <View style={{width: width - 150}}>
-                <Text text={`@${item.username}`} style={{fontSize: 16}} />
+                <Text text={`${item.username}`} style={{fontSize: 16}} />
               </View>
               <View style={{width: 60}}>
                 <View
