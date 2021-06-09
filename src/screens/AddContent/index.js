@@ -147,7 +147,7 @@ export default class App extends Component {
           width: width,
           height: height,
         },
-        title: this.state.title === '' ? 'New Video' : this.state.title,
+        title: this.state.title,
         photo: `https://image.mux.com/${assetPlaybackId}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
         active: false,
       };
@@ -236,7 +236,7 @@ export default class App extends Component {
         width: thumbnail.width,
         height: thumbnail.height,
       },
-      title: this.state.title === '' ? 'New Video' : this.state.title,
+      title: this.state.title,
       photo: videoThumbURL,
     };
 
