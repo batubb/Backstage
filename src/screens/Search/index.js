@@ -158,22 +158,6 @@ class Search extends Component {
                     }
                     style={{fontSize: 12}}
                   />
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text
-                      text={followerCount(item.follower)}
-                      style={{
-                        fontSize: 12,
-                        fontWeight: 'normal',
-                        marginRight: 5,
-                      }}
-                    />
-                    <Icon
-                      name="account-outline"
-                      color="#FFF"
-                      type="material-community"
-                      size={12}
-                    />
-                  </View>
                 </View>
               </View>
             </TouchableOpacity>
@@ -212,31 +196,6 @@ class Search extends Component {
                   }}>
                   <View style={{width: width - 170}}>
                     <Text text={item.username} style={{fontSize: 16}} />
-                  </View>
-                  <View style={{width: 60}}>
-                    <View
-                      style={{
-                        width: 60,
-                        justifyContent: 'flex-end',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                      }}>
-                      <Text
-                        text={followerCount(item.follower)}
-                        style={{
-                          fontSize: 12,
-                          fontWeight: 'normal',
-                          color: 'lightgray',
-                          marginRight: 5,
-                        }}
-                      />
-                      <Icon
-                        name="account-outline"
-                        color="lightgray"
-                        type="material-community"
-                        size={12}
-                      />
-                    </View>
                   </View>
                 </View>
               </View>
@@ -285,7 +244,7 @@ class Search extends Component {
                       }}
                     />
                   </View>
-                  {item.type === 'user' ? (
+                  {item.type === 'user' || item.type === 'influencer' ? (
                     <View style={{width: 60, alignItems: 'center'}}>
                       <Icon
                         name="chevron-right"
