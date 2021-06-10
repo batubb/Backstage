@@ -12,6 +12,7 @@ import {
   SafeAreaView,
   RefreshControl,
   KeyboardAvoidingView,
+  Alert,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {Icon} from 'react-native-elements';
@@ -22,6 +23,7 @@ import {
   setLikeCommentStatus,
   shareItem,
   getUserPosts,
+  checkSubscribtion,
 } from '../../services';
 import Store from '../../store/Store';
 import {followerCount, timeDifference} from '../../lib';
@@ -46,6 +48,7 @@ class Chat extends Component {
       reply: null,
       posts: [],
       anonymus: this.props.route.params.anonymus,
+      subscribtion: null,
     };
   }
 
@@ -125,12 +128,17 @@ class Chat extends Component {
           return b.timestamp - a.timestamp;
         });
 
-        this.setState({comments, loading: false});
+        this.setState({comments});
       });
 
+    const subscribtion = await checkSubscribtion(
+      Store.uid,
+      this.state.user.uid,
+    );
+    console.log(subscribtion);
     const posts = await getUserPosts(this.state.user.uid);
 
-    this.setState({posts});
+    this.setState({posts, subscribtion, loading: false});
   };
 
   goTo = (route, info = null) => {
@@ -252,10 +260,6 @@ class Chat extends Component {
         <TouchableOpacity onPress={() => this.goTo('UserProfile', user)}>
           <View style={{marginLeft: 10, width: 100}}>
             <Text text={user.username} />
-            <Text
-              text={`${followerCount(user.follower)} members`}
-              style={{fontSize: 12, color: 'gray'}}
-            />
           </View>
         </TouchableOpacity>
         <Button
@@ -687,7 +691,6 @@ class Chat extends Component {
 
   render() {
     const {loading, general} = this.state;
-
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
         <Header
@@ -708,6 +711,10 @@ class Chat extends Component {
             textStyle={{marginTop: 10, fontWeight: 'normal'}}
             text="Loading"
           />
+        ) : !this.state.subscribtion.subscribtion ? (
+          Alert.alert('Oops', 'You must be a member to view the content.', [
+            {text: 'Okay'},
+          ])
         ) : general ? (
           this.renderComments()
         ) : (
