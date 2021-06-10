@@ -222,83 +222,6 @@ class WatchVideo extends Component {
     this.setState({comment: ''});
   };
 
-  renderVideoPlayer2 = (video, paused, videoInfo, dk, sn) => {
-    return (
-      <View style={{flex: 1, position: 'absolute'}}>
-        <Video
-          source={{uri: video.url}}
-          ref={(ref) => {
-            this.player = ref;
-          }}
-          onLoadStart={() => this.setState({videoLoading: true})}
-          onLoad={() => this.setState({videoLoading: false})}
-          onProgress={(data) => this.setTime(data)}
-          onEnd={() => this.setState({paused: true})}
-          style={{flex: 1, width: width, height: height}}
-          paused={paused}
-          repeat
-          poster={video.photo}
-        />
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            width: width,
-            alignItems: 'center',
-            paddingVertical: BOTTOM_PADDING,
-          }}>
-          <View
-            style={{
-              width: width - 40,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <TouchableOpacity onPress={() => this.goTo('Comments', video)}>
-              <Text text={`${followerCount(video.comments)} comments`} />
-            </TouchableOpacity>
-            <Text text={`${followerCount(video.view)} views`} />
-          </View>
-          <View
-            style={{
-              width: width - 40,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <TouchableOpacity onPress={() => this.setState({paused: !paused})}>
-              <View style={{width: 40}}>
-                <Icon
-                  name={paused ? 'play' : 'pause'}
-                  color="#FFF"
-                  type="material-community"
-                />
-              </View>
-            </TouchableOpacity>
-            <Slider
-              style={{width: width - 140}}
-              value={videoInfo.currentTime}
-              thumbTintColor="#fff"
-              minimumTrackTintColor="#fff"
-              onSlidingStart={() => this.setState({paused: true})}
-              onSlidingComplete={() => this.setState({paused: false})}
-              maximumTrackTintColor="lightgray"
-              step={2}
-              thumbStyle={{height: 10, width: 10, backgroundColor: '#fff'}}
-              animationType="timing"
-              animateTransitions={true}
-              onValueChange={(value) => this.seek(value)}
-              maximumValue={videoInfo.seekableDuration}
-            />
-            <View style={{width: 60, alignItems: 'flex-end'}}>
-              <Text style={{fontSize: 12}} text={`${dk}:${sn}`} />
-            </View>
-          </View>
-        </View>
-      </View>
-    );
-  };
-
   renderVideoPlayer = (video, paused, videoInfo, dk, sn) => {
     return (
       <View style={{flex: 1, position: 'absolute'}}>
@@ -319,45 +242,79 @@ class WatchVideo extends Component {
         <View
           style={{
             position: 'absolute',
-            right: 10,
-            bottom: 100,
-            alignItems: 'center',
+            width: '90%',
+            height: '98%',
             display: 'flex',
-            height: '25%',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-end',
+            alignSelf: 'center',
           }}>
-          <View style={{alignItems: 'center'}}>
-            <WatchVideoIcon name="eye-outline" type="ionicon" />
-            <Text text={'1.25k'} />
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              height: '30%',
+              marginBottom: SIZES.spacing * 5,
+            }}>
+            <View style={{width: '30%', marginTop: 'auto'}}>
+              <Text
+                text={video.title}
+                numberOfLines={this.state.showMore ? 3 : 1}
+                onPress={() => this.setState({showMore: !this.state.showMore})}
+              />
+            </View>
+            <View
+              style={{
+                alignItems: 'center',
+                display: 'flex',
+                justifyContent: 'space-between',
+              }}>
+              <View style={{alignItems: 'center'}}>
+                <WatchVideoIcon name="eye-outline" type="ionicon" />
+                <Text text={'1.25k'} />
+              </View>
+              <View style={{alignItems: 'center'}}>
+                <WatchVideoIcon name="chatbubble-outline" type="ionicon" />
+                <Text text={`${followerCount(video.comments)}`} />
+              </View>
+              <WatchVideoIcon
+                name="dots-horizontal"
+                type="material-community"
+                onPress={() => this.setState({optionsVisible: true})}
+              />
+            </View>
           </View>
-          <View style={{alignItems: 'center'}}>
-            <WatchVideoIcon name="chatbubble-outline" type="ionicon" />
-            <Text text={'200'} />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <TouchableOpacity onPress={() => this.setState({paused: !paused})}>
+              <Icon
+                name={paused ? 'play' : 'pause'}
+                color="#FFF"
+                type="material-community"
+              />
+            </TouchableOpacity>
+            <Slider
+              style={{width: width - 140}}
+              value={videoInfo.currentTime}
+              thumbTintColor="#fff"
+              minimumTrackTintColor="#fff"
+              onSlidingStart={() => this.setState({paused: true})}
+              onSlidingComplete={() => this.setState({paused: false})}
+              maximumTrackTintColor="lightgray"
+              step={2}
+              thumbStyle={{height: 10, width: 10, backgroundColor: 'white'}}
+              animationType="timing"
+              animateTransitions={true}
+              onValueChange={(value) => this.seek(value)}
+              maximumValue={videoInfo.seekableDuration}
+            />
+            <View>
+              <Text style={{fontSize: 12}} text={`${dk}:${sn}`} />
+            </View>
           </View>
-          <WatchVideoIcon name="dots-horizontal" type="material-community" />
-        </View>
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            width: width,
-            alignItems: 'center',
-            paddingVertical: BOTTOM_PADDING,
-          }}>
-          <Text text={'asdasds'} />
-        </View>
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 50,
-            left: 10,
-            width: '30%',
-          }}>
-          <Text
-            text={video.title}
-            numberOfLines={this.state.showMore ? 3 : 1}
-            onPress={() => this.setState({showMore: !this.state.showMore})}
-          />
         </View>
       </View>
     );
@@ -598,8 +555,6 @@ class WatchVideo extends Component {
           }
           leftButtonIcon="chevron-left"
           backgroundColor="transparent"
-          rightButtonPress={() => this.setState({optionsVisible: true})}
-          rightButtonIcon="dots-horizontal"
         />
         <Options
           list={this.list}
