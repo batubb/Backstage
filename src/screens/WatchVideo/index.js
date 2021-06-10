@@ -272,10 +272,12 @@ class WatchVideo extends Component {
                 <WatchVideoIcon name="eye-outline" type="ionicon" />
                 <Text text={'1.25k'} />
               </View>
-              <View style={{alignItems: 'center'}}>
-                <WatchVideoIcon name="chatbubble-outline" type="ionicon" />
-                <Text text={`${followerCount(video.comments)}`} />
-              </View>
+              <TouchableOpacity onPress={() => this.goTo('Comments', video)}>
+                <View style={{alignItems: 'center'}}>
+                  <WatchVideoIcon name="chatbubble-outline" type="ionicon" />
+                  <Text text={`${followerCount(video.comments)}`} />
+                </View>
+              </TouchableOpacity>
               <WatchVideoIcon
                 name="dots-horizontal"
                 type="material-community"
