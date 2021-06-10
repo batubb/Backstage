@@ -99,31 +99,6 @@ class Rooms extends Component {
               <View style={{width: width - 150}}>
                 <Text text={`${item.username}`} style={{fontSize: 16}} />
               </View>
-              <View style={{width: 60}}>
-                <View
-                  style={{
-                    width: 60,
-                    justifyContent: 'flex-end',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}>
-                  <Text
-                    text={followerCount(item.follower)}
-                    style={{
-                      fontSize: 12,
-                      fontWeight: 'normal',
-                      color: 'lightgray',
-                      marginRight: 5,
-                    }}
-                  />
-                  <Icon
-                    name="account-outline"
-                    color="lightgray"
-                    type="material-community"
-                    size={12}
-                  />
-                </View>
-              </View>
             </View>
           </View>
         </TouchableOpacity>
