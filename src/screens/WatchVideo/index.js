@@ -354,7 +354,7 @@ class WatchVideo extends Component {
             width: '30%',
           }}>
           <Text
-            text={'hi this is a long video text long long ogn asdasd asd as d'}
+            text={video.title}
             numberOfLines={this.state.showMore ? 3 : 1}
             onPress={() => this.setState({showMore: !this.state.showMore})}
           />
@@ -597,7 +597,6 @@ class WatchVideo extends Component {
             this.props.navigation.dispatch(StackActions.pop())
           }
           leftButtonIcon="chevron-left"
-          title={video.title}
           backgroundColor="transparent"
           rightButtonPress={() => this.setState({optionsVisible: true})}
           rightButtonIcon="dots-horizontal"
