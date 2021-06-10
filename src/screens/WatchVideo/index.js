@@ -17,7 +17,7 @@ import {observer} from 'mobx-react';
 import {Slider, Icon} from 'react-native-elements';
 import Video from 'react-native-video';
 import {StackActions} from '@react-navigation/native';
-import {Loading, Header, Text, Options} from '../../components';
+import {Loading, Header, Options, Text} from '../../components';
 import {constants} from '../../resources';
 import {
   checkSubscribtion,
@@ -60,6 +60,7 @@ class WatchVideo extends Component {
       comment: '',
       keyboard: false,
       finished: false,
+      showMore: false,
     };
 
     this.list = [
@@ -331,7 +332,6 @@ class WatchVideo extends Component {
           </View>
           <View style={{alignItems: 'center'}}>
             <WatchVideoIcon name="chatbubble-outline" type="ionicon" />
-
             <Text text={'200'} />
           </View>
           <WatchVideoIcon name="dots-horizontal" type="material-community" />
@@ -345,6 +345,19 @@ class WatchVideo extends Component {
             paddingVertical: BOTTOM_PADDING,
           }}>
           <Text text={'asdasds'} />
+        </View>
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 50,
+            left: 10,
+            width: '30%',
+          }}>
+          <Text
+            text={'hi this is a long video text long long ogn asdasd asd as d'}
+            numberOfLines={this.state.showMore ? 3 : 1}
+            onPress={() => this.setState({showMore: !this.state.showMore})}
+          />
         </View>
       </View>
     );

@@ -6,10 +6,11 @@ import PropTypes from 'prop-types';
 
 export default class TextComponent extends Component {
   render() {
-    const {text, style, numberOfLines} = this.props;
+    const {text, style, numberOfLines, onPress} = this.props;
     return (
       <Text
         numberOfLines={numberOfLines}
+        onPress={onPress}
         style={[
           {
             fontFamily:
