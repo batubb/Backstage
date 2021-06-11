@@ -222,21 +222,11 @@ class Subscribe extends Component {
           text={`$ ${this.state.influencer.price.toFixed(2)}`}
           style={{fontSize: 32, marginTop: 10}}
         />
-        <Text
-          text="/ per month"
-          style={{color: 'gray', fontWeight: 'normal'}}
-        />
+        <Text text="per month" style={{color: 'white', fontWeight: 'normal'}} />
         <Button
-          buttonStyle={{
-            width: width - 60,
-            backgroundColor: '#FFF',
-            padding: 10,
-            marginTop: 20,
-            borderRadius: 24,
-          }}
-          textStyle={{color: 'black', fontWeight: 'normal'}}
           text="JOIN"
           onPress={() => this.setState({showCard: true})}
+          buttonStyle={{width: '100%', marginTop: 10}}
         />
       </View>
     );
@@ -353,13 +343,10 @@ class Subscribe extends Component {
         />
         <Button
           buttonStyle={{
-            width: width - 20,
-            backgroundColor: '#FFF',
-            padding: 10,
+            width: '100%',
+            alignSelf: 'center',
             marginTop: 10,
-            borderRadius: 4,
           }}
-          textStyle={{color: 'black', fontSize: 16}}
           text="Subscribe"
           onPress={() => this.subscribeInf()}
         />
@@ -381,7 +368,6 @@ class Subscribe extends Component {
             this.props.navigation.dispatch(StackActions.pop())
           }
           leftButtonIcon="chevron-left"
-          title={`Subscribe to ${influencer.name}`}
         />
         {loading ? (
           <Loading

@@ -1139,7 +1139,28 @@ export default class App extends Component {
         {!isPublishing && !isRecording ? (
           <TouchableOpacity
             style={{position: 'absolute', right: 0, top: TOP_PADDING}}
-            onPress={() => this.props.navigation.dispatch(StackActions.pop())}>
+            onPress={() => {
+              if (this.state.url) {
+                this.setState({
+                  isPublishing: false,
+                  hasPermission: false,
+                  paused: true,
+                  streamId: '',
+                  isRecording: false,
+                  url: '',
+                  title: '',
+                  assetId: '',
+                  uid: '',
+                  seconds: 0,
+                  timer: false,
+                  type: '',
+                  storyVideo: false,
+                });
+                /*if we have a url reset all state var's except for the ones initialized in component did mount*/
+              } else {
+                this.props.navigation.dispatch(StackActions.pop());
+              }
+            }}>
             <View style={{paddingHorizontal: 10}}>
               <Icon
                 name="close"

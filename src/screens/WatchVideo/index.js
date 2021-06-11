@@ -252,14 +252,15 @@ class WatchVideo extends Component {
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
-              height: '30%',
+              height: '23%',
               marginBottom: SIZES.spacing * 5,
             }}>
-            <View style={{width: '30%', marginTop: 'auto'}}>
+            <View style={{width: '70%', marginTop: 'auto', marginBottom: 10}}>
               <Text
                 text={video.title}
                 numberOfLines={this.state.showMore ? 3 : 1}
                 onPress={() => this.setState({showMore: !this.state.showMore})}
+                style={{fontWeight: 'normal', fontSize: 16}}
               />
             </View>
             <View
@@ -270,12 +271,19 @@ class WatchVideo extends Component {
               }}>
               <View style={{alignItems: 'center'}}>
                 <WatchVideoIcon name="eye-outline" type="ionicon" />
-                <Text text={'1.25k'} />
+                <Text text={'1.25K'} style={{fontSize: 12}} />
               </View>
               <TouchableOpacity onPress={() => this.goTo('Comments', video)}>
                 <View style={{alignItems: 'center'}}>
-                  <WatchVideoIcon name="chatbubble-outline" type="ionicon" />
-                  <Text text={`${followerCount(video.comments)}`} />
+                  <WatchVideoIcon
+                    name="chatbubble-outline"
+                    type="ionicon"
+                    size={28}
+                  />
+                  <Text
+                    text={`${followerCount(video.comments)}`}
+                    style={{fontSize: 12}}
+                  />
                 </View>
               </TouchableOpacity>
               <WatchVideoIcon

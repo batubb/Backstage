@@ -694,7 +694,7 @@ class Chat extends Component {
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
         <Header
-          title="Chat Room"
+          title="Room"
           leftButtonPress={() =>
             this.props.navigation.dispatch(StackActions.pop())
           }
