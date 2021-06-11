@@ -713,7 +713,7 @@ export default class App extends Component {
             />
           </TouchableOpacity>
           <TextInput
-            placeholder="Title"
+            placeholder="Add a title..."
             style={{
               fontFamily:
                 Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
@@ -728,16 +728,13 @@ export default class App extends Component {
             value={this.state.title}
             maxLength={30}
             placeholderTextColor="gray"
+            autoFocus
           />
           <Button
-            text="Set Title"
+            text="Confirm"
             buttonStyle={{
-              backgroundColor: '#FFF',
-              width: width / 2,
-              borderRadius: 24,
-              padding: 13,
+              width: '50%',
             }}
-            textStyle={{color: '#000', fontSize: 12}}
             onPress={() => this.setState({editTextModal: false})}
           />
         </KeyboardAvoidingView>
