@@ -766,23 +766,7 @@ export default class App extends Component {
           paused={this.state.storyVideo}
           repeat
         />
-        <TouchableOpacity
-          style={{position: 'absolute', left: 0, bottom: height / 2}}
-          onPress={() => this.setState({editTextModal: true})}>
-          <View
-            style={{
-              paddingHorizontal: 10,
-              paddingVertical: 3,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <Icon name="text" color="#FFF" type="material-community" />
-            <Text
-              text={this.state.title !== '' ? this.state.title : 'Title'}
-              style={{marginLeft: 5}}
-            />
-          </View>
-        </TouchableOpacity>
+
         <PostButton
           onPress={() => this.handleStoryPicked(this.state.url, 'video')}
         />
@@ -806,23 +790,6 @@ export default class App extends Component {
           photo={this.state.url}
           style={{width, height, position: 'absolute'}}
         />
-        <TouchableOpacity
-          style={{position: 'absolute', left: 0, bottom: height / 2}}
-          onPress={() => this.setState({editTextModal: true})}>
-          <View
-            style={{
-              paddingHorizontal: 10,
-              paddingVertical: 3,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <Icon name="text" color="#FFF" type="material-community" />
-            <Text
-              text={this.state.title !== '' ? this.state.title : 'Title'}
-              style={{marginLeft: 5}}
-            />
-          </View>
-        </TouchableOpacity>
         <PostButton
           onPress={() => this.handleStoryPicked(this.state.url, 'photo')}
         />
