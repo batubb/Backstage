@@ -425,6 +425,38 @@ export default class App extends Component {
     });
   };
 
+  // type can be one of story or video
+  selectMediaFromRoll = async (type) => {
+    let mediaType = 'video';
+    if (type === 'story') {
+      mediaType = 'mixed';
+    }
+    ImagePicker.launchImageLibrary({mediaType: mediaType}, (result) => {
+      if (!result.didCancel) {
+        if (type === 'video') {
+          this.setState({url: result.uri, type: 'video'});
+        }
+        // if this is a story
+        else {
+          // if this is a story video
+          if (result.duration) {
+            // if longer than 10 seconds, send a message
+            if (result.duration > 10) {
+              return Alert.alert(
+                'You can not upload a story longer than 10 seconds',
+                [{text: 'Okay'}],
+              );
+            } else {
+              this.setState({url: result.uri, type: 'storyVideo'});
+            }
+          } else {
+            this.setState({url: result.uri, type: 'storyPhoto'});
+          }
+        }
+      }
+    });
+  };
+
   becomeInfluencer = async () => {
     var updates = {};
 
@@ -762,6 +794,7 @@ export default class App extends Component {
           style={{width, height, position: 'absolute'}}
           paused={this.state.storyVideo}
           repeat
+          muted={false}
         />
 
         <PostButton
@@ -951,107 +984,117 @@ export default class App extends Component {
         {indexButton === 1 && url === '' ? this.renderLiveCamera() : null}
         {indexButton === 2 && url === '' ? this.renderCamera() : null}
         {indexButton === 0 && url === '' ? this.renderCamera() : null}
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 30,
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: width,
-          }}>
-          <TouchableOpacity
-            style={{margin: 10}}
-            onPressOut={() =>
-              indexButton === 2 ? this.stopStoryVideo() : null
-            }
-            onLongPress={() =>
-              indexButton === 2 ? this.startStoryVideo() : null
-            }
-            onPress={() => {
-              if (indexButton === 1) {
-                this.onPressPublishBtn();
-              } else if (indexButton === 0) {
-                this.startRecord();
-              } else {
-                this.takeStoryPhoto();
-              }
+        {url === '' ? (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 30,
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: width,
             }}>
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                alignSelf: 'center',
-                backgroundColor: 'white',
-                elevation: 4,
-                width: 70,
-                height: 70,
-                borderRadius: 35,
-                borderWidth: buttonColor === constants.RED ? 5 : 1,
-                borderColor: buttonColor,
-              }}>
-              {icon === 'camera' || icon === 'camera-off' ? null : (
-                <Icon name={icon} color={iconColor} type="material-community" />
-              )}
-            </View>
-          </TouchableOpacity>
-          <Carousel
-            ref={(c) => {
-              this.carousel = c;
-            }}
-            data={[{name: 'Video'}, {name: 'Live'}, {name: 'Story'}]}
-            renderItem={this.renderItem}
-            sliderWidth={width * 0.8}
-            itemWidth={width / 3}
-            activeAnimationType={'spring'}
-            activeAnimationOptions={{
-              friction: 4,
-              tension: 40,
-            }}
-            removeClippedSubviews={false}
-            inactiveSlideScale={0.6}
-            inactiveSlideOpacity={0.6}
-            scrollEnabled={!isPublishing && !isRecording}
-            enableMomentum
-            firstItem={1}
-            activeSlideAlignment={'center'}
-            onSnapToItem={(index) =>
-              !isPublishing && !isRecording
-                ? this.setState({indexButton: index})
-                : null
-            }
-          />
-          {indexButton === 0 ? (
             <TouchableOpacity
-              style={{position: 'absolute', left: 0, top: 10}}
-              onPress={() => this.selectVideoFromRoll()}>
+              style={{margin: 10}}
+              onPressOut={() =>
+                indexButton === 2 ? this.stopStoryVideo() : null
+              }
+              onLongPress={() =>
+                indexButton === 2 ? this.startStoryVideo() : null
+              }
+              onPress={() => {
+                if (indexButton === 1) {
+                  this.onPressPublishBtn();
+                } else if (indexButton === 0) {
+                  this.startRecord();
+                } else {
+                  this.takeStoryPhoto();
+                }
+              }}>
               <View
                 style={{
                   justifyContent: 'center',
                   alignItems: 'center',
                   alignSelf: 'center',
-                  backgroundColor: 'transparent',
-                  borderColor: 'darkgrey',
-                  borderTopWidth: 1,
-                  borderBottomWidth: 1,
-                  borderRightWidth: 1,
-                  borderTopRightRadius: 12,
-                  borderBottomRightRadius: 12,
-                  padding: 10,
-                  flexDirection: 'row',
+                  backgroundColor: 'white',
+                  elevation: 4,
+                  width: 70,
+                  height: 70,
+                  borderRadius: 35,
+                  borderWidth: buttonColor === constants.RED ? 5 : 1,
+                  borderColor: buttonColor,
                 }}>
-                <Icon
-                  name="upload"
-                  color="#FFF"
-                  type="material-community"
-                  size={16}
-                />
-                <Text text="Upload" style={{marginLeft: 5}} />
+                {icon === 'camera' || icon === 'camera-off' ? null : (
+                  <Icon
+                    name={icon}
+                    color={iconColor}
+                    type="material-community"
+                  />
+                )}
               </View>
             </TouchableOpacity>
-          ) : null}
-        </View>
+            <Carousel
+              ref={(c) => {
+                this.carousel = c;
+              }}
+              data={[{name: 'Video'}, {name: 'Live'}, {name: 'Story'}]}
+              renderItem={this.renderItem}
+              sliderWidth={width * 0.8}
+              itemWidth={width / 3}
+              activeAnimationType={'spring'}
+              activeAnimationOptions={{
+                friction: 4,
+                tension: 40,
+              }}
+              removeClippedSubviews={false}
+              inactiveSlideScale={0.6}
+              inactiveSlideOpacity={0.6}
+              scrollEnabled={!isPublishing && !isRecording}
+              enableMomentum
+              firstItem={indexButton}
+              activeSlideAlignment={'center'}
+              onSnapToItem={(index) =>
+                !isPublishing && !isRecording
+                  ? this.setState({indexButton: index})
+                  : null
+              }
+            />
+            {indexButton === 0 || indexButton === 2 ? (
+              <TouchableOpacity
+                style={{position: 'absolute', left: 0, top: 10}}
+                onPress={() =>
+                  this.selectMediaFromRoll(
+                    indexButton === 0 ? 'video' : 'story',
+                  )
+                }>
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    alignSelf: 'center',
+                    backgroundColor: 'transparent',
+                    borderColor: 'darkgrey',
+                    borderTopWidth: 1,
+                    borderBottomWidth: 1,
+                    borderRightWidth: 1,
+                    borderTopRightRadius: 12,
+                    borderBottomRightRadius: 12,
+                    padding: 10,
+                    flexDirection: 'row',
+                  }}>
+                  <Icon
+                    name="upload"
+                    color="#FFF"
+                    type="material-community"
+                    size={16}
+                  />
+                  <Text text="Upload" style={{marginLeft: 5}} />
+                </View>
+              </TouchableOpacity>
+            ) : null}
+          </View>
+        ) : null}
 
-        {indexButton === 1 && !isPublishing ? (
+        {indexButton === 1 && !isPublishing && url !== '' ? (
           <TouchableOpacity
             style={{position: 'absolute', left: 0, bottom: height / 2}}
             onPress={() => this.setState({editTextModal: true})}>
@@ -1070,19 +1113,27 @@ export default class App extends Component {
             </View>
           </TouchableOpacity>
         ) : null}
-        <TouchableOpacity
-          style={{position: 'absolute', right: 0, bottom: 40}}
-          onPress={() => {
-            this.setState({camera: this.state.camera === 1 ? 0 : 1});
+        {url !== '' ? (
+          <TouchableOpacity
+            style={{position: 'absolute', right: 0, bottom: 40}}
+            onPress={() => {
+              this.setState({camera: this.state.camera === 1 ? 0 : 1});
 
-            if (indexButton === 1) {
-              this.vb.switchCamera();
-            }
-          }}>
-          <View style={{padding: 10}}>
-            <Icon name="camera-reverse" color="#FFF" type="ionicon" size={32} />
-          </View>
-        </TouchableOpacity>
+              if (indexButton === 1) {
+                this.vb.switchCamera();
+              }
+            }}>
+            <View style={{padding: 10}}>
+              <Icon
+                name="camera-reverse"
+                color="#FFF"
+                type="ionicon"
+                size={32}
+              />
+            </View>
+          </TouchableOpacity>
+        ) : null}
+
         {url !== '' && type === 'video' ? this.renderVideo() : null}
         {url !== '' && type === 'storyPhoto' ? this.renderStoryPhoto() : null}
         {url !== '' && type === 'storyVideo' ? this.renderStoryVideo() : null}

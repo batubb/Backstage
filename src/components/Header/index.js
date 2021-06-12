@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   leftIcon: {
-    paddingHorizontal: 15,
+    //paddingHorizontal: 15,
   },
   rightIcon: {
     paddingHorizontal: 15,
