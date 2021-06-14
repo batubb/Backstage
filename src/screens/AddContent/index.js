@@ -40,6 +40,7 @@ import MyImage from '../../components/MyImage';
 import {SIZES} from '../../resources/theme';
 import PostButton from '../../components/ScreenComponents/AddContentComponents/PostButton/PostButton';
 import EditTitleModal from '../../components/ScreenComponents/AddContentComponents/EditTitleModal/EditTitleModal';
+import EditTitlePrompt from '../../components/ScreenComponents/AddContentComponents/EditTitlePrompt/EditTitlePrompt';
 
 const {width, height} = Dimensions.get('window');
 const TOP_PADDING = height >= 812 ? 60 : 40;
@@ -551,14 +552,7 @@ export default class App extends Component {
           paused={this.state.paused}
           repeat
         />
-        <KeyboardAvoidingView
-          behavior="padding"
-          style={{
-            position: 'absolute',
-            width: width,
-            height: height,
-            justifyContent: 'center',
-          }}>
+        {this.state.paused ? (
           <View
             style={{
               position: 'absolute',
@@ -569,50 +563,34 @@ export default class App extends Component {
               opacity: 0.6,
             }}
           />
-          <View
-            style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <TouchableOpacity
-              onPress={() => this.setState({paused: !this.state.paused})}>
-              <Icon
-                name={this.state.paused ? 'play' : 'pause'}
-                color="#FFF"
-                //type="material-community"
-                type="font-awesome-5"
-                size={72}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{position: 'absolute', left: 0, bottom: height / 2}}
-              onPress={() => this.setState({editTextModal: true})}>
-              <View
-                style={{
-                  paddingHorizontal: 10,
-                  paddingVertical: 3,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <View
-                  style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 18,
-                    backgroundColor: title ? 'white' : null,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <Icon
-                    name="text"
-                    color={title ? constants.BACKGROUND_COLOR : '#FFF'}
-                    type="material-community"
-                  />
-                </View>
-                {title === '' ? (
-                  <Text text={'Title'} style={{marginLeft: 5}} />
-                ) : null}
-              </View>
-            </TouchableOpacity>
+        ) : null}
+        <View
+          style={{
+            position: 'absolute',
+            justifyContent: 'flex-start',
+            width: constants.DEFAULT_PAGE_WIDTH,
+            alignSelf: 'center',
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+          <View style={{flex: 1}}>
+            <EditTitlePrompt
+              title={title}
+              openModal={() => this.setState({editTextModal: true})}
+            />
           </View>
-        </KeyboardAvoidingView>
+
+          <TouchableOpacity
+            onPress={() => this.setState({paused: !this.state.paused})}>
+            <Icon
+              name={this.state.paused ? 'play' : 'pause'}
+              color="#FFF"
+              type="font-awesome-5"
+              size={48}
+            />
+          </TouchableOpacity>
+          <View style={{flex: 1}} />
+        </View>
         <PostButton onPress={() => this.handlevideoPicked(this.state.url)} />
       </SafeAreaView>
     );
@@ -1098,36 +1076,20 @@ export default class App extends Component {
         ) : null}
 
         {indexButton === 1 && !isPublishing ? (
-          <TouchableOpacity
-            style={{position: 'absolute', left: 0, bottom: height / 2}}
-            onPress={() => this.setState({editTextModal: true})}>
-            <View
-              style={{
-                paddingHorizontal: 10,
-                paddingVertical: 3,
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <View
-                style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 18,
-                  backgroundColor: title ? 'white' : null,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <Icon
-                  name="text"
-                  color={title ? constants.BACKGROUND_COLOR : '#FFF'}
-                  type="material-community"
-                />
-              </View>
-              {title === '' ? (
-                <Text text={'Title'} style={{marginLeft: 5}} />
-              ) : null}
-            </View>
-          </TouchableOpacity>
+          <View
+            style={{
+              position: 'absolute',
+              bottom: height / 2,
+              display: 'flex',
+              justifyContent: 'center',
+              width: constants.DEFAULT_PAGE_WIDTH,
+              alignSelf: 'center',
+            }}>
+            <EditTitlePrompt
+              title={title}
+              openModal={() => this.setState({editTextModal: true})}
+            />
+          </View>
         ) : null}
         <TouchableOpacity
           style={{position: 'absolute', right: 0, bottom: 40}}

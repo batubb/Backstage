@@ -10,13 +10,12 @@ export default function PostButton(props) {
       buttonStyle={{
         position: 'absolute',
         backgroundColor: '#FFF',
-        width: '30%',
-        borderRadius: 24,
-        padding: 10,
+        width: '20%',
+        padding: 8,
         alignSelf: 'flex-end',
         bottom: 0,
         right: 0,
-        marginBottom: SIZES.spacing * 5,
+        marginBottom: SIZES.spacing * 7,
         marginRight: SIZES.spacing * 5,
       }}
       rightIconProps={{
