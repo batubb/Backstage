@@ -530,8 +530,7 @@ export default class App extends Component {
     );
   };
 
-  renderVideo = () => {
-    const PLAY_BUTTON_SIZE = width / 3;
+  renderVideo = (title) => {
     return (
       <SafeAreaView
         style={{
@@ -558,7 +557,6 @@ export default class App extends Component {
             position: 'absolute',
             width: width,
             height: height,
-            alignItems: 'center',
             justifyContent: 'center',
           }}>
           <View
@@ -566,7 +564,6 @@ export default class App extends Component {
               position: 'absolute',
               width: width,
               height: height,
-              alignItems: 'center',
               justifyContent: 'center',
               backgroundColor: '#000',
               opacity: 0.6,
@@ -576,28 +573,6 @@ export default class App extends Component {
             style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
             <TouchableOpacity
               onPress={() => this.setState({paused: !this.state.paused})}>
-              {/* <View
-              style={{
-                width: PLAY_BUTTON_SIZE,
-                height: PLAY_BUTTON_SIZE,
-                borderRadius: PLAY_BUTTON_SIZE / 2,
-                borderColor: 'white',
-                borderWidth: 2,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <View
-                style={{
-                  width: PLAY_BUTTON_SIZE,
-                  height: PLAY_BUTTON_SIZE,
-                  borderRadius: PLAY_BUTTON_SIZE / 2,
-                  borderColor: 'white',
-                  borderWidth: 2,
-                  position: 'absolute',
-                  backgroundColor: 'white',
-                  opacity: 0.5,
-                }}
-              /> */}
               <Icon
                 name={this.state.paused ? 'play' : 'pause'}
                 color="#FFF"
@@ -605,25 +580,37 @@ export default class App extends Component {
                 type="font-awesome-5"
                 size={72}
               />
-              {/* </View> */}
             </TouchableOpacity>
-            <TextInput
-              placeholder="Title"
-              style={{
-                fontFamily:
-                  Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
-                margin: 10,
-                padding: 15,
-                color: 'white',
-                fontSize: 14,
-                //marginBottom: 'auto',
-              }}
-              underlineColorAndroid="transparent"
-              onChangeText={(textInput) => this.setState({title: textInput})}
-              value={this.state.title}
-              maxLength={50}
-              placeholderTextColor="whitesmoke"
-            />
+            <TouchableOpacity
+              style={{position: 'absolute', left: 0, bottom: height / 2}}
+              onPress={() => this.setState({editTextModal: true})}>
+              <View
+                style={{
+                  paddingHorizontal: 10,
+                  paddingVertical: 3,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 18,
+                    backgroundColor: title ? 'white' : null,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Icon
+                    name="text"
+                    color={title ? constants.BACKGROUND_COLOR : '#FFF'}
+                    type="material-community"
+                  />
+                </View>
+                {title === '' ? (
+                  <Text text={'Title'} style={{marginLeft: 5}} />
+                ) : null}
+              </View>
+            </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
         <PostButton onPress={() => this.handlevideoPicked(this.state.url)} />
@@ -1155,7 +1142,7 @@ export default class App extends Component {
             <Icon name="camera-reverse" color="#FFF" type="ionicon" size={32} />
           </View>
         </TouchableOpacity>
-        {url !== '' && type === 'video' ? this.renderVideo() : null}
+        {url !== '' && type === 'video' ? this.renderVideo(title) : null}
         {url !== '' && type === 'storyPhoto' ? this.renderStoryPhoto() : null}
         {url !== '' && type === 'storyVideo' ? this.renderStoryVideo() : null}
         {editTextModal ? this.renderEdit() : null}

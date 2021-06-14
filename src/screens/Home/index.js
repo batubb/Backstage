@@ -379,7 +379,8 @@ class Home extends Component {
                 onRefresh={() => this.onRefresh()}
                 tintColor="white"
               />
-            }>
+            }
+            showsVerticalScrollIndicator={false}>
             {liveArray.length !== 0 ? this.liveArrayCard(liveArray) : null}
             {userPostsArray.length !== 0 ? (
               <FlatList
