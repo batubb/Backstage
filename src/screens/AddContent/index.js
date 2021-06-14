@@ -1121,11 +1121,21 @@ export default class App extends Component {
                 flexDirection: 'row',
                 alignItems: 'center',
               }}>
-              <Icon
-                name="text"
-                color={title ? constants.BACKGROUND_COLOR : '#FFF'}
-                type="material-community"
-              />
+              <View
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 18,
+                  backgroundColor: title ? 'white' : null,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Icon
+                  name="text"
+                  color={title ? constants.BACKGROUND_COLOR : '#FFF'}
+                  type="material-community"
+                />
+              </View>
               {title === '' ? (
                 <Text text={'Title'} style={{marginLeft: 5}} />
               ) : null}
