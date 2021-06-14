@@ -12,6 +12,7 @@ import {
   Platform,
   Keyboard,
   FlatList,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {Slider, Icon} from 'react-native-elements';
@@ -61,6 +62,7 @@ class WatchVideo extends Component {
       keyboard: false,
       finished: false,
       showMore: false,
+      controlsVisible: true,
     };
 
     this.list = [
@@ -224,109 +226,126 @@ class WatchVideo extends Component {
 
   renderVideoPlayer = (video, paused, videoInfo, dk, sn) => {
     return (
-      <View style={{flex: 1, position: 'absolute'}}>
-        <Video
-          source={{uri: video.url}}
-          ref={(ref) => {
-            this.player = ref;
-          }}
-          onLoadStart={() => this.setState({videoLoading: true})}
-          onLoad={() => this.setState({videoLoading: false})}
-          onProgress={(data) => this.setTime(data)}
-          onEnd={() => this.setState({paused: true})}
-          style={{flex: 1, width: width, height: height}}
-          paused={paused}
-          repeat
-          poster={video.photo}
-        />
+      <TouchableWithoutFeedback
+        onPress={() =>
+          this.setState({controlsVisible: !this.state.controlsVisible})
+        }>
         <View
-          style={{
-            position: 'absolute',
-            width: '90%',
-            height: '98%',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignSelf: 'center',
+          style={{flex: 1, position: 'absolute'}}
+          onPress={() => {
+            console.log('view pressed');
           }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              height: '23%',
-              marginBottom: SIZES.spacing * 5,
-            }}>
-            <View style={{width: '70%', marginTop: 'auto', marginBottom: 10}}>
-              <Text
-                text={video.title}
-                numberOfLines={this.state.showMore ? 3 : 1}
-                onPress={() => this.setState({showMore: !this.state.showMore})}
-                style={{fontWeight: 'normal', fontSize: 16}}
-              />
-            </View>
+          <Video
+            source={{uri: video.url}}
+            ref={(ref) => {
+              this.player = ref;
+            }}
+            onLoadStart={() => this.setState({videoLoading: true})}
+            onLoad={() => this.setState({videoLoading: false})}
+            onProgress={(data) => this.setTime(data)}
+            onEnd={() => this.setState({paused: true})}
+            style={{flex: 1, width: width, height: height}}
+            paused={paused}
+            repeat
+            poster={video.photo}
+          />
+          {this.state.controlsVisible ? (
             <View
               style={{
-                alignItems: 'center',
+                position: 'absolute',
+                width: '90%',
+                height: '98%',
                 display: 'flex',
-                justifyContent: 'space-between',
+                justifyContent: 'flex-end',
+                alignSelf: 'center',
               }}>
-              <View style={{alignItems: 'center'}}>
-                <WatchVideoIcon name="eye-outline" type="ionicon" />
-                <Text text={'1.25K'} style={{fontSize: 12}} />
-              </View>
-              <TouchableOpacity onPress={() => this.goTo('Comments', video)}>
-                <View style={{alignItems: 'center'}}>
-                  <WatchVideoIcon
-                    name="chatbubble-outline"
-                    type="ionicon"
-                    size={28}
-                  />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  height: '23%',
+                  marginBottom: SIZES.spacing * 5,
+                }}>
+                <View
+                  style={{width: '70%', marginTop: 'auto', marginBottom: 10}}>
                   <Text
-                    text={`${followerCount(video.comments)}`}
-                    style={{fontSize: 12}}
+                    text={video.title}
+                    numberOfLines={this.state.showMore ? 3 : 1}
+                    onPress={() =>
+                      this.setState({showMore: !this.state.showMore})
+                    }
+                    style={{fontWeight: 'normal', fontSize: 16}}
                   />
                 </View>
-              </TouchableOpacity>
-              <WatchVideoIcon
-                name="dots-horizontal"
-                type="material-community"
-                onPress={() => this.setState({optionsVisible: true})}
-              />
+                <View
+                  style={{
+                    alignItems: 'center',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                  }}>
+                  <View style={{alignItems: 'center'}}>
+                    <WatchVideoIcon name="eye-outline" type="ionicon" />
+                    <Text text={'1.25K'} style={{fontSize: 12}} />
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => this.goTo('Comments', video)}>
+                    <View style={{alignItems: 'center'}}>
+                      <WatchVideoIcon
+                        name="chatbubble-outline"
+                        type="ionicon"
+                        size={28}
+                      />
+                      <Text
+                        text={`${followerCount(video.comments)}`}
+                        style={{fontSize: 12}}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                  <WatchVideoIcon
+                    name="dots-horizontal"
+                    type="material-community"
+                    onPress={() => this.setState({optionsVisible: true})}
+                  />
+                </View>
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <TouchableOpacity
+                  onPress={() => this.setState({paused: !paused})}>
+                  <Icon
+                    name={paused ? 'play' : 'pause'}
+                    color="#FFF"
+                    type="material-community"
+                    size={28}
+                  />
+                </TouchableOpacity>
+                <Slider
+                  style={{width: width - 140}}
+                  value={videoInfo.currentTime}
+                  thumbTintColor="#fff"
+                  minimumTrackTintColor="#fff"
+                  onSlidingStart={() => this.setState({paused: true})}
+                  onSlidingComplete={() => this.setState({paused: false})}
+                  maximumTrackTintColor="lightgray"
+                  step={2}
+                  thumbStyle={{height: 10, width: 10, backgroundColor: 'white'}}
+                  animationType="timing"
+                  animateTransitions={true}
+                  onValueChange={(value) => this.seek(value)}
+                  maximumValue={videoInfo.seekableDuration}
+                />
+                <View>
+                  <Text style={{fontSize: 12}} text={`${dk}:${sn}`} />
+                </View>
+              </View>
             </View>
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <TouchableOpacity onPress={() => this.setState({paused: !paused})}>
-              <Icon
-                name={paused ? 'play' : 'pause'}
-                color="#FFF"
-                type="material-community"
-              />
-            </TouchableOpacity>
-            <Slider
-              style={{width: width - 140}}
-              value={videoInfo.currentTime}
-              thumbTintColor="#fff"
-              minimumTrackTintColor="#fff"
-              onSlidingStart={() => this.setState({paused: true})}
-              onSlidingComplete={() => this.setState({paused: false})}
-              maximumTrackTintColor="lightgray"
-              step={2}
-              thumbStyle={{height: 10, width: 10, backgroundColor: 'white'}}
-              animationType="timing"
-              animateTransitions={true}
-              onValueChange={(value) => this.seek(value)}
-              maximumValue={videoInfo.seekableDuration}
-            />
-            <View>
-              <Text style={{fontSize: 12}} text={`${dk}:${sn}`} />
-            </View>
-          </View>
+          ) : null}
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   };
 
