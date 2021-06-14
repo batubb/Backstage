@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
-import {View, Modal, KeyboardAvoidingView, Dimensions} from 'react-native';
+import {View, KeyboardAvoidingView, Dimensions} from 'react-native';
 import {
   TextInput,
   TouchableOpacity,
@@ -12,17 +12,18 @@ import constants from '../../../../resources/constants';
 import {SIZES} from '../../../../resources/theme';
 import MyImage from '../../../MyImage';
 import {Divider} from 'react-native-elements';
+import Modal from 'react-native-modal';
 
 export default function EditTitleModal(props) {
   const [title, setTitle] = useState(props.title);
 
   return (
     <Modal
-      animationType="slide"
-      visible
-      transparent
-      onRequestClose={props.closeModal}>
-      <KeyboardAvoidingView
+      isVisible
+      avoidKeyboard
+      style={{margin: 0}}
+      onBackdropPress={props.closeModal}>
+      <View
         style={{
           marginTop: 'auto',
           backgroundColor: 'white',
@@ -81,11 +82,10 @@ export default function EditTitleModal(props) {
             text="Add Title"
             onPress={() => {
               props.onChangeText(title);
-              alert('done');
             }}
           />
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }
