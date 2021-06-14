@@ -11,6 +11,7 @@ import {
   PermissionsAndroid,
   Platform,
   TextInput,
+  Modal,
 } from 'react-native';
 import {NodeCameraView} from 'react-native-nodemediaclient';
 import axios from 'axios';
@@ -38,6 +39,7 @@ import database from '@react-native-firebase/database';
 import MyImage from '../../components/MyImage';
 import {SIZES} from '../../resources/theme';
 import PostButton from '../../components/ScreenComponents/AddContentComponents/PostButton/PostButton';
+import EditTitleModal from '../../components/ScreenComponents/AddContentComponents/EditTitleModal/EditTitleModal';
 
 const {width, height} = Dimensions.get('window');
 const TOP_PADDING = height >= 812 ? 60 : 40;
@@ -711,6 +713,21 @@ export default class App extends Component {
 
   renderEdit = () => {
     return (
+      <EditTitleModal
+        closeModal={() => {
+          this.setState({editTextModal: false});
+        }}
+        photo={Store.user.photo}
+        title={this.state.title}
+        onChangeText={(input) => {
+          this.setState({title: input, editTextModal: false});
+        }}
+      />
+    );
+  };
+
+  renderEdit2 = () => {
+    return (
       <SafeAreaView
         style={{
           position: 'absolute',
@@ -760,7 +777,6 @@ export default class App extends Component {
             value={this.state.title}
             maxLength={30}
             placeholderTextColor="gray"
-            autoFocus
           />
           <Button
             text="Confirm"
@@ -1105,11 +1121,14 @@ export default class App extends Component {
                 flexDirection: 'row',
                 alignItems: 'center',
               }}>
-              <Icon name="text" color="#FFF" type="material-community" />
-              <Text
-                text={title !== '' ? title : 'Title'}
-                style={{marginLeft: 5}}
+              <Icon
+                name="text"
+                color={title ? constants.BACKGROUND_COLOR : '#FFF'}
+                type="material-community"
               />
+              {title === '' ? (
+                <Text text={'Title'} style={{marginLeft: 5}} />
+              ) : null}
             </View>
           </TouchableOpacity>
         ) : null}
