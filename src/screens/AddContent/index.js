@@ -1146,27 +1146,19 @@ export default class App extends Component {
             </View>
           </TouchableOpacity>
         ) : null}
-        {url !== '' ? (
-          <TouchableOpacity
-            style={{position: 'absolute', right: 0, bottom: 40}}
-            onPress={() => {
-              this.setState({camera: this.state.camera === 1 ? 0 : 1});
+        <TouchableOpacity
+          style={{position: 'absolute', right: 0, bottom: 40}}
+          onPress={() => {
+            this.setState({camera: this.state.camera === 1 ? 0 : 1});
 
-              if (indexButton === 1) {
-                this.vb.switchCamera();
-              }
-            }}>
-            <View style={{padding: 10}}>
-              <Icon
-                name="camera-reverse"
-                color="#FFF"
-                type="ionicon"
-                size={32}
-              />
-            </View>
-          </TouchableOpacity>
-        ) : null}
-
+            if (indexButton === 1) {
+              this.vb.switchCamera();
+            }
+          }}>
+          <View style={{padding: 10}}>
+            <Icon name="camera-reverse" color="#FFF" type="ionicon" size={32} />
+          </View>
+        </TouchableOpacity>
         {url !== '' && type === 'video' ? this.renderVideo() : null}
         {url !== '' && type === 'storyPhoto' ? this.renderStoryPhoto() : null}
         {url !== '' && type === 'storyVideo' ? this.renderStoryVideo() : null}
