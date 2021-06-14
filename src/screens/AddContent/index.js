@@ -351,7 +351,7 @@ export default class App extends Component {
     if (publishingState) {
       this.vb.stop();
       this.stopLiveAndPublishPost();
-      this.setState({timer: false});
+      this.setState({timer: false, title: ''});
     } else {
       this.vb.start();
       this.getAssetInfo(this.state.liveStreamId);
