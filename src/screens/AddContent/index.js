@@ -1127,7 +1127,7 @@ export default class App extends Component {
           </View>
         ) : null}
 
-        {indexButton === 1 && !isPublishing && url !== '' ? (
+        {indexButton === 1 && !isPublishing ? (
           <TouchableOpacity
             style={{position: 'absolute', left: 0, bottom: height / 2}}
             onPress={() => this.setState({editTextModal: true})}>
