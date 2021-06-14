@@ -426,7 +426,7 @@ export default class App extends Component {
   };
 
   // type can be one of story or video
-  selectMediaFromRoll = async (type) => {
+  selectMediaFromRoll = (type) => {
     let mediaType = 'video';
     if (type === 'story') {
       mediaType = 'mixed';
