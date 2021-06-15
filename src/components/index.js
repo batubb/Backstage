@@ -7,6 +7,7 @@ import MyImage from './MyImage';
 import Label from './Label';
 import Options from './Options';
 import SearchBar from './SearchBar';
+import Divider from './Divider';
 
 module.exports = {
   Button,
@@ -17,4 +18,5 @@ module.exports = {
   Label,
   Options,
   SearchBar,
+  Divider,
 };

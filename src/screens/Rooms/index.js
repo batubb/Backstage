@@ -23,11 +23,13 @@ import {
   MyImage,
   SearchBar,
   Button,
+  Divider,
 } from '../../components';
 import {constants} from '../../resources';
 import {getDealsData, searchUser} from '../../services';
 import {followerCount} from '../../lib';
 import {StackActions} from '@react-navigation/native';
+import {SIZES} from '../../resources/theme';
 
 const {width, height} = Dimensions.get('window');
 
@@ -75,7 +77,12 @@ class Rooms extends Component {
 
   renderSearchTerms = (data) => {
     return data.map((item, index) => (
-      <View key={item.uid} style={{width: width, alignItems: 'center'}}>
+      <View
+        key={item.uid}
+        style={{
+          width: width,
+          alignItems: 'center',
+        }}>
         <TouchableOpacity onPress={() => this.goTo('Chat', item)}>
           <View
             style={{
@@ -84,6 +91,7 @@ class Rooms extends Component {
               alignItems: 'center',
               justifyContent: 'space-between',
               marginTop: 10,
+              marginBottom: SIZES.spacing * 3,
             }}>
             <MyImage
               style={{width: 60, height: 60, borderRadius: 30}}
@@ -102,6 +110,7 @@ class Rooms extends Component {
             </View>
           </View>
         </TouchableOpacity>
+        <Divider width={'90%'} />
       </View>
     ));
   };

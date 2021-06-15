@@ -4,7 +4,7 @@ const {width, height} = Dimensions.get('window');
 
 export const COLORS = {
   // base colors
-  primary: '#FC6D3F', // orange
+  primary: '#A768FE', // purple
   secondary: '#FFFFFF', // gray
 
   backgroundColor: PlatformColor('systemBackground'),

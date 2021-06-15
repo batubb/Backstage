@@ -14,7 +14,7 @@ const constants = {
   //BACKGROUND_COLOR: '#0a0b09',
   BACKGROUND_COLOR: PlatformColor('systemBackground'),
   //BAR_COLOR: '#333333',
-  BAR_COLOR: PlatformColor('systemBackground'),
+  BAR_COLOR: PlatformColor('secondarySystemBackground'),
   BLUE: '#0a84ff',
   RED: '#FF5733',
   PAGE_LEFT_PADDING: SIZES.spacing * 2,

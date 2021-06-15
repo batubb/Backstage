@@ -13,9 +13,9 @@ import {
 } from 'react-native';
 import {observer} from 'mobx-react';
 import LinearGradient from 'react-native-linear-gradient';
-import {Icon, Header, Divider} from 'react-native-elements';
+import {Icon, Header} from 'react-native-elements';
 import {StackActions} from '@react-navigation/native';
-import {Loading, Text, MyImage} from '../../components';
+import {Loading, Text, MyImage, Divider} from '../../components';
 import {constants} from '../../resources';
 import {
   getFollowingLiveData,
@@ -352,7 +352,7 @@ class Home extends Component {
           }}
         />
         {this.renderStories()}
-        <Divider style={{backgroundColor: COLORS.separatorColor}} />
+        <Divider />
         {loading ? (
           <Loading
             loadingStyle={{

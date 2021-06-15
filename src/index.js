@@ -159,7 +159,7 @@ class TabBarBottom extends React.Component {
             borderTopWidth: 0,
           },
           inactiveTintColor: COLORS.gray,
-          activeTintColor: COLORS.white,
+          activeTintColor: COLORS.primary,
         }}>
         <Tab.Screen
           name="HomeMenu"
