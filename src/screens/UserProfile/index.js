@@ -177,6 +177,9 @@ class UserProfile extends Component {
         posts={posts}
         navigation={this.props.navigation}
         expired={!this.state.subscribtion.subscribtion}
+        numCols={constants.NUM_POSTS_PER_ROW_PROFILE}
+        extraData={Store.posts}
+        onPress={(item) => this.goTo('WatchVideo', item)}
       />
     );
   };

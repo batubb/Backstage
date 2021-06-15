@@ -18,6 +18,7 @@ import {Loading, Text, Header, MyImage, SearchBar} from '../../components';
 import {constants} from '../../resources';
 import {searchUser, getLeaderBoardData, getTrendingsData} from '../../services';
 import {followerCount} from '../../lib';
+import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
 
 const {width} = Dimensions.get('window');
 
@@ -103,6 +104,17 @@ class Search extends Component {
   };
 
   renderCards = (data) => {
+    return (
+      <PostsCard
+        posts={data}
+        isPersonCard
+        numCols={3}
+        onPress={(item) => this.goTo('UserProfile', item)}
+      />
+    );
+  };
+
+  renderCards2 = (data) => {
     return (
       <FlatList
         data={data}

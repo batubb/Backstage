@@ -13,33 +13,28 @@ import {Icon} from 'react-native-elements';
 
 const CARD_BORDER_RADIUS = 6;
 
+// onPress, posts, expired, isPersonCard, numCols, extraData
+
 export default function PostsCard(props) {
-  const goTo = (route, info = null) => {
-    if (route === 'WatchVideo') {
-      const replaceActions = StackActions.push(route, {video: info});
-      return props.navigation.dispatch(replaceActions);
-    }
-  };
   return (
     <FlatList
       data={props.posts}
       keyExtractor={(item) => item.uid}
-      extraData={Store.posts}
-      numColumns={constants.NUM_POSTS_PER_ROW_PROFILE}
+      extraData={props.extraData}
+      numColumns={props.numCols}
       renderItem={({item, index}) => (
         <View
           style={{
-            flex: 1 / constants.NUM_POSTS_PER_ROW_PROFILE,
+            flex: 1 / props.numCols,
             aspectRatio: 2 / 3,
             marginRight:
-              index % constants.NUM_POSTS_PER_ROW_PROFILE !==
-              constants.NUM_POSTS_PER_ROW_PROFILE - 1
+              index % props.numCols !== props.numCols - 1
                 ? SIZES.spacing * 3
                 : null,
             marginBottom: SIZES.spacing * 3,
           }}>
           <TouchableOpacity
-            onPress={() => goTo('WatchVideo', item)}
+            onPress={() => props.onPress(item)}
             style={{width: '100%'}}>
             <View
               style={{
@@ -67,32 +62,29 @@ export default function PostsCard(props) {
                   width: '100%',
                 }}
               />
-              <View
-                style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  paddingVertical: 5,
-                  paddingHorizontal: 10,
-                }}>
-                <Text
-                  text={
-                    item.title.length >= 17
-                      ? `${item.title.substring(0, 17)}...`
-                      : item.title
-                  }
-                  style={{fontSize: 12}}
-                />
-                <Text
-                  text={`${followerCount(item.view)} views`}
-                  style={{fontSize: 12, fontWeight: 'normal'}}
-                />
-              </View>
+              {props.isPersonCard ? null : (
+                <View
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    paddingVertical: 5,
+                    paddingHorizontal: 10,
+                  }}>
+                  <Text
+                    text={
+                      item.title.length >= 17
+                        ? `${item.title.substring(0, 17)}...`
+                        : item.title
+                    }
+                    style={{fontSize: 12}}
+                  />
+                  <Text
+                    text={`${followerCount(item.view)} views`}
+                    style={{fontSize: 12, fontWeight: 'normal'}}
+                  />
+                </View>
+              )}
             </View>
-            {item.active ? (
-              <View style={{position: 'absolute', top: 0, right: 0}}>
-                <Text text={'asdasd'} />
-              </View>
-            ) : null}
           </TouchableOpacity>
           {props.expired ? (
             <View

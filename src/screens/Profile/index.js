@@ -283,7 +283,15 @@ class Profile extends Component {
   };
 
   renderPosts2 = (posts) => {
-    return <PostsCard posts={posts} navigation={this.props.navigation} />;
+    return (
+      <PostsCard
+        posts={posts}
+        navigation={this.props.navigation}
+        numCols={constants.NUM_POSTS_PER_ROW_PROFILE}
+        extraData={Store.posts}
+        onPress={(item) => this.goTo('WatchVideo', item)}
+      />
+    );
   };
 
   renderUserSection = (data) => {
