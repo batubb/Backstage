@@ -17,7 +17,10 @@ export default function SubscribeButton(props) {
               'L',
             )}`
       }
-      secondary={!props.subscribtion.cancel && props.subscribtion.subscribtion}
+      secondary={
+        (!props.subscribtion.cancel && props.subscribtion.subscribtion) ||
+        props.subscribtion.cancel
+      }
       onPress={props.onSubscribePress}
       disabled={props.subscribtion.cancel}
     />

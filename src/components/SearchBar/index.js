@@ -11,6 +11,7 @@ import {
 import PropTypes from 'prop-types';
 import {Icon} from 'react-native-elements';
 import {constants} from '../../resources';
+import {COLORS} from '../../resources/theme';
 
 const {width} = Dimensions.get('window');
 
@@ -33,7 +34,7 @@ export default class SearchBar extends Component {
             width: width - 20,
             borderRadius: 4,
             paddingHorizontal: 10,
-            backgroundColor: constants.BAR_COLOR,
+            backgroundColor: COLORS.secondaryBackgroundColor,
           }}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Icon name="magnify" color="gray" type="material-community" />

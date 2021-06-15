@@ -28,37 +28,33 @@ export default function PostCard(props) {
           }}
           photo={props.item.photo}
         />
-        <LinearGradient
-          colors={['transparent', 'transparent', constants.BACKGROUND_COLOR]}
+
+        <View
           style={{
-            borderRadius: CARD_BORDER_RADIUS,
             position: 'absolute',
-            height: '100%',
-            width: '100%',
-          }}
-        />
-        {props.isPersonCard ? null : (
-          <View
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              paddingVertical: 5,
-              paddingHorizontal: 10,
-            }}>
-            <Text
-              text={
-                props.item.title && props.item.title.length >= 17
-                  ? `${props.item.title.substring(0, 17)}...`
-                  : props.item.title
-              }
-              style={{fontSize: 12}}
-            />
-            <Text
-              text={`${followerCount(props.item.cumulativeViews)} views`}
-              style={{fontSize: 12, fontWeight: 'normal'}}
-            />
-          </View>
-        )}
+            bottom: 0,
+            paddingVertical: 5,
+            paddingHorizontal: 10,
+          }}>
+          <Text
+            text={
+              props.isPersonCard
+                ? props.item.username
+                : props.item.title && props.item.title.length >= 17
+                ? `${props.item.title.substring(0, 17)}...`
+                : props.item.title
+            }
+            style={{fontSize: 12}}
+          />
+          <Text
+            text={`${followerCount(
+              props.isPersonCard
+                ? props.item.cumulativeViewsUser
+                : props.item.cumulativeViews,
+            )} views`}
+            style={{fontSize: 12, fontWeight: 'normal'}}
+          />
+        </View>
       </View>
     </TouchableOpacity>
   );

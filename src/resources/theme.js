@@ -7,6 +7,9 @@ export const COLORS = {
   primary: '#FC6D3F', // orange
   secondary: '#FFFFFF', // gray
 
+  backgroundColor: PlatformColor('systemBackground'),
+  secondaryBackgroundColor: PlatformColor('secondarySystemBackground'),
+
   primaryLabelColor: PlatformColor('label'),
   secondaryLabelColor: PlatformColor('secondaryLabel'),
   tertiaryLabelColor: PlatformColor('tertiaryLabel'),
@@ -15,6 +18,7 @@ export const COLORS = {
   systemBlue: PlatformColor('systemBlue'),
   white: 'white',
   separatorColor: PlatformColor('separator'),
+  gray: PlatformColor('systemGray'),
 
   // colors
   black: '#1E1F20',

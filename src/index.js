@@ -29,6 +29,8 @@ import Notifications from './screens/Notifications';
 import Subscribe from './screens/Subscribe';
 import MyBanks from './screens/MyBanks';
 import EditProfile from './screens/EditProfile';
+import {COLORS} from './resources/theme';
+import {PlatformColor} from 'react-native';
 
 LogBox.ignoreAllLogs();
 
@@ -151,13 +153,13 @@ class TabBarBottom extends React.Component {
         tabBarOptions={{
           tabBarPosition: 'bottom',
           swipeEnabled: false,
-          showLabel: true,
+          showLabel: false,
           style: {
             backgroundColor: constants.BAR_COLOR,
             borderTopWidth: 0,
           },
-          inactiveTintColor: 'gray',
-          activeTintColor: '#FFF',
+          inactiveTintColor: COLORS.gray,
+          activeTintColor: COLORS.white,
         }}>
         <Tab.Screen
           name="HomeMenu"
@@ -198,7 +200,7 @@ class TabBarBottom extends React.Component {
                 <Icon
                   name="magnify"
                   type="material-community"
-                  size={focused ? 30 : 26}
+                  size={focused ? 30 : 30}
                   color={color}
                 />
               </View>
@@ -219,9 +221,9 @@ class TabBarBottom extends React.Component {
                   justifyContent: 'center',
                 }}>
                 <Icon
-                  name="plus-box-outline"
-                  type="material-community"
-                  size={focused ? 30 : 26}
+                  name="add-circle-outline"
+                  type="material-icons"
+                  size={focused ? 30 : 30}
                   color={color}
                 />
               </View>
@@ -250,7 +252,7 @@ class TabBarBottom extends React.Component {
                 <Icon
                   name="account-group"
                   type="material-community"
-                  size={focused ? 30 : 26}
+                  size={focused ? 30 : 30}
                   color={color}
                 />
               </View>
@@ -273,7 +275,7 @@ class TabBarBottom extends React.Component {
                 <Icon
                   name="account"
                   type="material-community"
-                  size={focused ? 30 : 26}
+                  size={focused ? 30 : 30}
                   color={color}
                 />
               </View>

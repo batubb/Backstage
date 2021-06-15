@@ -25,7 +25,11 @@ export default function PostsCard(props) {
                 : null,
             marginBottom: SIZES.spacing * 3,
           }}>
-          <PostCard item={item} onPress={props.onPress} />
+          <PostCard
+            item={item}
+            onPress={props.onPress}
+            isPersonCard={props.isPersonCard}
+          />
           {props.expired ? (
             <View
               style={{

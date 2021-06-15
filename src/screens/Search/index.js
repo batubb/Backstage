@@ -94,7 +94,7 @@ class Search extends Component {
           <Text
             text={title}
             style={{
-              fontWeight: type === title.toLowerCase() ? 'bold' : 'normal',
+              fontWeight: 'bold',
               color: type === title.toLowerCase() ? '#000' : '#FFF',
             }}
           />
@@ -293,7 +293,7 @@ class Search extends Component {
                 justifyContent: 'space-between',
                 marginBottom: 5,
               }}>
-              {this.typeButton(type, 'Trendings')}
+              {this.typeButton(type, 'Trending')}
               {this.typeButton(type, 'Most Popular')}
             </View>
             <ScrollView
