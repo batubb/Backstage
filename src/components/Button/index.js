@@ -6,16 +6,16 @@ import PropTypes from 'prop-types';
 import Text from '../Text';
 import {constants} from '../../resources';
 import {Icon} from 'react-native-elements';
+import {COLORS} from '../../resources/theme';
+import {PlatformColor} from 'react-native';
 
 const {width} = Dimensions.get('screen');
 
 const secondaryStyle = {
   backgroundColor: 'transparent',
-  borderColor: constants.BAR_COLOR,
-  borderWidth: 1.5,
+  borderColor: PlatformColor('separator'),
+  borderWidth: 1,
 };
-
-const secondaryTextStyle = {};
 
 export default class Button extends Component {
   render() {
@@ -33,7 +33,7 @@ export default class Button extends Component {
         disabled={disabled}
         style={[
           {
-            backgroundColor: constants.BLUE,
+            backgroundColor: COLORS.systemBlue,
             padding: this.props.secondary
               ? 10
               : 10 + secondaryStyle.borderWidth,
@@ -47,11 +47,11 @@ export default class Button extends Component {
         ]}>
         <Text
           text={text}
-          style={[
-            {fontSize: 14, fontWeight: 'bold', color: 'white'},
-            this.props.secondary ? secondaryTextStyle : null,
-            textStyle,
-          ]}
+          style={
+            !this.props.secondary
+              ? [{color: COLORS.white}, textStyle]
+              : [textStyle]
+          }
         />
 
         {rightIconProps ? <Icon {...rightIconProps} /> : null}

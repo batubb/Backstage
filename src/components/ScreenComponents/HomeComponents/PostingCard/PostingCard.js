@@ -10,7 +10,7 @@ import {followerCount} from '../../../../lib';
 const NUM_CARDS_IN_SCREEN = 2.5;
 const DISTANCE_BETWEEN_CARDS = SIZES.spacing * 3;
 const HEIGHT_MULTIPLIER = 1.5;
-const BORDER_RADIUS = 16;
+const BORDER_RADIUS = 0;
 
 function PostingCardCaption(props) {
   const limit = props.longVersion ? 17 : 10;

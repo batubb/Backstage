@@ -1,3 +1,4 @@
+import {PlatformColor} from 'react-native';
 import {Dimensions} from 'react-native';
 const {width, height} = Dimensions.get('window');
 
@@ -6,9 +7,16 @@ export const COLORS = {
   primary: '#FC6D3F', // orange
   secondary: '#FFFFFF', // gray
 
+  primaryLabelColor: PlatformColor('label'),
+  secondaryLabelColor: PlatformColor('secondaryLabel'),
+  tertiaryLabelColor: PlatformColor('tertiaryLabel'),
+  quaternaryLabel: PlatformColor('quaternaryLabel'),
+
+  systemBlue: PlatformColor('systemBlue'),
+  white: 'white',
+
   // colors
   black: '#1E1F20',
-  white: '#FFFFFF',
 
   lightGray: '#F5F5F6',
   lightGray2: '#F6F6F7',

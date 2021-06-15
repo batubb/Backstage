@@ -1,3 +1,4 @@
+const {PlatformColor} = require('react-native');
 const {SIZES} = require('./theme');
 
 /* eslint-disable prettier/prettier */
@@ -10,8 +11,10 @@ const constants = {
     '5yq6+WeOBEfgiFapSIQhl8/6qurYypyUER9irR6DMGwIP1JPdh4kkG3tan+LaokI1BtvLnOpAyD',
   MUX_BASE_URL: 'https://api.mux.com',
 
-  BACKGROUND_COLOR: '#0a0b09',
-  BAR_COLOR: '#333333',
+  //BACKGROUND_COLOR: '#0a0b09',
+  BACKGROUND_COLOR: PlatformColor('systemBackground'),
+  //BAR_COLOR: '#333333',
+  BAR_COLOR: PlatformColor('systemBackground'),
   BLUE: '#0a84ff',
   RED: '#FF5733',
   PAGE_LEFT_PADDING: SIZES.spacing * 2,

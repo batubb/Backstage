@@ -3,6 +3,12 @@
 import React, {Component} from 'react';
 import {Text, Platform} from 'react-native';
 import PropTypes from 'prop-types';
+import {PlatformColor} from 'react-native';
+import {COLORS} from '../../resources/theme';
+
+const secondaryStyle = {
+  color: COLORS.secondaryLabelColor,
+};
 
 export default class TextComponent extends Component {
   render() {
@@ -14,11 +20,12 @@ export default class TextComponent extends Component {
         style={[
           {
             fontFamily:
-              Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
+              Platform.OS === 'ios' ? 'System' : 'sans-serif-condensed',
             fontSize: 14,
-            color: '#FFF',
+            color: COLORS.primaryLabelColor,
             fontWeight: 'bold',
           },
+          this.props.secondary ? secondaryStyle : null,
           style,
         ]}>
         {text}

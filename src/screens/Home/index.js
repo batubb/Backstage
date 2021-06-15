@@ -178,8 +178,8 @@ class Home extends Component {
     return (
       <View
         style={{
-          borderBottomWidth: SIZES.separatorWidth,
-          borderBottomColor: constants.BAR_COLOR,
+          //borderBottomWidth: SIZES.separatorWidth,
+          //borderBottomColor: constants.BAR_COLOR,
           paddingBottom: SIZES.spacing * 6,
         }}>
         <TouchableOpacity onPress={() => this.goTo('UserProfile', influencer)}>
@@ -348,12 +348,6 @@ class Home extends Component {
             barStyle: 'light-content',
             backgroundColor: constants.BACKGROUND_COLOR,
           }}
-          centerComponent={
-            <Image
-              style={{height: 50, width: 50}}
-              source={require('../../images/icon.png')}
-            />
-          }
           containerStyle={{
             borderBottomWidth: 0,
             backgroundColor: constants.BACKGROUND_COLOR,
