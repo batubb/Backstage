@@ -54,7 +54,7 @@ export default function ProfileTop(props) {
           </View>
           <View style={{marginTop: 'auto'}}>
             <Text
-              text={'27.5k views'}
+              text={`${props.views ? props.views : 0} views`}
               style={{fontWeight: 'bold', fontSize: 10}}
             />
           </View>

@@ -350,7 +350,11 @@ class UserProfile extends Component {
                   ? this.unsubscribeInf()
                   : this.goTo('Subscribe', this.state.user)
               }
-              //databarVisible
+              views={
+                !this.state.user.cumulativeViewsUser
+                  ? 0
+                  : this.state.user.cumulativeViewsUser
+              }
               followerNumber={this.state.followerNumber}
               onChatPress={() => this.goTo('Chat', this.state.user)}
               editProfileVisible={user.uid === Store.user.uid}
