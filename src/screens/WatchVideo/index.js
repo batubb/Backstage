@@ -284,7 +284,7 @@ class WatchVideo extends Component {
                     justifyContent: 'space-between',
                   }}>
                   <View style={{alignItems: 'center'}}>
-                    <WatchVideoIcon name="eye-outline" type="ionicon" />
+                    <WatchVideoIcon name="play-outline" type="ionicon" />
                     <Text
                       text={`${followerCount(video.cumulativeViews)}`}
                       style={{fontSize: 12}}
@@ -308,6 +308,7 @@ class WatchVideo extends Component {
                     name="dots-horizontal"
                     type="material-community"
                     onPress={() => this.setState({optionsVisible: true})}
+                    size={20}
                   />
                 </View>
               </View>

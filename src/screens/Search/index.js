@@ -30,7 +30,7 @@ class Search extends Component {
       refreshing: false,
       search: '',
       searchArray: [],
-      type: 'trendings',
+      type: 'trending',
       dealsArray: [],
       trendingsArray: [],
       leaderBoardArray: [],
@@ -304,7 +304,7 @@ class Search extends Component {
                   tintColor="white"
                 />
               }>
-              {type === 'trendings' ? this.renderCards(trendingsArray) : null}
+              {type === 'trending' ? this.renderCards(trendingsArray) : null}
               {type === 'most popular'
                 ? this.renderLeaderBoard(leaderBoardArray)
                 : null}
