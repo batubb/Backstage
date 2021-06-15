@@ -58,6 +58,10 @@ class Profile extends Component {
         typeof Store.user.biography === 'undefined'
           ? 'No Biography'
           : Store.user.biography,
+      cumulativeViewsUser:
+        typeof Store.user.cumulativeViewsUser === 'undefined'
+          ? 0
+          : Store.user.cumulativeViewsUser,
       followingArray: [],
       posts: [],
       postsArray: [],
@@ -95,6 +99,10 @@ class Profile extends Component {
             typeof Store.user.photo === 'undefined'
               ? 'https://www.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg'
               : Store.user.photo,
+          cumulativeViewsUser:
+            typeof Store.user.cumulativeViewsUser === 'undefined'
+              ? 0
+              : Store.user.cumulativeViewsUser,
         });
       });
     } else if (Store.user.type === 'influencer') {
@@ -124,6 +132,10 @@ class Profile extends Component {
             typeof Store.user.photo === 'undefined'
               ? 'https://www.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg'
               : Store.user.photo,
+          cumulativeViewsUser:
+            typeof Store.user.cumulativeViewsUser === 'undefined'
+              ? 0
+              : Store.user.cumulativeViewsUser,
         });
       });
     }
@@ -373,6 +385,7 @@ class Profile extends Component {
       daily,
       refreshing,
       optionsVisible,
+      cumulativeViewsUser,
     } = this.state;
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
@@ -415,6 +428,7 @@ class Profile extends Component {
                 biography={biography}
                 editProfileVisible
                 navigation={this.props.navigation}
+                views={cumulativeViewsUser}
               />
             </View>
             {Store.user.type === 'user'

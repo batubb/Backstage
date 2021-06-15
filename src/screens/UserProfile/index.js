@@ -341,6 +341,7 @@ class UserProfile extends Component {
             <ProfileTop
               name={user.name}
               photo={user.photo}
+              views={user.cumulativeViewsUser}
               biography={user.biography}
               subscribeButtonVisible={user.uid !== Store.user.uid}
               subscribtion={subscribtion}

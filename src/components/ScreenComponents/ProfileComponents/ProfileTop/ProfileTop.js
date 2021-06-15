@@ -7,6 +7,7 @@ import {SIZES} from '../../../../resources/theme';
 import SubscribeButton from './SubscribeButton';
 import Databar from './Databar';
 import {StackActions} from '@react-navigation/native';
+import {ListItem} from 'react-native-elements';
 
 // photo, name, biograohy, subscribeButtonVisible, user, subscribtion
 
@@ -54,8 +55,8 @@ export default function ProfileTop(props) {
           </View>
           <View style={{marginTop: 'auto'}}>
             <Text
-              text={'27.5k views'}
-              style={{fontWeight: 'bold', fontSize: 10}}
+              text={props.views}
+              style={{fontWeight: 'bold', fontSize: 10, color: 'white'}}
             />
           </View>
         </View>
