@@ -30,6 +30,7 @@ import {followerCount, timeDifference} from '../../lib';
 import {StackActions} from '@react-navigation/native';
 import database from '@react-native-firebase/database';
 import LinearGradient from 'react-native-linear-gradient';
+import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
 
 const {width} = Dimensions.get('window');
 
@@ -614,77 +615,10 @@ class Chat extends Component {
 
   renderPosts = () => {
     return (
-      <FlatList
-        data={this.state.posts}
-        keyExtractor={(item) => item.uid}
-        numColumns={3}
-        renderItem={({item}) => (
-          <View style={{width: width / 3, alignItems: 'center'}}>
-            <TouchableOpacity onPress={() => this.goTo('Comments', item)}>
-              <View
-                style={{
-                  borderRadius: 16,
-                  width: width / 3 - 10,
-                  height: 1.5 * (width / 3 - 10),
-                  backgroundColor: '#4d4d4d',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <MyImage
-                  style={{
-                    width: width / 3 - 10,
-                    height: 1.5 * (width / 3 - 10),
-                    borderRadius: 16,
-                  }}
-                  photo={item.photo}
-                />
-                <LinearGradient
-                  colors={[
-                    'transparent',
-                    'transparent',
-                    constants.BACKGROUND_COLOR,
-                  ]}
-                  style={{
-                    width: width / 3 - 10,
-                    height: 1.5 * (width / 3 - 10),
-                    borderRadius: 16,
-                    position: 'absolute',
-                  }}
-                />
-                <View
-                  style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    paddingVertical: 5,
-                    paddingHorizontal: 10,
-                    width: width / 3 - 10,
-                    alignItems: 'flex-end',
-                  }}>
-                  <Text
-                    text={`${followerCount(item.comments)} comments`}
-                    style={{fontSize: 12}}
-                  />
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text
-                      text={`${followerCount(item.view)} views`}
-                      style={{
-                        fontSize: 12,
-                        fontWeight: 'normal',
-                        marginRight: 5,
-                      }}
-                    />
-                    <Icon
-                      name="account-outline"
-                      color="#FFF"
-                      type="material-community"
-                      size={12}
-                    />
-                  </View>
-                </View>
-              </View>
-            </TouchableOpacity>
-          </View>
-        )}
+      <PostsCard
+        onPress={(item) => this.goTo('Comments', item)}
+        posts={this.state.posts}
+        numCols={3}
       />
     );
   };

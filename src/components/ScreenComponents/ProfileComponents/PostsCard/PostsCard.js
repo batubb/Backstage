@@ -72,14 +72,14 @@ export default function PostsCard(props) {
                   }}>
                   <Text
                     text={
-                      item.title.length >= 17
+                      item.title && item.title.length >= 17
                         ? `${item.title.substring(0, 17)}...`
                         : item.title
                     }
                     style={{fontSize: 12}}
                   />
                   <Text
-                    text={`${followerCount(item.view)} views`}
+                    text={`${followerCount(item.cumulativeViews)} views`}
                     style={{fontSize: 12, fontWeight: 'normal'}}
                   />
                 </View>
