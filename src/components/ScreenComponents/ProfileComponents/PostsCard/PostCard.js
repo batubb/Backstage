@@ -6,6 +6,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import constants from '../../../../resources/constants';
 import {followerCount} from '../../../../lib';
 
+import {Icon} from 'react-native-elements';
+import {SIZES} from '../../../../resources/theme';
+
 // onPress, item
 
 const CARD_BORDER_RADIUS = 6;
@@ -46,14 +49,17 @@ export default function PostCard(props) {
             }
             style={{fontSize: 12}}
           />
-          <Text
-            text={`${followerCount(
-              props.isPersonCard
-                ? props.item.cumulativeViewsUser
-                : props.item.cumulativeViews,
-            )} views`}
-            style={{fontSize: 12, fontWeight: 'normal'}}
-          />
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Icon name="play-outline" type="ionicon" color="#FFF" size={16} />
+            <Text
+              text={`${followerCount(
+                props.isPersonCard
+                  ? props.item.cumulativeViewsUser
+                  : props.item.cumulativeViews,
+              )}`}
+              style={{fontSize: 12, marginLeft: SIZES.spacing * 1}}
+            />
+          </View>
         </View>
       </View>
     </TouchableOpacity>
