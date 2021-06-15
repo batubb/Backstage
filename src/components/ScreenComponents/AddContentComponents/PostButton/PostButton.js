@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {SIZES} from '../../../../resources/theme';
+import {COLORS, SIZES} from '../../../../resources/theme';
 import {Button} from '../../../../components';
 
 export default function PostButton(props) {
@@ -9,8 +9,7 @@ export default function PostButton(props) {
       text="Post"
       buttonStyle={{
         position: 'absolute',
-        backgroundColor: '#FFF',
-        width: '20%',
+        width: '25%',
         padding: 8,
         alignSelf: 'flex-end',
         bottom: 0,
@@ -20,13 +19,11 @@ export default function PostButton(props) {
       }}
       rightIconProps={{
         name: 'chevron-right',
-        color: 'black',
+        color: COLORS.white,
         type: 'material-community',
       }}
       textStyle={{
-        color: '#000',
         fontSize: 16,
-        fontWeight: 'normal',
         flex: 1,
         textAlign: 'center',
       }}

@@ -32,7 +32,7 @@ function StoryImage(props) {
         height: SIZES.storyCircleWidth,
         borderRadius: SIZES.storyCircleWidth / 2,
         borderWidth: 2,
-        borderColor: '#fff',
+        borderColor: COLORS.primary,
       }}
       photo={props.photo}
     />

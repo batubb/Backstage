@@ -22,7 +22,7 @@ function PostingCardCaption(props) {
           ? `${props.caption.substring(0, limit)}...`
           : props.caption
       }
-      style={{fontSize: 12}}
+      style={{fontSize: 14}}
     />
   );
 }

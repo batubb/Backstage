@@ -188,6 +188,10 @@ class Home extends Component {
           data={influencer.posts.slice(0, constants.NUM_POSTS_TO_VIEW_IN_HOME)}
           keyExtractor={(item) => item.uid}
           horizontal
+          ListFooterComponentStyle={{
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
           ListFooterComponent={() => {
             if (
               influencer.posts.length <= constants.NUM_POSTS_TO_VIEW_IN_HOME
@@ -195,13 +199,7 @@ class Home extends Component {
               return null;
             }
             return (
-              <View
-                style={{
-                  alignItems: 'center',
-                  height: 1.5 * (width / 2.5 - 10),
-                  justifyContent: 'center',
-                  marginBottom: 10,
-                }}>
+              <View>
                 <TouchableOpacity
                   style={{alignItems: 'center'}} //marginHorizontal: 20}}
                   onPress={() => this.goTo('UserProfile', influencer)}>
@@ -210,7 +208,7 @@ class Home extends Component {
                       width: 50,
                       height: 50,
                       borderRadius: 25,
-                      backgroundColor: '#f26522',
+                      backgroundColor: COLORS.primary,
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}>

@@ -274,7 +274,7 @@ class WatchVideo extends Component {
                     onPress={() =>
                       this.setState({showMore: !this.state.showMore})
                     }
-                    style={{fontWeight: 'normal', fontSize: 16}}
+                    style={{fontSize: 16}}
                   />
                 </View>
                 <View
