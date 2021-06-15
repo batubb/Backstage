@@ -88,6 +88,11 @@ export default function PostsCard(props) {
                 />
               </View>
             </View>
+            {item.active ? (
+              <View style={{position: 'absolute', top: 0, right: 0}}>
+                <Text text={'asdasd'} />
+              </View>
+            ) : null}
           </TouchableOpacity>
           {props.expired ? (
             <View

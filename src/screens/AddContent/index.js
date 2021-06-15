@@ -156,7 +156,7 @@ export default class App extends Component {
       };
 
       await createVideoData(Store.user, livestream, 'live');
-      await createVideoData(Store.user, video);
+      await createVideoData(Store.user, video, 'video', 'video', 1);
 
       this.setState({
         assetId: livestreamResponse.data.data.active_asset_id,
@@ -411,6 +411,7 @@ export default class App extends Component {
 
     if (result.val()) {
       updates[`posts/${Store.user.uid}/${this.state.uid}/active`] = true;
+      updates[`posts/${Store.user.uid}/${this.state.uid}/isLive`] = 0;
     }
 
     database().ref().update(updates);
