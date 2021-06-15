@@ -33,7 +33,7 @@ export default class Button extends Component {
         disabled={disabled}
         style={[
           {
-            backgroundColor: COLORS.systemBlue,
+            backgroundColor: COLORS.primary,
             padding: this.props.secondary
               ? 10
               : 10 + secondaryStyle.borderWidth,

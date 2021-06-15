@@ -7,11 +7,11 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
-import {Text, Button} from '../../../../components';
+import {Text, Button, Divider} from '../../../../components';
 import constants from '../../../../resources/constants';
-import {SIZES} from '../../../../resources/theme';
+import {COLORS, SIZES} from '../../../../resources/theme';
 import MyImage from '../../../MyImage';
-import {Divider} from 'react-native-elements';
+
 import Modal from 'react-native-modal';
 
 export default function EditTitleModal(props) {
@@ -26,7 +26,7 @@ export default function EditTitleModal(props) {
       <View
         style={{
           marginTop: 'auto',
-          backgroundColor: 'white',
+          backgroundColor: COLORS.tertiaryBackgroundColor,
           borderTopLeftRadius: 10,
           borderTopRightRadius: 10,
         }}
@@ -42,7 +42,7 @@ export default function EditTitleModal(props) {
               width: '10%',
               height: '2%',
               borderRadius: 6,
-              backgroundColor: 'lightgray',
+              backgroundColor: COLORS.systemFill,
               alignSelf: 'center',
             }}
           />
@@ -65,14 +65,18 @@ export default function EditTitleModal(props) {
               onChangeText={(textInput) => setTitle(textInput)}
               value={title}
               maxLength={30}
-              style={{marginLeft: SIZES.spacing * 4, width: '100%'}}
+              style={{
+                marginLeft: SIZES.spacing * 4,
+                width: '100%',
+                color: COLORS.primaryLabelColor,
+              }}
+              placeholderTextColor={COLORS.placeholderTextColor}
             />
           </View>
           <Divider />
           <Text
             text={'Your followers watching this will see this title.'}
             style={{
-              color: 'black',
               fontWeight: 'normal',
               marginBottom: SIZES.spacing * 7,
               marginTop: SIZES.spacing * 7,

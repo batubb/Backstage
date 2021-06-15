@@ -5,10 +5,12 @@ const {width, height} = Dimensions.get('window');
 export const COLORS = {
   // base colors
   primary: '#A768FE', // purple
-  secondary: '#FFFFFF', // gray
+  secondary: 'white', // white
 
   backgroundColor: PlatformColor('systemBackground'),
   secondaryBackgroundColor: PlatformColor('secondarySystemBackground'),
+  tertiaryBackgroundColor: PlatformColor('tertiarySystemBackground'),
+  placeholderTextColor: PlatformColor('placeholderText'),
 
   primaryLabelColor: PlatformColor('label'),
   secondaryLabelColor: PlatformColor('secondaryLabel'),
@@ -19,6 +21,8 @@ export const COLORS = {
   white: 'white',
   separatorColor: PlatformColor('separator'),
   gray: PlatformColor('systemGray'),
+  systemFill: PlatformColor('systemFill'),
+  secondarySystemFill: PlatformColor('secondarySystemFill'),
 
   // colors
   black: '#1E1F20',

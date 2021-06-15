@@ -29,7 +29,8 @@ import {constants} from '../../resources';
 import {getDealsData, searchUser} from '../../services';
 import {followerCount} from '../../lib';
 import {StackActions} from '@react-navigation/native';
-import {SIZES} from '../../resources/theme';
+import {COLORS, SIZES} from '../../resources/theme';
+import EditTitleModal from '../../components/ScreenComponents/AddContentComponents/EditTitleModal/EditTitleModal';
 
 const {width, height} = Dimensions.get('window');
 
@@ -248,13 +249,17 @@ class Rooms extends Component {
                   justifyContent: 'flex-end',
                 }}>
                 <Text
-                  text="Anonymus Mode"
-                  style={{fontWeight: 'normal', color: 'gray', marginRight: 5}}
+                  text="Anonymous Mode"
+                  style={{
+                    fontWeight: 'normal',
+                    color: COLORS.secondaryLabelColor,
+                    marginRight: 5,
+                  }}
                 />
                 <Switch
-                  trackColor={{false: 'gray', true: 'green'}}
-                  thumbColor="#FFF"
-                  ios_backgroundColor="gray"
+                  trackColor={{false: COLORS.systemFill, true: COLORS.primary}}
+                  thumbColor={COLORS.secondary}
+                  ios_backgroundColor={COLORS.systemFill}
                   onChange={() =>
                     this.setState({
                       anon: !this.state.anon,
