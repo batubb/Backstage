@@ -285,7 +285,10 @@ class WatchVideo extends Component {
                   }}>
                   <View style={{alignItems: 'center'}}>
                     <WatchVideoIcon name="eye-outline" type="ionicon" />
-                    <Text text={'1.25K'} style={{fontSize: 12}} />
+                    <Text
+                      text={`${followerCount(video.cumulativeViews)}`}
+                      style={{fontSize: 12}}
+                    />
                   </View>
                   <TouchableOpacity
                     onPress={() => this.goTo('Comments', video)}>
