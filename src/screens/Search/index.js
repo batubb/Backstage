@@ -19,6 +19,9 @@ import {constants} from '../../resources';
 import {searchUser, getLeaderBoardData, getTrendingsData} from '../../services';
 import {followerCount} from '../../lib';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
+import {Button} from 'react-native-share';
+import {PlatformColor} from 'react-native';
+import {COLORS} from '../../resources/theme';
 
 const {width} = Dimensions.get('window');
 
@@ -86,7 +89,7 @@ class Search extends Component {
             alignItems: 'center',
             borderRadius: 4,
             borderWidth: 0.5,
-            borderColor: '#fff',
+            borderColor: COLORS.separatorColor,
             paddingVertical: 5,
             marginHorizontal: 5,
             marginVertical: 10,
