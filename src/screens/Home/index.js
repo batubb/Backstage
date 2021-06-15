@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import {observer} from 'mobx-react';
 import LinearGradient from 'react-native-linear-gradient';
-import {Icon, Header} from 'react-native-elements';
+import {Icon, Header, Divider} from 'react-native-elements';
 import {StackActions} from '@react-navigation/native';
 import {Loading, Text, MyImage} from '../../components';
 import {constants} from '../../resources';
@@ -23,8 +23,7 @@ import {
   getFollowingUserStories,
 } from '../../services';
 import Store from '../../store/Store';
-import {followerCount} from '../../lib';
-import {SIZES} from '../../resources/theme';
+import {COLORS, SIZES} from '../../resources/theme';
 import Story from '../../components/ScreenComponents/HomeComponents/Story/Story';
 import PostingCard from '../../components/ScreenComponents/HomeComponents/PostingCard/PostingCard';
 
@@ -293,9 +292,7 @@ class Home extends Component {
       <View
         style={{
           width: width,
-          borderBottomWidth: SIZES.separatorWidth,
-          borderBottomColor: constants.BAR_COLOR,
-          paddingBottom: SIZES.spacing * 3,
+          marginBottom: SIZES.spacing * 3,
         }}>
         <ScrollView horizontal>
           {this.state.loading ? (
@@ -355,6 +352,7 @@ class Home extends Component {
           }}
         />
         {this.renderStories()}
+        <Divider style={{backgroundColor: COLORS.separatorColor}} />
         {loading ? (
           <Loading
             loadingStyle={{

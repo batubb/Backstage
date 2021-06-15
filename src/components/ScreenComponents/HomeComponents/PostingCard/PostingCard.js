@@ -6,11 +6,12 @@ import {View, TouchableOpacity} from 'react-native';
 import {MyImage, Text} from '../../../../components';
 import LinearGradient from 'react-native-linear-gradient';
 import {followerCount} from '../../../../lib';
+import {Icon} from 'react-native-elements';
 
-const NUM_CARDS_IN_SCREEN = 2.5;
+const NUM_CARDS_IN_SCREEN = 2.15;
 const DISTANCE_BETWEEN_CARDS = SIZES.spacing * 3;
 const HEIGHT_MULTIPLIER = 1.5;
-const BORDER_RADIUS = 0;
+const BORDER_RADIUS = 6;
 
 function PostingCardCaption(props) {
   const limit = props.longVersion ? 17 : 10;
@@ -67,15 +68,6 @@ export default function PostingCard(props) {
             }}
             photo={props.item.photo}
           />
-          <LinearGradient
-            colors={['transparent', 'transparent', constants.BACKGROUND_COLOR]}
-            style={{
-              width: widthOfElement,
-              height: HEIGHT_MULTIPLIER * widthOfElement,
-              borderRadius: BORDER_RADIUS,
-              position: 'absolute',
-            }}
-          />
           <View
             style={{
               position: 'absolute',
@@ -104,11 +96,9 @@ export default function PostingCard(props) {
               </>
             ) : (
               <>
-                <PostingCardCaption caption={props.item.title} longVersion />
-                <PostingCardSmallCaption
-                  count={props.item.view}
-                  text={'views'}
-                />
+                <View style={{alignItems: 'flex-start'}}>
+                  <PostingCardCaption caption={props.item.title} longVersion />
+                </View>
               </>
             )}
           </View>

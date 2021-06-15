@@ -14,6 +14,7 @@ export const COLORS = {
 
   systemBlue: PlatformColor('systemBlue'),
   white: 'white',
+  separatorColor: PlatformColor('separator'),
 
   // colors
   black: '#1E1F20',
