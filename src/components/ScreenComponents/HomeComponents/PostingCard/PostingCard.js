@@ -8,7 +8,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {followerCount} from '../../../../lib';
 import {Icon} from 'react-native-elements';
 
-const NUM_CARDS_IN_SCREEN = 2.15;
+const NUM_CARDS_IN_SCREEN = 2.1;
 const DISTANCE_BETWEEN_CARDS = SIZES.spacing * 3;
 const HEIGHT_MULTIPLIER = 1.5;
 const BORDER_RADIUS = 6;

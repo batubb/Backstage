@@ -9,7 +9,7 @@ export default async function getLeaderBoardData(
 ) {
   const value = await database()
     .ref('users')
-    .orderByChild('follower')
+    .orderByChild('cumulativeViewsUser')
     .once('value');
 
   var userType = 'Follower';

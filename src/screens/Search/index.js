@@ -14,7 +14,14 @@ import {observer} from 'mobx-react';
 import {Icon} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
 import {StackActions} from '@react-navigation/native';
-import {Loading, Text, Header, MyImage, SearchBar} from '../../components';
+import {
+  Loading,
+  Text,
+  Header,
+  MyImage,
+  SearchBar,
+  Divider,
+} from '../../components';
 import {constants} from '../../resources';
 import {searchUser, getLeaderBoardData, getTrendingsData} from '../../services';
 import {followerCount} from '../../lib';
@@ -123,7 +130,12 @@ class Search extends Component {
         data={data}
         keyExtractor={(item) => item.uid}
         renderItem={({item}) => (
-          <View style={{width: width, alignItems: 'center', marginTop: 10}}>
+          <View
+            style={{
+              width: width,
+              alignItems: 'center',
+              marginTop: 10,
+            }}>
             <TouchableOpacity onPress={() => this.goTo('UserProfile', item)}>
               <View
                 style={{
@@ -131,6 +143,7 @@ class Search extends Component {
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'space-between',
+                  marginBottom: 10,
                 }}>
                 <Text text={item.index.toString()} style={{fontSize: 20}} />
                 <MyImage
@@ -150,6 +163,7 @@ class Search extends Component {
                 </View>
               </View>
             </TouchableOpacity>
+            <Divider />
           </View>
         )}
       />
