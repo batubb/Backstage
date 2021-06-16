@@ -414,6 +414,7 @@ class Profile extends Component {
                 tintColor="white"
               />
             }
+            showsVerticalScrollIndicator={false}
             contentContainerStyle={{
               width: constants.DEFAULT_PAGE_WIDTH,
               alignSelf: 'center',

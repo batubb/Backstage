@@ -8,6 +8,7 @@ import {
   ScrollView,
   Alert,
   RefreshControl,
+  Linking,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
@@ -105,7 +106,7 @@ class Home extends Component {
               border
             />
             <Label
-              text="Payment Methods"
+              text="Your Cards"
               icon="credit-card"
               onPressFunction={() => {}}
               border
@@ -117,21 +118,24 @@ class Home extends Component {
               border
             />
             <Label
-              text="Privacy Policy"
-              icon="watermark"
-              onPressFunction={() => {}}
-              border
-            />
-            <Label
-              text="Terms"
+              text="Privacy & Terms"
               icon="file-document-outline"
-              onPressFunction={() => {}}
+              onPressFunction={() => {
+                Linking.openURL(
+                  'https://www.notion.so/Legal-974079130f2d44b38a45c41fc5207800',
+                ).catch((err) => console.error('An error occurred', err));
+              }}
               border
             />
             <Label
               text="Help"
               icon="help-circle-outline"
-              onPressFunction={() => {}}
+              onPressFunction={() => {
+                Alert.alert(
+                  'Help',
+                  'Please reach out to us at backstagetechdev@gmail.com with any questions',
+                );
+              }}
               border
             />
 

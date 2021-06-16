@@ -358,8 +358,6 @@ class Home extends Component {
               alignItems: 'center',
               justifyContent: 'center',
             }}
-            textStyle={{marginTop: 10, fontWeight: 'normal'}}
-            text="Loading"
           />
         ) : (
           <ScrollView

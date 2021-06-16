@@ -333,6 +333,7 @@ class UserProfile extends Component {
             refreshControl={
               <RefreshControl refreshing={refreshing} tintColor="white" />
             }
+            showsVerticalScrollIndicator={false}
             contentContainerStyle={{
               width: constants.DEFAULT_PAGE_WIDTH,
               alignSelf: 'center',
