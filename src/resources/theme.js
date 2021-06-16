@@ -2,7 +2,7 @@ import {PlatformColor} from 'react-native';
 import {Dimensions} from 'react-native';
 const {width, height} = Dimensions.get('window');
 
-export const COLORS = {
+const ADAPTIVE_COLORS = {
   // base colors
   primary: '#A768FE', // purple
   secondary: 'white', // white
@@ -34,6 +34,45 @@ export const COLORS = {
   transparent: 'transparent',
   darkgray: '#898C95',
 };
+
+const DARK_COLORS = {
+  // base colors
+  primary: '#A768FE', // purple
+  secondary: 'white', // white
+
+  backgroundColor: '#000000ff',
+  secondaryBackgroundColor: '#1c1c1eff',
+  tertiaryBackgroundColor: '#2c2c2eff',
+  placeholderTextColor: '#ebebf54c',
+
+  primaryLabelColor: '#ffffffff',
+  secondaryLabelColor: '#ebebf599',
+  tertiaryLabelColor: '#ebebf54c',
+  quaternaryLabel: '#ebebf52d',
+
+  systemBlue: '#0a84ffff',
+  white: 'white',
+  separatorColor: '#54545899',
+  gray: '#8e8e93ff',
+  systemFill: '#7878805b',
+  secondarySystemFill: '#78788051',
+
+  // colors
+  black: '#1E1F20',
+
+  lightGray: '#F5F5F6',
+  lightGray2: '#F6F6F7',
+  lightGray3: '#EFEFF1',
+  lightGray4: '#F8F8F9',
+  transparent: 'transparent',
+  darkgray: '#898C95',
+};
+
+const LIGHT_COLORS = {
+  // TO BE FILLED
+};
+
+export const COLORS = DARK_COLORS;
 
 export const SIZES = {
   // global sizes
