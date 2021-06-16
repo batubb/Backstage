@@ -51,16 +51,20 @@ export default function EditTitleModal(props) {
               flexDirection: 'row',
               marginVertical: SIZES.spacing * 7,
             }}>
-            <MyImage
-              style={{
-                width: constants.PROFILE_PIC_SIZE / 2,
-                height: constants.PROFILE_PIC_SIZE / 2,
-                borderRadius: constants.PROFILE_PIC_SIZE / 4,
-              }}
-              photo={props.photo}
-            />
+            {props.photo && (
+              <MyImage
+                style={{
+                  width: constants.PROFILE_PIC_SIZE / 2,
+                  height: constants.PROFILE_PIC_SIZE / 2,
+                  borderRadius: constants.PROFILE_PIC_SIZE / 4,
+                }}
+                photo={props.photo}
+              />
+            )}
             <TextInput
-              placeholder="Add a Title..."
+              placeholder={
+                props.placeholder ? props.placeholder : 'Add a Title...'
+              }
               underlineColorAndroid="transparent"
               onChangeText={(textInput) => setTitle(textInput)}
               value={title}
@@ -75,7 +79,11 @@ export default function EditTitleModal(props) {
           </View>
           <Divider />
           <Text
-            text={'Your followers watching this will see this title.'}
+            text={
+              props.description
+                ? props.description
+                : 'Your followers watching this will see this title.'
+            }
             style={{
               fontWeight: 'normal',
               marginBottom: SIZES.spacing * 7,
@@ -83,7 +91,7 @@ export default function EditTitleModal(props) {
             }}
           />
           <Button
-            text="Add Title"
+            text={props.buttonText ? props.buttonText : 'Add Title'}
             onPress={() => {
               props.onChangeText(title);
             }}

@@ -116,6 +116,30 @@ class Rooms extends Component {
     ));
   };
 
+  renderNameModal2 = () => {
+    return (
+      <EditTitleModal
+        placeholder={'Your Nickname'}
+        buttonText={'Confirm'}
+        description={'This will be your anonymous nickname on chat.'}
+        closeModal={() => {
+          this.setState({
+            nameModalVisible: false,
+            anon: false,
+            anonData: null,
+            nameInput: '',
+          });
+        }}
+        onChangeText={(name) =>
+          this.setState({
+            anonData: {nickname: name, anonymus: true},
+            nameModalVisible: false,
+          })
+        }
+      />
+    );
+  };
+
   renderNameModal = () => {
     return (
       <SafeAreaView
