@@ -7,7 +7,7 @@ import constants from '../../../../resources/constants';
 import {followerCount} from '../../../../lib';
 
 import {Icon} from 'react-native-elements';
-import {SIZES} from '../../../../resources/theme';
+import {COLORS, SIZES} from '../../../../resources/theme';
 
 // onPress, item
 
@@ -22,15 +22,27 @@ export default function PostCard(props) {
         style={{
           borderRadius: CARD_BORDER_RADIUS,
           backgroundColor: '#4d4d4d',
+          width: '100%',
+          height: '100%',
+          justifyContent: 'center',
         }}>
-        <MyImage
-          style={{
-            borderRadius: CARD_BORDER_RADIUS,
-            height: '100%',
-            width: '100%',
-          }}
-          photo={props.item.photo}
-        />
+        {props.item.photo === constants.DEFAULT_PHOTO ? (
+          <Icon
+            name="account"
+            type="material-community"
+            color={COLORS.primaryLabelColor}
+            size={82}
+          />
+        ) : (
+          <MyImage
+            style={{
+              borderRadius: CARD_BORDER_RADIUS,
+              height: '100%',
+              width: '100%',
+            }}
+            photo={props.item.photo}
+          />
+        )}
 
         <View
           style={{
@@ -50,7 +62,12 @@ export default function PostCard(props) {
             style={{fontSize: 12}}
           />
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Icon name="play-outline" type="ionicon" color="#FFF" size={16} />
+            <Icon
+              name="play-outline"
+              type="ionicon"
+              color={COLORS.primaryLabelColor}
+              size={16}
+            />
             <Text
               text={`${followerCount(
                 props.isPersonCard
