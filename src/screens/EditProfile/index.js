@@ -22,7 +22,7 @@ import {makeid} from '../../lib';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
-import {SIZES} from '../../resources/theme';
+import {COLORS, SIZES} from '../../resources/theme';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const {width} = Dimensions.get('window');
@@ -265,7 +265,7 @@ class EditProfile extends Component {
                   style={{
                     fontWeight: 'bold',
                     marginTop: SIZES.spacing * 5,
-                    color: constants.BLUE,
+                    color: COLORS.primary,
                   }}
                 />
               </TouchableOpacity>

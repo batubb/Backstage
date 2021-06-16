@@ -278,7 +278,7 @@ class Chat extends Component {
             color: this.state.general ? constants.BACKGROUND_COLOR : '#FFF',
             fontSize: 12,
           }}
-          text="General"
+          text="Main"
           onPress={() => this.setState({general: true})}
         />
         <Button
@@ -296,7 +296,7 @@ class Chat extends Component {
             color: this.state.general ? '#FFF' : constants.BACKGROUND_COLOR,
             fontSize: 12,
           }}
-          text="Contents"
+          text="Content"
           onPress={() => this.setState({general: false})}
         />
       </View>

@@ -21,7 +21,7 @@ import {StackActions} from '@react-navigation/native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
-import {SIZES} from '../../resources/theme';
+import {COLORS, SIZES} from '../../resources/theme';
 
 const {width} = Dimensions.get('window');
 
@@ -144,7 +144,7 @@ class MyInfo extends Component {
           leftButtonIcon="chevron-left"
           rightButtonPress={() => this.saveInfo()}
           rightButtonIcon="check"
-          rightButtonColor={constants.BLUE}
+          rightButtonColor={COLORS.primary}
         />
         {loading ? (
           <Loading
