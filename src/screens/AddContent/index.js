@@ -57,7 +57,12 @@ export default class App extends Component {
       publicKey: '',
       ratio: '16:9',
       isRecording: false,
-      indexButton: 1,
+      indexButton:
+        this.props.route &&
+        this.props.route.params &&
+        this.props.route.params.startButtonIdx
+          ? this.props.route.params.startButtonIdx
+          : 1,
       liveStreamId: '',
       loading: false,
       url: '',

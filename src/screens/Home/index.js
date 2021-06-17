@@ -101,7 +101,7 @@ class Home extends Component {
       });
       return this.props.navigation.dispatch(replaceActions);
     } else if (route === 'AddContent') {
-      const replaceActions = StackActions.push(route);
+      const replaceActions = StackActions.push(route, {startButtonIdx: 2});
       return this.props.navigation.dispatch(replaceActions);
     }
   };
