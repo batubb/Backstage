@@ -299,7 +299,7 @@ class Home extends Component {
             <Story
               onPress={() => this.goTo('WatchStory', this.state.myStoriesArray)}
               photo={Store.user.photo}
-              text={'Your Stories'}
+              text={'Your Story'}
             />
           ) : (
             <Story

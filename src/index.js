@@ -157,6 +157,7 @@ class TabBarBottom extends React.Component {
           style: {
             backgroundColor: constants.BAR_COLOR,
             borderTopWidth: 0,
+            height: '11%',
           },
           inactiveTintColor: COLORS.gray,
           activeTintColor: COLORS.primary,

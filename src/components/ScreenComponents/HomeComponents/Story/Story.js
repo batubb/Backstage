@@ -16,8 +16,12 @@ function StoryCircle(props) {
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: props.loading ? constants.BAR_COLOR : null,
-        borderWidth: !props.loading ? 2.5 : null,
-        borderColor: !props.loading ? COLORS.primary : null,
+        borderWidth: !props.loading ? 3 : null,
+        borderColor: !props.loading
+          ? props.text === 'Add Story'
+            ? COLORS.secondary
+            : COLORS.primary
+          : null,
       }}>
       {props.children}
     </View>
@@ -31,8 +35,8 @@ function StoryImage(props) {
         width: '100%',
         height: '100%',
         borderRadius: SIZES.storyCircleWidth / 2,
-        borderWidth: 1,
-        borderColor: COLORS.secondary,
+        borderWidth: 1.5,
+        borderColor: COLORS.backgroundColor,
       }}
       photo={props.photo}
     />
@@ -51,7 +55,7 @@ export default function Story(props) {
     <TouchableOpacity
       onPress={props.onPress}
       style={{alignItems: 'center', marginRight: SIZES.spacing * 7}}>
-      <StoryCircle loading={props.loading}>
+      <StoryCircle loading={props.loading} text={props.text}>
         {!props.loading && !props.addStory ? (
           <StoryImage photo={props.photo} />
         ) : props.addStory ? (
@@ -73,7 +77,10 @@ export default function Story(props) {
               borderColor: COLORS.secondary,
               padding: 1,
             }}>
-            <Text text={'LIVE'} style={{fontSize: 8}} />
+            <Text
+              text={'LIVE'}
+              style={{fontSize: 8, color: COLORS.secondary}}
+            />
           </View>
         ) : null}
       </StoryCircle>
