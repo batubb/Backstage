@@ -17,7 +17,7 @@ import PhoneInput from 'react-native-phone-number-input';
 import {COLORS, SIZES} from '../../resources/theme';
 
 const {width} = Dimensions.get('window');
-//auth().settings.appVerificationDisabledForTesting = true;
+auth().settings.appVerificationDisabledForTesting = true;
 const BORDER_RADIUS = 6;
 
 class Login extends Component {
