@@ -274,7 +274,7 @@ class TabBarBottom extends React.Component {
                   justifyContent: 'center',
                 }}>
                 <Icon
-                  name="account"
+                  name="account-outline"
                   type="material-community"
                   size={focused ? 30 : 30}
                   color={color}

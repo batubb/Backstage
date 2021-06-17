@@ -13,13 +13,17 @@ import Store from '../../store/Store';
 import SMSVerifyCode from 'react-native-sms-verifycode';
 import {SafeAreaView} from 'react-native';
 import {KeyboardAvoidingView} from 'react-native';
+import PhoneInput from 'react-native-phone-number-input';
+import {COLORS, SIZES} from '../../resources/theme';
 
 const {width} = Dimensions.get('window');
-auth().settings.appVerificationDisabledForTesting = true;
+//auth().settings.appVerificationDisabledForTesting = true;
+const BORDER_RADIUS = 6;
 
 class Login extends Component {
   constructor(props) {
     super(props);
+    this.phoneRef = React.createRef();
     this.state = {
       loading: true,
       phoneFormatted: '',
@@ -48,7 +52,7 @@ class Login extends Component {
 
     try {
       const confirmation = await auth().signInWithPhoneNumber(
-        `+${this.state.phoneExtracted}`,
+        `${this.state.phoneFormatted}`,
       );
       this.setState({confirmation, loading: false});
     } catch (error) {
@@ -107,14 +111,15 @@ class Login extends Component {
         onInputCompleted={(text) => this.setState({confirmationCode: text})}
         verifyCodeLength={6}
         containerBackgroundColor={constants.BACKGROUND_COLOR}
-        codeViewBorderRadius={24}
+        codeViewBorderRadius={0}
         codeViewBorderWidth={2}
         containerPaddingVertical={20}
-        containerPaddingHorizontal={50}
-        focusedCodeViewBorderColor="lightgray"
-        codeViewBorderColor="gray"
+        containerPaddingHorizontal={30}
+        focusedCodeViewBorderColor={COLORS.secondary}
+        codeViewBorderColor={COLORS.gray}
         codeFontSize={20}
         codeColor={'#FFF'}
+        autoFocus
       />
     );
   };
@@ -127,7 +132,6 @@ class Login extends Component {
       confirmation,
       confirmationCode,
     } = this.state;
-
     if (loading) {
       return (
         <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
@@ -149,65 +153,94 @@ class Login extends Component {
           style={{
             flex: 1,
             backgroundColor: constants.BACKGROUND_COLOR,
-            justifyContent: 'center',
+            //justifyContent: 'center',
           }}>
           <KeyboardAvoidingView behavior="padding">
-            {confirmation ? (
-              <View style={{width: width, alignItems: 'center'}}>
-                <View style={{width: width - 20}}>
-                  <Text
-                    text={`Enter the 6-digit code sent to you at ${phoneFormatted}`}
-                    style={{fontSize: 24}}
-                  />
-                </View>
-                {this.codeInput(confirmationCode)}
-                <Button
-                  text="Enter Code"
-                  buttonStyle={{
-                    backgroundColor: '#FFF',
-                    width: width - 20,
-                    borderRadius: 24,
-                    padding: 13,
-                  }}
-                  textStyle={{color: '#000', fontSize: 16}}
-                  onPress={() => this.enterAuthCode()}
+            <View
+              style={{
+                width: '85%',
+                height: '100%',
+                alignSelf: 'center',
+              }}>
+              <View
+                style={{
+                  width: '100%',
+                  height: '40%',
+                  justifyContent: 'flex-end',
+                  //alignItems: 'center',
+                }}>
+                <Text
+                  text={
+                    confirmation
+                      ? 'Enter the code we just texted you '
+                      : 'Enter your phone number'
+                  }
+                  style={{fontWeight: 'normal', fontSize: 30}}
                 />
               </View>
-            ) : (
-              <View style={{width: width, alignItems: 'center'}}>
-                <View style={{width: width - 20, marginVertical: 10}}>
-                  <Text text="Enter your phone number" style={{fontSize: 24}} />
-                </View>
-                {this.phoneInput(phoneExtracted)}
-                <View style={{width: width - 40, marginVertical: 10}}>
-                  <Text
-                    text="We will send you an SMS containing the verification code. Messages and data may be charged."
-                    style={{fontSize: 12, fontWeight: 'normal'}}
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'space-around',
+                }}>
+                {confirmation ? (
+                  this.codeInput(confirmationCode)
+                ) : (
+                  <PhoneInput
+                    ref={this.phoneRef}
+                    defaultValue={''}
+                    containerStyle={{
+                      borderRadius: BORDER_RADIUS,
+                      width: '100%',
+                    }}
+                    textContainerStyle={{
+                      borderTopRightRadius: BORDER_RADIUS,
+                      borderBottomRightRadius: BORDER_RADIUS,
+                    }}
+                    defaultCode="US"
+                    layout="first"
+                    onChangeText={(text) => {
+                      this.setState({phoneExtracted: text});
+                    }}
+                    onChangeFormattedText={(text) => {
+                      this.setState({phoneFormatted: text});
+                    }}
+                    withDarkTheme
+                    withShadow
+                    autoFocus
                   />
-                </View>
+                )}
+              </View>
+              <View
+                style={{
+                  width: '100%',
+                  height: '30%',
+                  alignItems: 'center',
+                }}>
+                {!confirmation && (
+                  <Text
+                    text={
+                      "By entering your number, you're agreeing to our Terms of Service and Privacy Policy. Thanks!"
+                    }
+                    style={{
+                      width: '100%',
+                      textAlign: 'center',
+                      fontWeight: 'normal',
+                      marginBottom: SIZES.spacing * 5,
+                    }}
+                    secondary
+                  />
+                )}
                 <Button
-                  text="Next"
-                  buttonStyle={{
-                    backgroundColor: '#FFF',
-                    width: width - 20,
-                    borderRadius: 24,
-                    padding: 13,
-                  }}
-                  textStyle={{color: '#000', fontSize: 16}}
-                  onPress={() => this.sendAuthCode()}
-                />
-                <Button
-                  text="Do you need help?"
-                  buttonStyle={{
-                    backgroundColor: constants.BACKGROUND_COLOR,
-                    marginTop: 10,
-                    alignItems: 'flex-end',
-                  }}
-                  textStyle={{color: constants.BLUE, fontSize: 12}}
-                  onPress={() => this.goTo('Intro')}
+                  text={'Next'}
+                  buttonStyle={{width: '100%'}}
+                  onPress={() =>
+                    confirmation ? this.enterAuthCode() : this.sendAuthCode()
+                  }
                 />
               </View>
-            )}
+            </View>
           </KeyboardAvoidingView>
         </SafeAreaView>
       );
