@@ -1080,12 +1080,7 @@ export default class App extends Component {
               this.selectMediaFromRoll(indexButton === 0 ? 'video' : 'story');
             }}>
             <View style={{padding: 10}}>
-              <Icon
-                name="upload"
-                color="#FFF"
-                type="material-community"
-                size={32}
-              />
+              <Icon name="images-sharp" color="#FFF" type="ionicon" size={26} />
             </View>
           </TouchableOpacity>
         ) : null}
