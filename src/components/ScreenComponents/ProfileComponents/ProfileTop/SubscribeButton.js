@@ -13,8 +13,8 @@ export default function SubscribeButton(props) {
           ? props.subscribtion.subscribtion
             ? 'Subscribed'
             : 'Subscribe'
-          : `Active until ${moment(props.subscribtion.endTimestamp).format(
-              'L',
+          : `Ends on ${moment(props.subscribtion.endTimestamp).format(
+              'MMMM DD',
             )}`
       }
       secondary={

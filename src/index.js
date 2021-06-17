@@ -178,7 +178,7 @@ class TabBarBottom extends React.Component {
                 <Icon
                   name="home"
                   type="material-community"
-                  size={focused ? 30 : 26}
+                  size={focused ? 30 : 30}
                   color={color}
                 />
               </View>
@@ -251,8 +251,8 @@ class TabBarBottom extends React.Component {
                   justifyContent: 'center',
                 }}>
                 <Icon
-                  name="account-group"
-                  type="material-community"
+                  name="chatbox-outline"
+                  type="ionicon"
                   size={focused ? 30 : 30}
                   color={color}
                 />
