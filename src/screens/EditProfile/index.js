@@ -166,9 +166,7 @@ class EditProfile extends Component {
       await checkUserInfo(Store.uid, true);
       this.setState({photo: constants.DEFAULT_PHOTO});
     } catch (error) {
-      return Alert.alert('Oops', 'Something unexpected happens.', [
-        {text: 'Okay'},
-      ]);
+      return Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
     }
     this.setState({loading: false});
   };

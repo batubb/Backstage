@@ -121,15 +121,13 @@ class Subscribe extends Component {
           }
         } else {
           this.setState({loading: false});
-          return Alert.alert('Oops', 'Something is wrong please try again.', [
+          return Alert.alert('Oops', constants.ERROR_ALERT_MSG, [
             {text: 'Okay'},
           ]);
         }
       } else {
         this.setState({loading: false});
-        return Alert.alert('Oops', 'Something is wrong please try again.', [
-          {text: 'Okay'},
-        ]);
+        return Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
       }
     } catch (error) {
       console.log(error);

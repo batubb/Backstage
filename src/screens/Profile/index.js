@@ -9,7 +9,6 @@ import {
   RefreshControl,
   TouchableOpacity,
   FlatList,
-  Alert,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';

@@ -248,9 +248,7 @@ export default class App extends Component {
       await getUserPosts(Store.user.uid, true);
       this.props.navigation.dispatch(StackActions.pop());
     } catch (error) {
-      return Alert.alert('Oops', 'Something unexpected happens.', [
-        {text: 'Okay'},
-      ]);
+      return Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
     }
 
     this.setState({loading: false});
@@ -280,9 +278,7 @@ export default class App extends Component {
       await createStoryData(Store.user, content, type, this.state.title);
       this.props.navigation.dispatch(StackActions.pop());
     } catch (error) {
-      return Alert.alert('Oops', 'Something unexpected happens.', [
-        {text: 'Okay'},
-      ]);
+      return Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
     }
 
     this.setState({loading: false});
@@ -416,7 +412,7 @@ export default class App extends Component {
 
     database().ref().update(updates);
 
-    return Alert.alert('Yeyy', 'Your live stream is finished. ', [
+    return Alert.alert('Success', 'Your live stream has finished. ', [
       {text: 'Okay'},
     ]);
   };
@@ -465,7 +461,7 @@ export default class App extends Component {
     var updates = {};
 
     if (!this.state.influencer) {
-      return Alert.alert('Oops', 'You have to accept Terms & Conditions.', [
+      return Alert.alert('Oops', 'You have to accept the Terms & Conditions.', [
         {text: 'Okay'},
       ]);
     }

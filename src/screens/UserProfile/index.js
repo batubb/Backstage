@@ -117,9 +117,7 @@ class UserProfile extends Component {
         [{text: 'Okay'}],
       );
     } else {
-      Alert.alert('Oops', 'We are sorry for this. Please try again later.', [
-        {text: 'Okay'},
-      ]);
+      Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
     }
 
     this.setState({optionsVisible: false});
@@ -158,16 +156,14 @@ class UserProfile extends Component {
       this.setState({loading: false});
 
       Alert.alert(
-        'Oops',
+        'Success',
         `You have cancelled your subscribtion. Your subscription will continue until ${moment(
           this.state.subscribtion.endTimestamp,
         ).format('LL')}.`,
         [{text: 'Okay'}],
       );
     } else {
-      Alert.alert('Oops', 'We are sorry for this. Please try again later.', [
-        {text: 'Okay'},
-      ]);
+      Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
     }
   };
 

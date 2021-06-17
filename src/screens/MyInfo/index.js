@@ -108,9 +108,7 @@ class MyInfo extends Component {
       this.props.navigation.dispatch(StackActions.pop());
     } catch (error) {
       this.setState({loading: false});
-      return Alert.alert('Oops', 'Something unexpected happens.', [
-        {text: 'Okay'},
-      ]);
+      return Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
     }
   };
 

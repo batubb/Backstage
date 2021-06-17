@@ -59,11 +59,7 @@ class Home extends Component {
               this.goTo('Login');
             })
             .catch(() => {
-              Alert.alert(
-                'Oops',
-                'Something went wrong. We are sorry for this',
-                [{text: 'Okay'}],
-              );
+              Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
               this.setState({loading: false});
             });
         },

@@ -162,9 +162,7 @@ class WatchVideo extends Component {
         [{text: 'Okay'}],
       );
     } else {
-      Alert.alert('Oops', 'We are sorry for this. Please try again later.', [
-        {text: 'Okay'},
-      ]);
+      Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
     }
 
     this.setState({optionsVisible: false});
