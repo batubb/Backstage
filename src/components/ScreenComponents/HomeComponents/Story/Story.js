@@ -16,8 +16,8 @@ function StoryCircle(props) {
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: props.loading ? constants.BAR_COLOR : null,
-        borderWidth: !props.loading ? 2 : null,
-        borderColor: !props.loading ? COLORS.secondary : null,
+        borderWidth: !props.loading ? 2.5 : null,
+        borderColor: !props.loading ? COLORS.primary : null,
       }}>
       {props.children}
     </View>
@@ -28,11 +28,11 @@ function StoryImage(props) {
   return (
     <MyImage
       style={{
-        width: SIZES.storyCircleWidth,
-        height: SIZES.storyCircleWidth,
+        width: '100%',
+        height: '100%',
         borderRadius: SIZES.storyCircleWidth / 2,
-        borderWidth: 2,
-        borderColor: COLORS.primary,
+        borderWidth: 1,
+        borderColor: COLORS.secondary,
       }}
       photo={props.photo}
     />
@@ -57,13 +57,33 @@ export default function Story(props) {
         ) : props.addStory ? (
           <Icon name="plus" color="#FFF" type="material-community" size={32} />
         ) : null}
+        {props.isLive ? (
+          <View
+            style={{
+              position: 'absolute',
+              alignSelf: 'center',
+              bottom: -5,
+              height: '20%',
+              backgroundColor: COLORS.primary,
+              width: '50%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 5,
+              borderWidth: 1,
+              borderColor: COLORS.secondary,
+              padding: 1,
+            }}>
+            <Text text={'LIVE'} style={{fontSize: 8}} />
+          </View>
+        ) : null}
       </StoryCircle>
+
       {!props.loading ? (
         <Text
           text={props.text}
           style={{
             fontSize: 12,
-            marginTop: SIZES.spacing * 1,
+            marginTop: SIZES.spacing * 3,
             fontWeight: '400',
           }}
         />
