@@ -1036,39 +1036,6 @@ export default class App extends Component {
                   : null
               }
             />
-            {indexButton === 0 || indexButton === 2 ? (
-              <TouchableOpacity
-                style={{position: 'absolute', left: 0, top: 10}}
-                onPress={() =>
-                  this.selectMediaFromRoll(
-                    indexButton === 0 ? 'video' : 'story',
-                  )
-                }>
-                <View
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    alignSelf: 'center',
-                    backgroundColor: 'transparent',
-                    borderColor: 'darkgrey',
-                    borderTopWidth: 1,
-                    borderBottomWidth: 1,
-                    borderRightWidth: 1,
-                    borderTopRightRadius: 12,
-                    borderBottomRightRadius: 12,
-                    padding: 10,
-                    flexDirection: 'row',
-                  }}>
-                  <Icon
-                    name="upload"
-                    color="#FFF"
-                    type="material-community"
-                    size={16}
-                  />
-                  <Text text="Upload" style={{marginLeft: 5}} />
-                </View>
-              </TouchableOpacity>
-            ) : null}
           </View>
         ) : null}
 
@@ -1101,6 +1068,22 @@ export default class App extends Component {
             <Icon name="camera-reverse" color="#FFF" type="ionicon" size={32} />
           </View>
         </TouchableOpacity>
+        {indexButton === 0 || indexButton === 2 ? (
+          <TouchableOpacity
+            style={{position: 'absolute', left: 0, bottom: 40}}
+            onPress={() => {
+              this.selectMediaFromRoll(indexButton === 0 ? 'video' : 'story');
+            }}>
+            <View style={{padding: 10}}>
+              <Icon
+                name="upload"
+                color="#FFF"
+                type="material-community"
+                size={32}
+              />
+            </View>
+          </TouchableOpacity>
+        ) : null}
         {url !== '' && type === 'video' ? this.renderVideo(title) : null}
         {url !== '' && type === 'storyPhoto' ? this.renderStoryPhoto() : null}
         {url !== '' && type === 'storyVideo' ? this.renderStoryVideo() : null}
