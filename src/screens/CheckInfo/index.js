@@ -45,10 +45,10 @@ class CheckInfo extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false,
+      loading: true,
       name: '',
       username: '@',
-      step: 3,
+      step: 1,
       followingArray: [],
       userArray: [],
       search: '',
@@ -62,7 +62,7 @@ class CheckInfo extends Component {
 
     if (!result) {
       const userArray = await getDealsData();
-      //this.setState({ loading: false, userArray });
+      this.setState({loading: false, userArray});
     } else {
       const replaceActions = StackActions.replace('TabBarMenu');
       return this.props.navigation.dispatch(replaceActions);

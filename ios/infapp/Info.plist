@@ -25,9 +25,21 @@
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string></string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.234737203229-3o705fotnfletrrpq4qa4slv0tm4r1fj</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.backstageinf.cooldigital</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>backstage</string>
 			</array>
 		</dict>
 	</array>

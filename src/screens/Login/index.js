@@ -17,7 +17,7 @@ import PhoneInput from 'react-native-phone-number-input';
 import {COLORS, SIZES} from '../../resources/theme';
 
 const {width} = Dimensions.get('window');
-auth().settings.appVerificationDisabledForTesting = true;
+auth().settings.appVerificationDisabledForTesting = false;
 const BORDER_RADIUS = 6;
 
 class Login extends Component {
@@ -56,7 +56,9 @@ class Login extends Component {
       );
       this.setState({confirmation, loading: false});
     } catch (error) {
-      Alert.alert('Oops', 'Invalid format.', [{text: 'Okay'}]);
+      Alert.alert('Oops', 'Please try again. Error: ' + error, [
+        {text: 'Okay'},
+      ]);
       this.setState({loading: false});
     }
   };
