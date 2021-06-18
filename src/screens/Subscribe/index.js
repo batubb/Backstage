@@ -15,6 +15,7 @@ import {
 import {observer} from 'mobx-react';
 import {Loading, Header, Text, MyImage, Button} from '../../components';
 import {constants} from '../../resources';
+import * as RNIap from 'react-native-iap';
 import {
   subscribeInfluencer,
   checkUserInfo,
@@ -28,6 +29,11 @@ import ProfileTop from '../../components/ScreenComponents/ProfileComponents/Prof
 import {DEFAULT_PAGE_WIDTH} from '../../resources/constants';
 
 const {width} = Dimensions.get('window');
+
+const items = Platform.select({
+  ios: ['com.example.productId'],
+  android: ['com.example.productId'],
+});
 
 class Subscribe extends Component {
   constructor(props) {
@@ -51,6 +57,15 @@ class Subscribe extends Component {
 
   componentDidMount = async () => {
     const influencer = await checkUserInfo(this.state.influencer.uid);
+    RNIap.prepare();
+    RNIap.getProducts(items)
+      .then((products) => {
+        //handle success of fetch product list
+        console.log(products);
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
     this.setState({loading: false, influencer});
   };
 
@@ -61,6 +76,16 @@ class Subscribe extends Component {
       this.state.expYear === '' ||
       this.state.cvc === ''
     ) {
+      RNIap.buyProduct('com.example.productId')
+        .then((purchase) => {
+          this.setState({
+            receipt: purchase.transactionReceipt,
+          });
+          // handle success of purchase product
+        })
+        .catch((error) => {
+          console.log(error.message);
+        });
       return Alert.alert('Oops', 'You have to enter all inputs.', [
         {text: 'Okay'},
       ]);

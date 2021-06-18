@@ -8,7 +8,6 @@ target 'infapp' do
 
   use_react_native!(:path => config["reactNativePath"])
 
-
   target 'infappTests' do
     inherit! :complete
     # Pods for testing
