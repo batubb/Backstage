@@ -21,7 +21,9 @@ export default function PostCard(props) {
       <View
         style={{
           borderRadius: CARD_BORDER_RADIUS,
-          backgroundColor: '#4d4d4d',
+          backgroundColor: props.addButton
+            ? COLORS.secondaryBackgroundColor
+            : '#4d4d4d',
           width: '100%',
           height: '100%',
           justifyContent: 'center',

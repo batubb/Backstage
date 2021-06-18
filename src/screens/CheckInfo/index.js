@@ -74,7 +74,7 @@ class CheckInfo extends Component {
   createAccount = async () => {
     const data = {
       name: this.state.name,
-      username: this.state.username.toLowerCase(),
+      username: this.state.username.toLowerCase().substring(1),
       type: 'user',
       follower: 0,
       like: 0,

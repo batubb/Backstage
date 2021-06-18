@@ -13,7 +13,7 @@ const {width} = Dimensions.get('screen');
 
 const secondaryStyle = {
   backgroundColor: 'transparent',
-  borderColor: PlatformColor('separator'),
+  borderColor: COLORS.separatorColor,
   borderWidth: 1,
 };
 
