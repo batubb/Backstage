@@ -157,7 +157,6 @@ class TabBarBottom extends React.Component {
           style: {
             backgroundColor: constants.BAR_COLOR,
             borderTopWidth: 0,
-            height: '11%',
           },
           inactiveTintColor: COLORS.gray,
           activeTintColor: COLORS.primary,
@@ -170,14 +169,12 @@ class TabBarBottom extends React.Component {
             tabBarIcon: ({color, focused}) => (
               <View
                 style={{
-                  width: 40,
-                  height: 40,
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
                 <Icon
                   name="home"
-                  type="material-community"
+                  type="ionicon"
                   size={focused ? 30 : 30}
                   color={color}
                 />
@@ -193,14 +190,12 @@ class TabBarBottom extends React.Component {
             tabBarIcon: ({color, focused}) => (
               <View
                 style={{
-                  width: 40,
-                  height: 40,
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
                 <Icon
-                  name="magnify"
-                  type="material-community"
+                  name="ios-search-sharp"
+                  type="ionicon"
                   size={focused ? 30 : 30}
                   color={color}
                 />
@@ -216,15 +211,13 @@ class TabBarBottom extends React.Component {
             tabBarIcon: ({color, focused}) => (
               <View
                 style={{
-                  width: 40,
-                  height: 40,
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
                 <Icon
                   name="add-circle-outline"
-                  type="material-icons"
-                  size={focused ? 30 : 30}
+                  type="ionicon"
+                  size={focused ? 32 : 32}
                   color={color}
                 />
               </View>
@@ -245,13 +238,11 @@ class TabBarBottom extends React.Component {
             tabBarIcon: ({color, focused}) => (
               <View
                 style={{
-                  width: 40,
-                  height: 40,
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
                 <Icon
-                  name="chatbox-outline"
+                  name="md-chatbox-ellipses-outline"
                   type="ionicon"
                   size={focused ? 30 : 30}
                   color={color}
@@ -268,15 +259,13 @@ class TabBarBottom extends React.Component {
             tabBarIcon: ({color, focused}) => (
               <View
                 style={{
-                  width: 40,
-                  height: 40,
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
                 <Icon
-                  name="account-outline"
-                  type="material-community"
-                  size={focused ? 30 : 30}
+                  name="md-person-circle-outline"
+                  type="ionicon"
+                  size={focused ? 32 : 32}
                   color={color}
                 />
               </View>
