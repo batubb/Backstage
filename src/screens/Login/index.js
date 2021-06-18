@@ -189,7 +189,6 @@ class Login extends Component {
                     onChangeFormattedText={(text) => {
                       this.setState({phoneFormatted: text});
                     }}
-                    withDarkTheme
                     withShadow
                     autoFocus
                   />

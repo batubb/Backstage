@@ -62,7 +62,7 @@ class Profile extends Component {
         typeof Store.user.cumulativeViewsUser === 'undefined'
           ? 0
           : Store.user.cumulativeViewsUser,
-      followingArray: [],
+
       posts: [],
       postsArray: [],
       refreshing: false,
@@ -79,11 +79,7 @@ class Profile extends Component {
 
   componentDidMount = async () => {
     if (Store.user.type === 'user') {
-      const followingArray = await getFollowingUserPosts(
-        Store.uid,
-        Store.followList,
-      );
-      this.setState({loading: false, followingArray});
+      this.setState({loading: false});
 
       this.unsubscribe = this.props.navigation.addListener('focus', (e) => {
         this.setState({
@@ -149,11 +145,7 @@ class Profile extends Component {
     this.setState({refreshing: true});
 
     if (Store.user.type === 'user') {
-      const followingArray = await getFollowingUserPosts(
-        Store.uid,
-        Store.followList,
-      );
-      this.setState({refreshing: false, followingArray});
+      this.setState({refreshing: false});
     } else if (Store.user.type === 'influencer') {
       const posts = await getUserPosts(Store.user.uid, true);
       const {postsArray, daily} = setPosts(posts);
@@ -380,7 +372,6 @@ class Profile extends Component {
       photo,
       name,
       biography,
-      followingArray,
       postsArray,
       daily,
       refreshing,
@@ -432,9 +423,6 @@ class Profile extends Component {
                 views={cumulativeViews}
               />
             </View>
-            {Store.user.type === 'user'
-              ? this.renderUserSection(followingArray)
-              : null}
             {Store.user.type === 'influencer' ? (
               <View>
                 {daily.length !== 0 ? this.renderPosts2(daily) : null}
