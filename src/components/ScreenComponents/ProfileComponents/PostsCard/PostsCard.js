@@ -29,6 +29,7 @@ export default function PostsCard(props) {
             item={item}
             onPress={props.onPress}
             isPersonCard={props.isPersonCard}
+            addButton={props.addButton ? true : false}
           />
           {props.expired ? (
             <View

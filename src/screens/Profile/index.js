@@ -39,6 +39,7 @@ import Store from '../../store/Store';
 import {SIZES} from '../../resources/theme';
 import ProfileTop from '../../components/ScreenComponents/ProfileComponents/ProfileTop/ProfileTop';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
+import PostCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostCard';
 
 const {width} = Dimensions.get('window');
 
@@ -55,9 +56,7 @@ class Profile extends Component {
       name:
         typeof Store.user.name === 'undefined' ? 'No Name' : Store.user.name,
       biography:
-        typeof Store.user.biography === 'undefined'
-          ? 'No Biography'
-          : Store.user.biography,
+        typeof Store.user.biography === 'undefined' ? '' : Store.user.biography,
       cumulativeViews:
         typeof Store.user.cumulativeViewsUser === 'undefined'
           ? 0
@@ -89,7 +88,7 @@ class Profile extends Component {
               : Store.user.name,
           biography:
             typeof Store.user.biography === 'undefined'
-              ? 'No Biography'
+              ? ''
               : Store.user.biography,
           photo:
             typeof Store.user.photo === 'undefined'
@@ -178,6 +177,9 @@ class Profile extends Component {
       return this.props.navigation.dispatch(replaceActions);
     } else if (route === 'EditProfile') {
       const replaceActions = StackActions.push(route, {type: info});
+      return this.props.navigation.dispatch(replaceActions);
+    } else if (route === 'AddContent') {
+      const replaceActions = StackActions.push(route);
       return this.props.navigation.dispatch(replaceActions);
     }
   };
@@ -287,15 +289,25 @@ class Profile extends Component {
   };
 
   renderPosts2 = (posts) => {
-    return (
-      <PostsCard
-        posts={posts}
-        navigation={this.props.navigation}
-        numCols={constants.NUM_POSTS_PER_ROW_PROFILE}
-        extraData={Store.posts}
-        onPress={(item) => this.goTo('WatchVideo', item)}
-      />
-    );
+    if (posts.length === 0) {
+      return (
+        <PostsCard
+          addButton
+          posts={[{uid: 'dummy'}]}
+          numCols={constants.NUM_POSTS_PER_ROW_PROFILE}
+          onPress={() => this.goTo('AddContent')}
+        />
+      );
+    } else {
+      return (
+        <PostsCard
+          posts={posts}
+          numCols={constants.NUM_POSTS_PER_ROW_PROFILE}
+          extraData={Store.posts}
+          onPress={(item) => this.goTo('WatchVideo', item)}
+        />
+      );
+    }
   };
 
   renderUserSection = (data) => {
@@ -423,11 +435,8 @@ class Profile extends Component {
                 views={cumulativeViews}
               />
             </View>
-            {Store.user.type === 'influencer' ? (
-              <View>
-                {daily.length !== 0 ? this.renderPosts2(daily) : null}
-              </View>
-            ) : null}
+
+            <View>{this.renderPosts2(daily)}</View>
           </ScrollView>
         )}
         <Options

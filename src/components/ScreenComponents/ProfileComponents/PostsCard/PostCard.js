@@ -26,7 +26,14 @@ export default function PostCard(props) {
           height: '100%',
           justifyContent: 'center',
         }}>
-        {props.item.photo === constants.DEFAULT_PHOTO ? (
+        {props.addButton ? (
+          <Icon
+            name="plus"
+            type="material-community"
+            color={COLORS.primaryLabelColor}
+            size={60}
+          />
+        ) : props.item.photo === constants.DEFAULT_PHOTO ? (
           <Icon
             name="account"
             type="material-community"
@@ -43,41 +50,42 @@ export default function PostCard(props) {
             photo={props.item.photo}
           />
         )}
-
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            paddingVertical: 5,
-            paddingHorizontal: 10,
-          }}>
-          <Text
-            text={
-              props.isPersonCard
-                ? props.item.username
-                : props.item.title && props.item.title.length >= 17
-                ? `${props.item.title.substring(0, 17)}...`
-                : props.item.title
-            }
-            style={{fontSize: 12}}
-          />
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Icon
-              name="play-outline"
-              type="ionicon"
-              color={COLORS.primaryLabelColor}
-              size={16}
-            />
+        {!props.addButton && (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              paddingVertical: 5,
+              paddingHorizontal: 10,
+            }}>
             <Text
-              text={`${followerCount(
+              text={
                 props.isPersonCard
-                  ? props.item.cumulativeViewsUser
-                  : props.item.cumulativeViews,
-              )}`}
-              style={{fontSize: 12, marginLeft: SIZES.spacing * 1}}
+                  ? props.item.username
+                  : props.item.title && props.item.title.length >= 17
+                  ? `${props.item.title.substring(0, 17)}...`
+                  : props.item.title
+              }
+              style={{fontSize: 12}}
             />
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Icon
+                name="play-outline"
+                type="ionicon"
+                color={COLORS.primaryLabelColor}
+                size={16}
+              />
+              <Text
+                text={`${followerCount(
+                  props.isPersonCard
+                    ? props.item.cumulativeViewsUser
+                    : props.item.cumulativeViews,
+                )}`}
+                style={{fontSize: 12, marginLeft: SIZES.spacing * 1}}
+              />
+            </View>
           </View>
-        </View>
+        )}
       </View>
     </TouchableOpacity>
   );
