@@ -24,7 +24,6 @@ import {
 import Store from '../../store/Store';
 import {followerCount} from '../../lib';
 import {StackActions} from '@react-navigation/native';
-import TextInputMask from 'react-native-text-input-mask';
 import ProfileTop from '../../components/ScreenComponents/ProfileComponents/ProfileTop/ProfileTop';
 import {DEFAULT_PAGE_WIDTH} from '../../resources/constants';
 
@@ -230,127 +229,127 @@ class Subscribe extends Component {
     );
   };
 
-  renderCard = () => {
-    return (
-      <View style={{width: width, padding: 10}}>
-        <TextInputMask
-          value={this.state.cardNumber}
-          style={{
-            fontFamily:
-              Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
-            color: '#FFF',
-            fontSize: 16,
-            fontWeight: 'bold',
-            width: width - 20,
-            padding: 10,
-            backgroundColor: 'gray',
-            borderRadius: 4,
-            textAlign: 'center',
-          }}
-          onChangeText={(formatted, extracted) =>
-            this.setState({cardNumber: extracted})
-          }
-          mask={'[0000] [0000] [0000] [0000]'}
-          placeholder="Card Number"
-          placeholderTextColor="lightgray"
-          keyboardType="number-pad"
-        />
-        <View
-          style={{
-            width: width - 20,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginTop: 10,
-          }}>
-          <TextInputMask
-            value={this.state.expMonth}
-            style={{
-              fontFamily:
-                Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
-              color: '#FFF',
-              fontSize: 16,
-              fontWeight: 'bold',
-              width: (width - 20) / 5 - 5,
-              padding: 10,
-              backgroundColor: 'gray',
-              borderRadius: 4,
-              textAlign: 'center',
-            }}
-            onChangeText={(formatted, extracted) =>
-              this.setState({expMonth: extracted})
-            }
-            mask={'[00]'}
-            placeholder="Month"
-            placeholderTextColor="lightgray"
-            keyboardType="number-pad"
-          />
-          <TextInputMask
-            value={this.state.expYear}
-            style={{
-              fontFamily:
-                Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
-              color: '#FFF',
-              fontSize: 16,
-              fontWeight: 'bold',
-              width: (width - 20) / 5 - 5,
-              padding: 10,
-              backgroundColor: 'gray',
-              borderRadius: 4,
-              textAlign: 'center',
-            }}
-            onChangeText={(formatted, extracted) =>
-              this.setState({expYear: extracted})
-            }
-            mask={'[00]'}
-            placeholder="Year"
-            placeholderTextColor="lightgray"
-            keyboardType="number-pad"
-          />
-          <TextInputMask
-            value={this.state.cvc}
-            style={{
-              fontFamily:
-                Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
-              color: '#FFF',
-              fontSize: 16,
-              fontWeight: 'bold',
-              width: ((width - 20) * 3) / 5 - 5,
-              padding: 10,
-              backgroundColor: 'gray',
-              borderRadius: 4,
-              textAlign: 'center',
-            }}
-            onChangeText={(formatted, extracted) =>
-              this.setState({cvc: extracted})
-            }
-            mask={'[000]'}
-            placeholder="CVC"
-            placeholderTextColor="lightgray"
-            keyboardType="number-pad"
-          />
-        </View>
-        <Text
-          text="We do not record or store your card information anywhere. All transactions are made and protected by the Stripe payment system."
-          style={{
-            color: 'gray',
-            fontWeight: 'normal',
-            fontSize: 12,
-            marginTop: 10,
-            marginHorizontal: 5,
-          }}
-        />
-        <Button
-          buttonStyle={{
-            width: '100%',
-            alignSelf: 'center',
-            marginTop: 10,
-          }}
-          text="Subscribe"
-          onPress={() => this.subscribeInf()}
-        />
-      </View>
-    );
-  };
+  // renderCard = () => {
+  //   return (
+  //     <View style={{width: width, padding: 10}}>
+  //       <TextInputMask
+  //         value={this.state.cardNumber}
+  //         style={{
+  //           fontFamily:
+  //             Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
+  //           color: '#FFF',
+  //           fontSize: 16,
+  //           fontWeight: 'bold',
+  //           width: width - 20,
+  //           padding: 10,
+  //           backgroundColor: 'gray',
+  //           borderRadius: 4,
+  //           textAlign: 'center',
+  //         }}
+  //         onChangeText={(formatted, extracted) =>
+  //           this.setState({cardNumber: extracted})
+  //         }
+  //         mask={'[0000] [0000] [0000] [0000]'}
+  //         placeholder="Card Number"
+  //         placeholderTextColor="lightgray"
+  //         keyboardType="number-pad"
+  //       />
+  //       <View
+  //         style={{
+  //           width: width - 20,
+  //           flexDirection: 'row',
+  //           justifyContent: 'space-between',
+  //           marginTop: 10,
+  //         }}>
+  //         <TextInputMask
+  //           value={this.state.expMonth}
+  //           style={{
+  //             fontFamily:
+  //               Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
+  //             color: '#FFF',
+  //             fontSize: 16,
+  //             fontWeight: 'bold',
+  //             width: (width - 20) / 5 - 5,
+  //             padding: 10,
+  //             backgroundColor: 'gray',
+  //             borderRadius: 4,
+  //             textAlign: 'center',
+  //           }}
+  //           onChangeText={(formatted, extracted) =>
+  //             this.setState({expMonth: extracted})
+  //           }
+  //           mask={'[00]'}
+  //           placeholder="Month"
+  //           placeholderTextColor="lightgray"
+  //           keyboardType="number-pad"
+  //         />
+  //         <TextInputMask
+  //           value={this.state.expYear}
+  //           style={{
+  //             fontFamily:
+  //               Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
+  //             color: '#FFF',
+  //             fontSize: 16,
+  //             fontWeight: 'bold',
+  //             width: (width - 20) / 5 - 5,
+  //             padding: 10,
+  //             backgroundColor: 'gray',
+  //             borderRadius: 4,
+  //             textAlign: 'center',
+  //           }}
+  //           onChangeText={(formatted, extracted) =>
+  //             this.setState({expYear: extracted})
+  //           }
+  //           mask={'[00]'}
+  //           placeholder="Year"
+  //           placeholderTextColor="lightgray"
+  //           keyboardType="number-pad"
+  //         />
+  //         <TextInputMask
+  //           value={this.state.cvc}
+  //           style={{
+  //             fontFamily:
+  //               Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
+  //             color: '#FFF',
+  //             fontSize: 16,
+  //             fontWeight: 'bold',
+  //             width: ((width - 20) * 3) / 5 - 5,
+  //             padding: 10,
+  //             backgroundColor: 'gray',
+  //             borderRadius: 4,
+  //             textAlign: 'center',
+  //           }}
+  //           onChangeText={(formatted, extracted) =>
+  //             this.setState({cvc: extracted})
+  //           }
+  //           mask={'[000]'}
+  //           placeholder="CVC"
+  //           placeholderTextColor="lightgray"
+  //           keyboardType="number-pad"
+  //         />
+  //       </View>
+  //       <Text
+  //         text="We do not record or store your card information anywhere. All transactions are made and protected by the Stripe payment system."
+  //         style={{
+  //           color: 'gray',
+  //           fontWeight: 'normal',
+  //           fontSize: 12,
+  //           marginTop: 10,
+  //           marginHorizontal: 5,
+  //         }}
+  //       />
+  //       <Button
+  //         buttonStyle={{
+  //           width: '100%',
+  //           alignSelf: 'center',
+  //           marginTop: 10,
+  //         }}
+  //         text="Subscribe"
+  //         onPress={() => this.subscribeInf()}
+  //       />
+  //     </View>
+  //   );
+  // };
 
   render() {
     const {loading, refreshing, influencer, showCard} = this.state;
@@ -379,9 +378,8 @@ class Subscribe extends Component {
           />
         ) : (
           <View style={{width: DEFAULT_PAGE_WIDTH, alignSelf: 'center'}}>
-            {showCard ? (
-              this.renderCard()
-            ) : (
+            {showCard ? null : (
+              //this.renderCard()
               <>
                 <ProfileTop
                   photo={influencer.photo}

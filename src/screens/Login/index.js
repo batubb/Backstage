@@ -6,7 +6,6 @@ import {View, Dimensions, Platform, ScrollView, Alert} from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
-import TextInputMask from 'react-native-text-input-mask';
 import {Loading, Header, Text, Button} from '../../components';
 import {constants} from '../../resources';
 import Store from '../../store/Store';
@@ -23,6 +22,7 @@ const BORDER_RADIUS = 6;
 class Login extends Component {
   constructor(props) {
     super(props);
+    console.log('here');
     this.phoneRef = React.createRef();
     this.state = {
       loading: true,
@@ -36,11 +36,13 @@ class Login extends Component {
   componentDidMount = async () => {
     auth().onAuthStateChanged((auth) => {
       if (auth) {
+        console.log('in here auth');
         Store.setPhone(auth.phoneNumber);
         Store.setUID(auth.uid);
         const replaceActions = StackActions.replace('CheckInfo');
         return this.props.navigation.dispatch(replaceActions);
       } else {
+        console.log('in here not auth');
         Store.clearUserData();
         this.setState({loading: false});
       }
@@ -78,32 +80,6 @@ class Login extends Component {
   goTo = (route) => {
     const replaceActions = StackActions.push(route);
     return this.props.navigation.dispatch(replaceActions);
-  };
-
-  phoneInput = (phoneExtracted) => {
-    return (
-      <TextInputMask
-        value={phoneExtracted}
-        style={{
-          fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
-          color: '#FFF',
-          fontSize: 20,
-          fontWeight: 'bold',
-          width: width - 20,
-          padding: 10,
-          backgroundColor: 'gray',
-          borderRadius: 25,
-          textAlign: 'center',
-        }}
-        onChangeText={(formatted, extracted) =>
-          this.setState({phoneFormatted: formatted, phoneExtracted: extracted})
-        }
-        mask={'+[00] [000] [000] [00] [00]'}
-        placeholder="+90 (555) 555 55 55"
-        placeholderTextColor="lightgray"
-        keyboardType="phone-pad"
-      />
-    );
   };
 
   codeInput = (confirmationCode) => {
@@ -155,8 +131,13 @@ class Login extends Component {
           style={{
             flex: 1,
             backgroundColor: constants.BACKGROUND_COLOR,
-            //justifyContent: 'center',
           }}>
+          {confirmation && (
+            <Header
+              leftButtonPress={() => this.setState({confirmation: false})}
+              leftButtonIcon="chevron-left"
+            />
+          )}
           <KeyboardAvoidingView behavior="padding">
             <View
               style={{
