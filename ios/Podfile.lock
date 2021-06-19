@@ -279,6 +279,9 @@ PODS:
     - React (< 1.0.0, >= 0.13.0)
   - react-native-safe-area-context (3.1.9):
     - React-Core
+  - react-native-text-input-mask (2.0.1):
+    - React
+    - RNInputMask
   - react-native-video (5.1.1):
     - React-Core
     - react-native-video/Video (= 5.1.1)
@@ -367,6 +370,9 @@ PODS:
     - RNFBApp
   - RNGestureHandler (1.9.0):
     - React-Core
+  - RNIap (6.2.1):
+    - React-Core
+  - RNInputMask (4.1.0)
   - RNReanimated (1.13.2):
     - React-Core
   - RNScreens (2.17.1):
@@ -404,6 +410,7 @@ DEPENDENCIES:
   - react-native-nodemediaclient (from `../node_modules/react-native-nodemediaclient`)
   - react-native-onesignal (from `../node_modules/react-native-onesignal`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-text-input-mask (from `../node_modules/react-native-text-input-mask`)
   - react-native-video (from `../node_modules/react-native-video`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -423,6 +430,8 @@ DEPENDENCIES:
   - "RNFBDatabase (from `../node_modules/@react-native-firebase/database`)"
   - "RNFBStorage (from `../node_modules/@react-native-firebase/storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNIap (from `../node_modules/react-native-iap`)
+  - RNInputMask (from `../node_modules/react-native-text-input-mask/ios/InputMask`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNShare (from `../node_modules/react-native-share`)
@@ -497,6 +506,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-onesignal"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-text-input-mask:
+    :path: "../node_modules/react-native-text-input-mask"
   react-native-video:
     :path: "../node_modules/react-native-video"
   React-RCTActionSheet:
@@ -535,6 +546,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/storage"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNIap:
+    :path: "../node_modules/react-native-iap"
+  RNInputMask:
+    :path: "../node_modules/react-native-text-input-mask/ios/InputMask"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -587,6 +602,7 @@ SPEC CHECKSUMS:
   react-native-nodemediaclient: eeb78d795f2fc3d772b2b95f460aa45018d03119
   react-native-onesignal: 6d3d3ac10192c5694049ce8c1ba481e5392c1a73
   react-native-safe-area-context: b6e0e284002381d2ff29fa4fff42b4d8282e3c94
+  react-native-text-input-mask: cffd00848940e7670cf233a99e7be782257935ed
   react-native-video: 0bb76b6d6b77da3009611586c7dbf817b947f30e
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
   React-RCTAnimation: 1bde3ecc0c104c55df246eda516e0deb03c4e49b
@@ -606,6 +622,8 @@ SPEC CHECKSUMS:
   RNFBDatabase: a0a66428ec39a984f0e397c5c58767421c5ffa66
   RNFBStorage: 3d87e4ee72171f84178d76810eac26118e2b8396
   RNGestureHandler: 9b7e605a741412e20e13c512738a31bd1611759b
+  RNIap: 5058c0b824e97f9dcc6728ff271dbe418d10d27a
+  RNInputMask: 815461ebdf396beb62cf58916c35cf6930adb991
   RNReanimated: e03f7425cb7a38dcf1b644d680d1bfc91c3337ad
   RNScreens: b6c9607e6fe47c1b6e2f1910d2acd46dd7ecea3a
   RNShare: 8af5349f05fc042d230674dd650d19789187ff9c
@@ -613,6 +631,6 @@ SPEC CHECKSUMS:
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
 
-PODFILE CHECKSUM: fc1ca5c1c486014b2ed49d0d17f6ecc37ded437c
+PODFILE CHECKSUM: 5c966d23a51f651556f4dfaef25f038880936edc
 
 COCOAPODS: 1.10.1

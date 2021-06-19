@@ -45,7 +45,7 @@
     "react-native-sms-verifycode": "^2.4.3",
     "react-native-snap-carousel": "^3.9.1",
     "react-native-swiper": "^1.6.0",
-    "react-native-text-input-mask": "^3.1.4",
+    "react-native-text-input-mask": "^2.0.1",
     "react-native-vector-icons": "^8.0.0",
     "react-native-video": "^5.1.1",
     "rn-fetch-blob": "^0.12.0",

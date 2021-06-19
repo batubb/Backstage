@@ -8,10 +8,13 @@ target 'infapp' do
 
   use_react_native!(:path => config["reactNativePath"])
 
+
   target 'infappTests' do
     inherit! :complete
     # Pods for testing
   end
+  
+  pod 'RNInputMask', :path => '../node_modules/react-native-text-input-mask/ios/InputMask'
 
   # Enables Flipper.
   #
