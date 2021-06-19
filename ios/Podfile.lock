@@ -370,8 +370,6 @@ PODS:
     - RNFBApp
   - RNGestureHandler (1.9.0):
     - React-Core
-  - RNIap (6.2.1):
-    - React-Core
   - RNInputMask (4.1.0)
   - RNReanimated (1.13.2):
     - React-Core
@@ -430,7 +428,6 @@ DEPENDENCIES:
   - "RNFBDatabase (from `../node_modules/@react-native-firebase/database`)"
   - "RNFBStorage (from `../node_modules/@react-native-firebase/storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
-  - RNIap (from `../node_modules/react-native-iap`)
   - RNInputMask (from `../node_modules/react-native-text-input-mask/ios/InputMask`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -546,8 +543,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/storage"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
-  RNIap:
-    :path: "../node_modules/react-native-iap"
   RNInputMask:
     :path: "../node_modules/react-native-text-input-mask/ios/InputMask"
   RNReanimated:
@@ -622,7 +617,6 @@ SPEC CHECKSUMS:
   RNFBDatabase: a0a66428ec39a984f0e397c5c58767421c5ffa66
   RNFBStorage: 3d87e4ee72171f84178d76810eac26118e2b8396
   RNGestureHandler: 9b7e605a741412e20e13c512738a31bd1611759b
-  RNIap: 5058c0b824e97f9dcc6728ff271dbe418d10d27a
   RNInputMask: 815461ebdf396beb62cf58916c35cf6930adb991
   RNReanimated: e03f7425cb7a38dcf1b644d680d1bfc91c3337ad
   RNScreens: b6c9607e6fe47c1b6e2f1910d2acd46dd7ecea3a
@@ -631,6 +625,6 @@ SPEC CHECKSUMS:
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
 
-PODFILE CHECKSUM: 5c966d23a51f651556f4dfaef25f038880936edc
+PODFILE CHECKSUM: 84b18a5c3e8ad2f4c9a89eb854af88a15beb0b40
 
 COCOAPODS: 1.10.1
