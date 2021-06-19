@@ -48,6 +48,7 @@ class MyStack extends React.Component {
                     <Stack.Screen name="Subscribe" component={Subscribe} />
                     <Stack.Screen name="TabBarMenu" component={TabBarMenu} options={{ animationEnabled: false }} />
                     <Stack.Screen name="UserProfile" component={UserProfile} />
+                    <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
                 </Stack.Navigator>
             </NavigationContainer>
         );
@@ -98,7 +99,6 @@ class ProfileMenu extends React.Component {
                 <Stack.Screen name="Highlights" component={Highlights} />
                 <Stack.Screen name="MyInfo" component={MyInfo} />
                 <Stack.Screen name="Notifications" component={Notifications} />
-                <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
                 <Stack.Screen name="UserProfile" component={UserProfile} />
                 <Stack.Screen name="Rooms" component={Rooms} />
                 <Stack.Screen name="MyBanks" component={MyBanks} />

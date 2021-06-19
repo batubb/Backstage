@@ -8,10 +8,11 @@ import { observer } from 'mobx-react';
 import { Icon } from 'react-native-elements';
 import Video from 'react-native-video';
 import { StackActions } from '@react-navigation/native';
-import { Loading, Text, MyImage } from '../../components';
+import { Loading, Text, MyImage, Options } from '../../components';
 import { constants } from '../../resources';
 import { checkSubscribtion, checkUserInfo, report } from '../../services';
 import Store from '../../store/Store';
+import database from '@react-native-firebase/database';
 
 const { width, height } = Dimensions.get('window');
 var BOTTOM_PADDING = height >= 812 ? 44 : 20;
@@ -35,6 +36,7 @@ class WatchStory extends Component {
             subscribtion: {
                 subscribtion: false,
             },
+            optionsVisible: false,
         };
 
         this.list = [
@@ -42,7 +44,7 @@ class WatchStory extends Component {
         ];
 
         if (Store.user.uid === this.props.route.params.stories[0].user.uid) {
-            this.list = [...this.list, { title: 'Edit', color: constants.RED, onPress: this.editVideo }];
+            this.list = [...this.list, { title: 'Delete', color: constants.RED, onPress: this.deleteVideo }];
         }
     }
 
@@ -67,7 +69,7 @@ class WatchStory extends Component {
     }
 
     reportVideo = async () => {
-        const result = await report(this.state.content);
+        const result = await report(this.state.content, 'story');
 
         if (result) {
             Alert.alert('Thank You', 'You have reported this video. We will investigate this video.', [{ text: 'Okay' }]);
@@ -78,8 +80,10 @@ class WatchStory extends Component {
         this.setState({ optionsVisible: false });
     }
 
-    editVideo = () => {
-        // TODO Video editleme
+    deleteVideo = async () => {
+        await database().ref('stories').child(Store.user.uid).child(this.state.content.uid).set(null);
+        this.setState({ optionsVisible: false });
+        this.props.navigation.dispatch(StackActions.pop());
     }
 
     nextStory = (stories, content) => {
@@ -159,7 +163,7 @@ class WatchStory extends Component {
     }
 
     render() {
-        const { loading, stories, content, subscribtion } = this.state;
+        const { loading, stories, content, subscribtion, optionsVisible } = this.state;
 
         return (
             <View style={{ flex: 1, backgroundColor: constants.BACKGROUND_COLOR }}>
@@ -215,10 +219,20 @@ class WatchStory extends Component {
                             }
                         </View>
                     </View>
-                    <TouchableOpacity style={{ padding: 5 }} onPress={() => this.props.navigation.dispatch(StackActions.pop())}>
-                        <Icon name="close" color="#FFF" type="material-community" />
-                    </TouchableOpacity>
+                    <View style={{ flexDirection: 'row' }}>
+                        <TouchableOpacity style={{ padding: 5 }} onPress={() => this.setState({ optionsVisible: true })}>
+                            <Icon name="dots-horizontal" color="#FFF" type="material-community" />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{ padding: 5 }} onPress={() => this.props.navigation.dispatch(StackActions.pop())}>
+                            <Icon name="close" color="#FFF" type="material-community" />
+                        </TouchableOpacity>
+                    </View>
                 </View>
+                <Options
+                    list={this.list}
+                    visible={optionsVisible}
+                    cancelPress={() => this.setState({ optionsVisible: false })}
+                />
             </View>
         );
     }

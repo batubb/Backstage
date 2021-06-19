@@ -2,7 +2,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
-import { View, Dimensions, Platform, ScrollView, Alert } from 'react-native';
+import { View, Dimensions, Platform, Alert, TouchableOpacity } from 'react-native';
 import { observer } from 'mobx-react';
 import { StackActions } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
@@ -13,9 +13,11 @@ import Store from '../../store/Store';
 import SMSVerifyCode from 'react-native-sms-verifycode';
 import { SafeAreaView } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native';
+import { Icon } from 'react-native-elements';
 
 const { width } = Dimensions.get('window');
-auth().settings.appVerificationDisabledForTesting = true;
+
+// auth().settings.appVerificationDisabledForTesting = true;
 
 class Login extends Component {
     constructor(props) {
@@ -26,6 +28,7 @@ class Login extends Component {
             phoneExtracted: '',
             confirmation: false,
             confirmationCode: '',
+            readed: true,
         };
     }
 
@@ -44,12 +47,17 @@ class Login extends Component {
     }
 
     sendAuthCode = async () => {
+        if (!this.state.readed) {
+            return Alert.alert('Oops', 'You should read privacy policy, term & conditions and you have to accept these terms.', [{ text: 'Okay' }]);
+        }
+
         this.setState({ loading: true });
 
         try {
             const confirmation = await auth().signInWithPhoneNumber(`+${this.state.phoneExtracted}`);
             this.setState({ confirmation, loading: false });
         } catch (error) {
+            console.log(error);
             Alert.alert('Oops', 'Invalid format.', [{ text: 'Okay' }]);
             this.setState({ loading: false });
         }
@@ -61,7 +69,7 @@ class Login extends Component {
 
         try {
             const confirmation = this.state.confirmation;
-            confirmation.confirm(this.state.confirmationCode);
+            await confirmation.confirm(this.state.confirmationCode);
         } catch (error) {
             Alert.alert('Oops', 'Wrong code. Please try again.', [{ text: 'Okay' }]);
             this.setState({ loading: false });
@@ -107,7 +115,7 @@ class Login extends Component {
     }
 
     render() {
-        const { loading, phoneFormatted, phoneExtracted, confirmation, confirmationCode } = this.state;
+        const { loading, phoneFormatted, phoneExtracted, confirmation, confirmationCode, readed } = this.state;
 
         if (loading) {
             return (
@@ -150,23 +158,22 @@ class Login extends Component {
                                         />
                                     </View>
                                     {this.phoneInput(phoneExtracted)}
-                                    <View style={{ width: width - 40, marginVertical: 10 }}>
-                                        <Text
-                                            text="We will send you an SMS containing the verification code. Messages and data may be charged."
-                                            style={{ fontSize: 12, fontWeight: 'normal' }}
-                                        />
+                                    <View style={{ flexDirection: 'row', width: width - 40, alignItems: 'center' }}>
+                                        <TouchableOpacity style={{ paddingVertical: 10 }} onPress={() => this.setState({ readed: !readed })}>
+                                            <Icon name="check-circle" color={readed ? constants.BLUE : 'gray'} type="material-community" />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => this.goTo('PrivacyPolicy')}>
+                                            <Text
+                                                text="I have read and accept the terms of use and privacy policies."
+                                                style={{ fontSize: 12, marginLeft: 5, fontWeight: 'normal' }}
+                                            />
+                                        </TouchableOpacity>
                                     </View>
                                     <Button
                                         text="Next"
                                         buttonStyle={{ backgroundColor: '#FFF', width: width - 20, borderRadius: 24, padding: 13 }}
                                         textStyle={{ color: '#000', fontSize: 16 }}
                                         onPress={() => this.sendAuthCode()}
-                                    />
-                                    <Button
-                                        text="Do you need help?"
-                                        buttonStyle={{ backgroundColor: constants.BACKGROUND_COLOR, marginTop: 10, alignItems: 'flex-end' }}
-                                        textStyle={{ color: constants.BLUE, fontSize: 12 }}
-                                        onPress={() => this.goTo('Intro')}
                                     />
                                 </View>
                         }

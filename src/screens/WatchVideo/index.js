@@ -45,7 +45,6 @@ class WatchVideo extends Component {
 
         this.list = [
             { title: 'Report', onPress: this.reportVideo },
-            { title: 'Share', onPress: this.shareVideo },
         ];
 
         if (Store.user.uid === this.props.route.params.video.user.uid) {
@@ -184,7 +183,6 @@ class WatchVideo extends Component {
                     style={{ flex: 1, width: width, height: height }}
                     paused={paused}
                     repeat
-                    poster={video.photo}
                 />
                 <View style={{ position: 'absolute', bottom: 0, width: width, alignItems: 'center', paddingVertical: BOTTOM_PADDING }}>
                     <View style={{ width: width - 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -251,7 +249,6 @@ class WatchVideo extends Component {
                             onEnd={() => this.setState({ paused: true, finished: true })}
                             style={{ flex: 1, width: width, height: height }}
                             paused={false}
-                            poster={video.photo}
                         />
                 }
                 <SafeAreaView style={{ position: 'absolute', bottom: BOTTOM_PADDING, width, alignItems: 'center', height, justifyContent: 'flex-end' }}>

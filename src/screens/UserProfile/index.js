@@ -33,7 +33,7 @@ class UserProfile extends Component {
 
         this.list = [
             { title: 'Report', onPress: this.reportVideo },
-            { title: 'Share', onPress: this.shareVideo },
+            { title: 'Block', onPress: this.blockUser },
         ];
     }
 
@@ -77,6 +77,12 @@ class UserProfile extends Component {
         } else {
             Alert.alert('Oops', 'We are sorry for this. Please try again later.', [{ text: 'Okay' }]);
         }
+
+        this.setState({ optionsVisible: false });
+    }
+
+    blockUser = async () => {
+        Alert.alert('Success', 'You have blocked this user. Now this user can not see your profile.', [{ text: 'Okay' }]);
 
         this.setState({ optionsVisible: false });
     }
@@ -257,7 +263,7 @@ class UserProfile extends Component {
     }
 
     render() {
-        const { loading, refreshing, user, posts, postsArray, daily, optionsVisible } = this.state;
+        const { loading, refreshing, user, posts, daily, optionsVisible } = this.state;
 
         return (
             <View style={{ flex: 1, backgroundColor: constants.BACKGROUND_COLOR }}>

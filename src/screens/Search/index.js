@@ -52,7 +52,7 @@ class Search extends Component {
     searchUser = async (search) => {
         this.setState({ search: search });
 
-        if (search.length >= 3) {
+        if (search.length >= 1) {
             const searchArray = await searchUser(search);
             this.setState({ searchArray });
         } else {

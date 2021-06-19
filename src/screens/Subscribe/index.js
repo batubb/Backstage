@@ -69,7 +69,7 @@ class Subscribe extends Component {
             const token = await createToken(params);
 
             if (typeof token.id !== 'undefined') {
-                const subs = await createCustomerAndSubscription(Store.user, this.state.influencer, token, constants.TIER_1);
+                const subs = await createCustomerAndSubscription(Store.user, this.state.influencer, token, this.state.influencer.price);
 
                 if (subs) {
                     const result = await subscribeInfluencer(Store.user, influencer, subs);

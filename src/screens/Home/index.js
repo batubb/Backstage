@@ -11,6 +11,8 @@ import { constants } from '../../resources';
 import { getFollowingLiveData, getFollowingUserPosts, getFollowingUserStories } from '../../services';
 import Store from '../../store/Store';
 import { followerCount } from '../../lib';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import database from '@react-native-firebase/database';
 
 const { width } = Dimensions.get('window');
 
@@ -35,6 +37,8 @@ class Home extends Component {
         ]).then((values) => {
             this.setState({ loading: false, liveArray: values[0], userPostsArray: values[1], userStoriesArray: values[2].userStoriesArray, myStoriesArray: values[2].myStoriesArray });
         });
+
+        this.setPushId()
     }
 
     onRefresh = async () => {
@@ -47,6 +51,18 @@ class Home extends Component {
         ]).then((values) => {
             this.setState({ refreshing: false, liveArray: values[0], userPostsArray: values[1], userStoriesArray: values[2].userStoriesArray, myStoriesArray: values[2].myStoriesArray });
         });
+    }
+
+    setPushId = async () => {
+        try {
+            const push = await AsyncStorage.getItem('pushInfo');
+
+            if (push) {
+                database().ref('users').child(Store.uid).child('token').set(push);
+            }
+        } catch (e) {
+            // saving error
+        }
     }
 
     goTo = (route, info = null) => {
@@ -72,13 +88,13 @@ class Home extends Component {
         }
     }
 
-    expireAlert = (info) => {
+    expireAlert = () => {
         Alert.alert(
             'Oops',
             'You must be a member to view the content.',
             [
                 {
-                    text: 'Okay', onPress: () => this.goTo('UserProfile', info),
+                    text: 'Okay',
                 },
             ]
         );
@@ -210,9 +226,9 @@ class Home extends Component {
         );
     }
 
-    expiredCard = (influencer) => {
+    expiredCard = () => {
         return (
-            <TouchableOpacity activeOpacity={0.9} style={{ position: 'absolute' }} onPress={() => this.expireAlert(influencer)}>
+            <TouchableOpacity activeOpacity={0.9} style={{ position: 'absolute' }} onPress={() => this.expireAlert()}>
                 <View style={{ width: (width / 2.5) - 10, height: (1.5) * ((width / 2.5) - 10), borderRadius: 16, alignItems: 'center', justifyContent: 'center' }}>
                     <View style={{ position: 'absolute', width: (width / 2.5) - 10, height: (1.5) * ((width / 2.5) - 10), borderRadius: 16, backgroundColor: 'black', opacity: 0.8 }} />
                     <View style={{ width: 80, height: 80, borderColor: '#FFF', borderWidth: 2, borderRadius: 40, alignItems: 'center', justifyContent: 'center' }}>
@@ -299,8 +315,8 @@ class Home extends Component {
                     statusBarProps={{ barStyle: 'light-content', backgroundColor: constants.BACKGROUND_COLOR }}
                     centerComponent={
                         <Image
-                            style={{ height: 50, width: 50 }}
-                            source={require('../../images/icon.png')}
+                            style={{ height: (width / 3) * (247 / 853), width: width / 3 }}
+                            source={require('../../images/icon.jpeg')}
                         />
                     }
                     containerStyle={{ borderBottomWidth: 0, backgroundColor: constants.BACKGROUND_COLOR, borderColor: constants.BACKGROUND_COLOR }}

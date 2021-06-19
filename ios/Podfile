@@ -1,13 +1,14 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, '11.0'
+platform :ios, '10.0'
 
 target 'infapp' do
   config = use_native_modules!
 
   use_react_native!(:path => config["reactNativePath"])
 
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
   target 'infappTests' do
     inherit! :complete
@@ -15,6 +16,7 @@ target 'infapp' do
   end
   
   pod 'RNInputMask', :path => '../node_modules/react-native-text-input-mask/ios/InputMask'
+  pod 'CodePush', :path => '../node_modules/react-native-code-push'
 
   # Enables Flipper.
   #
@@ -24,6 +26,10 @@ target 'infapp' do
   # post_install do |installer|
   #   flipper_post_install(installer)
   # end
+end
+
+target 'OneSignalNotificationServiceExtension' do
+  pod 'OneSignal', '>= 3.0', '< 4.0'
 end
 
 target 'infapp-tvOS' do

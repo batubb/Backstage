@@ -37,6 +37,21 @@ export default async function report(item, type = 'video') {
         } catch (error) {
             Alert.alert('Oops', 'Something went wrong. We are sorry for this', [{ text: 'Okay' }]);
         }
+    } else if (type === 'story') {
+        const data = {
+            report: item,
+            user: Store.user,
+            createTimestamp: new Date().getTime(),
+            uid,
+            type,
+        };
+
+        try {
+            await database().ref('reports').child(type).child(uid).update(data);
+            return true;
+        } catch (error) {
+            Alert.alert('Oops', 'Something went wrong. We are sorry for this', [{ text: 'Okay' }]);
+        }
     }
 
     return false;

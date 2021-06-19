@@ -40,6 +40,5 @@ export default function setPosts(posts) {
 
     dailyVideos.sort(function (a, b) { return b.timestamp - a.timestamp; });
     otherVideosArray.sort(function (a, b) { return b[0].timestamp - a[0].timestamp; });
-
     return { postsArray: otherVideosArray, daily: dailyVideos };
 }

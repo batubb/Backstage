@@ -8,6 +8,14 @@ export default async function setLikeCommentStatus(user, video, comment, status 
         await database().ref('comments').child(video.uid).child(comment.uid).child('likes').child(user.uid).set(!status);
     }
 
+    if (typeof video.token !== 'undefined' && !status) {
+        database().ref('pushList').child(video.uid).set({
+            token: video.token,
+            message: `Your comment "${comment.comment}" is liked by ${user.name}`,
+            title: 'You have a new like',
+        });
+    }
+
     return true;
 }
 

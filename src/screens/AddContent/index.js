@@ -46,7 +46,7 @@ export default class App extends Component {
             assetId: '',
             uid: '',
             camera: 1,
-            influencerPrice: 4.99,
+            influencerPrice: constants.TIERS[0],
             influencer: false,
             editTextModal: false,
             seconds: 0,
@@ -105,16 +105,17 @@ export default class App extends Component {
                     width: width,
                     height: height,
                 },
+                publicKey: this.state.publicKey,
+                liveId: id,
                 title: this.state.title === '' ? 'Livestream' : this.state.title,
                 photo: `https://image.mux.com/${this.state.publicKey}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
             };
 
-
-            await sleep(10000);
-
             if (!this.state.onPage) {
                 return true;
             }
+
+            await sleep(5000);
 
             const livestreamResponse = await this.mux_instance.get('/video/v1/live-streams/' + id);
             const assetResponse = await this.mux_instance.get('/video/v1/assets/' + livestreamResponse.data.data.active_asset_id);
@@ -128,6 +129,7 @@ export default class App extends Component {
                     width: width,
                     height: height,
                 },
+                assetPlaybackId: assetPlaybackId,
                 title: this.state.title === '' ? 'New Video' : this.state.title,
                 photo: `https://image.mux.com/${assetPlaybackId}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
                 active: false,
@@ -139,6 +141,7 @@ export default class App extends Component {
             this.setState({ assetId: livestreamResponse.data.data.active_asset_id, assetPlaybackId });
         } catch (err) {
             console.log('err: ', err);
+            return Alert.alert('Oops', 'Something unexpected happens.', [{ text: 'Okay' }]);
         }
     }
 
@@ -320,7 +323,8 @@ export default class App extends Component {
         if (publishingState) {
             this.vb.stop();
             this.stopLiveAndPublishPost();
-            this.setState({ timer: false });
+            this.props.navigation.dispatch(StackActions.pop());
+            this.setState({ timer: false, seconds: 0 });
         } else {
             this.vb.start();
             this.getAssetInfo(this.state.liveStreamId);
@@ -367,19 +371,18 @@ export default class App extends Component {
     }
 
     stopLiveAndPublishPost = async () => {
-        const result = await database().ref('posts').child(Store.user.uid).child(this.state.uid).once('value');
+        // const result = await database().ref('posts').child(Store.user.uid).child(this.state.uid).once('value');
 
-        var updates = {};
+        // var updates = {};
 
-        updates[`live/${this.state.uid}`] = null;
+        // updates[`live/${this.state.uid}`] = null;
 
-        if (result.val()) {
-            updates[`posts/${Store.user.uid}/${this.state.uid}/active`] = true;
-        }
+        // if (result.val()) {
+        //     updates[`posts/${Store.user.uid}/${this.state.uid}/active`] = true;
+        // }
 
-        database().ref().update(updates);
-
-        return Alert.alert('Yeyy', 'Your live stream is finished. ', [{ text: 'Okay' }]);
+        // database().ref().update(updates);
+        return Alert.alert('Yeyy', 'Your live stream is over. Your live broadcast will appear in your videos section in 1-2 minutes.', [{ text: 'Okay' }]);
     }
 
     selectVideoFromRoll = async () => {
@@ -398,7 +401,7 @@ export default class App extends Component {
         }
 
         updates[`users/${Store.user.uid}/type`] = 'influencer';
-        updates[`users/${Store.user.uid}/price`] = parseFloat(this.state.influencerPrice.toFixed(2));
+        updates[`users/${Store.user.uid}/price`] = parseFloat(this.state.influencerPrice.price.toFixed(2));
 
         this.setState({ loading: true });
         await database().ref().update(updates);
@@ -408,20 +411,28 @@ export default class App extends Component {
 
     setPrice = (type) => {
         const { influencerPrice } = this.state;
+        var counter = 0;
+
+        for (let i = 0; i < constants.TIERS.length; i++) {
+            const element = constants.TIERS[i];
+
+            if (element.price === influencerPrice.price) {
+                counter = i;
+                break;
+            }
+        }
 
         if (type === 'minus') {
-            if (influencerPrice <= 4.99) {
-                this.setState({ influencerPrice: 1.99 });
+            if (influencerPrice.price === constants.TIERS[0].price) {
+                this.setState({ influencerPrice: constants.TIERS[constants.TIERS.length - 1] });
             } else {
-                this.setState({ influencerPrice: influencerPrice - 5 });
+                this.setState({ influencerPrice: constants.TIERS[counter - 1] });
             }
         } else {
-            if (influencerPrice === 1.99) {
-                this.setState({ influencerPrice: 4.99 });
-            } else if (influencerPrice >= 19.99) {
-                this.setState({ influencerPrice: 19.99 });
+            if (influencerPrice.price === constants.TIERS[constants.TIERS.length - 1].price) {
+                this.setState({ influencerPrice: constants.TIERS[0] });
             } else {
-                this.setState({ influencerPrice: influencerPrice + 5 });
+                this.setState({ influencerPrice: constants.TIERS[counter + 1] });
             }
         }
     }
@@ -429,6 +440,19 @@ export default class App extends Component {
     takeStoryPhoto = async () => {
         const data = await this.camera.takePictureAsync({ quality: 0.2 });
         this.setState({ type: 'storyPhoto', url: data.uri });
+    }
+
+    setSnapToItem = (index) => {
+        const { isPublishing, isRecording } = this.state;
+
+        if (index === 0) {
+            this.carousel.snapToItem(1, true, true);
+            return this.selectVideoFromRoll();
+        }
+
+        if (!isPublishing && !isRecording) {
+            return this.setState({ indexButton: index });
+        }
     }
 
     renderItem = ({ item, index }) => {
@@ -645,7 +669,7 @@ export default class App extends Component {
             editTextModal,
             seconds,
             type,
-            title
+            title,
         } = this.state;
 
         if (Store.user.type === 'user') {
@@ -677,7 +701,7 @@ export default class App extends Component {
                                     </TouchableOpacity>
                                     <View style={{ paddingHorizontal: 20 }}>
                                         <Text
-                                            text={`${influencerPrice.toFixed(2)} $`}
+                                            text={`${influencerPrice.price.toFixed(2)} $`}
                                             style={{ fontSize: 24, marginTop: 10 }}
                                         />
                                         <Text
@@ -793,7 +817,7 @@ export default class App extends Component {
                         enableMomentum
                         firstItem={1}
                         activeSlideAlignment={'center'}
-                        onSnapToItem={(index) => (!isPublishing && !isRecording) ? this.setState({ indexButton: index }) : null}
+                        onSnapToItem={(index) => this.setSnapToItem(index)}
                     />
                     {
                         indexButton === 0 ?

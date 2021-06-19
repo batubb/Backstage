@@ -23,14 +23,18 @@ export default async function getLeaderBoardData(uid = '', limit = constants.DEA
     });
 
     leaderBoardArray.reverse();
-    
+
     leaderBoardArray.slice(0, 20);
 
     var newleaderBoardArray = [];
-
+    var z = 1;
     for (let i = 0; i < leaderBoardArray.length; i++) {
         const element = leaderBoardArray[i];
-        newleaderBoardArray.push({ ...element, index: i + 1 });
+
+        if (element.type === 'influencer') {
+            newleaderBoardArray.push({ ...element, index: z });
+            z++;
+        }
     }
 
     const result = newleaderBoardArray.filter(user => user.type === 'influencer');
