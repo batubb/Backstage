@@ -22,7 +22,6 @@ const BORDER_RADIUS = 6;
 class Login extends Component {
   constructor(props) {
     super(props);
-    console.log('here');
     this.phoneRef = React.createRef();
     this.state = {
       loading: true,
@@ -34,6 +33,7 @@ class Login extends Component {
   }
 
   componentDidMount = async () => {
+    console.log('#####IN LOGIN####');
     auth().onAuthStateChanged((auth) => {
       if (auth) {
         console.log('in here auth');
@@ -121,7 +121,7 @@ class Login extends Component {
               justifyContent: 'center',
             }}
             textStyle={{marginTop: 10, fontWeight: 'normal'}}
-            text="Loading"
+            text="Loadingasd"
           />
         </View>
       );

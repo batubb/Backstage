@@ -17,6 +17,7 @@ import Intro from './screens/Intro';
 import UserProfile from './screens/UserProfile';
 import WatchVideo from './screens/WatchVideo';
 import WatchStory from './screens/WatchStory';
+import TestPage from './screens/TestPage';
 import Comments from './screens/Comments';
 import Settings from './screens/Settings';
 import Highlights from './screens/Highlights';
@@ -134,6 +135,7 @@ class TabBarMenu extends React.Component {
         />
         <Stack.Screen name="AddContent" component={AddContent} />
         <Stack.Screen name="WatchStory" component={WatchStory} />
+        <Stack.Screen name="TestPage" component={TestPage} />
       </Stack.Navigator>
     );
   }

@@ -15,7 +15,10 @@ import {
 import {observer} from 'mobx-react';
 import {Loading, Header, Text, MyImage, Button} from '../../components';
 import {constants} from '../../resources';
-import * as RNIap from 'react-native-iap';
+import RNIap, {
+  purchaseErrorListener,
+  purchaseUpdatedListener,
+} from 'react-native-iap';
 import {
   subscribeInfluencer,
   checkUserInfo,
@@ -27,11 +30,12 @@ import {followerCount} from '../../lib';
 import {StackActions} from '@react-navigation/native';
 import ProfileTop from '../../components/ScreenComponents/ProfileComponents/ProfileTop/ProfileTop';
 import {DEFAULT_PAGE_WIDTH} from '../../resources/constants';
+import {TapGestureHandler} from 'react-native-gesture-handler';
 
 const {width} = Dimensions.get('window');
 
 const items = Platform.select({
-  ios: ['com.example.productId'],
+  ios: ['new.test.product'],
   android: ['com.example.productId'],
 });
 
@@ -55,17 +59,30 @@ class Subscribe extends Component {
     };
   }
 
+  isSuccess = (deliveryResult) => {
+    return true;
+  };
+
+  deliverOrDownloadFancyInAppPurchase = (asd) => {
+    return true;
+  };
+
   componentDidMount = async () => {
     const influencer = await checkUserInfo(this.state.influencer.uid);
-    RNIap.prepare();
-    RNIap.getProducts(items)
-      .then((products) => {
-        //handle success of fetch product list
-        console.log(products);
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
+
+    RNIap.initConnection().then(() => {
+      // we make sure that "ghost" pending payment are removed
+      // (ghost = failed pending payment that are still marked as pending in Google's native Vending module cache)
+      RNIap.getSubscriptions(items)
+        .catch(() => {
+          console.log('error getting products');
+        })
+        .then((products) => {
+          console.log(products);
+          RNIap.requestSubscription(products[0]['productId']);
+        });
+    });
+
     this.setState({loading: false, influencer});
   };
 

@@ -66,6 +66,7 @@ class CheckInfo extends Component {
       const userArray = await getDealsData();
       this.setState({loading: false, userArray});
     } else {
+      //this.setState({loading: false});
       const replaceActions = StackActions.replace('TabBarMenu');
       return this.props.navigation.dispatch(replaceActions);
     }
@@ -139,7 +140,7 @@ class CheckInfo extends Component {
               justifyContent: 'center',
             }}
             textStyle={{marginTop: 10, fontWeight: 'normal'}}
-            text="Loading"
+            text="Loading123"
           />
         </View>
       );

@@ -15,7 +15,7 @@ import {observer} from 'mobx-react';
 import LinearGradient from 'react-native-linear-gradient';
 import {Icon, Header} from 'react-native-elements';
 import {StackActions} from '@react-navigation/native';
-import {Loading, Text, MyImage, Divider} from '../../components';
+import {Loading, Text, MyImage, Divider, Button} from '../../components';
 import {constants} from '../../resources';
 import {
   getFollowingLiveData,
@@ -44,6 +44,7 @@ class Home extends Component {
   }
 
   componentDidMount = async () => {
+    console.log('here before');
     Promise.all([
       getFollowingLiveData(Store.uid, Store.followList),
       getFollowingUserPosts(Store.uid, Store.followList),
@@ -57,6 +58,7 @@ class Home extends Component {
         myStoriesArray: values[2].myStoriesArray,
       });
     });
+    console.log('here after');
   };
 
   onRefresh = async () => {
@@ -327,6 +329,17 @@ class Home extends Component {
     );
   };
 
+  // renderTestButton = () => {
+  //   return (
+  //     <Button
+  //       text={'This is a test'}
+  //       onPress={() => {
+  //         this.props.navigation.dispatch(StackActions.push('TestPage'));
+  //       }}
+  //     />
+  //   );
+  // };
+
   render() {
     const {loading, liveArray, refreshing, userPostsArray} = this.state;
 
@@ -351,6 +364,7 @@ class Home extends Component {
         />
         {this.renderStories()}
         <Divider />
+        {/* {this.renderTestButton()} */}
         {loading ? (
           <Loading
             loadingStyle={{

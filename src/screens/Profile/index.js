@@ -405,7 +405,7 @@ class Profile extends Component {
               justifyContent: 'center',
             }}
             textStyle={{marginTop: 10, fontWeight: 'normal'}}
-            text="Loading"
+            text="Loading89"
           />
         ) : (
           <ScrollView

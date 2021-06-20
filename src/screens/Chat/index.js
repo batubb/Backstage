@@ -643,7 +643,7 @@ class Chat extends Component {
               justifyContent: 'center',
             }}
             textStyle={{marginTop: 10, fontWeight: 'normal'}}
-            text="Loading"
+            text="Loading67"
           />
         ) : !this.state.subscribtion.subscribtion ? (
           Alert.alert('Oops', 'You must be a member to view the content.', [
