@@ -299,7 +299,7 @@ class Search extends Component {
               justifyContent: 'center',
             }}
             textStyle={{marginTop: 10, fontWeight: 'normal'}}
-            text="Loading1011"
+            text="Loading"
           />
         ) : search.length === 0 ? (
           <>

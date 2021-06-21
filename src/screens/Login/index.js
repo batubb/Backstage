@@ -33,7 +33,6 @@ class Login extends Component {
   }
 
   componentDidMount = async () => {
-    console.log('#####IN LOGIN####');
     auth().onAuthStateChanged((auth) => {
       if (auth) {
         console.log('in here auth');
@@ -42,7 +41,6 @@ class Login extends Component {
         const replaceActions = StackActions.replace('CheckInfo');
         return this.props.navigation.dispatch(replaceActions);
       } else {
-        console.log('in here not auth');
         Store.clearUserData();
         this.setState({loading: false});
       }
@@ -121,7 +119,7 @@ class Login extends Component {
               justifyContent: 'center',
             }}
             textStyle={{marginTop: 10, fontWeight: 'normal'}}
-            text="Loadingasd"
+            text="Loading"
           />
         </View>
       );

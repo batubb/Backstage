@@ -10,7 +10,7 @@ export default class Loading extends React.Component {
 
     return (
       <View style={loadingStyle}>
-        <ActivityIndicator size="small" color={'red'} />
+        <ActivityIndicator size="small" color={indicatorColor} />
         {text !== '' ? <Text text={text} style={textStyle} /> : null}
       </View>
     );

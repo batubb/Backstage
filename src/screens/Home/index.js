@@ -44,7 +44,6 @@ class Home extends Component {
   }
 
   componentDidMount = async () => {
-    console.log('here before');
     Promise.all([
       getFollowingLiveData(Store.uid, Store.followList),
       getFollowingUserPosts(Store.uid, Store.followList),
@@ -58,7 +57,6 @@ class Home extends Component {
         myStoriesArray: values[2].myStoriesArray,
       });
     });
-    console.log('here after');
   };
 
   onRefresh = async () => {

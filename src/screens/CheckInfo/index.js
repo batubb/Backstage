@@ -140,7 +140,7 @@ class CheckInfo extends Component {
               justifyContent: 'center',
             }}
             textStyle={{marginTop: 10, fontWeight: 'normal'}}
-            text="Loading123"
+            text="Loading"
           />
         </View>
       );
