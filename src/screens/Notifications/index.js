@@ -120,7 +120,7 @@ class Notifications extends Component {
                 var updates = {
                     likes: this.state.likes,
                     videos: this.state.videos,
-                    roomActivities: false,
+                    roomActivities: true,
                 };
 
                 database().ref('users').child(Store.user.uid).child('notifications').update(updates);
@@ -210,7 +210,7 @@ class Notifications extends Component {
                             </View>
                             <View style={{ width: width, paddingHorizontal: 40, marginTop: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                 <Text
-                                    text="Room Activities"
+                                    text="Comments"
                                     style={{ fontSize: 16 }}
                                 />
                                 <Switch

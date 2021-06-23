@@ -67,16 +67,29 @@ class WatchVideo extends Component {
             const influencer = await checkUserInfo(this.state.video.user.uid);
 
             if (this.state.video.type === 'video') {
-                const video = await getVideoInfo(this.state.video.uid, influencer);
+                try {
+                    const video = await getVideoInfo(this.state.video.uid, influencer);
 
-                if (typeof video.title !== 'undefined') {
-                    setVideoView(Store.user.uid, this.state.video);
+                    if (typeof video.title !== 'undefined') {
+                        setVideoView(Store.user.uid, this.state.video);
+                    }
+
+                    if (video) {
+                        this.setState({ video });
+                    }
+                } catch (error) {
+                    console.log(error);
                 }
-
-                this.setState({ video });
             } else if (this.state.video.type === 'live') {
-                const video = await getVideoInfo(this.state.video.uid, influencer, 'live');
-                this.setState({ video });
+                try {
+                    const video = await getVideoInfo(this.state.video.uid, influencer, 'live');
+
+                    if (video) {
+                        this.setState({ video });
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
 
                 database().ref('comments').child(this.state.video.uid).orderByChild('timestamp').on('value', snap => {
                     var comments = [];
@@ -328,6 +341,7 @@ class WatchVideo extends Component {
 
     render() {
         const { loading, video, paused, videoLoading, videoInfo, dk, sn, optionsVisible } = this.state;
+
         return (
             <View style={{ flex: 1, backgroundColor: constants.BACKGROUND_COLOR }}>
                 {video.type === 'video' ? this.renderVideoPlayer(video, paused, videoInfo, dk, sn) : null}

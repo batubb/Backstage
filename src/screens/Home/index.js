@@ -13,6 +13,7 @@ import Store from '../../store/Store';
 import { followerCount } from '../../lib';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import database from '@react-native-firebase/database';
+import axios from 'axios';
 
 const { width } = Dimensions.get('window');
 
@@ -27,6 +28,19 @@ class Home extends Component {
             userStoriesArray: [],
             myStoriesArray: [],
         };
+
+        this.mux_instance = axios.create({
+            baseURL: constants.MUX_BASE_URL,
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'mp4_support': 'standard',
+            },
+            auth: {
+                username: constants.MUX_USERNAME,
+                password: constants.MUX_PASSWORD,
+            },
+        });
     }
 
     componentDidMount = async () => {
@@ -65,13 +79,26 @@ class Home extends Component {
         }
     }
 
-    goTo = (route, info = null) => {
+    goTo = async (route, info = null) => {
         if (route === 'UserProfile') {
             const replaceActions = StackActions.push(route, { user: info });
             return this.props.navigation.dispatch(replaceActions);
         } else if (route === 'WatchVideo') {
-            const replaceActions = StackActions.push(route, { video: info });
-            return this.props.navigation.dispatch(replaceActions);
+            if (info.type === 'live') {
+                const livestreamResponse = await this.mux_instance.get('/video/v1/live-streams/' + info.liveId);
+                const status = livestreamResponse.data.data.status;
+
+                if (status === 'active') {
+                    const replaceActions = StackActions.push(route, { video: info });
+                    return this.props.navigation.dispatch(replaceActions);
+                } else {
+                    this.onRefresh();
+                    return Alert.alert('Oops', 'This livestream is over.', [{ text: 'Okay' }]);
+                }
+            } else {
+                const replaceActions = StackActions.push(route, { video: info });
+                return this.props.navigation.dispatch(replaceActions);
+            }
         } else if (route === 'WatchStory') {
             const userStories = [];
 

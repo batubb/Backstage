@@ -148,6 +148,7 @@ export default class App extends Component {
     createStream = async () => {
         try {
             const mux_response = await this.mux_instance.post('/video/v1/live-streams', {
+                reduced_latency: true,
                 playback_policy: ['public'],
                 new_asset_settings: {
                     playback_policy: ['public'],
@@ -326,15 +327,42 @@ export default class App extends Component {
             this.props.navigation.dispatch(StackActions.pop());
             this.setState({ timer: false, seconds: 0 });
         } else {
-            this.vb.start();
-            this.getAssetInfo(this.state.liveStreamId);
-            this.setState({ timer: true }, () => {
-                this.startTimer();
-            });
+            const activeLive = await this.checkActiveLive();
+
+            if (activeLive) {
+                return Alert.alert('Oops', 'The previous live broadcast is still in progress. Please try again in 1-2 minutes.', [{ text: 'Okay' }]);
+            } else {
+                this.vb.start();
+                this.getAssetInfo(this.state.liveStreamId);
+                this.setState({ timer: true }, () => {
+                    this.startTimer();
+                });
+            }
         }
 
         this.setState({ isPublishing: !publishingState });
     };
+
+    checkActiveLive = async () => {
+        try {
+            const result = await database().ref('live').once('value');
+            const data = result.val();
+            const keys = Object.keys(data);
+
+            for (let i = 0; i < keys.length; i++) {
+                const k = keys[i];
+                const element = data[k];
+
+                if (element.user.uid === Store.user.uid) {
+                    return true;
+                }
+            }
+
+            return false;
+        } catch (error) {
+            return false;
+        }
+    }
 
     startTimer = async () => {
         while (this.state.timer) {
