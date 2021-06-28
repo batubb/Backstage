@@ -59,7 +59,11 @@ export default function PostCard(props) {
               bottom: 0,
               paddingVertical: 5,
               paddingHorizontal: 10,
-              width: '100%',
+              width: '95%',
+              backgroundColor: constants.BAR_COLOR,
+              borderRadius: 5,
+              marginBottom: 5,
+              marginHorizontal: 3,
             }}>
             <Text
               text={
@@ -96,7 +100,7 @@ export default function PostCard(props) {
               {props.item.price !== '' && (
                 <View>
                   <Text
-                    text={`$ ${props.item.price}`}
+                    text={`$${props.item.price}`}
                     style={{fontSize: 12, marginLeft: SIZES.spacing * 1}}
                   />
                 </View>
