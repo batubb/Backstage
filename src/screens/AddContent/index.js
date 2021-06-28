@@ -1061,7 +1061,7 @@ export default class App extends Component {
             />
           </View>
         ) : null}
-        {!this.state.isStoryVideoRecording ? (
+        {!this.state.isStoryVideoRecording && !this.state.isRecording ? (
           <TouchableOpacity
             style={{position: 'absolute', right: 0, bottom: 40}}
             onPress={() => {
