@@ -53,6 +53,7 @@ class UserProfile extends Component {
       daily: [],
       optionsVisible: false,
       followerNumber: 0,
+      products: [],
     };
 
     this.list = [
@@ -65,6 +66,16 @@ class UserProfile extends Component {
     this.unsubscribe = this.props.navigation.addListener('focus', (e) => {
       this.checkInfluencerInfos();
     });
+    let productId = [];
+    productId.push(this.state.user.appStoreProductId);
+    const productsRes = await RNIap.getSubscriptions(productId);
+
+    console.log('got products ', productsRes);
+    if (!productsRes) {
+      this.setState({products: []});
+    } else {
+      this.setState({products: productsRes});
+    }
   };
 
   checkInfluencerInfos = async () => {
@@ -255,9 +266,9 @@ class UserProfile extends Component {
                 subscribtion.subscribtion
                   ? Alert.alert(
                       'Please unsubscribe through your Apple Store Settings',
-                    ) //this.unsubscribeInf()
-                  : this.requestRNIsubscription()
-              } //this.goTo('Subscribe', this.state.user)}
+                    )
+                  : this.requestRNISubscription()
+              }
             />
           ) : null}
           {user.uid !== Store.user.uid && subscribtion.cancel ? (
