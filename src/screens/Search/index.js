@@ -204,7 +204,10 @@ class Search extends Component {
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
         <Header title="Discover" />
-        <SearchBar searchUser={(input) => this.searchUser(input)} />
+        <SearchBar
+          searchUser={(input) => this.searchUser(input)}
+          style={{paddingBottom: SIZES.padding}}
+        />
         {loading ? (
           <Loading
             loadingStyle={{
@@ -224,8 +227,7 @@ class Search extends Component {
                   onRefresh={() => this.onRefresh()}
                   tintColor="white"
                 />
-              }
-              style={{paddingTop: SIZES.padding}}>
+              }>
               {this.renderCards(trendingsArray)}
             </ScrollView>
           </>

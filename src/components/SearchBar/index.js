@@ -10,20 +10,22 @@ import {
   Keyboard,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import {Text} from '../../components';
+import Text from '../../components/Text';
 import {Icon} from 'react-native-elements';
-import {constants} from '../../resources';
 import {COLORS, SIZES} from '../../resources/theme';
 import Animated from 'react-native-reanimated';
-import runTiming from '../../lib/runTiming';
+import {runTiming} from '../../lib';
 
 const {width} = Dimensions.get('window');
 
 export default class SearchBar extends Component {
-  state = {
-    search: '',
-    showCancelButton: false,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      search: '',
+      showCancelButton: false,
+    };
+  }
   animatedWidthClock = new Animated.Clock();
   animatedWidthValue = new Animated.Value(width - 20);
 
@@ -57,6 +59,7 @@ export default class SearchBar extends Component {
           width,
           paddingHorizontal: 10,
           flexDirection: 'row',
+          ...this.props.style,
         }}>
         <Animated.View
           style={{
@@ -99,8 +102,9 @@ export default class SearchBar extends Component {
               onPress={() => {
                 searchUser('');
                 this.setState({search: ''});
-              }}>
-              <View style={{paddingVertical: 10}}>
+              }}
+              style={{right: 10}}>
+              <View style={{padding: 10}}>
                 <Icon
                   name="close-circle"
                   color="#FFF"
@@ -111,13 +115,15 @@ export default class SearchBar extends Component {
             </TouchableOpacity>
           ) : null}
         </Animated.View>
-        {showCancelButton && (
+        {showCancelButton ? (
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => {
               this.closeCancelButton();
-              searchUser('');
-              this.setState({search: ''});
+              if (search !== '') {
+                searchUser('');
+                this.setState({search: ''});
+              }
               Keyboard.dismiss();
             }}
             style={{
@@ -129,10 +135,10 @@ export default class SearchBar extends Component {
             }}>
             <Text
               text="Cancel"
-              style={{fontSize: 13, color: COLORS.gray, textAlign: 'center'}}
+              style={{color: COLORS.gray, textAlign: 'center'}}
             />
           </TouchableOpacity>
-        )}
+        ) : null}
       </View>
     );
   }
@@ -140,8 +146,10 @@ export default class SearchBar extends Component {
 
 SearchBar.propTypes = {
   searchUser: PropTypes.func,
+  style: PropTypes.object,
 };
 
 SearchBar.defaultProps = {
   searchUser: null,
+  style: {},
 };

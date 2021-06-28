@@ -6,6 +6,7 @@ import controlArray from './controlArray';
 import setPosts from './setPosts';
 import sleep from './sleep';
 import regexCheck from './regexCheck';
+import runTiming from './runTiming';
 
 module.exports = {
     makeid,
@@ -14,5 +15,6 @@ module.exports = {
     controlArray,
     setPosts,
     sleep,
-    regexCheck
+    regexCheck,
+    runTiming,
 };
