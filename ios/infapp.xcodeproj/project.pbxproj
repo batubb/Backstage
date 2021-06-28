@@ -20,6 +20,7 @@
 		6D81F4342EABD428741D4466 /* libPods-infapp-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 147730564AD26EC0AE48ABE4 /* libPods-infapp-tvOSTests.a */; };
 		790654F598364966A544BADE /* libPods-infapp-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA05699607500D6A7733F588 /* libPods-infapp-tvOS.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		AEF1E46CD07C4982B7675002 /* libRNVideoEditor.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB6E9A0D4BB4D7B8F941CA0 /* libRNVideoEditor.a */; };
 		D4C0AA4A261F18CE00C6BECC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D4C0AA49261F18CE00C6BECC /* GoogleService-Info.plist */; };
 		FA349FE2B2B8545250DDD2A0 /* libPods-infapp-infappTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7851B8E3F9F01EAB27266ACC /* libPods-infapp-infappTests.a */; };
 /* End PBXBuildFile section */
@@ -31,6 +32,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = infapp;
+		};
+		21327731268A3E0200923C52 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A5E50231BCC34EB4BCB6878F /* RNVideoEditor.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNVideoEditor;
 		};
 		2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -62,9 +70,11 @@
 		56EE39ACA5E48E121E19A8D3 /* Pods-infapp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-infapp.debug.xcconfig"; path = "Target Support Files/Pods-infapp/Pods-infapp.debug.xcconfig"; sourceTree = "<group>"; };
 		641EA2D815702BCEBD448981 /* Pods-infapp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-infapp.release.xcconfig"; path = "Target Support Files/Pods-infapp/Pods-infapp.release.xcconfig"; sourceTree = "<group>"; };
 		7851B8E3F9F01EAB27266ACC /* libPods-infapp-infappTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-infapp-infappTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7BB6E9A0D4BB4D7B8F941CA0 /* libRNVideoEditor.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVideoEditor.a; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = infapp/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8A3A7A319C3308AD824B847D /* Pods-infapp-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-infapp-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-infapp-tvOSTests/Pods-infapp-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		91FB7E3C136B6AFF7E03D0A1 /* Pods-infapp-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-infapp-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-infapp-tvOS/Pods-infapp-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		A5E50231BCC34EB4BCB6878F /* RNVideoEditor.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVideoEditor.xcodeproj; path = "../node_modules/react-native-video-editor/ios/RNVideoEditor.xcodeproj"; sourceTree = "<group>"; };
 		AA05699607500D6A7733F588 /* libPods-infapp-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-infapp-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B019159690B6A1748C85C62A /* Pods-infapp-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-infapp-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-infapp-tvOSTests/Pods-infapp-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		B82A4A0C06BAF7E1B177FCEF /* libPods-infapp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-infapp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,6 +99,7 @@
 			files = (
 				4E2F469BF21165A5381BDC3F /* libPods-infapp.a in Frameworks */,
 				202C97FE267D4869006DBD2D /* StoreKit.framework in Frameworks */,
+				AEF1E46CD07C4982B7675002 /* libRNVideoEditor.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,6 +154,22 @@
 			name = infapp;
 			sourceTree = "<group>";
 		};
+		2132772D268A3E0100923C52 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				7BB6E9A0D4BB4D7B8F941CA0 /* libRNVideoEditor.a */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		2132772E268A3E0200923C52 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				21327732268A3E0200923C52 /* libRNVideoEditor.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -175,6 +202,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				A5E50231BCC34EB4BCB6878F /* RNVideoEditor.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -189,6 +217,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				38FDB44B023396ABAD2BE6F4 /* Pods */,
+				2132772D268A3E0100923C52 /* Recovered References */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -218,6 +247,7 @@
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
 				16242CF9E34EBFFD850B09AA /* [CP] Copy Pods Resources */,
+				4E4AC1BF05869C788AC063C6 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -241,6 +271,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				8D635EF49D5E8B3FF2912321 /* [CP] Copy Pods Resources */,
 				B8C55915799ABAAF082A9CF8 /* [CP-User] [RNFB] Core Configuration */,
+				05A6382A0736C5FAD5A929FB /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -330,6 +361,12 @@
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 2132772E268A3E0200923C52 /* Products */;
+					ProjectRef = A5E50231BCC34EB4BCB6878F /* RNVideoEditor.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* infapp */,
@@ -339,6 +376,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		21327732268A3E0200923C52 /* libRNVideoEditor.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNVideoEditor.a;
+			remoteRef = 21327731268A3E0200923C52 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		00E356EC1AD99517003FC87E /* Resources */ = {
@@ -389,6 +436,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
+		};
+		05A6382A0736C5FAD5A929FB /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-infapp/Pods-infapp-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignal/OneSignal.framework/OneSignal",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignal.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-infapp/Pods-infapp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		083C6CF639C5A3DA14D32277 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -497,6 +562,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+		};
+		4E4AC1BF05869C788AC063C6 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-infapp-infappTests/Pods-infapp-infappTests-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignal/OneSignal.framework/OneSignal",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignal.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-infapp-infappTests/Pods-infapp-infappTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		57D55702211475565A0B2014 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -704,9 +787,17 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native-video-editor/ios/**",
+				);
 				INFOPLIST_FILE = infappTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -726,9 +817,17 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = 3G68G367VK;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native-video-editor/ios/**",
+				);
 				INFOPLIST_FILE = infappTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -753,6 +852,10 @@
 				DEVELOPMENT_TEAM = V7293GG6Z6;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 armv7s armv7";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native-video-editor/ios/**",
+				);
 				INFOPLIST_FILE = infapp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0.5;
@@ -782,6 +885,10 @@
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = V7293GG6Z6;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 armv7 armv7s";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native-video-editor/ios/**",
+				);
 				INFOPLIST_FILE = infapp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0.5;
@@ -811,8 +918,16 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native-video-editor/ios/**",
+				);
 				INFOPLIST_FILE = "infapp-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -839,8 +954,16 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native-video-editor/ios/**",
+				);
 				INFOPLIST_FILE = "infapp-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -866,8 +989,16 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native-video-editor/ios/**",
+				);
 				INFOPLIST_FILE = "infapp-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -893,8 +1024,16 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native-video-editor/ios/**",
+				);
 				INFOPLIST_FILE = "infapp-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

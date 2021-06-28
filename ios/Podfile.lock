@@ -86,8 +86,8 @@ PODS:
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
-  - NodeMediaClient (2.9.2)
-  - OneSignal (3.4.3)
+  - NodeMediaClient (2.9.6)
+  - OneSignalXCFramework (3.4.4)
   - PromisesObjC (1.2.12)
   - RCTRequired (0.63.4)
   - RCTTypeSafety (0.63.4):
@@ -255,29 +255,29 @@ PODS:
     - React-cxxreact (= 0.63.4)
     - React-jsi (= 0.63.4)
   - React-jsinspector (0.63.4)
-  - react-native-camera (3.43.0):
+  - react-native-camera (3.44.1):
     - React-Core
-    - react-native-camera/RCT (= 3.43.0)
-    - react-native-camera/RN (= 3.43.0)
-  - react-native-camera/RCT (3.43.0):
+    - react-native-camera/RCT (= 3.44.1)
+    - react-native-camera/RN (= 3.44.1)
+  - react-native-camera/RCT (3.44.1):
     - React-Core
-  - react-native-camera/RN (3.43.0):
+  - react-native-camera/RN (3.44.1):
     - React-Core
-  - react-native-create-thumbnail (1.2.2):
+  - react-native-create-thumbnail (1.4.1):
     - React
   - react-native-image-picker (3.8.1):
     - React-Core
-  - react-native-nodemediaclient (0.2.14):
-    - NodeMediaClient (= 2.9.2)
+  - react-native-nodemediaclient (0.2.17):
+    - NodeMediaClient (= 2.9.6)
     - React
-    - react-native-nodemediaclient/RCTNodeMediaClient (= 0.2.14)
-  - react-native-nodemediaclient/RCTNodeMediaClient (0.2.14):
-    - NodeMediaClient (= 2.9.2)
+    - react-native-nodemediaclient/RCTNodeMediaClient (= 0.2.17)
+  - react-native-nodemediaclient/RCTNodeMediaClient (0.2.17):
+    - NodeMediaClient (= 2.9.6)
     - React
-  - react-native-onesignal (4.1.0):
-    - OneSignal (= 3.4.3)
+  - react-native-onesignal (4.1.1):
+    - OneSignalXCFramework (= 3.4.4)
     - React (< 1.0.0, >= 0.13.0)
-  - react-native-safe-area-context (3.1.9):
+  - react-native-safe-area-context (3.2.0):
     - React-Core
   - react-native-text-input-mask (2.0.1):
     - React
@@ -349,35 +349,35 @@ PODS:
     - React-jsi (= 0.63.4)
   - rn-fetch-blob (0.12.0):
     - React-Core
-  - RNCAsyncStorage (1.13.4):
+  - RNCAsyncStorage (1.15.5):
     - React-Core
-  - RNCMaskedView (0.1.10):
+  - RNCMaskedView (0.1.11):
     - React
-  - RNFBApp (10.7.0):
+  - RNFBApp (10.8.1):
     - Firebase/CoreOnly (~> 7.6.0)
     - React-Core
-  - RNFBAuth (10.7.0):
+  - RNFBAuth (10.8.1):
     - Firebase/Auth (~> 7.6.0)
     - React-Core
     - RNFBApp
-  - RNFBDatabase (10.7.0):
+  - RNFBDatabase (10.8.1):
     - Firebase/Database (~> 7.6.0)
     - React-Core
     - RNFBApp
-  - RNFBStorage (10.7.0):
+  - RNFBStorage (10.8.1):
     - Firebase/Storage (~> 7.6.0)
     - React-Core
     - RNFBApp
-  - RNGestureHandler (1.9.0):
+  - RNGestureHandler (1.10.3):
     - React-Core
-  - RNIap (6.2.1):
+  - RNIap (6.2.4):
     - React-Core
   - RNInputMask (4.1.0)
-  - RNReanimated (1.13.2):
+  - RNReanimated (1.13.3):
     - React-Core
-  - RNScreens (2.17.1):
+  - RNScreens (2.18.1):
     - React-Core
-  - RNShare (5.1.4):
+  - RNShare (5.3.0):
     - React-Core
   - RNVectorIcons (8.1.0):
     - React-Core
@@ -455,7 +455,7 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - NodeMediaClient
-    - OneSignal
+    - OneSignalXCFramework
     - PromisesObjC
     - SSZipArchive
 
@@ -583,8 +583,8 @@ SPEC CHECKSUMS:
   JWT: 9b5c05abbcc1a0e69c3c91e1655b3387fc7e581d
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
-  NodeMediaClient: 595811d347cfc02dfcda26bb611faf4c7f2be9c5
-  OneSignal: e4dfb1912410f302dc9661ce98fc829f6c18ff6a
+  NodeMediaClient: 0f15a8f84c84ec1023ab4a8b3c5c0dff9a7f62d1
+  OneSignalXCFramework: eaf286b7438aa1f030f03e5fa9f1c79ede5d8f04
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   RCTRequired: 082f10cd3f905d6c124597fd1c14f6f2655ff65e
   RCTTypeSafety: 8c9c544ecbf20337d069e4ae7fd9a377aadf504b
@@ -596,12 +596,12 @@ SPEC CHECKSUMS:
   React-jsi: a0418934cf48f25b485631deb27c64dc40fb4c31
   React-jsiexecutor: 93bd528844ad21dc07aab1c67cb10abae6df6949
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
-  react-native-camera: f432fcf1b32b528bbf7c3543d3e3b1deb0c5b72a
-  react-native-create-thumbnail: 4c445d78f7fe6537292e169744faff065c4e71f8
+  react-native-camera: 7bf59f2728ffb019fa25e60a225d2c57e1a8f0f6
+  react-native-create-thumbnail: d31c84dd69fb4d60aec0ff2f49bc0de41ede7b2c
   react-native-image-picker: 31971f6184e7c1dcb4fc1f122e1ba2c3fb11ef1e
-  react-native-nodemediaclient: eeb78d795f2fc3d772b2b95f460aa45018d03119
-  react-native-onesignal: 6d3d3ac10192c5694049ce8c1ba481e5392c1a73
-  react-native-safe-area-context: b6e0e284002381d2ff29fa4fff42b4d8282e3c94
+  react-native-nodemediaclient: 5e2564acad7b0899a93888bebc507c00575d3020
+  react-native-onesignal: 2a7c3a5f2aa1c599d94cda6cc583205e1548828d
+  react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
   react-native-text-input-mask: cffd00848940e7670cf233a99e7be782257935ed
   react-native-video: 0bb76b6d6b77da3009611586c7dbf817b947f30e
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
@@ -615,18 +615,18 @@ SPEC CHECKSUMS:
   React-RCTVibration: ae4f914cfe8de7d4de95ae1ea6cc8f6315d73d9d
   ReactCommon: 73d79c7039f473b76db6ff7c6b159c478acbbb3b
   rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
-  RNCAsyncStorage: 44539979e1f234262d64d3ce86ec21cceb1b2c5e
-  RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
-  RNFBApp: d75aa9756bca20df2c902a3f7e11bc276f03c65b
-  RNFBAuth: 77664661b9b75a8af2c194145cc4af52c151f2ac
-  RNFBDatabase: a0a66428ec39a984f0e397c5c58767421c5ffa66
-  RNFBStorage: 3d87e4ee72171f84178d76810eac26118e2b8396
-  RNGestureHandler: 9b7e605a741412e20e13c512738a31bd1611759b
-  RNIap: 5058c0b824e97f9dcc6728ff271dbe418d10d27a
+  RNCAsyncStorage: 56a3355a10b5d660c48c6e37325ac85ebfd09885
+  RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
+  RNFBApp: 02bde3edecf2e9694b908a5d3504e03449980f20
+  RNFBAuth: 16f2b91bf53f398d83a15cff0dd52225967c1d78
+  RNFBDatabase: 21ebccd262d7ab77db2b5c7fe4c6528c6ec259c3
+  RNFBStorage: fb33c149ca21187b86f4e32dc35693525b5f2ac0
+  RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
+  RNIap: c9ec66feaf72edced0f82cbd2bf8ca73ea9511bf
   RNInputMask: 815461ebdf396beb62cf58916c35cf6930adb991
-  RNReanimated: e03f7425cb7a38dcf1b644d680d1bfc91c3337ad
-  RNScreens: b6c9607e6fe47c1b6e2f1910d2acd46dd7ecea3a
-  RNShare: 8af5349f05fc042d230674dd650d19789187ff9c
+  RNReanimated: 514a11da3a2bcc6c3dfd9de32b38e2b9bf101926
+  RNScreens: f7ad633b2e0190b77b6a7aab7f914fad6f198d8d
+  RNShare: 4df87d1791f50a2c7b1d89432fb9bbb7c02a9c9a
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6

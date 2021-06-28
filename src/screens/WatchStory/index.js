@@ -15,14 +15,16 @@ import {observer} from 'mobx-react';
 import {Icon} from 'react-native-elements';
 import Video from 'react-native-video';
 import {StackActions} from '@react-navigation/native';
-import Animated, {Easing} from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import {Loading, Text, MyImage} from '../../components';
 import {constants} from '../../resources';
 import {checkSubscribtion, checkUserInfo, report} from '../../services';
 import Store from '../../store/Store';
-import runTiming from '../../lib/runTiming';
+import {runTiming} from '../../lib';
+import SlidingUpPanel from 'rn-sliding-up-panel';
 
 const {width, height} = Dimensions.get('window');
+const SCREEN_DIMENSIONS = Dimensions.get('screen');
 var BOTTOM_PADDING = height >= 812 ? 44 : 20;
 BOTTOM_PADDING = Platform.OS === 'android' ? 0 : BOTTOM_PADDING;
 
@@ -61,6 +63,7 @@ class WatchStory extends Component {
   }
 
   componentDidMount = async () => {
+    this.bottomSheetRef?.show();
     const subscribtion = await checkSubscribtion(
       Store.uid,
       this.state.content.user.uid,
@@ -198,11 +201,7 @@ class WatchStory extends Component {
           }}
           onBuffer={() => {
             this.storyLoadingValue = new Animated.Value(0);
-            this.startProgressBar(
-              this.videoDuration,
-              0,
-              false,
-            );
+            this.startProgressBar(this.videoDuration, 0, false);
           }}
           onPlaybackResume={() => {
             this.setState({isVideoSeeked: false});
@@ -236,7 +235,14 @@ class WatchStory extends Component {
           justifyContent: 'center',
         }}>
         <Image
-          style={{flex: 1, width, height, position: 'absolute'}}
+          style={{
+            flex: 1,
+            width,
+            height,
+            position: 'absolute',
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          }}
           source={{uri: content.url}}
           onLoadStart={() => this.setState({loading: true})}
           onLoadEnd={() => {
@@ -265,7 +271,7 @@ class WatchStory extends Component {
       }
       const duration =
         contentType === 'photo'
-          ? 9000
+          ? 10000
           : parseFloat(parseFloat(videoDuration * 1000).toFixed(2));
       this.storyLoadingValue = runTiming(
         this.storyLoadingClock,
@@ -289,104 +295,116 @@ class WatchStory extends Component {
 
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
-        {content.type === 'photo' && subscribtion.subscribtion
-          ? this.renderImage(content)
-          : null}
-        {content.type === 'video' && subscribtion.subscribtion
-          ? this.renderVideoPlayer(content)
-          : null}
-        <Animated.Code>
-          {() =>
-            Animated.call(
-              [this.storyLoadingValue],
-              ([val]) => (this.currentLoadingValue = val),
-            )
-          }
-        </Animated.Code>
-        {loading || this.state.isVideoSeeked ? (
+        <SlidingUpPanel
+          ref={(ref) => (this.bottomSheetRef = ref)}
+          height={SCREEN_DIMENSIONS.height}
+          snappingPoints={[SCREEN_DIMENSIONS.height, 0]}
+          containerStyle={{flex: 1}}
+          friction={0.7}
+          onBottomReached={() =>
+            this.props.navigation.dispatch(StackActions.pop())
+          }>
+          {content.type === 'photo' && subscribtion.subscribtion
+            ? this.renderImage(content)
+            : null}
+          {content.type === 'video' && subscribtion.subscribtion
+            ? this.renderVideoPlayer(content)
+            : null}
+          <Animated.Code>
+            {() =>
+              Animated.call(
+                [this.storyLoadingValue],
+                ([val]) => (this.currentLoadingValue = val),
+              )
+            }
+          </Animated.Code>
+          {loading || this.state.isVideoSeeked ? (
+            <View
+              style={{
+                width,
+                height,
+                backgroundColor: loading
+                  ? constants.BACKGROUND_COLOR
+                  : constants.TRANSPARENT_BLACK_COLOR,
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'absolute',
+              }}>
+              <Loading />
+            </View>
+          ) : null}
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => this.nextStory(stories, content)}
+            style={{width: width / 2, height, position: 'absolute', right: 0}}
+          />
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => this.previousStory(stories, content)}
+            style={{width: width / 2, height, position: 'absolute', left: 0}}
+          />
           <View
             style={{
               width,
-              height,
-              backgroundColor: loading
-                ? constants.BACKGROUND_COLOR
-                : constants.TRANSPARENT_BLACK_COLOR,
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'absolute',
+              flexDirection: 'row',
+              paddingHorizontal: 20,
+              paddingVertical: 10,
+              marginTop: BOTTOM_PADDING,
+              justifyContent: 'space-between',
             }}>
-            <Loading />
+            {stories.map((item, index) => (
+              <View
+                key={item.uid}
+                style={{
+                  width: (width - 40) / stories.length - 2.5,
+                  height: 2,
+                  backgroundColor: index < content.id ? '#FFF' : 'gray',
+                  flexDirection: 'row',
+                }}>
+                {index === content.id && !loading ? (
+                  <Animated.View
+                    style={{
+                      height: 2,
+                      backgroundColor: '#FFF',
+                      flex: this.storyLoadingValue,
+                    }}
+                  />
+                ) : null}
+              </View>
+            ))}
           </View>
-        ) : null}
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => this.nextStory(stories, content)}
-          style={{width: width / 2, height, position: 'absolute', right: 0}}
-        />
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => this.previousStory(stories, content)}
-          style={{width: width / 2, height, position: 'absolute', left: 0}}
-        />
-        <View
-          style={{
-            width,
-            flexDirection: 'row',
-            paddingHorizontal: 20,
-            paddingVertical: 10,
-            marginTop: BOTTOM_PADDING,
-            justifyContent: 'space-between',
-          }}>
-          {stories.map((item, index) => (
-            <View
-              key={item.uid}
-              style={{
-                width: (width - 40) / stories.length - 2.5,
-                height: 2,
-                backgroundColor: index < content.id ? '#FFF' : 'gray',
-                flexDirection: 'row',
-              }}>
-              {index === content.id && !loading ? (
-                <Animated.View
-                  style={{
-                    height: 2,
-                    backgroundColor: '#FFF',
-                    flex: this.storyLoadingValue,
-                  }}
-                />
-              ) : null}
+          <View
+            style={{
+              width,
+              flexDirection: 'row',
+              paddingHorizontal: 20,
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <View style={{alignItems: 'center', flexDirection: 'row'}}>
+              <MyImage
+                photo={content.user.photo}
+                style={{width: 50, height: 50, borderRadius: 25}}
+              />
+              <View>
+                <Text text={content.user.name} style={{marginLeft: 5}} />
+                {content.title !== '' ? (
+                  <Text
+                    text={content.title}
+                    style={{marginLeft: 5, fontSize: 12, fontWeight: 'normal'}}
+                  />
+                ) : null}
+              </View>
             </View>
-          ))}
-        </View>
-        <View
-          style={{
-            width,
-            flexDirection: 'row',
-            paddingHorizontal: 20,
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
-          <View style={{alignItems: 'center', flexDirection: 'row'}}>
-            <MyImage
-              photo={content.user.photo}
-              style={{width: 50, height: 50, borderRadius: 25}}
-            />
-            <View>
-              <Text text={content.user.name} style={{marginLeft: 5}} />
-              {content.title !== '' ? (
-                <Text
-                  text={content.title}
-                  style={{marginLeft: 5, fontSize: 12, fontWeight: 'normal'}}
-                />
-              ) : null}
-            </View>
+            <TouchableOpacity
+              style={{padding: 5}}
+              onPress={() =>
+                this.props.navigation.dispatch(StackActions.pop())
+              }>
+              <Icon name="close" color="#FFF" type="material-community" />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={{padding: 5}}
-            onPress={() => this.props.navigation.dispatch(StackActions.pop())}>
-            <Icon name="close" color="#FFF" type="material-community" />
-          </TouchableOpacity>
-        </View>
+        </SlidingUpPanel>
       </View>
     );
   }
