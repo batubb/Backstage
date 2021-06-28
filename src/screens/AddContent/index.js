@@ -77,6 +77,7 @@ export default class App extends Component {
       timer: false,
       type: '',
       storyVideo: false,
+      isStoryVideoRecording: false,
       onPage: true,
     };
 
@@ -378,7 +379,7 @@ export default class App extends Component {
 
   stopStoryVideo = async () => {
     this.camera.stopRecording();
-    this.setState({isRecording: false, seconds: 0, timer: false});
+    this.setState({isRecording: false, seconds: 0, timer: false, isStoryVideoRecording: false});
   };
 
   startStoryVideo = async () => {
@@ -393,7 +394,7 @@ export default class App extends Component {
       this.startTimer();
     });
 
-    this.setState({isRecording: true});
+    this.setState({isRecording: true, isStoryVideoRecording: true});
     const result = await data;
 
     this.setState({url: result.uri, type: 'storyVideo', timer: true});
@@ -1060,20 +1061,27 @@ export default class App extends Component {
             />
           </View>
         ) : null}
-        <TouchableOpacity
-          style={{position: 'absolute', right: 0, bottom: 40}}
-          onPress={() => {
-            this.setState({camera: this.state.camera === 1 ? 0 : 1});
+        {!this.state.isStoryVideoRecording ? (
+          <TouchableOpacity
+            style={{position: 'absolute', right: 0, bottom: 40}}
+            onPress={() => {
+              this.setState({camera: this.state.camera === 1 ? 0 : 1});
 
-            if (indexButton === 1) {
-              this.vb.switchCamera();
-            }
-          }}>
-          <View style={{padding: 10}}>
-            <Icon name="camera-reverse" color="#FFF" type="ionicon" size={32} />
-          </View>
-        </TouchableOpacity>
-        {indexButton === 0 || indexButton === 2 ? (
+              if (indexButton === 1) {
+                this.vb.switchCamera();
+              }
+            }}>
+            <View style={{padding: 10}}>
+              <Icon
+                name="camera-reverse"
+                color="#FFF"
+                type="ionicon"
+                size={32}
+              />
+            </View>
+          </TouchableOpacity>
+        ) : null}
+        {(indexButton === 0 || indexButton === 2) && !this.state.isRecording ? (
           <TouchableOpacity
             style={{position: 'absolute', left: 0, bottom: 40}}
             onPress={() => {
@@ -1120,6 +1128,7 @@ export default class App extends Component {
                   timer: false,
                   type: '',
                   storyVideo: false,
+                  isStoryVideoRecording: false,
                 });
                 /*if we have a url reset all state var's except for the ones initialized in component did mount*/
               } else {
