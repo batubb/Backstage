@@ -23,12 +23,12 @@ import {
   Divider,
 } from '../../components';
 import {constants} from '../../resources';
-import {searchUser, getLeaderBoardData, getTrendingsData} from '../../services';
+import {searchUser, getTrendingsData} from '../../services';
 import {followerCount} from '../../lib';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
 import {Button} from 'react-native-share';
 import {PlatformColor} from 'react-native';
-import {COLORS} from '../../resources/theme';
+import {COLORS, SIZES} from '../../resources/theme';
 
 const {width} = Dimensions.get('window');
 
@@ -40,31 +40,22 @@ class Search extends Component {
       refreshing: false,
       search: '',
       searchArray: [],
-      type: 'trending',
-      dealsArray: [],
       trendingsArray: [],
-      leaderBoardArray: [],
     };
   }
 
   componentDidMount = async () => {
     const trendingsArray = await getTrendingsData();
-    const leaderBoardArray = await getLeaderBoardData();
 
-    this.setState({loading: false, leaderBoardArray, trendingsArray});
+    this.setState({loading: false, trendingsArray});
   };
 
   onRefresh = async () => {
     this.setState({refreshing: true});
 
     const trendingsArray = await getTrendingsData();
-    const leaderBoardArray = await getLeaderBoardData();
 
-    this.setState({refreshing: false, leaderBoardArray, trendingsArray});
-  };
-
-  setType = async (type) => {
-    this.setState({type: type});
+    this.setState({refreshing: false, trendingsArray});
   };
 
   searchUser = async (search) => {
@@ -85,34 +76,6 @@ class Search extends Component {
     }
   };
 
-  typeButton = (type, title, active = true) => {
-    return (
-      <TouchableOpacity
-        onPress={() => (active ? this.setType(title.toLowerCase()) : null)}>
-        <View
-          style={{
-            backgroundColor: type === title.toLowerCase() ? '#FFF' : null,
-            width: width / 2 - 10,
-            alignItems: 'center',
-            borderRadius: 4,
-            borderWidth: 0.5,
-            borderColor: COLORS.separatorColor,
-            paddingVertical: 5,
-            marginHorizontal: 5,
-            marginVertical: 10,
-          }}>
-          <Text
-            text={title}
-            style={{
-              fontWeight: 'bold',
-              color: type === title.toLowerCase() ? '#000' : '#FFF',
-            }}
-          />
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
   renderCards = (data) => {
     return (
       <PostsCard
@@ -120,52 +83,6 @@ class Search extends Component {
         isPersonCard
         numCols={3}
         onPress={(item) => this.goTo('UserProfile', item)}
-      />
-    );
-  };
-
-  renderLeaderBoard = (data) => {
-    return (
-      <FlatList
-        data={data}
-        keyExtractor={(item) => item.uid}
-        renderItem={({item}) => (
-          <View
-            style={{
-              width: width,
-              alignItems: 'center',
-              marginTop: 10,
-            }}>
-            <TouchableOpacity onPress={() => this.goTo('UserProfile', item)}>
-              <View
-                style={{
-                  width: width - 20,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: 10,
-                }}>
-                <Text text={item.index.toString()} style={{fontSize: 20}} />
-                <MyImage
-                  style={{width: 60, height: 60, borderRadius: 30}}
-                  photo={item.photo}
-                />
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    width: width - 110,
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}>
-                  <View style={{width: width - 170}}>
-                    <Text text={item.username} style={{fontSize: 16}} />
-                  </View>
-                </View>
-              </View>
-            </TouchableOpacity>
-            <Divider />
-          </View>
-        )}
       />
     );
   };
@@ -280,16 +197,13 @@ class Search extends Component {
       loading,
       refreshing,
       search,
-      type,
-      dealsArray,
       trendingsArray,
-      leaderBoardArray,
       searchArray,
     } = this.state;
 
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
-        <Header title="Search" />
+        <Header title="Discover" />
         <SearchBar searchUser={(input) => this.searchUser(input)} />
         {loading ? (
           <Loading
@@ -303,16 +217,6 @@ class Search extends Component {
           />
         ) : search.length === 0 ? (
           <>
-            <View
-              style={{
-                width: width,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginBottom: 5,
-              }}>
-              {this.typeButton(type, 'Trending')}
-              {this.typeButton(type, 'Most Popular')}
-            </View>
             <ScrollView
               refreshControl={
                 <RefreshControl
@@ -320,11 +224,9 @@ class Search extends Component {
                   onRefresh={() => this.onRefresh()}
                   tintColor="white"
                 />
-              }>
-              {type === 'trending' ? this.renderCards(trendingsArray) : null}
-              {type === 'most popular'
-                ? this.renderLeaderBoard(leaderBoardArray)
-                : null}
+              }
+              style={{paddingTop: SIZES.padding}}>
+              {this.renderCards(trendingsArray)}
             </ScrollView>
           </>
         ) : (
