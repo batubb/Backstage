@@ -15,10 +15,12 @@ import {observer} from 'mobx-react';
 import {Icon} from 'react-native-elements';
 import Video from 'react-native-video';
 import {StackActions} from '@react-navigation/native';
+import Animated, {Easing} from 'react-native-reanimated';
 import {Loading, Text, MyImage} from '../../components';
 import {constants} from '../../resources';
 import {checkSubscribtion, checkUserInfo, report} from '../../services';
 import Store from '../../store/Store';
+import runTiming from '../../lib/runTiming';
 
 const {width, height} = Dimensions.get('window');
 var BOTTOM_PADDING = height >= 812 ? 44 : 20;
@@ -35,6 +37,7 @@ class WatchStory extends Component {
       stories: this.props.route.params.stories,
       paused: true,
       videoLoading: true,
+      isVideoSeeked: false,
       isCommentModalVisible: false,
       videoInfo: {},
       content: {...this.props.route.params.stories[0], id: 0},
@@ -52,6 +55,9 @@ class WatchStory extends Component {
         {title: 'Edit', color: constants.RED, onPress: this.editVideo},
       ];
     }
+
+    this.storyLoadingClock = new Animated.Clock();
+    this.storyLoadingValue = new Animated.Value(0);
   }
 
   componentDidMount = async () => {
@@ -64,6 +70,7 @@ class WatchStory extends Component {
     if (subscribtion.subscribtion) {
       const influencer = await checkUserInfo(this.state.content.user.uid);
       this.setState({loading: false, paused: false, influencer});
+      this.startProgressBar();
     } else {
       Alert.alert('Oops', 'You must be a member to view the content.', [
         {
@@ -71,6 +78,13 @@ class WatchStory extends Component {
           onPress: () => this.props.navigation.dispatch(StackActions.pop()),
         },
       ]);
+    }
+  };
+
+  componentWillUnmount = () => {
+    if (this.storyLoadingNextAction) {
+      clearTimeout(this.storyLoadingNextAction);
+      this.storyLoadingNextAction = null;
     }
   };
 
@@ -169,7 +183,43 @@ class WatchStory extends Component {
           style={{flex: 1, width: width, height: height, position: 'absolute'}}
           paused={false}
           onLoadStart={() => this.setState({loading: true})}
-          onLoad={() => this.setState({loading: false})}
+          onLoad={(videoData) => {
+            this.videoDuration = videoData.duration;
+          }}
+          onVideoEnd={() => {
+            this.storyLoadingValue = new Animated.Value(0);
+            this.nextStory(this.state.stories, this.state.content);
+          }}
+          onProgress={() => {
+            if (this.state.loading) {
+              this.setState({loading: false});
+              this.startProgressBar(this.videoDuration, 0, false);
+            }
+          }}
+          onBuffer={() => {
+            this.storyLoadingValue = new Animated.Value(0);
+            this.startProgressBar(
+              this.videoDuration,
+              0,
+              false,
+            );
+          }}
+          onPlaybackResume={() => {
+            this.setState({isVideoSeeked: false});
+            this.startProgressBar(
+              this.videoDuration - this.currentLoadingValue,
+              this.currentLoadingValue,
+              false,
+            );
+          }}
+          onPlaybackStalled={() => {
+            this.storyLoadingValue = new Animated.Value(
+              this.currentLoadingValue,
+            );
+            clearTimeout(this.storyLoadingNextAction);
+            this.storyLoadingNextAction = null;
+            this.setState({isVideoSeeked: true});
+          }}
         />
       </View>
     );
@@ -189,10 +239,49 @@ class WatchStory extends Component {
           style={{flex: 1, width, height, position: 'absolute'}}
           source={{uri: content.url}}
           onLoadStart={() => this.setState({loading: true})}
-          onLoadEnd={() => this.setState({loading: false})}
+          onLoadEnd={() => {
+            this.setState({loading: false});
+            this.startProgressBar();
+          }}
         />
       </View>
     );
+  };
+
+  startProgressBar = (
+    videoDuration = null,
+    startFrom = 0,
+    setNextAction = true,
+  ) => {
+    const contentType = this.state.content.type;
+
+    if (
+      contentType === 'photo' ||
+      (contentType === 'video' && videoDuration !== null)
+    ) {
+      if (this.storyLoadingNextAction) {
+        clearTimeout(this.storyLoadingNextAction);
+        this.storyLoadingNextAction = null;
+      }
+      const duration =
+        contentType === 'photo'
+          ? 9000
+          : parseFloat(parseFloat(videoDuration * 1000).toFixed(2));
+      this.storyLoadingValue = runTiming(
+        this.storyLoadingClock,
+        duration,
+        new Animated.Value(startFrom),
+        new Animated.Value(1),
+      );
+
+      if (setNextAction) {
+        this.storyLoadingNextAction = setTimeout(() => {
+          this.storyLoadingValue = new Animated.Value(0);
+          this.nextStory(this.state.stories, this.state.content);
+          this.storyLoadingNextAction = null;
+        }, duration);
+      }
+    }
   };
 
   render() {
@@ -206,12 +295,22 @@ class WatchStory extends Component {
         {content.type === 'video' && subscribtion.subscribtion
           ? this.renderVideoPlayer(content)
           : null}
-        {loading ? (
+        <Animated.Code>
+          {() =>
+            Animated.call(
+              [this.storyLoadingValue],
+              ([val]) => (this.currentLoadingValue = val),
+            )
+          }
+        </Animated.Code>
+        {loading || this.state.isVideoSeeked ? (
           <View
             style={{
               width,
               height,
-              backgroundColor: constants.BACKGROUND_COLOR,
+              backgroundColor: loading
+                ? constants.BACKGROUND_COLOR
+                : constants.TRANSPARENT_BLACK_COLOR,
               alignItems: 'center',
               justifyContent: 'center',
               position: 'absolute',
@@ -244,9 +343,19 @@ class WatchStory extends Component {
               style={{
                 width: (width - 40) / stories.length - 2.5,
                 height: 2,
-                backgroundColor: index <= content.id ? '#FFF' : 'gray',
-              }}
-            />
+                backgroundColor: index < content.id ? '#FFF' : 'gray',
+                flexDirection: 'row',
+              }}>
+              {index === content.id && !loading ? (
+                <Animated.View
+                  style={{
+                    height: 2,
+                    backgroundColor: '#FFF',
+                    flex: this.storyLoadingValue,
+                  }}
+                />
+              ) : null}
+            </View>
           ))}
         </View>
         <View
