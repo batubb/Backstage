@@ -62,8 +62,8 @@ export default function PostCard(props) {
               width: '95%',
               backgroundColor: constants.BAR_COLOR,
               borderRadius: 5,
-              marginBottom: 5,
-              marginHorizontal: 3,
+              marginBottom: SIZES.padding * 0.3,
+              marginHorizontal: SIZES.padding * 0.3,
             }}>
             <View style={{flexDirection: 'row'}}>
               <Text

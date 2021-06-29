@@ -228,7 +228,11 @@ class Search extends Component {
                   onRefresh={() => this.onRefresh()}
                   tintColor="white"
                 />
-              }>
+              }
+              style={{
+                marginHorizontal: SIZES.padding,
+              }}
+              >
               {this.renderCards(trendingsArray)}
             </ScrollView>
           </>
