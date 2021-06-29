@@ -122,24 +122,22 @@ class Withdraw extends Component {
               <LineChart
                 data={{
                   labels: [
-                    'January',
-                    'February',
-                    'March',
-                    'April',
+                    'Jan',
+                    'Febr',
+                    'Mar',
+                    'Apr',
                     'May',
-                    'June',
                   ],
                   datasets: [
                     {
-                      data: [20, 45, 28, 80, 99, 43],
+                      data: [20, 45, 28, 80, 99],
                       color: (opacity = 1) => COLORS.primary,
                       strokeWidth: 2,
                     },
                   ],
                 }}
-                width={width + SIZES.padding * 12 - 5}
+                width={width + SIZES.padding * 8}
                 height={300}
-                withVerticalLabels={false}
                 withHorizontalLabels={false}
                 withInnerLines={false}
                 withOuterLines={false}
@@ -147,12 +145,13 @@ class Withdraw extends Component {
                 chartConfig={{
                   backgroundGradientFromOpacity: 0,
                   backgroundGradientToOpacity: 0,
-                  fillShadowGradient: COLORS.secondary,
+                  color: (opacity = 1) => COLORS.primary,
+                  fillShadowGradient: 'transparent',
                 }}
                 style={{
                   borderRadius: SIZES.radius,
-                  marginTop: 50,
-                  marginLeft: -(SIZES.padding * 6),
+                  marginTop: 55,
+                  marginLeft: -(SIZES.padding * 4),
                 }}
                 bezier
               />
@@ -160,7 +159,7 @@ class Withdraw extends Component {
             <View
               style={{
                 alignItems: 'center',
-                marginTop: SIZES.padding * 5,
+                marginTop: SIZES.padding * 8,
               }}>
               <Button
                 onPress={() => this.goTo('EditBankAccount')}
