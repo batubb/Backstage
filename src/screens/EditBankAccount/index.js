@@ -45,7 +45,7 @@ class EditBankAccount extends Component {
           display: 'flex',
           flexDirection: 'row',
           marginTop: SIZES.spacing * 15,
-          marginHorizontal: SIZES.spacing * 10,
+          marginHorizontal: SIZES.spacing * 6,
           borderRadius: 6,
           backgroundColor: COLORS.systemFill,
           paddingVertical: SIZES.spacing * 6,
@@ -135,7 +135,7 @@ class EditBankAccount extends Component {
                 onPress={() =>
                   this.props.navigation.dispatch(StackActions.pop())
                 }
-                text="Add"
+                text="Save"
                 primary
                 buttonStyle={{
                   paddingVertical: SIZES.padding * 1.5,
