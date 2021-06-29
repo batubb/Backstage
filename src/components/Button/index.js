@@ -25,6 +25,7 @@ export default class Button extends Component {
       text,
       onPress,
       rightIconProps,
+      leftIconProps,
       disabled,
     } = this.props;
     return (
@@ -45,6 +46,8 @@ export default class Button extends Component {
           this.props.secondary ? secondaryStyle : null,
           buttonStyle,
         ]}>
+        {leftIconProps ? <Icon {...leftIconProps} /> : null}
+
         <Text
           text={text}
           style={
