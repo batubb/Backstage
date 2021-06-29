@@ -313,6 +313,7 @@ class UserProfile extends Component {
           title={user.username}
           rightButtonPress={() => this.setState({optionsVisible: true})}
           rightButtonIcon="dots-horizontal"
+          showVerificationIcon={true}
         />
         {loading ? (
           <Loading
@@ -356,7 +357,6 @@ class UserProfile extends Component {
               onChatPress={() => this.goTo('Chat', this.state.user)}
               editProfileVisible={user.uid === Store.user.uid}
               navigation={this.props.navigation}
-              showVerificationIcon={true}
             />
             <View>{daily.length !== 0 ? this.renderPosts(daily) : null}</View>
           </ScrollView>

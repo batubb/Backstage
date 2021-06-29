@@ -401,6 +401,7 @@ class Profile extends Component {
           rightButtonIcon="cog-outline"
           rightSecondButtonPress={() => this.goTo('Withdraw')}
           rightSecondButtonIcon="currency-usd"
+          showVerificationIcon={true}
         />
         {loading ? (
           <Loading
@@ -438,7 +439,6 @@ class Profile extends Component {
                 editProfileVisible
                 navigation={this.props.navigation}
                 views={cumulativeViews}
-                showVerificationIcon={true}
               />
             </View>
 
