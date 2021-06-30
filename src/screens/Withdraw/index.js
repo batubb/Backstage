@@ -28,6 +28,24 @@ class Withdraw extends Component {
     this.state = {
       loading: true,
       refreshing: false,
+      clickedPointData: {
+        name: null,
+        value: null,
+      },
+      months: [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+      ],
     };
   }
 
@@ -46,7 +64,13 @@ class Withdraw extends Component {
   };
 
   render() {
-    const {loading, refreshing} = this.state;
+    const {loading, refreshing, clickedPointData} = this.state;
+
+    const renderMonths = this.state.months
+      .slice(0, 5)
+      .map((item) => item.substr(0, 3));
+
+    const data = [50, 100, 150, 200, 250];
 
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
@@ -81,7 +105,7 @@ class Withdraw extends Component {
               }}
             />
             <Text
-              text="$ 1.284,10"
+              text="$ 1,284.10"
               style={{
                 textAlign: 'left',
                 paddingLeft: SIZES.padding * 2,
@@ -100,13 +124,14 @@ class Withdraw extends Component {
                 marginTop: SIZES.padding * 3,
                 overflow: 'hidden',
               }}>
-              <View style={{
-                position: 'absolute',
-                top: SIZES.padding,
-                left: 0,
-              }}>
+              <View
+                style={{
+                  position: 'absolute',
+                  top: SIZES.padding,
+                  left: 0,
+                }}>
                 <Text
-                  text="August"
+                  text={clickedPointData.name || 'August'}
                   style={{
                     textAlign: 'left',
                     paddingLeft: SIZES.padding * 6,
@@ -115,7 +140,11 @@ class Withdraw extends Component {
                   }}
                 />
                 <Text
-                  text="2021"
+                  text={
+                    clickedPointData.value
+                      ? `$${clickedPointData.value}`
+                      : new Date().getFullYear()
+                  }
                   style={{
                     textAlign: 'left',
                     paddingLeft: SIZES.padding * 6,
@@ -126,40 +155,50 @@ class Withdraw extends Component {
               </View>
               <LineChart
                 data={{
-                  labels: [
-                    'Jan',
-                    'Feb',
-                    'Mar',
-                    'Apr',
-                    'May',
-                  ],
+                  labels: renderMonths,
                   datasets: [
                     {
-                      data: [50, 100, 150, 200, 250],
+                      data,
                       color: (opacity = 1) => COLORS.primary,
                       strokeWidth: 2,
                     },
                   ],
                 }}
-                width={width + SIZES.padding * 4}
+                width={width + SIZES.padding * 5}
                 height={260}
                 withHorizontalLines={true}
                 withVerticalLines={false}
-                fromZero={true}
+                formatYLabel={(yValue) => `$${parseInt(yValue)}`}
+                fromNumber={data[0]}
+                onDataPointClick={(data) => {
+                  if (data) {
+                    this.setState({
+                      clickedPointData: {
+                        name: this.state.months.find(
+                          (month) =>
+                            month.slice(0, 3) === renderMonths[data.index],
+                        ),
+                        value: data.value,
+                      },
+                    });
+                  }
+                }}
                 chartConfig={{
                   backgroundGradientFromOpacity: 0,
                   backgroundGradientToOpacity: 0,
                   color: (opacity = 1) => COLORS.tertiaryLabelColor,
-                  fillShadowGradient: COLORS.systemFill,
+                  fillShadowGradient: '',
                   labelColor: (opacity = 1) => COLORS.secondaryLabelColor,
                   propsForBackgroundLines: {
-                    strokeDashoffset: 30,
+                    strokeDasharray: COLORS.secondaryLabelColor,
+                    strokeDashoffset: 15,
                   },
+                  backgroundColor: COLORS.secondaryLabelColor,
                 }}
                 style={{
                   borderRadius: SIZES.radius,
                   marginTop: 75,
-                  marginLeft: -SIZES.padding,
+                  marginLeft: -(SIZES.padding * 1.6),
                 }}
                 bezier
               />
@@ -171,7 +210,7 @@ class Withdraw extends Component {
               showLeftIcon={false}
               customRightComponent={
                 <Text
-                  text="$ 52,99"
+                  text="$ 52.99"
                   style={{
                     textAlign: 'left',
                     paddingLeft: SIZES.padding * 6,
