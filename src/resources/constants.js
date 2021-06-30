@@ -37,6 +37,20 @@ const constants = {
   NUM_POSTS_TO_VIEW_IN_HOME: 3,
 
   TIER_1: 'price_1ImhznKwkzsqkh9m3eAmW9kG',
+  MONTHS: [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ],
 };
 
 module.exports = constants;

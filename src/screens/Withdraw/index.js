@@ -32,20 +32,7 @@ class Withdraw extends Component {
         name: null,
         value: null,
       },
-      months: [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December',
-      ],
+      months: constants.MONTHS,
     };
   }
 
