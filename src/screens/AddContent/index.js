@@ -37,7 +37,7 @@ import {KeyboardAvoidingView} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import database from '@react-native-firebase/database';
 import MyImage from '../../components/MyImage';
-import {SIZES} from '../../resources/theme';
+import {SIZES, COLORS} from '../../resources/theme';
 import PostButton from '../../components/ScreenComponents/AddContentComponents/PostButton/PostButton';
 import EditTitleModal from '../../components/ScreenComponents/AddContentComponents/EditTitleModal/EditTitleModal';
 import EditTitlePrompt from '../../components/ScreenComponents/AddContentComponents/EditTitlePrompt/EditTitlePrompt';
@@ -71,7 +71,7 @@ export default class App extends Component {
       uid: '',
       camera: 1,
       influencerPrice: 4.99,
-      influencer: false,
+      influencer: true,
       editTextModal: false,
       seconds: 0,
       timer: false,
@@ -379,7 +379,12 @@ export default class App extends Component {
 
   stopStoryVideo = async () => {
     this.camera.stopRecording();
-    this.setState({isRecording: false, seconds: 0, timer: false, isStoryVideoRecording: false});
+    this.setState({
+      isRecording: false,
+      seconds: 0,
+      timer: false,
+      isStoryVideoRecording: false,
+    });
   };
 
   startStoryVideo = async () => {
@@ -854,20 +859,25 @@ export default class App extends Component {
                 backgroundColor: constants.BACKGROUND_COLOR,
                 justifyContent: 'center',
                 alignItems: 'center',
+                bottom: SIZES.padding * 2,
               }}>
               <Text
                 text="Set your subscription price"
-                style={{fontSize: 20, marginTop: 10}}
+                style={{fontSize: 20, marginBottom: SIZES.padding}}
               />
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <TouchableOpacity onPress={() => this.setPrice('minus')}>
-                  <View style={{padding: 5}}>
-                    <Icon
-                      name="chevron-left"
-                      color="#FFF"
-                      type="material-community"
-                    />
-                  </View>
+                <TouchableOpacity
+                  onPress={() => this.setPrice('minus')}
+                  style={{
+                    padding: 5,
+                    backgroundColor: COLORS.white,
+                    borderRadius: 100,
+                  }}>
+                  <Icon
+                    name="chevron-left"
+                    color={constants.BACKGROUND_COLOR}
+                    type="material-community"
+                  />
                 </TouchableOpacity>
                 <View style={{paddingHorizontal: 20}}>
                   <Text
@@ -879,46 +889,30 @@ export default class App extends Component {
                     style={{fontSize: 12, color: 'gray'}}
                   />
                 </View>
-                <TouchableOpacity onPress={() => this.setPrice('plus')}>
-                  <View style={{padding: 5}}>
-                    <Icon
-                      name="chevron-right"
-                      color="#FFF"
-                      type="material-community"
-                    />
-                  </View>
-                </TouchableOpacity>
-              </View>
-              <TouchableOpacity
-                onPress={() => this.setState({influencer: !influencer})}>
-                <View
+                <TouchableOpacity
+                  onPress={() => this.setPrice('plus')}
                   style={{
-                    flexDirection: 'row',
-                    marginTop: 10,
-                    width: width - 40,
-                    alignItems: 'center',
+                    padding: 5,
+                    backgroundColor: COLORS.white,
+                    borderRadius: 100,
                   }}>
                   <Icon
-                    name="check-circle"
-                    color={influencer ? constants.BLUE : 'gray'}
+                    name="chevron-right"
+                    color={constants.BACKGROUND_COLOR}
                     type="material-community"
                   />
-                  <Text
-                    text="I want to be as an influencer. I have readed Term & Conditions."
-                    style={{fontSize: 12, marginLeft: 5, fontWeight: 'normal'}}
-                  />
-                </View>
-              </TouchableOpacity>
+                </TouchableOpacity>
+              </View>
               <Button
                 text="Become an Creator"
                 buttonStyle={{
-                  backgroundColor: '#FFF',
-                  borderRadius: 24,
-                  padding: 13,
-                  width: width - 40,
-                  marginTop: 20,
+                  backgroundColor: COLORS.primary,
+                  borderRadius: SIZES.radius,
+                  paddingVertical: SIZES.padding * 1.5,
+                  paddingHorizontal: SIZES.padding * 4,
+                  marginTop: SIZES.padding * 4,
                 }}
-                textStyle={{color: '#000', fontSize: 16}}
+                textStyle={{color: COLORS.white, fontSize: 16}}
                 onPress={() => this.becomeInfluencer()}
               />
             </View>
