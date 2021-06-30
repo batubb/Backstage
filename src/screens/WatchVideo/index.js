@@ -35,7 +35,7 @@ import {SafeAreaView} from 'react-native';
 import {KeyboardAvoidingView} from 'react-native';
 import database from '@react-native-firebase/database';
 import WatchVideoIcon from '../../components/ScreenComponents/WatchVideoComponents/WatchVideoIcon/WatchVideoIcon';
-import {SIZES} from '../../resources/theme';
+import {COLORS, SIZES} from '../../resources/theme';
 
 const {width, height} = Dimensions.get('window');
 const BOTTOM_PADDING = height >= 812 ? 40 : 20;
@@ -63,6 +63,7 @@ class WatchVideo extends Component {
       finished: false,
       showMore: false,
       controlsVisible: true,
+      months: constants.MONTHS,
     };
 
     this.list = [
@@ -223,6 +224,11 @@ class WatchVideo extends Component {
   };
 
   renderVideoPlayer = (video, paused, videoInfo, dk, sn) => {
+    const date = new Date(video.timestamp);
+    const month = this.state.months[date.getMonth()].slice(0, 3);
+    const day = date.getDate();
+    const year = date.getFullYear();
+
     return (
       <TouchableWithoutFeedback
         onPress={() =>
@@ -262,17 +268,25 @@ class WatchVideo extends Component {
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                   height: '23%',
-                  marginBottom: SIZES.spacing * 5,
+                  marginBottom: SIZES.spacing * 10,
                 }}>
                 <View
-                  style={{width: '70%', marginTop: 'auto', marginBottom: 10}}>
+                  style={{width: '70%', marginTop: 'auto'}}>
                   <Text
                     text={video.title}
                     numberOfLines={this.state.showMore ? 3 : 1}
                     onPress={() =>
                       this.setState({showMore: !this.state.showMore})
                     }
-                    style={{fontSize: 16}}
+                    style={{fontSize: this.state.showMore ? SIZES.h4 : SIZES.h3}}
+                  />
+                  <Text
+                    text={`${month} ${day}, ${year}`}
+                    numberOfLines={1}
+                    onPress={() =>
+                      this.setState({showMore: !this.state.showMore})
+                    }
+                    style={{fontSize: SIZES.body4, color: COLORS.white, paddingTop: 3}}
                   />
                 </View>
                 <View
