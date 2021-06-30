@@ -116,7 +116,19 @@ class Search extends Component {
                     alignItems: 'center',
                   }}>
                   <View style={{width: width - 150}}>
-                    <Text text={item.name} style={{fontSize: 16}} />
+                    <View style={{flexDirection: 'row'}}>
+                      <Text text={item.name} style={{fontSize: 16}} />
+                      <Icon
+                        name="verified"
+                        size={16}
+                        color={COLORS.primary}
+                        type="material-icons"
+                        style={{
+                          paddingLeft: SIZES.padding * 0.3,
+                          top: 2,
+                        }}
+                      />
+                    </View>
                     <Text
                       text={`@${item.username}`}
                       style={{

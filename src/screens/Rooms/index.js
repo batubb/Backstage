@@ -105,8 +105,18 @@ class Rooms extends Component {
                 justifyContent: 'space-between',
                 alignItems: 'center',
               }}>
-              <View style={{width: width - 150}}>
+              <View style={{width: width - 150, flexDirection: 'row'}}>
                 <Text text={`${item.username}`} style={{fontSize: 16}} />
+                <Icon
+                  name="verified"
+                  size={18}
+                  color={COLORS.primary}
+                  type="material-icons"
+                  style={{
+                    paddingLeft: SIZES.padding * 0.3,
+                    top: 2,
+                  }}
+                />
               </View>
             </View>
           </View>
