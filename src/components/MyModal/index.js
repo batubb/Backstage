@@ -57,7 +57,7 @@ export default function MyModal(props) {
             <Text
               text={props.text}
               style={{
-                textAlign: 'center',
+                textAlign: 'left',
                 marginTop: SIZES.spacing * 3.5,
                 marginBottom: SIZES.spacing * 7,
                 paddingHorizontal: SIZES.spacing * 2,
