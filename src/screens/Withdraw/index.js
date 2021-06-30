@@ -18,6 +18,7 @@ import Store from '../../store/Store';
 import {followerCount} from '../../lib';
 import {COLORS, FONTS, SIZES} from '../../resources/theme';
 import {StackActions} from '@react-navigation/native';
+import {LineChart} from 'react-native-chart-kit';
 
 const {width, height} = Dimensions.get('window');
 
@@ -32,6 +33,13 @@ class Withdraw extends Component {
 
   componentDidMount = async () => {
     this.setState({loading: false});
+  };
+
+  goTo = (route, info = null) => {
+    if (route === 'EditBankAccount') {
+      const replaceActions = StackActions.push(route);
+      return this.props.navigation.dispatch(replaceActions);
+    }
   };
 
   render() {
@@ -80,20 +88,82 @@ class Withdraw extends Component {
             />
             <View
               style={{
+                position: 'relative',
                 height: 300,
                 backgroundColor: COLORS.systemFill,
                 borderRadius: SIZES.radius,
                 marginHorizontal: SIZES.padding,
                 marginTop: SIZES.padding * 3,
-              }}
-            />
+              }}>
+              <View style={{
+                position: 'absolute',
+                top: SIZES.padding,
+                left: 0,
+              }}>
+                <Text
+                  text="August"
+                  style={{
+                    textAlign: 'left',
+                    paddingLeft: SIZES.padding * 2,
+                    paddingTop: SIZES.padding,
+                    fontSize: SIZES.h3,
+                  }}
+                />
+                <Text
+                  text="2021"
+                  style={{
+                    textAlign: 'left',
+                    paddingLeft: SIZES.padding * 2,
+                    color: COLORS.secondaryLabelColor,
+                    fontSize: SIZES.h3,
+                  }}
+                />
+              </View>
+              <LineChart
+                data={{
+                  labels: [
+                    'January',
+                    'February',
+                    'March',
+                    'April',
+                    'May',
+                    'June',
+                  ],
+                  datasets: [
+                    {
+                      data: [20, 45, 28, 80, 99, 43],
+                      color: (opacity = 1) => COLORS.primary,
+                      strokeWidth: 2,
+                    },
+                  ],
+                }}
+                width={width + SIZES.padding * 12 - 5}
+                height={300}
+                withVerticalLabels={false}
+                withHorizontalLabels={false}
+                withInnerLines={false}
+                withOuterLines={false}
+                fromZero={true}
+                chartConfig={{
+                  backgroundGradientFromOpacity: 0,
+                  backgroundGradientToOpacity: 0,
+                  fillShadowGradient: COLORS.secondary,
+                }}
+                style={{
+                  borderRadius: SIZES.radius,
+                  marginTop: 50,
+                  marginLeft: -(SIZES.padding * 6),
+                }}
+                bezier
+              />
+            </View>
             <View
               style={{
                 alignItems: 'center',
-                marginTop: SIZES.padding * 4,
+                marginTop: SIZES.padding * 5,
               }}>
               <Button
-                onPress={() => {}}
+                onPress={() => this.goTo('EditBankAccount')}
                 text="Withdraw"
                 primary
                 buttonStyle={{
@@ -108,7 +178,7 @@ class Withdraw extends Component {
                 rightIconProps={{
                   name: 'bank',
                   color: '#FFF',
-                  type: "material-community",
+                  type: 'material-community',
                   size: 22,
                   style: {
                     paddingLeft: SIZES.spacing,
