@@ -87,6 +87,7 @@ class Withdraw extends Component {
                 paddingLeft: SIZES.padding * 2,
                 paddingTop: SIZES.padding,
                 fontSize: SIZES.h1,
+                color: COLORS.secondaryLabelColor,
               }}
             />
             <View
@@ -134,7 +135,7 @@ class Withdraw extends Component {
                   ],
                   datasets: [
                     {
-                      data: [20, 45, 28, 80, 99],
+                      data: [50, 100, 150, 200, 250],
                       color: (opacity = 1) => COLORS.primary,
                       strokeWidth: 2,
                     },
@@ -149,7 +150,7 @@ class Withdraw extends Component {
                   backgroundGradientFromOpacity: 0,
                   backgroundGradientToOpacity: 0,
                   color: (opacity = 1) => COLORS.tertiaryLabelColor,
-                  fillShadowGradient: 'transparent',
+                  fillShadowGradient: COLORS.systemFill,
                   labelColor: (opacity = 1) => COLORS.secondaryLabelColor,
                   propsForBackgroundLines: {
                     strokeDashoffset: 30,
@@ -165,9 +166,9 @@ class Withdraw extends Component {
             </View>
             <Label
               text="Withdravable Balance"
-              icon="currency-usd"
               onPressFunction={() => {}}
               showRightIcon={false}
+              showLeftIcon={false}
               customRightComponent={
                 <Text
                   text="$ 52,99"

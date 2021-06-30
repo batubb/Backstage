@@ -77,7 +77,7 @@ class WithdrawSummary extends Component {
               />
             ) : null}
             <Text
-              text="Withdraw Summary"
+              text="Summary"
               style={{
                 textAlign: 'left',
                 marginTop: SIZES.padding * 6,
@@ -93,10 +93,10 @@ class WithdrawSummary extends Component {
               showLeftIcon={false}
               customRightComponent={
                 <Text
-                  text={`$ ${availableBalance}`}
+                  text={`$${availableBalance}`}
                   style={{
+                    right: SIZES.padding,
                     textAlign: 'left',
-                    paddingLeft: SIZES.padding * 6,
                     color: COLORS.secondaryLabelColor,
                     fontSize: SIZES.h3,
                   }}
@@ -104,6 +104,7 @@ class WithdrawSummary extends Component {
               }
               border
               style={{
+                left: SIZES.padding * 0.4,
                 marginTop: SIZES.padding,
               }}
               touchableOpacityProps={{
@@ -111,16 +112,16 @@ class WithdrawSummary extends Component {
               }}
             />
             <Label
-              text="Apple Inc. Fees"
+              text="Apple Fee (%15)"
               onPressFunction={() => {}}
               showRightIcon={false}
               showLeftIcon={false}
               customRightComponent={
                 <Text
-                  text={`$ ${parseFloat(appleFees).toFixed(2)}`}
+                  text={`- $${parseFloat(appleFees).toFixed(2)}`}
                   style={{
+                    right: SIZES.padding,
                     textAlign: 'left',
-                    paddingLeft: SIZES.padding * 6,
                     color: COLORS.secondaryLabelColor,
                     fontSize: SIZES.h3,
                   }}
@@ -128,6 +129,7 @@ class WithdrawSummary extends Component {
               }
               border
               style={{
+                left: SIZES.padding * 0.4,
                 marginTop: SIZES.padding,
               }}
               touchableOpacityProps={{
@@ -135,16 +137,16 @@ class WithdrawSummary extends Component {
               }}
             />
             <Label
-              text="Backstage Fees"
+              text="Backstage Fee (%10)"
               onPressFunction={() => {}}
               showRightIcon={false}
               showLeftIcon={false}
               customRightComponent={
                 <Text
-                  text={`$ ${parseFloat(backstageFees).toFixed(2)}`}
+                  text={`- $${parseFloat(backstageFees).toFixed(2)}`}
                   style={{
+                    right: SIZES.padding,
                     textAlign: 'left',
-                    paddingLeft: SIZES.padding * 6,
                     color: COLORS.secondaryLabelColor,
                     fontSize: SIZES.h3,
                   }}
@@ -152,6 +154,7 @@ class WithdrawSummary extends Component {
               }
               border
               style={{
+                left: SIZES.padding * 0.4,
                 marginTop: SIZES.padding,
               }}
               touchableOpacityProps={{
@@ -160,18 +163,16 @@ class WithdrawSummary extends Component {
             />
             <Label
               text="You will receive"
-              icon="money"
               onPressFunction={() => {}}
               showRightIcon={false}
               showLeftIcon={false}
               customRightComponent={
                 <Text
-                  text={`$ ${parseFloat(
+                  text={`$${parseFloat(
                     availableBalance - appleFees - backstageFees,
                   ).toFixed(2)}`}
                   style={{
                     textAlign: 'left',
-                    paddingLeft: SIZES.padding * 6,
                     color: COLORS.secondaryLabelColor,
                     fontSize: SIZES.h3,
                   }}
@@ -180,12 +181,18 @@ class WithdrawSummary extends Component {
               border
               style={{
                 marginTop: SIZES.padding,
+                backgroundColor: COLORS.systemFill,
+                paddingHorizontal: SIZES.padding * 1.2,
+                paddingVertical: SIZES.padding * 2,
+                borderRadius: SIZES.radius * 0.4,
+                marginLeft: '2%',
+                width: '95%',
               }}
               touchableOpacityProps={{
                 activeOpacity: 1,
               }}
             />
-            <Label
+            {/* <Label
               text="Bank of America"
               icon="bank"
               onPressFunction={() => {}}
@@ -209,7 +216,7 @@ class WithdrawSummary extends Component {
               touchableOpacityProps={{
                 activeOpacity: 0.8,
               }}
-            />
+            />*/}
             <Text
               text="We will send your money to Bank of America account."
               style={{
@@ -227,7 +234,7 @@ class WithdrawSummary extends Component {
               }}>
               <Button
                 onPress={() => this.setState({showModal: true})}
-                text="Withdraw"
+                text="Confirm"
                 primary
                 buttonStyle={{
                   padding: SIZES.padding * 1.5,
@@ -237,15 +244,6 @@ class WithdrawSummary extends Component {
                 }}
                 textStyle={{
                   fontSize: SIZES.body3,
-                }}
-                rightIconProps={{
-                  name: 'bank',
-                  color: '#FFF',
-                  type: 'material-community',
-                  size: 22,
-                  style: {
-                    paddingLeft: SIZES.spacing,
-                  },
                 }}
               />
             </View>
