@@ -31,6 +31,7 @@ import Subscribe from './screens/Subscribe';
 import MyBanks from './screens/MyBanks';
 import EditProfile from './screens/EditProfile';
 import Withdraw from './screens/Withdraw';
+import EditBankAccount from './screens/EditBankAccount';
 import {COLORS} from './resources/theme';
 import {PlatformColor} from 'react-native';
 
@@ -121,6 +122,7 @@ class ProfileMenu extends React.Component {
         <Stack.Screen name="MyBanks" component={MyBanks} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="Withdraw" component={Withdraw} />
+        <Stack.Screen name="EditBankAccount" component={EditBankAccount} />
       </Stack.Navigator>
     );
   }
