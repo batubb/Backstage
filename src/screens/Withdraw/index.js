@@ -11,7 +11,7 @@ import {
 import {observer} from 'mobx-react';
 import LinearGradient from 'react-native-linear-gradient';
 import {Icon} from 'react-native-elements';
-import {Loading, Header, Text, Button} from '../../components';
+import {Loading, Header, Text, Button, Label} from '../../components';
 import {constants} from '../../resources';
 import {getFollowingLiveData, getFollowingUserPosts} from '../../services';
 import Store from '../../store/Store';
@@ -37,6 +37,9 @@ class Withdraw extends Component {
 
   goTo = (route, info = null) => {
     if (route === 'EditBankAccount') {
+      const replaceActions = StackActions.push(route);
+      return this.props.navigation.dispatch(replaceActions);
+    } else if (route === 'WithdrawSummary') {
       const replaceActions = StackActions.push(route);
       return this.props.navigation.dispatch(replaceActions);
     }
@@ -89,11 +92,12 @@ class Withdraw extends Component {
             <View
               style={{
                 position: 'relative',
-                height: 300,
+                height: 320,
                 backgroundColor: COLORS.systemFill,
                 borderRadius: SIZES.radius,
                 marginHorizontal: SIZES.padding,
                 marginTop: SIZES.padding * 3,
+                overflow: 'hidden',
               }}>
               <View style={{
                 position: 'absolute',
@@ -104,7 +108,7 @@ class Withdraw extends Component {
                   text="August"
                   style={{
                     textAlign: 'left',
-                    paddingLeft: SIZES.padding * 2,
+                    paddingLeft: SIZES.padding * 6,
                     paddingTop: SIZES.padding,
                     fontSize: SIZES.h3,
                   }}
@@ -113,7 +117,7 @@ class Withdraw extends Component {
                   text="2021"
                   style={{
                     textAlign: 'left',
-                    paddingLeft: SIZES.padding * 2,
+                    paddingLeft: SIZES.padding * 6,
                     color: COLORS.secondaryLabelColor,
                     fontSize: SIZES.h3,
                   }}
@@ -136,33 +140,56 @@ class Withdraw extends Component {
                     },
                   ],
                 }}
-                width={width + SIZES.padding * 8}
-                height={300}
-                withHorizontalLabels={false}
-                withInnerLines={false}
-                withOuterLines={false}
+                width={width + SIZES.padding * 4}
+                height={260}
+                withHorizontalLines={true}
+                withVerticalLines={false}
                 fromZero={true}
                 chartConfig={{
                   backgroundGradientFromOpacity: 0,
                   backgroundGradientToOpacity: 0,
-                  color: (opacity = 1) => COLORS.primary,
+                  color: (opacity = 1) => COLORS.tertiaryLabelColor,
                   fillShadowGradient: 'transparent',
+                  labelColor: (opacity = 1) => COLORS.secondaryLabelColor,
+                  propsForBackgroundLines: {
+                    strokeDashoffset: 30,
+                  },
                 }}
                 style={{
                   borderRadius: SIZES.radius,
-                  marginTop: 55,
-                  marginLeft: -(SIZES.padding * 4),
+                  marginTop: 75,
+                  marginLeft: -SIZES.padding,
                 }}
                 bezier
               />
             </View>
+            <Label
+              text="Withdravable Balance"
+              icon="currency-usd"
+              onPressFunction={() => {}}
+              showRightIcon={false}
+              customRightComponent={
+                <Text
+                  text="$ 52,99"
+                  style={{
+                    textAlign: 'left',
+                    paddingLeft: SIZES.padding * 6,
+                    color: COLORS.secondaryLabelColor,
+                    fontSize: SIZES.h3,
+                  }}
+                />
+              }
+              style={{
+                marginTop: SIZES.padding,
+              }}
+            />
             <View
               style={{
                 alignItems: 'center',
-                marginTop: SIZES.padding * 8,
+                marginTop: SIZES.padding * 3,
               }}>
               <Button
-                onPress={() => this.goTo('EditBankAccount')}
+                onPress={() => this.goTo('WithdrawSummary')}
                 text="Withdraw"
                 primary
                 buttonStyle={{
