@@ -3,10 +3,11 @@ import React from 'react';
 import {constants} from '../../../../resources';
 import {MyImage, Text, Button} from '../../../../components';
 import {View} from 'react-native';
-import {SIZES} from '../../../../resources/theme';
+import {COLORS, SIZES} from '../../../../resources/theme';
 import SubscribeButton from './SubscribeButton';
 import Databar from './Databar';
 import {StackActions} from '@react-navigation/native';
+import {Icon} from 'react-native-elements';
 
 // photo, name, biograohy, subscribeButtonVisible, user, subscribtion
 
@@ -40,7 +41,29 @@ export default function ProfileTop(props) {
             marginLeft: SIZES.spacing * 8,
           }}>
           <View>
-            <Text text={props.name} numberOfLines={1} style={{fontSize: 20}} />
+            <View>
+              <Text
+                text={
+                  <>
+                    {props.name}
+                    {props.showVerificationIcon ? (
+                      <Icon
+                        name="verified"
+                        size={20}
+                        color={COLORS.primary}
+                        type="material-icons"
+                        style={{
+                          paddingLeft: SIZES.padding * 0.5,
+                          top: 2,
+                        }}
+                      />
+                    ) : null}
+                  </>
+                }
+                numberOfLines={1}
+                style={{fontSize: 20}}
+              />
+            </View>
             <Text
               numberOfLines={2}
               text={props.biography}

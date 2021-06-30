@@ -83,6 +83,7 @@ class Search extends Component {
         isPersonCard
         numCols={3}
         onPress={(item) => this.goTo('UserProfile', item)}
+        showVerificationIcon={true}
       />
     );
   };

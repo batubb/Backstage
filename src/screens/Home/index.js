@@ -146,7 +146,19 @@ class Home extends Component {
             photo={user.photo}
           />
         )}
-        <Text text={text} style={{fontSize: live ? 14 : 14}} />
+        <View style={{flexDirection: 'row'}}>
+          <Text text={text} style={{fontSize: live ? 14 : 14}} />
+          <Icon
+            name="verified"
+            size={15}
+            color={COLORS.primary}
+            type="material-icons"
+            style={{
+              paddingLeft: SIZES.padding * 0.3,
+              top: 1,
+            }}
+          />
+        </View>
       </View>
     );
   };

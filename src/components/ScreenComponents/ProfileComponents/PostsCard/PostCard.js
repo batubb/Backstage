@@ -65,16 +65,29 @@ export default function PostCard(props) {
               marginBottom: 5,
               marginHorizontal: 3,
             }}>
-            <Text
-              text={
-                props.isPersonCard
-                  ? props.item.username
-                  : props.item.title && props.item.title.length >= 17
-                  ? `${props.item.title.substring(0, 17)}...`
-                  : props.item.title
-              }
-              style={{fontSize: 12}}
-            />
+            <View style={{flexDirection: 'row'}}>
+              <Text
+                text={
+                  props.isPersonCard
+                    ? props.item.username
+                    : props.item.title && props.item.title.length >= 17
+                    ? `${props.item.title.substring(0, 17)}...`
+                    : props.item.title
+                }
+                style={{fontSize: 12}}
+              />
+              {props.showVerificationIcon ? (
+                <Icon
+                  name="verified"
+                  size={14}
+                  color={COLORS.primary}
+                  type="material-icons"
+                  style={{
+                    paddingLeft: SIZES.padding * 0.2,
+                  }}
+                />
+              ) : null}
+            </View>
             <View
               style={{
                 flexDirection: 'row',
@@ -97,7 +110,7 @@ export default function PostCard(props) {
                   style={{fontSize: 12, marginLeft: SIZES.spacing * 1}}
                 />
               </View>
-              {props.item.price !== '' && (
+              {props.item.price && (
                 <View>
                   <Text
                     text={`$${props.item.price}`}

@@ -438,6 +438,7 @@ class Profile extends Component {
                 editProfileVisible
                 navigation={this.props.navigation}
                 views={cumulativeViews}
+                showVerificationIcon={true}
               />
             </View>
 
