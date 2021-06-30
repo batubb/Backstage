@@ -128,7 +128,7 @@ class Withdraw extends Component {
                 data={{
                   labels: [
                     'Jan',
-                    'Febr',
+                    'Feb',
                     'Mar',
                     'Apr',
                     'May',
@@ -165,7 +165,7 @@ class Withdraw extends Component {
               />
             </View>
             <Label
-              text="Withdravable Balance"
+              text="Withdrawable Balance"
               onPressFunction={() => {}}
               showRightIcon={false}
               showLeftIcon={false}
