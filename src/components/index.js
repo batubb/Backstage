@@ -3,6 +3,7 @@ import Button from './Button';
 import Loading from './Loading';
 import Header from './Header';
 import Text from './Text';
+import MyModal from './MyModal';
 import MyImage from './MyImage';
 import Label from './Label';
 import Options from './Options';
@@ -14,6 +15,7 @@ module.exports = {
   Loading,
   Header,
   Text,
+  MyModal,
   MyImage,
   Label,
   Options,
