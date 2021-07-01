@@ -57,7 +57,7 @@ export default class App extends Component {
       publicKey: '',
       ratio: '16:9',
       isRecording: false,
-      indexButton:
+      indexButton: 
         this.props.route &&
         this.props.route.params &&
         this.props.route.params.startButtonIdx
@@ -66,6 +66,9 @@ export default class App extends Component {
       liveStreamId: '',
       loading: false,
       url: '',
+      thumbnailUrl: '',
+      thumbnailWidth: '',
+      thumnailHeight: '',
       title: '',
       assetId: '',
       uid: '',
@@ -232,18 +235,18 @@ export default class App extends Component {
     const onname = makeid(40, 'uuid');
 
     const data = await this.uploadVideo(url, onname);
-    const thumbnail = await createThumbnail({url: url, timeStamp: 10000});
-    const thumbnailUrl = await this.uploadThumbnail(thumbnail.path, onname);
+    const thumbnail = this.state.thumbnailUrl !== '' ? this.state.thumbnailUrl : await createThumbnail({url: url, timeStamp: 10000});
+    const thumbnailUrl = this.state.thumbnailUrl !== '' ? this.state.thumbnailUrl : await this.uploadThumbnail(thumbnail.path, onname);
 
-    const videoThumbURL = `${constants.VIDEO_THUMB_URL}${onname}_500x500.jpg?alt=media`;
+    const videoThumbURL = this.state.thumbnailUrl !== '' ? this.state.thumbnailUrl : `${constants.VIDEO_THUMB_URL}${onname}_500x500.jpg?alt=media`;
 
     var video = {
       uid: onname,
       url: data,
       thumbnail: {
         url: thumbnailUrl,
-        width: thumbnail.width,
-        height: thumbnail.height,
+        width: this.state.thumbnailWidth !== '' ? this.state.thumbnailWidth : thumbnail.width,
+        height: this.state.thumbnailWidth !== '' ? this.state.thumnailHeight : thumbnail.height,
       },
       title: this.state.title,
       photo: videoThumbURL,
@@ -436,6 +439,19 @@ export default class App extends Component {
     });
   };
 
+  selectThumbnailFromRoll = async () => {
+    this.setState({loading: true, paused: true});
+    ImagePicker.launchImageLibrary({mediaType: 'photo'}, async (result) => {
+      if (!result.didCancel) {
+        const onname = makeid(40, 'uuid');
+        const thumbnailUrl = await this.uploadThumbnail(result.uri, onname);
+        const videoThumbURL = `${constants.VIDEO_THUMB_URL}${onname}_500x500.jpg?alt=media`;
+
+        this.setState({loading: false, thumbnailUrl: videoThumbURL, thumbnailWidth: result.width, thumnailHeight: result.height});
+      }
+    });
+  };
+
   // type can be one of story or video
   selectMediaFromRoll = (type) => {
     let mediaType = 'video';
@@ -539,7 +555,7 @@ export default class App extends Component {
     );
   };
 
-  renderVideo = (title) => {
+  renderVideo = (title = '') => {
     return (
       <SafeAreaView
         style={{
@@ -586,6 +602,30 @@ export default class App extends Component {
               title={title}
               openModal={() => this.setState({editTextModal: true})}
             />
+            <TouchableOpacity
+              style={{paddingLeft: SIZES.spacing, flexDirection: 'row', alignItems: 'center', paddingTop: SIZES.padding}}
+              onPress={() => this.selectThumbnailFromRoll()}>
+              <Icon name={this.state.thumbnailUrl !== '' ? 'image-edit' : 'video-image'} color="#FFF" type="material-community" style={{left: 2}} />
+              <Text 
+                text={this.state.thumbnailUrl !== '' ? "Change\nThumbnail" : "Thumbnail"}
+                style={{
+                  paddingLeft: SIZES.spacing * 5,
+                }}
+              />
+            </TouchableOpacity>
+            {this.state.thumbnailUrl !== '' ? 
+              <TouchableOpacity
+                style={{paddingLeft: SIZES.spacing, flexDirection: 'row', alignItems: 'center', paddingTop: SIZES.padding * 2}}
+                onPress={() => this.setState({thumbnailUrl: ''})}>
+                <Icon name="delete-sweep" color="#FFF" type="material-community" style={{left: 2}} />
+                <Text 
+                  text={"Remove\nThumbnail"}
+                  style={{
+                    paddingLeft: SIZES.spacing * 5,
+                  }}
+                />
+              </TouchableOpacity>
+            : null}
           </View>
 
           <TouchableOpacity
@@ -881,12 +921,12 @@ export default class App extends Component {
                 </TouchableOpacity>
                 <View style={{paddingHorizontal: 20}}>
                   <Text
-                    text={`${influencerPrice.toFixed(2)} $`}
+                    text={`$${influencerPrice.toFixed(2)}`}
                     style={{fontSize: 24, marginTop: 10}}
                   />
                   <Text
-                    text={'/per month'}
-                    style={{fontSize: 12, color: 'gray'}}
+                    text={'per month'}
+                    style={{fontSize: 12, color: 'gray', textAlign: 'center'}}
                   />
                 </View>
                 <TouchableOpacity
