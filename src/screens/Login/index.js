@@ -2,11 +2,11 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, {Component} from 'react';
-import {View, Dimensions, Platform, ScrollView, Alert} from 'react-native';
+import {View, Dimensions, TouchableOpacity, Alert} from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
-import {Loading, Header, Text, Button} from '../../components';
+import {Loading, Header, Text, Button, GradientText} from '../../components';
 import {constants} from '../../resources';
 import Store from '../../store/Store';
 import SMSVerifyCode from 'react-native-sms-verifycode';
@@ -14,8 +14,10 @@ import {SafeAreaView} from 'react-native';
 import {KeyboardAvoidingView} from 'react-native';
 import PhoneInput from 'react-native-phone-number-input';
 import {COLORS, SIZES} from '../../resources/theme';
+import LinearGradient from 'react-native-linear-gradient';
+import {Icon} from 'react-native-elements';
 
-const {width} = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 auth().settings.appVerificationDisabledForTesting = false;
 const BORDER_RADIUS = 6;
 
@@ -86,13 +88,13 @@ class Login extends Component {
         ref={(ref) => (this.verifycode = ref)}
         onInputCompleted={(text) => this.setState({confirmationCode: text})}
         verifyCodeLength={6}
-        containerBackgroundColor={constants.BACKGROUND_COLOR}
+        containerBackgroundColor={'transparent'}
         codeViewBorderRadius={0}
         codeViewBorderWidth={2}
         containerPaddingVertical={20}
         containerPaddingHorizontal={30}
-        focusedCodeViewBorderColor={COLORS.secondary}
-        codeViewBorderColor={COLORS.gray}
+        focusedCodeViewBorderColor={COLORS.black}
+        codeViewBorderColor={COLORS.white}
         codeFontSize={20}
         codeColor={'#FFF'}
         autoFocus
@@ -125,104 +127,141 @@ class Login extends Component {
       );
     } else {
       return (
-        <SafeAreaView
-          style={{
-            flex: 1,
-            backgroundColor: constants.BACKGROUND_COLOR,
-          }}>
-          {confirmation && (
-            <Header
-              leftButtonPress={() => this.setState({confirmation: false})}
-              leftButtonIcon="chevron-left"
-            />
-          )}
-          <KeyboardAvoidingView behavior="padding">
-            <View
-              style={{
-                width: '85%',
-                height: '100%',
-                alignSelf: 'center',
-              }}>
+        <LinearGradient
+          colors={constants.CUSTOM_PURPLE_GRADIENT}
+          start={{x: -0.2, y: 0.7}}
+          end={{x: 0.7, y: 0}}
+          locations={[0, 0.4, 1]}
+          style={{flex: 1}}>
+          <SafeAreaView
+            style={{
+              flex: 1,
+            }}>
+            {confirmation && (
+              <Header
+                leftButtonPress={() => this.setState({confirmation: false})}
+                leftButtonIcon="chevron-left"
+                backgroundColor={"transparent"}
+              />
+            )}
+            <KeyboardAvoidingView behavior="padding" style={{flex: 1}}>
               <View
                 style={{
-                  width: '100%',
-                  height: '40%',
-                  justifyContent: 'flex-end',
-                  //alignItems: 'center',
-                }}>
-                <Text
-                  text={
-                    confirmation
-                      ? 'Enter the code we just texted you '
-                      : 'Enter your phone number'
-                  }
-                  style={{fontWeight: 'normal', fontSize: 30}}
-                />
-              </View>
-              <View
-                style={{
+                  width: '85%',
                   flex: 1,
-                  alignItems: 'center',
-                  justifyContent: 'space-around',
+                  alignSelf: 'center',
                 }}>
-                {confirmation ? (
-                  this.codeInput(confirmationCode)
-                ) : (
-                  <PhoneInput
-                    ref={this.phoneRef}
-                    defaultValue={''}
-                    containerStyle={{
-                      borderRadius: BORDER_RADIUS,
-                      width: '100%',
-                    }}
-                    textContainerStyle={{
-                      borderTopRightRadius: BORDER_RADIUS,
-                      borderBottomRightRadius: BORDER_RADIUS,
-                    }}
-                    defaultCode="US"
-                    layout="first"
-                    onChangeText={(text) => {
-                      this.setState({phoneExtracted: text});
-                    }}
-                    onChangeFormattedText={(text) => {
-                      this.setState({phoneFormatted: text});
-                    }}
-                    withShadow
-                    autoFocus
-                  />
-                )}
-              </View>
-              <View
-                style={{
-                  width: '100%',
-                  height: '30%',
-                  alignItems: 'center',
-                }}>
-                {!confirmation && (
+                <View
+                  style={{
+                    width: '100%',
+                    flex: confirmation ? 0.3 : 0.4,
+                    justifyContent: 'flex-end',
+                  }}>
                   <Text
                     text={
-                      "By entering your number, you're agreeing to our Terms of Service and Privacy Policy. Thanks!"
+                      confirmation
+                        ? 'Enter the code we just texted you '
+                        : 'Enter your phone number'
                     }
                     style={{
-                      width: '100%',
-                      textAlign: 'center',
-                      fontWeight: 'normal',
-                      marginBottom: SIZES.spacing * 5,
+                      fontWeight: 'bold',
+                      fontSize: 30,
+                      fontFamily: 'SF Pro Display',
                     }}
-                    secondary
                   />
-                )}
-                <Button
-                  text={'Next'}
-                  buttonStyle={{width: '100%'}}
-                  onPress={() =>
-                    confirmation ? this.enterAuthCode() : this.sendAuthCode()
-                  }
-                />
+                </View>
+                <View
+                  style={{
+                    flex: 0.25,
+                    alignItems: 'center',
+                    justifyContent: 'space-around',
+                  }}>
+                  {confirmation ? (
+                    this.codeInput(confirmationCode)
+                  ) : (
+                    <PhoneInput
+                      ref={this.phoneRef}
+                      defaultValue={''}
+                      containerStyle={{
+                        borderRadius: BORDER_RADIUS,
+                        width: '100%',
+                      }}
+                      textContainerStyle={{
+                        borderTopRightRadius: BORDER_RADIUS,
+                        borderBottomRightRadius: BORDER_RADIUS,
+                      }}
+                      defaultCode="US"
+                      layout="first"
+                      onChangeText={(text) => {
+                        this.setState({phoneExtracted: text});
+                      }}
+                      onChangeFormattedText={(text) => {
+                        this.setState({phoneFormatted: text});
+                      }}
+                      withShadow
+                      autoFocus
+                    />
+                  )}
+                </View>
+                <View
+                  style={{
+                    width: '100%',
+                    flex: 0.5,
+                    alignItems: 'center',
+                  }}>
+                  {!confirmation && (
+                    <Text
+                      text={
+                        "By entering your number, you're agreeing to our Terms of Service and Privacy Policy. Thanks!"
+                      }
+                      style={{
+                        width: '100%',
+                        textAlign: 'left',
+                        fontWeight: 'normal',
+                        color: COLORS.white,
+                      }}
+                      secondary
+                    />
+                  )}
+                  <TouchableOpacity
+                    onPress={() =>
+                      confirmation ? this.enterAuthCode() : this.sendAuthCode()
+                    }
+                    style={{
+                      backgroundColor: '#ffffff',
+                      paddingVertical: SIZES.padding * 1.2,
+                      alignItems: 'center',
+                      borderRadius: 12,
+                      marginRight: width * 0.03,
+                      paddingHorizontal: SIZES.padding * 3.5,
+                      marginTop: SIZES.padding * 5,
+                    }}>
+                    <GradientText
+                      colors={['#872EC4', '#B150E2']}
+                      start={{x: -0.2, y: 0.7}}
+                      end={{x: 0.7, y: 0}}
+                      locations={[0, 0.4, 1]}
+                      style={{
+                        color: 'black',
+                        fontSize: 27,
+                        fontWeight: 'bold',
+                        fontFamily: 'SF Pro Display',
+                      }}>
+                      Next
+                      <Icon
+                        name="arrow-right"
+                        type="font-awesome-5"
+                        size={25}
+                        color={'#872EC4'}
+                        style={{paddingLeft: 10}}
+                      />
+                    </GradientText>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          </KeyboardAvoidingView>
-        </SafeAreaView>
+            </KeyboardAvoidingView>
+          </SafeAreaView>
+        </LinearGradient>
       );
     }
   }

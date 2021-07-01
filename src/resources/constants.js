@@ -51,6 +51,7 @@ const constants = {
     'November',
     'December',
   ],
+  CUSTOM_PURPLE_GRADIENT: ['#872EC4', '#B150E2', '#D56DFB'],
 };
 
 module.exports = constants;

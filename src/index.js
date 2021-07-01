@@ -33,6 +33,7 @@ import EditProfile from './screens/EditProfile';
 import Withdraw from './screens/Withdraw';
 import EditBankAccount from './screens/EditBankAccount';
 import WithdrawSummary from './screens/WithdrawSummary';
+import Welcome from './screens/Welcome';
 import {COLORS} from './resources/theme';
 import {PlatformColor} from 'react-native';
 
@@ -46,6 +47,11 @@ class MyStack extends React.Component {
     return (
       <NavigationContainer>
         <Stack.Navigator headerMode="none" mode="card">
+          <Stack.Screen
+            name="Welcome"
+            component={Welcome}
+            options={{animationEnabled: false}}
+          />
           <Stack.Screen
             name="Login"
             component={Login}

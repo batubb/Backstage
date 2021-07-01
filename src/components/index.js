@@ -9,6 +9,7 @@ import Label from './Label';
 import Options from './Options';
 import SearchBar from './SearchBar';
 import Divider from './Divider';
+import GradientText from './GradientText';
 
 module.exports = {
   Button,
@@ -21,4 +22,5 @@ module.exports = {
   Options,
   SearchBar,
   Divider,
+  GradientText,
 };
