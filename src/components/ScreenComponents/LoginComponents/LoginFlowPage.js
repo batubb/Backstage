@@ -1,19 +1,26 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {SafeAreaView} from 'react-native';
-import {View, TextInput, KeyboardAvoidingView} from 'react-native';
+import {
+  View,
+  Dimensions,
+  KeyboardAvoidingView,
+  TouchableOpacity,
+} from 'react-native';
 import constants from '../../../resources/constants';
-import {Text, Button} from '../../../components';
+import {Text, Button, GradientText} from '../../../components';
 import {COLORS, SIZES} from '../../../resources/theme';
 import PropTypes from 'prop-types';
 import {HeaderHeightContext} from '@react-navigation/stack';
+import {Icon} from 'react-native-elements';
+
+const {width} = Dimensions.get('window');
 
 export default function LoginFlowPage(props) {
   return (
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: constants.BACKGROUND_COLOR,
       }}>
       <HeaderHeightContext.Consumer>
         {(headerHeight) => (
@@ -32,21 +39,27 @@ export default function LoginFlowPage(props) {
                 width: '85%',
                 height: '100%',
                 alignSelf: 'center',
+                marginTop: '5%',
               }}>
               <View
                 style={{
                   width: '100%',
-                  height: '40%',
+                  height: '30%',
                   justifyContent: 'flex-end',
                 }}>
                 <Text
                   text={props.title}
-                  style={{fontWeight: 'normal', fontSize: 30}}
+                  style={{
+                    fontWeight: 'normal',
+                    fontSize: 30,
+                    fontWeight: 'bold',
+                    fontFamily: 'SF Pro Display',
+                  }}
                 />
               </View>
               <View
                 style={{
-                  flex: 1,
+                  height: '20%',
                   alignItems: 'center',
                   justifyContent: 'space-around',
                 }}>
@@ -55,15 +68,41 @@ export default function LoginFlowPage(props) {
               <View
                 style={{
                   width: '100%',
-                  height: '30%',
                   alignItems: 'center',
                   marginBottom: SIZES.spacing * 5,
                 }}>
-                <Button
-                  text={'Next'}
-                  buttonStyle={{width: '100%'}}
-                  onPress={props.onPressNext}
-                />
+                <TouchableOpacity
+                  onPress={() => props.onPressNext()}
+                  style={{
+                    backgroundColor: '#ffffff',
+                    paddingVertical: SIZES.padding * 1.2,
+                    alignItems: 'center',
+                    borderRadius: 12,
+                    marginRight: width * 0.03,
+                    paddingHorizontal: SIZES.padding * 3.5,
+                    marginTop: SIZES.padding * 5,
+                  }}>
+                  <GradientText
+                    colors={['#872EC4', '#B150E2']}
+                    start={{x: -0.2, y: 0.7}}
+                    end={{x: 0.7, y: 0}}
+                    locations={[0, 0.4, 1]}
+                    style={{
+                      color: 'black',
+                      fontSize: 27,
+                      fontWeight: 'bold',
+                      fontFamily: 'SF Pro Display',
+                    }}>
+                    Next
+                    <Icon
+                      name="arrow-right"
+                      type="font-awesome-5"
+                      size={25}
+                      color={'#872EC4'}
+                      style={{paddingLeft: 10}}
+                    />
+                  </GradientText>
+                </TouchableOpacity>
               </View>
             </View>
           </KeyboardAvoidingView>

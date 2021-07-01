@@ -34,7 +34,7 @@ class Home extends Component {
 
   goTo = (route, info = null) => {
     if (
-      route === 'Login' ||
+      route === 'Welcome' ||
       route === 'Notifications' ||
       route === 'PrivacyPolicy' ||
       route === 'MyBanks'
@@ -56,7 +56,7 @@ class Home extends Component {
           auth()
             .signOut()
             .then(() => {
-              this.goTo('Login');
+              this.goTo('Welcome');
             })
             .catch(() => {
               Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
