@@ -240,7 +240,6 @@ class Login extends Component {
                       colors={['#872EC4', '#B150E2']}
                       start={{x: -0.2, y: 0.7}}
                       end={{x: 0.7, y: 0}}
-                      locations={[0, 0.4, 1]}
                       style={{
                         color: 'black',
                         fontSize: 27,

@@ -9,6 +9,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import { LinearTextGradient } from "react-native-text-gradient";
 import {Icon} from 'react-native-elements';
 import {StackActions} from '@react-navigation/native';
+import auth from '@react-native-firebase/auth';
+import Store from '../../store/Store';
 
 const {width} = Dimensions.get('window');
 
@@ -18,7 +20,18 @@ class Welcome extends Component {
   };
 
   componentDidMount() {
-    this.setState({loading: false});
+    auth().onAuthStateChanged((auth) => {
+      if (auth) {
+        console.log('in here auth');
+        Store.setPhone(auth.phoneNumber);
+        Store.setUID(auth.uid);
+        const replaceActions = StackActions.replace('CheckInfo');
+        return this.props.navigation.dispatch(replaceActions);
+      } else {
+        Store.clearUserData();
+        this.setState({loading: false});
+      }
+    });
   }
 
   render() {
