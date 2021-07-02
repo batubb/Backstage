@@ -10,7 +10,7 @@ export default class MyImage extends Component {
     }
 
     render() {
-        const { photo, style } = this.props;
+        const { photo, style, gradientComponent } = this.props;
         const { loading } = this.state;
 
         return (
@@ -22,6 +22,7 @@ export default class MyImage extends Component {
                     onLoadStart={() => this.setState({ loading: true })}
                     onLoadEnd={() => this.setState({ loading: false })}
                 />
+                {gradientComponent}
             </View>
         );
     }
