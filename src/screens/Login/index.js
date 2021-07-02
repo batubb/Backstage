@@ -110,6 +110,7 @@ class Login extends Component {
       confirmation,
       confirmationCode,
     } = this.state;
+
     if (loading) {
       return (
         <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
@@ -141,7 +142,7 @@ class Login extends Component {
               <Header
                 leftButtonPress={() => this.setState({confirmation: false})}
                 leftButtonIcon="chevron-left"
-                backgroundColor={"transparent"}
+                backgroundColor={'transparent'}
               />
             )}
             <KeyboardAvoidingView behavior="padding" style={{flex: 1}}>
@@ -209,7 +210,7 @@ class Login extends Component {
                     flex: 0.5,
                     alignItems: 'center',
                   }}>
-                  {!confirmation && (
+                  {!confirmation ? (
                     <Text
                       text={
                         "By entering your number, you're agreeing to our Terms of Service and Privacy Policy. Thanks!"
@@ -222,13 +223,40 @@ class Login extends Component {
                       }}
                       secondary
                     />
+                  ) : (
+                    <TouchableOpacity
+                      onPress={() => this.sendAuthCode()}
+                      style={{
+                        width: '100%',
+                      }}>
+                      <Text
+                        text={"Didn't receive a code? Tap to resend."}
+                        style={{
+                          textAlign: 'center',
+                          right: SIZES.padding * 0.5,
+                          fontWeight: 'normal',
+                          fontSize: 16,
+                          color: COLORS.white,
+                        }}
+                        secondary
+                      />
+                    </TouchableOpacity>
                   )}
                   <TouchableOpacity
                     onPress={() =>
                       confirmation ? this.enterAuthCode() : this.sendAuthCode()
                     }
+                    disabled={
+                      confirmation
+                        ? confirmationCode.length !== 6
+                        : phoneExtracted.length === 0
+                    }
                     style={{
-                      backgroundColor: '#ffffff',
+                      backgroundColor: !!(confirmation
+                        ? confirmationCode.length === 6
+                        : phoneExtracted.length !== 0)
+                        ? '#ffffff'
+                        : '#ffffff50',
                       paddingVertical: SIZES.padding * 1.2,
                       alignItems: 'center',
                       borderRadius: 12,
