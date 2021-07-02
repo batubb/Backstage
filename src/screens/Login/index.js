@@ -93,7 +93,7 @@ class Login extends Component {
         codeViewBorderWidth={2}
         containerPaddingVertical={20}
         containerPaddingHorizontal={30}
-        focusedCodeViewBorderColor={COLORS.black}
+        focusedCodeViewBorderColor={COLORS.white}
         codeViewBorderColor={COLORS.white}
         codeFontSize={20}
         codeColor={'#FFF'}
