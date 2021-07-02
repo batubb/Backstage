@@ -119,11 +119,15 @@ class EditProfile extends Component {
   }
 
   choosePhotoType = () => {
-    Alert.alert('Choose', 'Where would you like to select the photo?', [
-      {text: 'Gallery', onPress: () => this.pickImage()},
-      {text: 'Remove Picture', onPress: () => this.updateUserInfo()},
-      {text: 'Cancel', style: 'cancel'},
-    ]);
+    if (this.state.photo === constants.DEFAULT_PHOTO) {
+      this.pickImage();
+    } else {
+      Alert.alert('Choose', 'Where would you like to select the photo?', [
+        {text: 'Gallery', onPress: () => this.pickImage()},
+        {text: 'Remove Picture', onPress: () => this.updateUserInfo()},
+        {text: 'Cancel', style: 'cancel'},
+      ]);
+    }
   };
 
   pickImage = async () => {
