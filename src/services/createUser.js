@@ -15,6 +15,7 @@ export default async function checkUserInfo(
     phone: phone,
     createTimestamp: new Date().getTime(),
     lastActivity: new Date().getTime(),
+    verified: false,
     photo:
       'http://newgatehotel.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png',
     notifications: {
