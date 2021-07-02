@@ -1,13 +1,8 @@
 /* eslint-disable no-alert */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState} from 'react';
-import {View, KeyboardAvoidingView, Dimensions} from 'react-native';
-import {
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-} from 'react-native-gesture-handler';
-import {Text, Button, Divider} from '../../components';
+import React from 'react';
+import {View, Dimensions} from 'react-native';
+import Text from '../../components/Text';
 import constants from '../../resources/constants';
 import {COLORS, SIZES} from '../../resources/theme';
 import MyImage from './../MyImage';
