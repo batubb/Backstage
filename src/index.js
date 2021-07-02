@@ -7,6 +7,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {View, LogBox} from 'react-native';
 import {Icon} from 'react-native-elements';
 import {constants} from './resources';
+import CustomTabBarNavigator from './components/TabNavigatorComponents/CustomTabNavigator';
 
 import Login from './screens/Login';
 import Home from './screens/Home';
@@ -164,6 +165,27 @@ class TabBarBottom extends React.Component {
     return (
       <Tab.Navigator
         lazy
+        tabBar={(props) => (
+          <CustomTabBarNavigator
+            {...props}
+            style={{
+              height: 80,
+              width: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: constants.BAR_COLOR,
+              flexDirection: 'row',
+            }}
+            buttonStyle={{
+              flex: 1,
+              height: 60,
+            }}
+            rippleProps={{
+              rippleColor: COLORS.primary,
+              rippleCentered: true,
+            }}
+          />
+        )}
         tabBarOptions={{
           tabBarPosition: 'bottom',
           swipeEnabled: false,
@@ -179,6 +201,7 @@ class TabBarBottom extends React.Component {
           name="HomeMenu"
           component={HomeMenu}
           options={{
+            tabBarAccessibilityLabel: 'Feed',
             tabBarLabel: 'Feed',
             tabBarIcon: ({color, focused}) => (
               <View
@@ -200,6 +223,7 @@ class TabBarBottom extends React.Component {
           name="SearchMenu"
           component={SearchMenu}
           options={{
+            tabBarAccessibilityLabel: 'Search',
             tabBarLabel: 'Search',
             tabBarIcon: ({color, focused}) => (
               <View
@@ -221,6 +245,7 @@ class TabBarBottom extends React.Component {
           name="AddContent"
           component={AddContentPlaceHolder}
           options={{
+            tabBarAccessibilityLabel: 'Create',
             tabBarLabel: 'Create',
             tabBarIcon: ({color, focused}) => (
               <View
@@ -248,6 +273,7 @@ class TabBarBottom extends React.Component {
           name="RoomsMenu"
           component={RoomsMenu}
           options={{
+            tabBarAccessibilityLabel: 'RoomsMenu',
             tabBarLabel: 'Rooms',
             tabBarIcon: ({color, focused}) => (
               <View
@@ -269,6 +295,7 @@ class TabBarBottom extends React.Component {
           name="ProfileMenu"
           component={ProfileMenu}
           options={{
+            tabBarAccessibilityLabel: 'Profile',
             tabBarLabel: 'Profile',
             tabBarIcon: ({color, focused}) => (
               <View
