@@ -1,6 +1,7 @@
 import React from 'react';
 import {View} from 'react-native';
-import Ripple from 'react-native-material-ripple';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import RippleFeedback from './RippleFeedback';
 
 export default function CustomTabBarNavigator({
   state,
@@ -43,22 +44,23 @@ export default function CustomTabBarNavigator({
         };
 
         return (
-          <View key={index} style={buttonStyle}>
-            <Ripple
-              accessibilityRole="button"
-              accessibilityState={isFocused ? {selected: true} : {}}
-              accessibilityLabel={options.tabBarAccessibilityLabel}
-              testID={options.tabBarTestID}
+          <View
+            key={index}
+            style={buttonStyle}
+            accessibilityRole="button"
+            accessibilityState={isFocused ? {selected: true} : {}}
+            accessibilityLabel={options.tabBarAccessibilityLabel}
+            testID={options.tabBarTestID}>
+            <RippleFeedback
               onPress={onPress}
-              onLongPress={onLongPress}
-              {...rippleProps}>
+              onLongPress={onLongPress}>
               {options.tabBarIcon({
                 focused: isFocused,
                 color: isFocused
                   ? props.activeTintColor
                   : props.inactiveTintColor,
               })}
-            </Ripple>
+            </RippleFeedback>
           </View>
         );
       })}

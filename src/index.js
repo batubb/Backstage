@@ -37,6 +37,7 @@ import WithdrawSummary from './screens/WithdrawSummary';
 import Welcome from './screens/Welcome';
 import {COLORS} from './resources/theme';
 import {PlatformColor} from 'react-native';
+import {getBottomSpace} from './lib/iPhoneXHelper';
 
 LogBox.ignoreAllLogs();
 
@@ -169,9 +170,9 @@ class TabBarBottom extends React.Component {
           <CustomTabBarNavigator
             {...props}
             style={{
-              height: 80,
+              height: 60 + getBottomSpace(),
               width: '100%',
-              justifyContent: 'center',
+              justifyContent: 'space-around',
               alignItems: 'center',
               backgroundColor: constants.BAR_COLOR,
               flexDirection: 'row',
@@ -179,10 +180,6 @@ class TabBarBottom extends React.Component {
             buttonStyle={{
               flex: 1,
               height: 60,
-            }}
-            rippleProps={{
-              rippleColor: COLORS.primary,
-              rippleCentered: true,
             }}
           />
         )}
