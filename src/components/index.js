@@ -10,6 +10,7 @@ import Options from './Options';
 import SearchBar from './SearchBar';
 import Divider from './Divider';
 import GradientText from './GradientText';
+import VerifiedIcon from './VerifiedIcon';
 
 module.exports = {
   Button,
@@ -23,4 +24,5 @@ module.exports = {
   SearchBar,
   Divider,
   GradientText,
+  VerifiedIcon,
 };

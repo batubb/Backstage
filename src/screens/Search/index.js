@@ -21,6 +21,7 @@ import {
   MyImage,
   SearchBar,
   Divider,
+  VerifiedIcon,
 } from '../../components';
 import {constants} from '../../resources';
 import {searchUser, getTrendingsData} from '../../services';
@@ -28,7 +29,7 @@ import {followerCount} from '../../lib';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
 import {Button} from 'react-native-share';
 import {PlatformColor} from 'react-native';
-import {COLORS, SIZES} from '../../resources/theme';
+import {SIZES} from '../../resources/theme';
 
 const {width} = Dimensions.get('window');
 
@@ -83,7 +84,6 @@ class Search extends Component {
         isPersonCard
         numCols={3}
         onPress={(item) => this.goTo('UserProfile', item)}
-        showVerificationIcon={true}
       />
     );
   };
@@ -118,16 +118,7 @@ class Search extends Component {
                   <View style={{width: width - 150}}>
                     <View style={{flexDirection: 'row'}}>
                       <Text text={item.name} style={{fontSize: 16}} />
-                      <Icon
-                        name="verified"
-                        size={16}
-                        color={COLORS.primary}
-                        type="material-icons"
-                        style={{
-                          paddingLeft: SIZES.padding * 0.3,
-                          top: 2,
-                        }}
-                      />
+                      {item.verified === true ? <VerifiedIcon size={16} /> : null}
                     </View>
                     <Text
                       text={`@${item.username}`}

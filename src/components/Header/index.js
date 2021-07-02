@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import {constants} from '../../resources';
 import {COLORS, SIZES} from '../../resources/theme';
 import Text from '../Text';
+import VerifiedIcon from '../VerifiedIcon';
 
 const {width} = Dimensions.get('window');
 
@@ -55,18 +56,7 @@ export default class HeaderComponent extends React.Component {
               text={title.length >= 22 ? `${title.substring(0, 22)}...` : title}
               style={{fontSize: 18}}
             />
-            {showVerificationIcon ? (
-              <Icon
-                name="verified"
-                size={18}
-                color={COLORS.primary}
-                type="material-icons"
-                style={{
-                  paddingLeft: SIZES.padding * 0.3,
-                  top: 2,
-                }}
-              />
-            ) : null}
+            {showVerificationIcon ? <VerifiedIcon size={18} /> : null}
           </View>
         }
         centerContainerStyle={{
@@ -80,7 +70,9 @@ export default class HeaderComponent extends React.Component {
                 onPress={() => rightSecondButtonPress()}>
                 <Icon
                   name={rightSecondButtonIcon}
-                  color={rightSecondButtonColor ? rightSecondButtonColor : '#FFF'}
+                  color={
+                    rightSecondButtonColor ? rightSecondButtonColor : '#FFF'
+                  }
                   type="material-community"
                 />
               </TouchableOpacity>

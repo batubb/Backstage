@@ -393,6 +393,7 @@ class Profile extends Component {
       optionsVisible,
       cumulativeViews,
     } = this.state;
+
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
         <Header
@@ -401,7 +402,7 @@ class Profile extends Component {
           rightButtonIcon="cog-outline"
           rightSecondButtonPress={() => this.goTo('Withdraw')}
           rightSecondButtonIcon="currency-usd"
-          showVerificationIcon={true}
+          showVerificationIcon={Store.user.verified === true}
         />
         {loading ? (
           <Loading
