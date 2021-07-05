@@ -181,7 +181,7 @@ class Profile extends Component {
     } else if (route === 'AddContent') {
       const replaceActions = StackActions.push(route);
       return this.props.navigation.dispatch(replaceActions);
-    } else if (route === 'Withdraw') {
+    } else if (route === 'Earnings') {
       const replaceActions = StackActions.push(route);
       return this.props.navigation.dispatch(replaceActions);
     }
@@ -400,7 +400,7 @@ class Profile extends Component {
           title={`${Store.user.username}`}
           rightButtonPress={() => this.goTo('Settings')}
           rightButtonIcon="cog-outline"
-          rightSecondButtonPress={() => this.goTo('Withdraw')}
+          rightSecondButtonPress={() => this.goTo('Earnings')}
           rightSecondButtonIcon="currency-usd"
           showVerificationIcon={Store.user.verified === true}
         />

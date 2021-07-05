@@ -31,7 +31,7 @@ import Notifications from './screens/Notifications';
 import Subscribe from './screens/Subscribe';
 import MyBanks from './screens/MyBanks';
 import EditProfile from './screens/EditProfile';
-import Withdraw from './screens/Withdraw';
+import Earnings from './screens/Earnings';
 import EditBankAccount from './screens/EditBankAccount';
 import WithdrawSummary from './screens/WithdrawSummary';
 import Welcome from './screens/Welcome';
@@ -130,7 +130,7 @@ class ProfileMenu extends React.Component {
         <Stack.Screen name="Rooms" component={Rooms} />
         <Stack.Screen name="MyBanks" component={MyBanks} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
-        <Stack.Screen name="Withdraw" component={Withdraw} />
+        <Stack.Screen name="Earnings" component={Earnings} />
         <Stack.Screen name="EditBankAccount" component={EditBankAccount} />
         <Stack.Screen name="WithdrawSummary" component={WithdrawSummary} />
       </Stack.Navigator>

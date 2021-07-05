@@ -22,7 +22,7 @@ import {LineChart} from 'react-native-chart-kit';
 
 const {width, height} = Dimensions.get('window');
 
-class Withdraw extends Component {
+class Earnings extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -246,4 +246,4 @@ class Withdraw extends Component {
   }
 }
 
-export default observer(Withdraw);
+export default observer(Earnings);
