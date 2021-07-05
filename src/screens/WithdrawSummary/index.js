@@ -1,26 +1,12 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Dimensions,
-  FlatList,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  RefreshControl,
-} from 'react-native';
+import {View, Dimensions, ScrollView, RefreshControl} from 'react-native';
 import {observer} from 'mobx-react';
-import LinearGradient from 'react-native-linear-gradient';
-import {Icon} from 'react-native-elements';
 import {Loading, Header, Text, Button, Label, MyModal} from '../../components';
 import {constants} from '../../resources';
-import {getFollowingLiveData, getFollowingUserPosts} from '../../services';
 import Store from '../../store/Store';
-import {followerCount} from '../../lib';
-import {COLORS, FONTS, SIZES} from '../../resources/theme';
+import {COLORS, SIZES} from '../../resources/theme';
 import {StackActions} from '@react-navigation/native';
-import {LineChart} from 'react-native-chart-kit';
-
-const {width, height} = Dimensions.get('window');
+import {withdraw} from '../../services';
 
 class WithdrawSummary extends Component {
   constructor(props) {
@@ -36,12 +22,18 @@ class WithdrawSummary extends Component {
     this.setState({loading: false});
   };
 
+  onWithdrawApproved = async (amount = 0) => {
+    this.setState({loading: true});
+    withdraw(amount, () => this.setState({showModal: true, loading: false}));
+  };
+
   render() {
     const {loading, refreshing, showModal} = this.state;
 
     const availableBalance = 52.99;
     const appleFees = availableBalance * 0.15;
-    const backstageFees = appleFees * 0.1;
+    const backstageFees = availableBalance * 0.1;
+    const userReceived = availableBalance - appleFees - backstageFees;
 
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
@@ -168,9 +160,7 @@ class WithdrawSummary extends Component {
               showLeftIcon={false}
               customRightComponent={
                 <Text
-                  text={`$${parseFloat(
-                    availableBalance - appleFees - backstageFees,
-                  ).toFixed(2)}`}
+                  text={`$${parseFloat(userReceived).toFixed(2)}`}
                   style={{
                     textAlign: 'left',
                     color: COLORS.secondaryLabelColor,
@@ -233,7 +223,9 @@ class WithdrawSummary extends Component {
                 marginTop: SIZES.padding * 4,
               }}>
               <Button
-                onPress={() => this.setState({showModal: true})}
+                onPress={() =>
+                  this.onWithdrawApproved(parseFloat(userReceived).toFixed(2))
+                }
                 text="Confirm"
                 primary
                 buttonStyle={{

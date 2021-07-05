@@ -81,7 +81,7 @@ class EditBankAccount extends Component {
     }
     this.setState({loading: true});
 
-    var updates = {
+    const updates = {
       recipientFullName,
       recipientAddress,
       phoneNumber: phoneFormatted,
