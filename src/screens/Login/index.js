@@ -16,6 +16,7 @@ import PhoneInput from 'react-native-phone-number-input';
 import {COLORS, SIZES} from '../../resources/theme';
 import LinearGradient from 'react-native-linear-gradient';
 import {Icon} from 'react-native-elements';
+import { sendBirdCreateUser } from '../../services/connectSendbird';
 
 const {width, height} = Dimensions.get('window');
 auth().settings.appVerificationDisabledForTesting = false;
@@ -35,11 +36,16 @@ class Login extends Component {
   }
 
   componentDidMount = async () => {
-    auth().onAuthStateChanged((auth) => {
+    auth().onAuthStateChanged(async (auth) => {
       if (auth) {
         console.log('in here auth');
         Store.setPhone(auth.phoneNumber);
         Store.setUID(auth.uid);
+        if (auth.sendbirdAccessToken) {
+          await sendBirdLoginWithAccessToken(auth.uid, auth.sendbirdAccessToken);
+        } else {
+          await sendBirdCreateUser();
+        }
         const replaceActions = StackActions.replace('CheckInfo');
         return this.props.navigation.dispatch(replaceActions);
       } else {

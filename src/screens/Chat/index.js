@@ -16,7 +16,14 @@ import {
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {Icon} from 'react-native-elements';
-import {Loading, Header, Text, MyImage, Button, VerifiedIcon} from '../../components';
+import {
+  Loading,
+  Header,
+  Text,
+  MyImage,
+  Button,
+  VerifiedIcon,
+} from '../../components';
 import {constants} from '../../resources';
 import {
   sendComment,
@@ -31,6 +38,7 @@ import {StackActions} from '@react-navigation/native';
 import database from '@react-native-firebase/database';
 import LinearGradient from 'react-native-linear-gradient';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
+import {sendBirdLoginWithAccessToken, sendBirdCreateUser, sendBirdCreateChannel} from '../../services/connectSendbird';
 
 const {width} = Dimensions.get('window');
 
@@ -54,6 +62,18 @@ class Chat extends Component {
   }
 
   componentDidMount = async () => {
+    if (Store.user.sendbirdAccessToken) {
+      await sendBirdLoginWithAccessToken(Store.user.uid, Store.user.sendbirdAccessToken);
+    } else {
+      await sendBirdCreateUser();
+    }
+    await sendBirdCreateChannel({
+      uid: 'nqmb4uvf-4w4q-gr1x-z4wn-53x3wcd8kra7',
+      thumbnail: {
+        url: "https://firebasestorage.googleapis.com/v0/b/backstage-ceb27.appspot.com/o/thumbnails%2Fnqmb4uvf-4w4q-gr1x-z4wn-53x3wcd8kra7.jpg?alt=media&token=e8818600-11df-487c-b5f3-b96c49649857",
+      }
+    });
+    return;
     await database()
       .ref('comments')
       .child(this.state.user.uid)
@@ -261,7 +281,7 @@ class Chat extends Component {
         <TouchableOpacity onPress={() => this.goTo('UserProfile', user)}>
           <View style={{marginLeft: 10, width: 100, flexDirection: 'row'}}>
             <Text text={user.username} />
-            {user.verified === true ? <VerifiedIcon size={14} /> : null} 
+            {user.verified === true ? <VerifiedIcon size={14} /> : null}
           </View>
         </TouchableOpacity>
         <Button
@@ -430,7 +450,9 @@ class Chat extends Component {
                     <View style={{width: width - 80}}>
                       <View style={{flexDirection: 'row'}}>
                         <Text text={item.user.username} />
-                        {item.user.verified === true ? <VerifiedIcon size={14} /> : null}
+                        {item.user.verified === true ? (
+                          <VerifiedIcon size={14} />
+                        ) : null}
                       </View>
                       <Text
                         text={item.comment}
@@ -555,8 +577,10 @@ class Chat extends Component {
                   <View style={{width: width - 110}}>
                     <View style={{flexDirection: 'row'}}>
                       <Text text={item.user.username} />
-                      {item.user.verified === true ? <VerifiedIcon size={14} /> : null}
-                    </View> 
+                      {item.user.verified === true ? (
+                        <VerifiedIcon size={14} />
+                      ) : null}
+                    </View>
                     <Text
                       text={item.comment}
                       style={{fontSize: 12, fontWeight: 'normal'}}
