@@ -2,6 +2,7 @@
 import React from 'react';
 import {COLORS, SIZES} from '../../../../resources/theme';
 import {Button} from '../../../../components';
+import {getBottomSpace} from '../../../../lib/iPhoneXHelper';
 
 export default function PostButton(props) {
   return (
@@ -14,7 +15,7 @@ export default function PostButton(props) {
         alignSelf: 'flex-end',
         bottom: 0,
         right: 0,
-        marginBottom: SIZES.spacing * 7,
+        marginBottom: SIZES.spacing * 7 + getBottomSpace(),
         marginRight: SIZES.spacing * 5,
       }}
       rightIconProps={{
