@@ -37,7 +37,10 @@ class Home extends Component {
       route === 'Welcome' ||
       route === 'Notifications' ||
       route === 'PrivacyPolicy' ||
-      route === 'MyBanks'
+      route === 'EditBankAccount' ||
+      route === 'Withdraw' ||
+      route === 'Earnings' ||
+      route === 'WithdrawalHistory'
     ) {
       const replaceActions = StackActions.push(route);
       return this.props.navigation.dispatch(replaceActions);
@@ -96,21 +99,27 @@ class Home extends Component {
               <RefreshControl refreshing={refreshing} tintColor="white" />
             }>
             <Label
+              text="Earnings"
+              icon="currency-usd"
+              onPressFunction={() => this.goTo('Earnings')}
+              border
+            />
+            <Label
+              text="Bank Information"
+              icon="bank"
+              onPressFunction={() => this.goTo('EditBankAccount')}
+              border
+            />
+            <Label
+              text="Withdrawals"
+              icon="clock-time-ten-outline"
+              onPressFunction={() => this.goTo('WithdrawalHistory')}
+              border
+            />
+            <Label
               text="Notifications"
               icon="bell"
               onPressFunction={() => this.goTo('Notifications')}
-              border
-            />
-            <Label
-              text="Your Cards"
-              icon="credit-card"
-              onPressFunction={() => {}}
-              border
-            />
-            <Label
-              text="Creator Portal"
-              icon="currency-usd"
-              onPressFunction={() => {}}
               border
             />
             <Label
