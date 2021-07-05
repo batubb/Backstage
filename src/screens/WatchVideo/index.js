@@ -36,6 +36,7 @@ import {KeyboardAvoidingView} from 'react-native';
 import database from '@react-native-firebase/database';
 import WatchVideoIcon from '../../components/ScreenComponents/WatchVideoComponents/WatchVideoIcon/WatchVideoIcon';
 import {COLORS, SIZES} from '../../resources/theme';
+import {getBottomSpace, getStatusBarHeight} from '../../lib/iPhoneXHelper';
 
 const {width, height} = Dimensions.get('window');
 const BOTTOM_PADDING = height >= 812 ? 40 : 20;
@@ -64,6 +65,7 @@ class WatchVideo extends Component {
       showMore: false,
       controlsVisible: true,
       months: constants.MONTHS,
+      fullScreen: true,
     };
 
     this.list = [
@@ -247,8 +249,18 @@ class WatchVideo extends Component {
             onLoadStart={() => this.setState({videoLoading: true})}
             onLoad={() => this.setState({videoLoading: false})}
             onProgress={(data) => this.setTime(data)}
-            onEnd={() => this.setState({paused: true})}
-            style={{flex: 1, width: width, height: height}}
+            onEnd={() => this.setState({paused: true, controlsVisible: true})}
+            fullScreen={this.state.fullScreen}
+            resizeMode={this.state.fullScreen ? "cover" : "contain"}
+            style={[
+              this.state.fullScreen
+                ? {
+                    flex: 1,
+                    width: Dimensions.get('screen').width,
+                    height: Dimensions.get('screen').height,
+                  }
+                : {flex: 1, width: width, height: height},
+            ]}
             paused={paused}
             repeat
             poster={video.photo}
@@ -270,15 +282,16 @@ class WatchVideo extends Component {
                   height: '23%',
                   marginBottom: SIZES.spacing * 10,
                 }}>
-                <View
-                  style={{width: '70%', marginTop: 'auto'}}>
+                <View style={{width: '70%', marginTop: 'auto'}}>
                   <Text
                     text={video.title}
                     numberOfLines={this.state.showMore ? 3 : 1}
                     onPress={() =>
                       this.setState({showMore: !this.state.showMore})
                     }
-                    style={{fontSize: this.state.showMore ? SIZES.h4 : SIZES.h3}}
+                    style={{
+                      fontSize: this.state.showMore ? SIZES.h4 : SIZES.h3,
+                    }}
                   />
                   <Text
                     text={`${month} ${day}, ${year}`}
@@ -286,7 +299,11 @@ class WatchVideo extends Component {
                     onPress={() =>
                       this.setState({showMore: !this.state.showMore})
                     }
-                    style={{fontSize: SIZES.body4, color: COLORS.white, paddingTop: 3}}
+                    style={{
+                      fontSize: SIZES.body4,
+                      color: COLORS.white,
+                      paddingTop: 3,
+                    }}
                   />
                 </View>
                 <View
@@ -340,7 +357,7 @@ class WatchVideo extends Component {
                   />
                 </TouchableOpacity>
                 <Slider
-                  style={{width: width - 140}}
+                  style={{width: width - 150}}
                   value={videoInfo.currentTime}
                   thumbTintColor="#fff"
                   minimumTrackTintColor="#fff"
@@ -355,11 +372,43 @@ class WatchVideo extends Component {
                   maximumValue={videoInfo.seekableDuration}
                 />
                 <View>
-                  <Text style={{fontSize: 12}} text={`${dk}:${sn}`} />
+                  <Text
+                    style={{fontSize: 12, paddingLeft: SIZES.padding}}
+                    text={`${dk}:${sn}`}
+                  />
                 </View>
+                <TouchableOpacity
+                  onPress={() =>
+                    this.setState({fullScreen: !this.state.fullScreen})
+                  }
+                  style={{bottom: 1}}>
+                  <Icon
+                    name={!this.state.fullScreen ? 'fullscreen' : 'fullscreen-exit'}
+                    color="#FFF"
+                    type="material-community"
+                    size={28}
+                  />
+                </TouchableOpacity>
               </View>
             </View>
-          ) : null}
+          ) : (
+            <TouchableOpacity
+              onPress={() =>
+                this.setState({fullScreen: !this.state.fullScreen})
+              }
+              style={{
+                position: 'absolute',
+                right: SIZES.padding * 2,
+                bottom: getBottomSpace() + SIZES.padding * 0.5,
+              }}>
+              <Icon
+                name="fullscreen-exit"
+                color="#FFF"
+                type="material-community"
+                size={28}
+              />
+            </TouchableOpacity>
+          )}
         </View>
       </TouchableWithoutFeedback>
     );
