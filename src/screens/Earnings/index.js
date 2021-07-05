@@ -42,11 +42,21 @@ class Earnings extends Component {
 
   goTo = (route, info = null) => {
     if (route === 'EditBankAccount') {
-      const replaceActions = StackActions.push(route);
+      const replaceActions = StackActions.push(route, info);
       return this.props.navigation.dispatch(replaceActions);
     } else if (route === 'WithdrawSummary') {
       const replaceActions = StackActions.push(route);
       return this.props.navigation.dispatch(replaceActions);
+    }
+  };
+
+  onWithdrawButtonPressed = async () => {
+    if (typeof Store.user.bank === 'undefined') {
+      this.goTo('EditBankAccount', {
+        afterSuccessfulSave: () => this.goTo('WithdrawSummary'),
+      });
+    } else {
+      this.goTo('WithdrawSummary');
     }
   };
 
@@ -216,7 +226,7 @@ class Earnings extends Component {
                 marginTop: SIZES.padding * 3,
               }}>
               <Button
-                onPress={() => this.goTo('WithdrawSummary')}
+                onPress={() => this.onWithdrawButtonPressed()}
                 text="Withdraw"
                 primary
                 buttonStyle={{
