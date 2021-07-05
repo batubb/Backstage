@@ -34,6 +34,7 @@ import EditProfile from './screens/EditProfile';
 import Earnings from './screens/Earnings';
 import EditBankAccount from './screens/EditBankAccount';
 import WithdrawSummary from './screens/WithdrawSummary';
+import WithdrawalHistory from './screens/WithdrawalHistory';
 import Welcome from './screens/Welcome';
 import {COLORS} from './resources/theme';
 import {PlatformColor} from 'react-native';
@@ -133,6 +134,7 @@ class ProfileMenu extends React.Component {
         <Stack.Screen name="Earnings" component={Earnings} />
         <Stack.Screen name="EditBankAccount" component={EditBankAccount} />
         <Stack.Screen name="WithdrawSummary" component={WithdrawSummary} />
+        <Stack.Screen name="WithdrawalHistory" component={WithdrawalHistory} />
       </Stack.Navigator>
     );
   }

@@ -5,6 +5,7 @@ import {Dimensions, TouchableOpacity, View, StyleSheet} from 'react-native';
 import {Icon} from 'react-native-elements';
 import Text from '../Text';
 import {constants} from '../../resources';
+import {COLORS} from '../../resources/theme';
 
 const {width} = Dimensions.get('window');
 
@@ -20,6 +21,8 @@ export default class ProfileLabels extends Component {
       showLeftIcon = true,
       customRightComponent,
       touchableOpacityProps,
+      secondaryText,
+      secondaryTextStyle,
     } = this.props;
 
     return (
@@ -36,7 +39,19 @@ export default class ProfileLabels extends Component {
                 <Icon name={icon} color="#FFF" type="material-community" />
               </View>
             ) : null}
-            <Text text={text} style={styles.labelText} />
+            <View style={{flexDirection: 'column'}}>
+              <Text text={text} style={styles.labelText} />
+              {secondaryText && (
+                <Text
+                  text={secondaryText}
+                  style={
+                    !this.props.secondary
+                      ? [{color: COLORS.white}, secondaryTextStyle]
+                      : [secondaryTextStyle]
+                  }
+                />
+              )}
+            </View>
           </View>
           {!customRightComponent && showRightIcon ? (
             <View style={styles.chevron}>
