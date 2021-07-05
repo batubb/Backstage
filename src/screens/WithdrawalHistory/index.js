@@ -66,7 +66,7 @@ class WithdrawalHistory extends Component {
             <View
               style={{
                 alignItems: 'center',
-                marginVertical: SIZES.padding * 4,
+                marginVertical: SIZES.padding * 3,
                 marginHorizontal: SIZES.padding * 2,
                 flex: 1,
                 flexDirection: 'row',
@@ -74,31 +74,37 @@ class WithdrawalHistory extends Component {
               <Button
                 onPress={() => this.setState({selectedTab: 0})}
                 text="Pending"
-                secondary={selectedTab !== 0}
                 buttonStyle={{
                   padding: SIZES.padding,
                   flex: 1,
                   marginRight: SIZES.padding * 0.5,
                   justifyContent: 'center',
                   alignItems: 'center',
+                  backgroundColor:
+                    selectedTab !== 0 ? COLORS.transparent : COLORS.white,
                 }}
                 textStyle={{
                   fontSize: SIZES.body3,
+                  color:
+                    selectedTab !== 0 ? COLORS.white : COLORS.black,
                 }}
               />
               <Button
                 onPress={() => this.setState({selectedTab: 1})}
                 text="Completed"
-                secondary={selectedTab !== 1}
                 buttonStyle={{
                   padding: SIZES.padding,
                   flex: 1,
                   marginLeft: SIZES.padding * 0.5,
                   justifyContent: 'center',
                   alignItems: 'center',
+                  backgroundColor:
+                    selectedTab !== 1 ? COLORS.transparent : COLORS.white,
                 }}
                 textStyle={{
                   fontSize: SIZES.body3,
+                  color:
+                    selectedTab !== 1 ? COLORS.white : COLORS.black,
                 }}
               />
             </View>
