@@ -73,7 +73,7 @@ class WithdrawSummary extends Component {
                   this.props.navigation.dispatch(StackActions.pop());
                 }}
                 text="We have received your request. We will notify you when your money is on its way to your bank account."
-                photo="https://i.pinimg.com/originals/46/d1/8f/46d18fc9c093bfcb248d1cc49b9a52fc.gif"
+                photo={constants.SUCCESS_ICON_URL}
               />
             ) : null}
             <Text
