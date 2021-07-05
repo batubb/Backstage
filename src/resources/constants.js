@@ -17,6 +17,7 @@ const constants = {
   BAR_COLOR: COLORS.secondaryBackgroundColor,
   BLUE: '#0a84ff',
   RED: '#FF5733',
+  TRANSPARENT_BLACK_COLOR: '#00000041',
   PAGE_LEFT_PADDING: SIZES.spacing * 2,
   PROFILE_PIC_SIZE: 100,
   DEFAULT_PAGE_WIDTH: '95%',
