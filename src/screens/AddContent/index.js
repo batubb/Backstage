@@ -448,6 +448,8 @@ export default class App extends Component {
         const videoThumbURL = `${constants.VIDEO_THUMB_URL}${onname}_500x500.jpg?alt=media`;
 
         this.setState({loading: false, thumbnailUrl: videoThumbURL, thumbnailWidth: result.width, thumnailHeight: result.height});
+      } else {
+        this.setState({loading: false});
       }
     });
   };
