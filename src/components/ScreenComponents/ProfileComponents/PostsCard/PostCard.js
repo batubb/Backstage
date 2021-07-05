@@ -59,6 +59,11 @@ export default function PostCard(props) {
               bottom: 0,
               paddingVertical: 5,
               paddingHorizontal: 10,
+              width: '95%',
+              backgroundColor: constants.BAR_COLOR,
+              borderRadius: 5,
+              marginBottom: 5,
+              marginHorizontal: 3,
             }}>
             <Text
               text={
@@ -70,21 +75,36 @@ export default function PostCard(props) {
               }
               style={{fontSize: 12}}
             />
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Icon
-                name="play-outline"
-                type="ionicon"
-                color={COLORS.primaryLabelColor}
-                size={16}
-              />
-              <Text
-                text={`${followerCount(
-                  props.isPersonCard
-                    ? props.item.cumulativeViewsUser
-                    : props.item.cumulativeViews,
-                )}`}
-                style={{fontSize: 12, marginLeft: SIZES.spacing * 1}}
-              />
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Icon
+                  name="play-outline"
+                  type="ionicon"
+                  color={COLORS.primaryLabelColor}
+                  size={16}
+                />
+                <Text
+                  text={`${followerCount(
+                    props.isPersonCard
+                      ? props.item.cumulativeViewsUser
+                      : props.item.cumulativeViews,
+                  )}`}
+                  style={{fontSize: 12, marginLeft: SIZES.spacing * 1}}
+                />
+              </View>
+              {props.item.price !== '' && (
+                <View>
+                  <Text
+                    text={`$${props.item.price}`}
+                    style={{fontSize: 12, marginLeft: SIZES.spacing * 1}}
+                  />
+                </View>
+              )}
             </View>
           </View>
         )}

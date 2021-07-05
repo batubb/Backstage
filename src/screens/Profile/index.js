@@ -36,7 +36,7 @@ import storage from '@react-native-firebase/storage';
 import moment from 'moment';
 
 import Store from '../../store/Store';
-import {SIZES} from '../../resources/theme';
+import {COLORS, SIZES} from '../../resources/theme';
 import ProfileTop from '../../components/ScreenComponents/ProfileComponents/ProfileTop/ProfileTop';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
 import PostCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostCard';
@@ -179,6 +179,9 @@ class Profile extends Component {
       const replaceActions = StackActions.push(route, {type: info});
       return this.props.navigation.dispatch(replaceActions);
     } else if (route === 'AddContent') {
+      const replaceActions = StackActions.push(route);
+      return this.props.navigation.dispatch(replaceActions);
+    } else if (route === 'Withdraw') {
       const replaceActions = StackActions.push(route);
       return this.props.navigation.dispatch(replaceActions);
     }
@@ -396,6 +399,8 @@ class Profile extends Component {
           title={`${Store.user.username}`}
           rightButtonPress={() => this.goTo('Settings')}
           rightButtonIcon="cog-outline"
+          rightSecondButtonPress={() => this.goTo('Withdraw')}
+          rightSecondButtonIcon="currency-usd"
         />
         {loading ? (
           <Loading

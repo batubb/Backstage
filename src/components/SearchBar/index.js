@@ -7,31 +7,66 @@ import {
   TextInput,
   Dimensions,
   TouchableOpacity,
+  Keyboard,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import Text from '../../components/Text';
 import {Icon} from 'react-native-elements';
-import {constants} from '../../resources';
-import {COLORS} from '../../resources/theme';
+import {COLORS, SIZES} from '../../resources/theme';
+import Animated from 'react-native-reanimated';
+import {runTiming} from '../../lib';
 
 const {width} = Dimensions.get('window');
 
 export default class SearchBar extends Component {
-  state = {
-    search: '',
+  constructor(props) {
+    super(props);
+    this.state = {
+      search: '',
+      showCancelButton: false,
+    };
+  }
+  animatedWidthClock = new Animated.Clock();
+  animatedWidthValue = new Animated.Value(width - 20);
+
+  openCancelButton = () => {
+    this.animatedWidthValue = runTiming(
+      this.animatedWidthClock,
+      300,
+      new Animated.Value(width - 20),
+      new Animated.Value(width - 90),
+    );
+    this.setState({showCancelButton: true});
+  };
+
+  closeCancelButton = () => {
+    this.setState({showCancelButton: false});
+    this.animatedWidthValue = runTiming(
+      this.animatedWidthClock,
+      400,
+      new Animated.Value(width - 90),
+      new Animated.Value(width - 20),
+    );
   };
 
   render() {
     const {searchUser} = this.props;
-    const {search} = this.state;
+    const {search, showCancelButton} = this.state;
 
     return (
-      <View style={{width, alignItems: 'center'}}>
-        <View
+      <View
+        style={{
+          width,
+          paddingHorizontal: 10,
+          flexDirection: 'row',
+          ...this.props.style,
+        }}>
+        <Animated.View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            width: width - 20,
+            width: this.animatedWidthValue,
             borderRadius: 4,
             paddingHorizontal: 10,
             backgroundColor: COLORS.secondaryBackgroundColor,
@@ -44,9 +79,14 @@ export default class SearchBar extends Component {
                 fontFamily:
                   Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
                 color: '#FFF',
-                width: width - 110,
+                width: width - (showCancelButton ? 150 : 20),
                 fontSize: 16,
-                padding: 10,
+                padding: SIZES.padding,
+              }}
+              onFocus={() => {
+                if (!this.state.showCancelButton) {
+                  this.openCancelButton();
+                }
               }}
               underlineColorAndroid="transparent"
               onChangeText={(searchInput) => {
@@ -62,8 +102,9 @@ export default class SearchBar extends Component {
               onPress={() => {
                 searchUser('');
                 this.setState({search: ''});
-              }}>
-              <View style={{paddingVertical: 10}}>
+              }}
+              style={{right: 10}}>
+              <View style={{padding: 10}}>
                 <Icon
                   name="close-circle"
                   color="#FFF"
@@ -73,7 +114,31 @@ export default class SearchBar extends Component {
               </View>
             </TouchableOpacity>
           ) : null}
-        </View>
+        </Animated.View>
+        {showCancelButton ? (
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => {
+              this.closeCancelButton();
+              if (search !== '') {
+                searchUser('');
+                this.setState({search: ''});
+              }
+              Keyboard.dismiss();
+            }}
+            style={{
+              alignSelf: 'center',
+              justifyContent: 'center',
+              width: 90,
+              paddingRight: 16,
+              padding: SIZES.padding,
+            }}>
+            <Text
+              text="Cancel"
+              style={{color: COLORS.gray, textAlign: 'center'}}
+            />
+          </TouchableOpacity>
+        ) : null}
       </View>
     );
   }
@@ -81,8 +146,10 @@ export default class SearchBar extends Component {
 
 SearchBar.propTypes = {
   searchUser: PropTypes.func,
+  style: PropTypes.object,
 };
 
 SearchBar.defaultProps = {
   searchUser: null,
+  style: {},
 };
