@@ -52,6 +52,7 @@ const constants = {
     'December',
   ],
   CUSTOM_PURPLE_GRADIENT: ['#872EC4', '#B150E2', '#D56DFB'],
+  SUCCESS_ICON_URL: 'https://i.pinimg.com/originals/46/d1/8f/46d18fc9c093bfcb248d1cc49b9a52fc.gif',
 };
 
 module.exports = constants;
