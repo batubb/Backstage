@@ -4,8 +4,22 @@ import axios from 'axios';
 import {constants} from '../resources';
 import Store from '../store/Store';
 import database from '@react-native-firebase/database';
+import {makeid} from '../lib';
 
 export const sendbird = new SendBird({appId: constants.SENDBIRD_APP_ID});
+
+export async function authSendBird() {
+  if (sendbird.currentUser === null) {
+    if (Store.user.sendbirdAccessToken) {
+      await sendBirdLoginWithAccessToken(
+        Store.user.uid,
+        Store.user.sendbirdAccessToken,
+      );
+    } else {
+      await sendBirdCreateUser();
+    }
+  }
+}
 
 export function sendBirdLoginWithAccessToken(user_id, access_token) {
   return new Promise((resolve, reject) => {
@@ -97,29 +111,80 @@ function checkUserInfo() {
 }
 
 // - should be called after publishing an video by influencer.
-export function sendBirdCreateChannel(videoData) {
-  const params = new sendbird.OpenChannelParams();
-  params.name = `${Store.user.uid}-${videoData.uid}`;
-  params.coverUrlOrImage = videoData.thumbnail.url;
-  params.operatorUserIds = constants.SENDBIRD_OPERATOR_USER_IDS;
-
+export function sendBirdCreateChannel(userData) {
   return new Promise((resolve, reject) =>
-    sendbird.OpenChannel.createChannel(
-      params,
-      async (openChannel, error) => {
+    authSendBird().then(() => {
+      const params = new sendbird.OpenChannelParams();
+      params.name = `${userData.uid}`;
+      params.operatorUserIds = constants.SENDBIRD_OPERATOR_USER_IDS;
+
+      sendbird.OpenChannel.createChannel(params, async (openChannel, error) => {
         if (error) {
           reject(error);
           return;
         }
-        console.log(openChannel);
-        // openChannel.updateChannel();
-      },
+        try {
+          await database()
+            .ref('users')
+            .child(userData.uid)
+            .update({
+              ...userData,
+              sendbirdRoomUrl: openChannel.url,
+            });
+          resolve(openChannel.url);
+        } catch (error) {
+          reject(error);
+        }
+      });
+    }),
+  );
+}
+
+export async function getSendBirdChannelFromUrl(url) {
+  return await sendbird.OpenChannel.getChannel(url);
+}
+
+export function sendBirdEnterChannel(url) {
+  return new Promise((resolve, reject) =>
+    authSendBird().then(() =>
+      getSendBirdChannelFromUrl(url)
+        .then(async (openChannel) =>
+          openChannel.enter((response, error) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(openChannel);
+            }
+          }),
+        )
+        .catch((error) => reject(error)),
     ),
   );
 }
 
-export function sendBirdEnterChannel() {
-  return new Promise((resolve, reject) => {
-    //sendbird.OpenChannel.getChannel()
-  });
+export function sendBirdLeaveChannel(connection) {
+  return new Promise((resolve, reject) =>
+    connection.exit((response, error) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve(response);
+    }),
+  );
+}
+
+export function startSendBirdChannelHandler(channelUrl, callback) {
+  const channelHandler = new sendbird.ChannelHandler();
+  const channelHandlerId = makeid(12);
+
+  channelHandler.onMessageReceived = (channel, message) => {
+    if (channel.url === channelUrl) {
+      callback(channel, message);
+    }
+  };
+
+  sendbird.addChannelHandler(channelHandlerId, channelHandler);
+
+  return () => sendbird.removeChannelHandler(channelHandlerId);
 }

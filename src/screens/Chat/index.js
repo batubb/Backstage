@@ -38,7 +38,12 @@ import {StackActions} from '@react-navigation/native';
 import database from '@react-native-firebase/database';
 import LinearGradient from 'react-native-linear-gradient';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
-import {sendBirdLoginWithAccessToken, sendBirdCreateUser, sendBirdCreateChannel} from '../../services/connectSendbird';
+import {
+  sendBirdCreateChannel,
+  sendBirdEnterChannel,
+  sendBirdLeaveChannel,
+  startSendBirdChannelHandler,
+} from '../../services/connectSendbird';
 
 const {width} = Dimensions.get('window');
 
@@ -59,20 +64,59 @@ class Chat extends Component {
       anonymus: this.props.route.params.anonymus,
       subscribtion: null,
     };
+    this.roomConnection = null;
+    this.channelHandler = null;
   }
 
   componentDidMount = async () => {
-    if (Store.user.sendbirdAccessToken) {
-      await sendBirdLoginWithAccessToken(Store.user.uid, Store.user.sendbirdAccessToken);
-    } else {
-      await sendBirdCreateUser();
-    }
-    await sendBirdCreateChannel({
-      uid: 'nqmb4uvf-4w4q-gr1x-z4wn-53x3wcd8kra7',
-      thumbnail: {
-        url: "https://firebasestorage.googleapis.com/v0/b/backstage-ceb27.appspot.com/o/thumbnails%2Fnqmb4uvf-4w4q-gr1x-z4wn-53x3wcd8kra7.jpg?alt=media&token=e8818600-11df-487c-b5f3-b96c49649857",
+    const subscribtion =
+      Store.uid !== this.state.user.uid
+        ? await checkSubscribtion(Store.uid, this.state.user.uid)
+        : {subscribtion: true};
+
+    if (subscribtion.subscribtion === true) {
+      const posts = await getUserPosts(this.state.user.uid);
+      this.setState({posts, subscribtion});
+
+      if (this.state.user.sendbirdRoomUrl) {
+        this.joinGroup();
+      } else {
+        await database()
+          .ref('users')
+          .child(this.state.user.uid)
+          .once('value', (user) => {
+            user = user.toJSON();
+            if (user.sendbirdRoomUrl) {
+              if (Store.uid === this.state.user.uid) {
+                Store.setUser(user);
+              }
+              this.setState({user}, () => this.joinGroup());
+            } else {
+              sendBirdCreateChannel(user)
+                .then((groupChannelUrl) => {
+                  const update = {
+                    sendbirdRoomUrl: groupChannelUrl,
+                  };
+                  if (Store.uid === this.state.user.uid) {
+                    Store.setUser({...user, ...update});
+                  }
+                  this.setState(
+                    {
+                      user: {...user, ...update},
+                    },
+                    () => this.joinGroup(),
+                  );
+                })
+                .catch((error) => {
+                  Alert.alert('Oops', constants.ERROR_ALERT_MSG, [
+                    {text: 'Okay'},
+                  ]);
+                  this.setState({loading: false});
+                });
+            }
+          });
       }
-    });
+    }
     return;
     await database()
       .ref('comments')
@@ -151,15 +195,36 @@ class Chat extends Component {
 
         this.setState({comments});
       });
+  };
 
-    const subscribtion = await checkSubscribtion(
-      Store.uid,
-      this.state.user.uid,
+  joinGroup = () => {
+    sendBirdEnterChannel(this.state.user.sendbirdRoomUrl)
+      .then((channelConnection) => {
+        this.roomConnection = channelConnection;
+        this.messageListener();
+        this.setState({loading: false});
+      })
+      .catch((error) => {
+        console.log(error)
+        Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
+        this.setState({loading: false});
+      });
+  };
+
+  messageListener = () => {
+    this.channelHandler = startSendBirdChannelHandler(
+      this.roomConnection.url,
+      (channel, message) => {
+        console.log(message);
+        const comments = [...this.state.comments];
+        comments.push({
+          comment: message.message,
+        });
+        this.setState({
+          comments,
+        });
+      },
     );
-    console.log(subscribtion);
-    const posts = await getUserPosts(this.state.user.uid);
-
-    this.setState({posts, subscribtion, loading: false});
   };
 
   goTo = (route, info = null) => {
@@ -176,7 +241,13 @@ class Chat extends Component {
   };
 
   componentWillUnmount = () => {
-    database().ref('comments').child(this.state.user.uid).off();
+    // database().ref('comments').child(this.state.user.uid).off();
+    if (this.roomConnection !== null) {
+      sendBirdLeaveChannel(this.roomConnection);
+    }
+    if (this.channelHandler !== null) {
+      this.channelHandler();
+    }
   };
 
   showReplyTab = (reply, set = true) => {
