@@ -35,7 +35,7 @@ class Login extends Component {
   }
 
   componentDidMount = async () => {
-    auth().onAuthStateChanged((auth) => {
+    auth().onAuthStateChanged(async (auth) => {
       if (auth) {
         console.log('in here auth');
         Store.setPhone(auth.phoneNumber);

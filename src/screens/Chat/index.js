@@ -16,7 +16,14 @@ import {
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {Icon} from 'react-native-elements';
-import {Loading, Header, Text, MyImage, Button, VerifiedIcon} from '../../components';
+import {
+  Loading,
+  Header,
+  Text,
+  MyImage,
+  Button,
+  VerifiedIcon,
+} from '../../components';
 import {constants} from '../../resources';
 import {
   sendComment,
@@ -31,6 +38,12 @@ import {StackActions} from '@react-navigation/native';
 import database from '@react-native-firebase/database';
 import LinearGradient from 'react-native-linear-gradient';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
+import {
+  sendBirdCreateChannel,
+  sendBirdEnterChannel,
+  sendBirdLeaveChannel,
+  startSendBirdChannelHandler,
+} from '../../services/connectSendbird';
 
 const {width} = Dimensions.get('window');
 
@@ -51,9 +64,60 @@ class Chat extends Component {
       anonymus: this.props.route.params.anonymus,
       subscribtion: null,
     };
+    this.roomConnection = null;
+    this.channelHandler = null;
   }
 
   componentDidMount = async () => {
+    const subscribtion =
+      Store.uid !== this.state.user.uid
+        ? await checkSubscribtion(Store.uid, this.state.user.uid)
+        : {subscribtion: true};
+
+    if (subscribtion.subscribtion === true) {
+      const posts = await getUserPosts(this.state.user.uid);
+      this.setState({posts, subscribtion});
+
+      if (this.state.user.sendbirdRoomUrl) {
+        this.joinGroup();
+      } else {
+        await database()
+          .ref('users')
+          .child(this.state.user.uid)
+          .once('value', (user) => {
+            user = user.toJSON();
+            if (user.sendbirdRoomUrl) {
+              if (Store.uid === this.state.user.uid) {
+                Store.setUser(user);
+              }
+              this.setState({user}, () => this.joinGroup());
+            } else {
+              sendBirdCreateChannel(user)
+                .then((groupChannelUrl) => {
+                  const update = {
+                    sendbirdRoomUrl: groupChannelUrl,
+                  };
+                  if (Store.uid === this.state.user.uid) {
+                    Store.setUser({...user, ...update});
+                  }
+                  this.setState(
+                    {
+                      user: {...user, ...update},
+                    },
+                    () => this.joinGroup(),
+                  );
+                })
+                .catch((error) => {
+                  Alert.alert('Oops', constants.ERROR_ALERT_MSG, [
+                    {text: 'Okay'},
+                  ]);
+                  this.setState({loading: false});
+                });
+            }
+          });
+      }
+    }
+    return;
     await database()
       .ref('comments')
       .child(this.state.user.uid)
@@ -131,15 +195,36 @@ class Chat extends Component {
 
         this.setState({comments});
       });
+  };
 
-    const subscribtion = await checkSubscribtion(
-      Store.uid,
-      this.state.user.uid,
+  joinGroup = () => {
+    sendBirdEnterChannel(this.state.user.sendbirdRoomUrl)
+      .then((channelConnection) => {
+        this.roomConnection = channelConnection;
+        this.messageListener();
+        this.setState({loading: false});
+      })
+      .catch((error) => {
+        console.log(error)
+        Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
+        this.setState({loading: false});
+      });
+  };
+
+  messageListener = () => {
+    this.channelHandler = startSendBirdChannelHandler(
+      this.roomConnection.url,
+      (channel, message) => {
+        console.log(message);
+        const comments = [...this.state.comments];
+        comments.push({
+          comment: message.message,
+        });
+        this.setState({
+          comments,
+        });
+      },
     );
-    console.log(subscribtion);
-    const posts = await getUserPosts(this.state.user.uid);
-
-    this.setState({posts, subscribtion, loading: false});
   };
 
   goTo = (route, info = null) => {
@@ -156,7 +241,13 @@ class Chat extends Component {
   };
 
   componentWillUnmount = () => {
-    database().ref('comments').child(this.state.user.uid).off();
+    // database().ref('comments').child(this.state.user.uid).off();
+    if (this.roomConnection !== null) {
+      sendBirdLeaveChannel(this.roomConnection);
+    }
+    if (this.channelHandler !== null) {
+      this.channelHandler();
+    }
   };
 
   showReplyTab = (reply, set = true) => {
@@ -261,7 +352,7 @@ class Chat extends Component {
         <TouchableOpacity onPress={() => this.goTo('UserProfile', user)}>
           <View style={{marginLeft: 10, width: 100, flexDirection: 'row'}}>
             <Text text={user.username} />
-            {user.verified === true ? <VerifiedIcon size={14} /> : null} 
+            {user.verified === true ? <VerifiedIcon size={14} /> : null}
           </View>
         </TouchableOpacity>
         <Button
@@ -430,7 +521,9 @@ class Chat extends Component {
                     <View style={{width: width - 80}}>
                       <View style={{flexDirection: 'row'}}>
                         <Text text={item.user.username} />
-                        {item.user.verified === true ? <VerifiedIcon size={14} /> : null}
+                        {item.user.verified === true ? (
+                          <VerifiedIcon size={14} />
+                        ) : null}
                       </View>
                       <Text
                         text={item.comment}
@@ -555,8 +648,10 @@ class Chat extends Component {
                   <View style={{width: width - 110}}>
                     <View style={{flexDirection: 'row'}}>
                       <Text text={item.user.username} />
-                      {item.user.verified === true ? <VerifiedIcon size={14} /> : null}
-                    </View> 
+                      {item.user.verified === true ? (
+                        <VerifiedIcon size={14} />
+                      ) : null}
+                    </View>
                     <Text
                       text={item.comment}
                       style={{fontSize: 12, fontWeight: 'normal'}}
