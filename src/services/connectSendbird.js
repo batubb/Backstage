@@ -87,6 +87,7 @@ export async function sendBirdDisconnect() {
   return await sendbird.disconnect();
 }
 
+// TODO: if it's anonymus, user should be updated.
 function checkUserInfo() {
   return new Promise((resolve, reject) => {
     if (
@@ -110,10 +111,10 @@ function checkUserInfo() {
   });
 }
 
-// - should be called after publishing an video by influencer.
 export function sendBirdCreateChannel(userData) {
   return new Promise((resolve, reject) =>
-    authSendBird().then(() => {
+    authSendBird().then(async () => {
+      await checkUserInfo();
       const params = new sendbird.OpenChannelParams();
       params.name = `${userData.uid}`;
       params.operatorUserIds = constants.SENDBIRD_OPERATOR_USER_IDS;
@@ -144,9 +145,10 @@ export async function getSendBirdChannelFromUrl(url) {
   return await sendbird.OpenChannel.getChannel(url);
 }
 
-export function sendBirdEnterChannel(url) {
+export async function sendBirdEnterChannel(url) {
   return new Promise((resolve, reject) =>
-    authSendBird().then(() =>
+    authSendBird().then(async () => {
+      await checkUserInfo();
       getSendBirdChannelFromUrl(url)
         .then(async (openChannel) =>
           openChannel.enter((response, error) => {
@@ -157,8 +159,8 @@ export function sendBirdEnterChannel(url) {
             }
           }),
         )
-        .catch((error) => reject(error)),
-    ),
+        .catch((error) => reject(error));
+    }),
   );
 }
 
@@ -187,4 +189,59 @@ export function startSendBirdChannelHandler(channelUrl, callback) {
   sendbird.addChannelHandler(channelHandlerId, channelHandler);
 
   return () => sendbird.removeChannelHandler(channelHandlerId);
+}
+
+export function sendMessageToSendBirdChannel(message, connection) {
+  const params = new sendbird.UserMessageParams();
+  params.message = message;
+  return new Promise((resolve, reject) =>
+    connection.sendUserMessage(params, (message, error) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve(message);
+    }),
+  );
+}
+
+export function loadSendBirdChannelMessages(
+  channel,
+  offset = 0,
+  limit = 30,
+  reverse = false,
+) {
+  const listQuery = channel.createPreviousMessageListQuery();
+  listQuery.includeReplies = true;
+  listQuery.includeThreadInfo = false;
+  listQuery.includeParentMessageText = false;
+
+  if (offset === 0) {
+    return new Promise((resolve, reject) => {
+      listQuery.load(
+        limit,
+        reverse,
+        sendbird.BaseChannel.MessageTypeFilter.ALL,
+        (messages, error) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(messages);
+          }
+        },
+      );
+    });
+  } else {
+    return new Promise((resolve, reject) => {
+      listQuery.load(
+        (messages, error) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(messages);
+          }
+        },
+      );
+    });
+  }
 }

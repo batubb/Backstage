@@ -43,16 +43,19 @@ import {
   sendBirdEnterChannel,
   sendBirdLeaveChannel,
   startSendBirdChannelHandler,
+  sendMessageToSendBirdChannel,
+  loadSendBirdChannelMessages,
 } from '../../services/connectSendbird';
+import {COLORS} from '../../resources/theme';
 
 const {width} = Dimensions.get('window');
-
-// TODO Pagination Eklenecek.
 
 class Chat extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      offset: 0,
+      limit: 30,
       loading: true,
       refreshing: false,
       user: this.props.route.params.user,
@@ -117,95 +120,18 @@ class Chat extends Component {
           });
       }
     }
-    return;
-    await database()
-      .ref('comments')
-      .child(this.state.user.uid)
-      .on('value', (snap) => {
-        var comments = [];
-        const uid = Store.user.uid;
-
-        snap.forEach((element) => {
-          const {reply, likes} = element.val();
-          var replyArray = [];
-          var likeStatus = false;
-          var likeCount = 0;
-          var keys = [];
-
-          if (typeof reply !== 'undefined') {
-            const replyKeys = Object.keys(reply);
-
-            for (let i = 0; i < replyKeys.length; i++) {
-              const k = replyKeys[i];
-
-              if (typeof reply[k].likes !== 'undefined') {
-                keys = Object.keys(reply[k].likes);
-
-                for (let j = 0; j < keys.length; j++) {
-                  const m = keys[j];
-
-                  if (reply[k].likes[m]) {
-                    likeCount++;
-                  }
-                }
-
-                if (typeof reply[k].likes[uid] !== 'undefined') {
-                  likeStatus = reply[k].likes[uid];
-                }
-              }
-
-              replyArray.push({...reply[k], likeStatus, likeCount});
-            }
-
-            replyArray.sort(function (a, b) {
-              return b.timestamp - a.timestamp;
-            });
-          }
-
-          likeStatus = false;
-          likeCount = 0;
-
-          if (typeof likes !== 'undefined') {
-            keys = Object.keys(likes);
-            for (let j = 0; j < keys.length; j++) {
-              const m = keys[j];
-
-              if (likes[m]) {
-                likeCount++;
-              }
-            }
-
-            if (typeof likes[uid] !== 'undefined') {
-              likeStatus = likes[uid];
-            }
-          }
-
-          comments.push({
-            ...element.val(),
-            reply: replyArray,
-            showReply: false,
-            likeStatus,
-            likeCount,
-          });
-        });
-
-        comments.sort(function (a, b) {
-          return b.timestamp - a.timestamp;
-        });
-
-        this.setState({comments});
-      });
   };
 
   joinGroup = () => {
     sendBirdEnterChannel(this.state.user.sendbirdRoomUrl)
       .then((channelConnection) => {
         this.roomConnection = channelConnection;
+        this.loadMessages();
         this.messageListener();
         this.setState({loading: false});
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
         this.setState({loading: false});
       });
@@ -216,15 +142,83 @@ class Chat extends Component {
       this.roomConnection.url,
       (channel, message) => {
         console.log(message);
-        const comments = [...this.state.comments];
-        comments.push({
-          comment: message.message,
-        });
-        this.setState({
-          comments,
-        });
+        this.buildMessages([message]);
       },
     );
+  };
+
+  loadMessages = async () => {
+    const {offset, limit} = this.state;
+    this.setState({refreshing: true});
+    loadSendBirdChannelMessages(this.roomConnection, offset, limit)
+      .then(async (messages) => {
+        console.log(messages);
+        await this.buildMessages(messages);
+
+        if (messages.length > 0) {
+          this.setState({offset: offset + 1});
+        }
+      })
+      .catch((error) => {
+        Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
+      })
+      .finally(() => this.setState({refreshing: false}));
+  };
+
+  // TODO: Set admin messages.
+  buildMessages = async (messagesData) => {
+    const comments = [...this.state.comments];
+
+    messagesData.forEach(async (messageData) => {
+      if (messageData.messageType === 'admin') {
+      }
+
+      const constantCommentData = {
+        comment: messageData.message,
+        reply: [],
+        showReply: false,
+        likeStatus: false,
+        likeCount: 0,
+        timestampt: messageData.createdAt,
+        isOperator: messageData.isOperatorMessage === true,
+        messageId: messageData.messageId,
+      };
+      if (messageData.isOperatorMessage === true) {
+        comments.push({
+          user: {
+            username: messageData._sender.nickname,
+            photo: messageData._sender.plainProfileUrl ?? '',
+            role: messageData._sender.role,
+          },
+          ...constantCommentData,
+        });
+      } else {
+        if (Store.user.uid === messageData._sender.userId) {
+          comments.push({
+            user: Store.user.uid,
+            ...constantCommentData,
+          });
+        } else {
+          await database()
+            .ref('users')
+            .child(messageData._sender.userId)
+            .once('value', (user) => {
+              user = user?.toJSON();
+  
+              if (user) {
+                comments.push({
+                  user,
+                  ...constantCommentData,
+                });
+              }
+            });
+        }
+      }
+    });
+
+    this.setState({
+      comments: await comments,
+    });
   };
 
   goTo = (route, info = null) => {
@@ -241,7 +235,6 @@ class Chat extends Component {
   };
 
   componentWillUnmount = () => {
-    // database().ref('comments').child(this.state.user.uid).off();
     if (this.roomConnection !== null) {
       sendBirdLeaveChannel(this.roomConnection);
     }
@@ -309,26 +302,17 @@ class Chat extends Component {
     );
   };
 
+  // TODO: Send reply comment.
   sendComment = async () => {
-    if (this.state.anonymus) {
-      await sendComment(
-        {
-          ...Store.user,
-          type: 'anonymus',
-          name: this.state.anonymus.nickname,
-          photo: constants.DEFAULT_PHOTO,
-        },
-        this.state.user,
-        this.state.comment,
-        this.state.reply,
-      );
-    } else {
-      await sendComment(
-        Store.user,
-        this.state.user,
-        this.state.comment,
-        this.state.reply,
-      );
+    if (!this.state.reply) {
+      sendMessageToSendBirdChannel(this.state.comment, this.roomConnection)
+        .then((message) => {
+          console.log(message);
+          this.buildMessages([message]);
+        })
+        .catch((error) =>
+          Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]),
+        );
     }
     this.setState({comment: '', reply: null});
   };
@@ -488,6 +472,8 @@ class Chat extends Component {
             refreshControl={
               <RefreshControl refreshing={refreshing} tintColor="white" />
             }
+            refreshing={this.state.refreshing}
+            onRefresh={() => this.loadMessages()}
             ListEmptyComponent={() => {
               return (
                 <View style={{width: width, alignItems: 'center'}}>
@@ -495,7 +481,7 @@ class Chat extends Component {
                 </View>
               );
             }}
-            keyExtractor={(item) => item.uid}
+            keyExtractor={(item) => item.messageId.toString()}
             renderItem={({item, index}) => (
               <View
                 style={{
@@ -520,9 +506,16 @@ class Chat extends Component {
                     }}>
                     <View style={{width: width - 80}}>
                       <View style={{flexDirection: 'row'}}>
-                        <Text text={item.user.username} />
+                        <Text
+                          text={`${
+                            item.isOperator === true ? 'Moderator - ' : ''
+                          }${item.user.username}`}
+                        />
                         {item.user.verified === true ? (
                           <VerifiedIcon size={14} />
+                        ) : null}
+                        {item.isOperator === true ? (
+                          <VerifiedIcon size={14} color={COLORS.secondary} />
                         ) : null}
                       </View>
                       <Text
