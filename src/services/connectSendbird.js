@@ -212,11 +212,11 @@ export function loadSendBirdChannelMessages(
   reverse = false,
 ) {
   const listQuery = channel.createPreviousMessageListQuery();
-  listQuery.includeReplies = true;
-  listQuery.includeThreadInfo = false;
-  listQuery.includeParentMessageText = false;
 
   if (offset === 0) {
+    listQuery.includeReplies = true;
+    listQuery.includeThreadInfo = false;
+    listQuery.includeParentMessageText = false;
     return new Promise((resolve, reject) => {
       listQuery.load(
         limit,
@@ -232,6 +232,8 @@ export function loadSendBirdChannelMessages(
       );
     });
   } else {
+    listQuery.limit = limit * (offset + 1);
+    listQuery.reverse = reverse;
     return new Promise((resolve, reject) => {
       listQuery.load(
         (messages, error) => {

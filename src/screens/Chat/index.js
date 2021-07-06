@@ -13,6 +13,7 @@ import {
   RefreshControl,
   KeyboardAvoidingView,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {Icon} from 'react-native-elements';
@@ -46,7 +47,7 @@ import {
   sendMessageToSendBirdChannel,
   loadSendBirdChannelMessages,
 } from '../../services/connectSendbird';
-import {COLORS} from '../../resources/theme';
+import {COLORS, SIZES} from '../../resources/theme';
 
 const {width} = Dimensions.get('window');
 
@@ -55,7 +56,7 @@ class Chat extends Component {
     super(props);
     this.state = {
       offset: 0,
-      limit: 30,
+      limit: 20,
       loading: true,
       refreshing: false,
       user: this.props.route.params.user,
@@ -128,34 +129,36 @@ class Chat extends Component {
         this.roomConnection = channelConnection;
         this.loadMessages();
         this.messageListener();
-        this.setState({loading: false});
       })
       .catch((error) => {
         console.log(error);
         Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
-        this.setState({loading: false});
-      });
+      })
+      .finally(() => this.setState({loading: false}));
   };
 
   messageListener = () => {
     this.channelHandler = startSendBirdChannelHandler(
       this.roomConnection.url,
-      (channel, message) => {
-        console.log(message);
-        this.buildMessages([message]);
+      async (channel, message) => {
+        await this.buildMessages([message]);
+        this.commentsFlatListRef?.scrollToEnd();
       },
     );
   };
 
   loadMessages = async () => {
-    const {offset, limit} = this.state;
+    const {offset, limit, refreshing} = this.state;
+    if (refreshing || this.state.comments.length >= (offset + 1) * limit) {
+      return;
+    }
     this.setState({refreshing: true});
-    loadSendBirdChannelMessages(this.roomConnection, offset, limit)
+
+    loadSendBirdChannelMessages(this.roomConnection, offset, limit, false)
       .then(async (messages) => {
-        console.log(messages);
         await this.buildMessages(messages);
 
-        if (messages.length > 0) {
+        if (this.state.comments.length >= (offset + 1) * limit) {
           this.setState({offset: offset + 1});
         }
       })
@@ -167,12 +170,19 @@ class Chat extends Component {
 
   // TODO: Set admin messages.
   buildMessages = async (messagesData) => {
-    const comments = [...this.state.comments];
+    let comments = [...this.state.comments];
 
     messagesData.forEach(async (messageData) => {
-      if (messageData.messageType === 'admin') {
-      }
+      // if (messageData.messageType === 'admin') {
+      // }
 
+      if (
+        comments.some((comment) => comment.messageId === messageData.messageId)
+      ) {
+        comments = comments.filter(
+          (comment) => comment.messageId !== messageData.messageId,
+        );
+      }
       const constantCommentData = {
         comment: messageData.message,
         reply: [],
@@ -195,7 +205,10 @@ class Chat extends Component {
       } else {
         if (Store.user.uid === messageData._sender.userId) {
           comments.push({
-            user: Store.user.uid,
+            user: {
+              username: Store.user.username,
+              photo: Store.user.photo,
+            },
             ...constantCommentData,
           });
         } else {
@@ -204,7 +217,7 @@ class Chat extends Component {
             .child(messageData._sender.userId)
             .once('value', (user) => {
               user = user?.toJSON();
-  
+
               if (user) {
                 comments.push({
                   user,
@@ -217,7 +230,7 @@ class Chat extends Component {
     });
 
     this.setState({
-      comments: await comments,
+      comments: await comments.sort((a, b) => b.timestamp - a.timestamp),
     });
   };
 
@@ -307,7 +320,6 @@ class Chat extends Component {
     if (!this.state.reply) {
       sendMessageToSendBirdChannel(this.state.comment, this.roomConnection)
         .then((message) => {
-          console.log(message);
           this.buildMessages([message]);
         })
         .catch((error) =>
@@ -468,86 +480,104 @@ class Chat extends Component {
       <SafeAreaView style={{width, alignItems: 'center', flex: 1}}>
         <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={170}>
           <FlatList
+            ref={(ref) => (this.commentsFlatListRef = ref)}
             data={comments}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} tintColor="white" />
+            inverted={comments.length > 0}
+            onEndReachedThreshold={0.8}
+            onEndReached={() => this.loadMessages()}
+            ListHeaderComponent={
+              <>
+                {refreshing && (
+                  <ActivityIndicator
+                    size="large"
+                    color="white"
+                    style={{padding: SIZES.padding}}
+                  />
+                )}
+              </>
             }
-            refreshing={this.state.refreshing}
-            onRefresh={() => this.loadMessages()}
             ListEmptyComponent={() => {
               return (
-                <View style={{width: width, alignItems: 'center'}}>
+                <View
+                  style={{
+                    width: width,
+                    alignItems: 'center',
+                  }}>
                   <Text text="There is no comments" style={{color: 'gray'}} />
                 </View>
               );
             }}
-            keyExtractor={(item) => item.messageId.toString()}
+            keyExtractor={(item, index) => index.toString()}
+            contentContainerStyle={{
+              flexDirection:
+                comments.length === 0 ? 'column' : 'column-reverse',
+            }}
             renderItem={({item, index}) => (
               <View
                 style={{
                   paddingTop: 15,
-                  width: width,
+                  flex: 1,
                   alignItems: 'center',
                   backgroundColor: constants.BAR_COLOR,
-                  marginTop: 10,
+                  marginTop: SIZES.spacing * 3,
+                  marginHorizontal: SIZES.padding,
+                  paddingHorizontal: SIZES.padding,
                 }}>
                 <View
                   style={{
-                    width: width - 20,
                     flexDirection: 'row',
+                    flex: 1,
                     alignItems: 'center',
                     justifyContent: 'space-between',
                   }}>
                   <View
                     style={{
-                      flexDirection: 'row',
-                      width: width - 80,
+                      flexDirection: 'column',
+                      flex: 1,
                       justifyContent: 'space-between',
                     }}>
-                    <View style={{width: width - 80}}>
-                      <View style={{flexDirection: 'row'}}>
-                        <Text
-                          text={`${
-                            item.isOperator === true ? 'Moderator - ' : ''
-                          }${item.user.username}`}
-                        />
-                        {item.user.verified === true ? (
-                          <VerifiedIcon size={14} />
-                        ) : null}
-                        {item.isOperator === true ? (
-                          <VerifiedIcon size={14} color={COLORS.secondary} />
-                        ) : null}
-                      </View>
+                    <View style={{flexDirection: 'row', flex: 1}}>
                       <Text
-                        text={item.comment}
-                        style={{fontSize: 12, fontWeight: 'normal'}}
+                        text={`${
+                          item.isOperator === true ? 'Moderator - ' : ''
+                        }${item.user.username}`}
                       />
+                      {item.user.verified === true ? (
+                        <VerifiedIcon size={14} />
+                      ) : null}
+                      {item.isOperator === true ? (
+                        <VerifiedIcon size={14} color={COLORS.secondary} />
+                      ) : null}
                     </View>
-                    <View style={{width: 60, alignItems: 'flex-end'}}>
-                      <Text
-                        text={timeDifference(item.timestamp)}
-                        style={{color: 'gray', fontSize: 10}}
-                      />
-                    </View>
+                    <Text
+                      text={item.comment}
+                      style={{fontSize: 12, fontWeight: 'normal'}}
+                    />
+                  </View>
+                  <View style={{width: 60, alignItems: 'flex-end'}}>
+                    <Text
+                      text={timeDifference(item.timestamp)}
+                      style={{color: 'gray', fontSize: 10}}
+                    />
                   </View>
                 </View>
                 <View
                   style={{
-                    width: width,
+                    flex: 1,
                     flexDirection: 'row',
-                    alignItems: 'center',
+                    alignSelf: 'flex-start',
                     justifyContent: 'space-between',
                   }}>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View style={{flexDirection: 'row'}}>
                     <TouchableOpacity
                       onPress={() =>
                         this.likeComment(item, index, item.likeStatus)
                       }>
                       <View
                         style={{
-                          padding: 10,
+                          padding: SIZES.padding * 0.8,
+                          paddingLeft: SIZES.spacing,
                           flexDirection: 'row',
-                          alignItems: 'center',
                         }}>
                         <Icon
                           name={item.likeStatus ? 'heart' : 'heart-outline'}
@@ -564,7 +594,10 @@ class Chat extends Component {
                       </View>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => this.showReplyTab(item)}>
-                      <View style={{padding: 10}}>
+                      <View
+                        style={{
+                          padding: SIZES.padding,
+                        }}>
                         <Icon
                           name="reply"
                           color="#FFF"
@@ -577,7 +610,8 @@ class Chat extends Component {
                   {item.reply.length !== 0 ? (
                     <TouchableOpacity
                       onPress={() => this.seeThread(item, index)}>
-                      <View style={{padding: 10, flexDirection: 'row'}}>
+                      <View
+                        style={{padding: SIZES.padding, flexDirection: 'row'}}>
                         <Icon
                           name={item.showReply ? 'chevron-up' : 'chevron-down'}
                           color="#FFF"
@@ -586,7 +620,7 @@ class Chat extends Component {
                         />
                         <Text
                           text="See Thread"
-                          style={{fontSize: 12, marginLeft: 3}}
+                          style={{fontSize: 12, marginLeft: SIZES.spacing}}
                         />
                       </View>
                     </TouchableOpacity>
