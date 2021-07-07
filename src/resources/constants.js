@@ -36,13 +36,9 @@ const constants = {
   NUM_CARDS_IN_SCREEN: 2.5,
   NUM_POSTS_TO_VIEW_IN_HOME: 3,
 
-  SENDBIRD_APP_ID: 'AF2352AC-8C23-47A5-82BD-149EA89DF508',
-  SENDBIRD_ACCESS_TOKEN: '079e6eefb659bcaa1eb6fb26fddd5585e557505e',
-  SENDBIRD_API_REQUEST_URL: 'https://api-AF2352AC-8C23-47A5-82BD-149EA89DF508.sendbird.com',
-  SENDBIRD_API_VERSION: 'v3',
-  SENDBIRD_OPERATOR_USER_IDS: ['604576'],
-  CHAT_CANNOT_JOIN_BANNED_MESSAGE: 'You cannot join the influencer\'s room,\nbecause you\'re banned.',
-  CHAT_IN_BANNED_MESSAGE: 'You are banned from the influencer\'s room.',
+  STREAM_API_KEY: 'qhfvewj4k2zp',
+  STREAM_API_SECRET: 'ufw2m72mvr5cx8andn3ezk8ay9vhcy9aehywaujgptk9s2e9h8wcr74gafbxprsw',
+  STREAM_APP_ID: '1132017',
 
   TIER_1: 'price_1ImhznKwkzsqkh9m3eAmW9kG',
   MONTHS: [

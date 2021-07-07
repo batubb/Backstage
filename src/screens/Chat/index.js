@@ -5,14 +5,9 @@ import React, {Component} from 'react';
 import {
   View,
   Dimensions,
-  FlatList,
   TouchableOpacity,
-  TextInput,
-  Platform,
   SafeAreaView,
-  KeyboardAvoidingView,
   Alert,
-  ActivityIndicator,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {Icon} from 'react-native-elements';
@@ -23,35 +18,32 @@ import {
   MyImage,
   Button,
   VerifiedIcon,
-  Options,
 } from '../../components';
 import {constants} from '../../resources';
-import {
-  getUserPosts,
-} from '../../services';
+import {getUserPosts} from '../../services';
 import Store from '../../store/Store';
-import {followerCount, timeDifference} from '../../lib';
+import {timeDifference, generateStreamToken, makeid} from '../../lib';
 import {StackActions} from '@react-navigation/native';
 import database from '@react-native-firebase/database';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
 import {
-  sendBirdCreateChannel,
-  sendBirdEnterChannel,
-  sendBirdLeaveChannel,
-  startSendBirdChannelHandler,
-  sendMessageToSendBirdChannel,
-  loadSendBirdChannelMessages,
-  SENDBIRD_MESSAGE_CALLBACK_TYPES,
-  banUserFromSendBirdChannel,
-  getDefaultEmojisFromSendBird,
-  sendbird,
-} from '../../services/connectSendbird';
-import {COLORS, SIZES} from '../../resources/theme';
-import UserMessage from '../../components/ScreenComponents/ChatComponents/UserMessage/UserMessage';
-import AdminMessage from '../../components/ScreenComponents/ChatComponents/AdminMessage/AdminMessage';
-import User from '../../components/ScreenComponents/ChatComponents/User/User';
+  OverlayProvider as ChatOverlayProvider,
+  Channel,
+  MessageList,
+  Streami18n,
+  Chat as StreamChatComponent,
+  MessageInput,
+} from 'stream-chat-react-native';
+import {StreamChat} from 'stream-chat';
+import jwt from 'react-native-pure-jwt';
+import {getBottomSpace, getStatusBarHeight} from '../../lib/iPhoneXHelper';
+import { COLORS } from '../../resources/theme';
 
 const {width} = Dimensions.get('window');
+
+const streami18n = new Streami18n({
+  language: 'en',
+});
 
 class Chat extends Component {
   constructor(props) {
@@ -63,7 +55,6 @@ class Chat extends Component {
       refreshing: false,
       endReached: false,
       user: this.props.route.params.user,
-      isBanned: false,
       general: true,
       comments: [],
       comment: '',
@@ -74,12 +65,45 @@ class Chat extends Component {
       optionsVisible: false,
       optionsList: [],
       emojies: [],
+      theme: {
+        avatar: {
+          image: {
+            height: 70,
+            width: 70,
+          },
+        },
+        colors: {
+          accent_blue: COLORS.primary,
+          accent_green: '#20E070',
+          accent_red: constants.RED,
+          bg_gradient_end: COLORS.backgroundColor,
+          bg_gradient_start: COLORS.backgroundColor,
+          black: COLORS.white,
+          blue_alice: COLORS.black,
+          border: COLORS.black,
+          grey: COLORS.gray,
+          grey_gainsboro: COLORS.systemFill,
+          grey_whisper: COLORS.quaternaryLabel,
+          icon_background: '#FFFFFF',
+          modal_shadow: COLORS.secondaryBackgroundColor,
+          overlay: '#00000066',
+          overlay_dark: '#FFFFFFCC',
+          shadow_icon: '#00000080',
+          targetedMessageBackground: '#302D22',
+          transparent: 'transparent',
+          white: COLORS.black,
+          white_smoke: COLORS.secondaryBackgroundColor,
+          white_snow: COLORS.backgroundColor,
+        },
+        imageGallery: {
+          blurType: 'dark',
+        },
+        spinner: {
+          height: 30,
+          width: 30,
+        },
+      },
     };
-    this.roomConnection = null;
-    this.roomConnectionActions = null;
-    this.channelHandler = null;
-    this.clearChannelHandler = null;
-    this.scrollToEnd = true;
   }
 
   componentDidMount = async () => {
@@ -92,217 +116,103 @@ class Chat extends Component {
       const posts = await getUserPosts(this.state.user.uid);
       this.setState({posts, subscribtion});
 
-      if (this.state.user.sendbirdRoomUrl) {
-        this.joinGroup();
-      } else {
-        await database()
-          .ref('users')
-          .child(this.state.user.uid)
-          .once('value', (user) => {
-            user = user.toJSON();
-            if (user.sendbirdRoomUrl) {
-              if (Store.uid === this.state.user.uid) {
-                Store.setUser(user);
-              }
-              this.setState({user}, () => this.joinGroup());
-            } else {
-              sendBirdCreateChannel(user)
-                .then((groupChannelUrl) => {
-                  const update = {
-                    sendbirdRoomUrl: groupChannelUrl,
-                  };
-                  if (Store.uid === this.state.user.uid) {
-                    Store.setUser({...user, ...update});
-                  }
-                  this.setState(
-                    {
-                      user: {...user, ...update},
-                    },
-                    () => this.joinGroup(),
-                  );
-                })
-                .catch((error) => {
-                  Alert.alert('Oops', constants.ERROR_ALERT_MSG, [
-                    {text: 'Okay'},
-                  ]);
-                  this.setState({loading: false});
-                });
-            }
-          });
-      }
-    }
-  };
-
-  joinGroup = () => {
-    sendBirdEnterChannel(this.state.user.sendbirdRoomUrl)
-      .then((channelConnection) => {
-        this.roomConnection = channelConnection;
-        this.loadMessages();
-        this.messageListener();
-      })
-      .catch((error) => {
-        console.log(error);
-        if (error?.code === 900100) {
-          this.setState({isBanned: true});
-          Alert.alert('Oops', constants.CHAT_CANNOT_JOIN_BANNED_MESSAGE, [
-            {text: 'Okay'},
-          ]);
-        } else {
-          Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
-        }
-      })
-      .finally(() => this.setState({loading: false}));
-  };
-
-  messageListener = () => {
-    getDefaultEmojisFromSendBird()
-      .then((data) => {
-        this.setState({
-          emojies: data?.[0]?.emojis ?? [],
-        });
-      })
-      .catch((error) =>
-        Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]),
+      this.streamServerClient = StreamChat.getInstance(
+        constants.STREAM_API_KEY,
       );
 
-    const [channelHandler, clearChannelHandler] = startSendBirdChannelHandler(
-      this.roomConnection.url,
-      async (type, channel, message) => {
-        this.roomConnectionActions = channel;
-        switch (type) {
-          case SENDBIRD_MESSAGE_CALLBACK_TYPES.RECEIVE:
-            await this.buildMessages([message]);
-
-            if (this.scrollToEnd) {
-              this.commentsFlatListRef?.scrollToEnd();
-            }
-            break;
-
-          case SENDBIRD_MESSAGE_CALLBACK_TYPES.DELETE:
-            const comments = this.state.comments.filter(
-              (comment) => comment.messageId !== message.messageId,
-            );
-            this.setState({comments});
-            break;
-
-          case SENDBIRD_MESSAGE_CALLBACK_TYPES.BAN:
-            if (message.userId === Store.user.uid) {
-              this.clearChannelHandler();
-              sendBirdLeaveChannel(this.roomConnection);
-              this.roomConnection = null;
-              this.setState({isBanned: true, comments: []});
-              Alert.alert('Oops', constants.CHAT_IN_BANNED_MESSAGE, [
-                {text: 'Okay'},
-              ]);
-            }
-            break;
-
-          default:
-            break;
-        }
-      },
-    );
-    this.channelHandler = channelHandler;
-    this.clearChannelHandler = () => clearChannelHandler();
-  };
-
-  loadMessages = async (scrollToEnd = true) => {
-    const {offset, limit, refreshing, endReached} = this.state;
-    if (refreshing || endReached) {
-      this.scrollToEnd = false;
-      return;
-    }
-    this.scrollToEnd = scrollToEnd;
-    this.setState({refreshing: true});
-
-    loadSendBirdChannelMessages(this.roomConnection, offset, limit, false)
-      .then(async (messages) => {
-        await this.buildMessages(messages);
-
-        if (this.state.comments.length === (offset + 1) * limit) {
-          this.setState({offset: offset + 1});
-        } else {
-          this.setState({endReached: true});
-        }
-      })
-      .catch((error) => {
-        Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
-      })
-      .finally(() => this.setState({refreshing: false}));
-  };
-
-  buildMessages = async (messagesData) => {
-    let comments = [...this.state.comments];
-
-    messagesData.forEach(async (messageData) => {
-      if (
-        comments.some((comment) => comment.messageId === messageData.messageId)
-      ) {
-        comments = comments.filter(
-          (comment) => comment.messageId !== messageData.messageId,
-        );
-      }
-      const constantCommentData = {
-        comment: messageData.message,
-        replies: [],
-        createdTimestampt: messageData.createdAt,
-        updatedTimestampt: messageData.updatedAt,
-        isOperator: messageData.isOperatorMessage === true,
-        messageId: messageData.messageId,
-        nativeMessageObject: messageData,
-      };
-      if (messageData.messageType === 'admin') {
-        comments.push({
-          user: {
-            username: 'Admin Announcement',
-            photo: '',
-            role: '',
-          },
-          ...constantCommentData,
-          isAdmin: true,
-        });
-        return;
-      }
-      if (messageData.isOperatorMessage === true) {
-        comments.push({
-          user: {
-            username: messageData._sender.nickname,
-            photo: messageData._sender.plainProfileUrl ?? '',
-            role: messageData._sender.role ?? '',
-          },
-          ...constantCommentData,
-        });
-        return;
-      }
-      if (Store.user.uid === messageData._sender.userId) {
-        comments.push({
-          user: {
-            ...Store.user,
-            username: Store.user.username,
-            photo: Store.user.photo,
-          },
-          ...constantCommentData,
-        });
-        return;
-      }
       await database()
         .ref('users')
-        .child(messageData._sender.userId)
-        .once('value', (user) => {
-          user = user?.toJSON();
+        .child(this.state.user.uid)
+        .once('value', async (snap) => {
+          snap = snap.toJSON();
 
-          if (user) {
-            comments.push({
-              user,
-              ...constantCommentData,
+          const streamUserUid = snap.streamUserUid ?? makeid(40);
+          const token = await jwt.sign(
+            {
+              user_id: streamUserUid,
+            },
+            streamUserUid,
+            {
+              alg: 'HS256',
+            },
+          );
+          const user = {
+            id: streamUserUid,
+            uid: snap.uid,
+            name: snap.name,
+            username: snap.username,
+            role: 'user',
+            image: snap.photo,
+          };
+          this.streamServerClient
+            .connectUser(user, token)
+            .then(async (streamUserData) => {
+              if (snap.streamUserUid !== streamUserUid) {
+                if (Store.user.uid === snap.uid) {
+                  Store.setUser({...Store.user, streamUserUid});
+                }
+                await database()
+                  .ref('users')
+                  .child(snap.uid)
+                  .update({streamUserUid});
+              }
+
+              if (!snap.streamChannelUid) {
+                const streamChannelUid = makeid(40);
+                this.channel = this.streamServerClient.channel(
+                  'messaging',
+                  streamChannelUid,
+                  {
+                    name: streamChannelUid,
+                  },
+                );
+                await this.channel.create();
+
+                if (snap.streamChannelUid !== streamChannelUid) {
+                  if (Store.user.uid === snap.uid) {
+                    Store.setUser({...Store.user, streamChannelUid});
+                  }
+                  await database()
+                    .ref('users')
+                    .child(snap.uid)
+                    .update({streamChannelUid});
+                }
+              } else {
+                this.channel = this.streamServerClient.getChannelById(
+                  'messaging',
+                  snap.streamChannelUid,
+                );
+              }
+
+              const {members} = await this.channel.queryMembers({
+                id: snap.streamUserUid,
+              });
+              if (
+                !members.some((member) => member.user_id === snap.streamUserUid)
+              ) {
+                await this.channel.addMembers([snap.streamUserUid]);
+              }
+              this.watchChannel();
+            })
+            .catch((error) => {
+              console.log(error);
+              Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
+              this.setState({loading: false});
             });
-          }
         });
-    });
+    }
+  };
 
-    this.setState({
-      comments: await comments.sort((a, b) => b.timestamp - a.timestamp),
-    });
+  componentWillUnmount = async () => {
+    if (this.channel) {
+      await this.channel.stopWatching();
+    }
+    await this.streamServerClient.disconnectUser();
+  };
+
+  watchChannel = async () => {
+    const channelState = await this.channel.watch();
+    this.setState({loading: false});
   };
 
   goTo = (route, info = null) => {
@@ -318,116 +228,42 @@ class Chat extends Component {
     }
   };
 
-  componentWillUnmount = () => {
-    if (this.roomConnection !== null) {
-      sendBirdLeaveChannel(this.roomConnection);
-    }
-    if (this.clearChannelHandler !== null) {
-      this.clearChannelHandler();
-    }
-  };
-
-  showReplyTab = (reply, set = true) => {
-    if (set) {
-      this.textinput.focus();
-      this.setState({comment: `@${reply.user.username} `});
-    } else {
-      this.setState({comment: ''});
-    }
-
-    this.setState({reply});
-  };
-
-  seeThread = (item, index) => {
-    var comments = this.state.comments;
-    comments[index].showReply = !item.showReply;
-    this.setState({comments});
-  };
-
-  likeComment = async (messageData) => {};
-
-  banUser = async (messageData) => {
-    banUserFromSendBirdChannel(this.roomConnection, messageData.user.uid)
-      .then(() => {
-        this.setState({optionsList: [], optionsVisible: false});
-        Alert.alert(
-          'Success',
-          `${messageData.user.username} has been successfully banned.`,
-          [{text: 'Okay'}],
-        );
-      })
-      .catch((error) =>
-        Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]),
-      );
-  };
-
-  muteUser = async (messageData) => {};
-
-  deleteComment = async (messageData) => {
-    this.roomConnection.deleteMessage(
-      messageData.nativeMessageObject,
-      (deletedMessage, error) => {
-        this.setState({optionsList: [], optionsVisible: false});
-        if (error) {
-          Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
-          return;
-        }
-      },
+  renderComments = () => {
+    return (
+      <ChatOverlayProvider
+        i18nInstance={streami18n}
+        value={{style: this.state.theme}}
+        bottomInset={getBottomSpace()}>
+        <SafeAreaView style={{flex: 1, backgroundColor: this.state.theme.colors.white}}>
+          <StreamChatComponent
+            client={this.streamServerClient}
+            i18nInstance={streami18n}>
+            <Channel
+              channel={this.channel}
+              keyboardVerticalOffset={getStatusBarHeight()}>
+              <View style={{flex: 1}}>
+                <MessageList
+                  onThreadSelect={(thread) => {
+                    console.log(thread);
+                  }}
+                />
+                <MessageInput />
+              </View>
+            </Channel>
+          </StreamChatComponent>
+        </SafeAreaView>
+      </ChatOverlayProvider>
     );
   };
 
-  // TODO: Send reply comment.
-  sendComment = async () => {
-    if (!this.state.reply) {
-      sendMessageToSendBirdChannel(this.state.comment, this.roomConnection)
-        .then((message) => {
-          this.buildMessages([message]);
-        })
-        .catch((error) =>
-          Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]),
-        );
-    }
-    this.setState({comment: '', reply: null});
-  };
-
-  showOptions = (messageData) => {
-    const constantOptionsList = [
-      {title: 'Like', onPress: () => this.likeComment(messageData)},
-    ];
-    const myOptionsList = [
-      ...constantOptionsList,
-      {
-        title: 'Delete Message',
-        onPress: () => this.deleteComment(messageData),
-      },
-    ];
-    const adminOptionsList = [
-      ...myOptionsList,
-      {
-        title: 'Mute User',
-        onPress: () => this.muteUser(messageData),
-        color: constants.RED,
-      },
-      {
-        title: 'Ban User',
-        onPress: () => this.banUser(messageData),
-        color: constants.RED,
-      },
-    ];
-    const optionsList =
-      !messageData.isOperator &&
-      !messageData.isAdmin ?
-        (messageData.user.uid === Store.user.uid && this.state.user.uid !== Store.user.uid)
-          ? myOptionsList
-          : this.state.user.uid === Store.user.uid
-            ? adminOptionsList
-            : constantOptionsList
-        : constantOptionsList;
-
-    this.setState({
-      optionsVisible: true,
-      optionsList,
-    });
+  renderPosts = () => {
+    return (
+      <PostsCard
+        onPress={(item) => this.goTo('Comments', item)}
+        posts={this.state.posts}
+        numCols={3}
+      />
+    );
   };
 
   renderProfileTop = (user = this.state.user) => {
@@ -492,281 +328,6 @@ class Chat extends Component {
     );
   };
 
-  commentBar = () => {
-    const {comment, reply} = this.state;
-
-    return (
-      <View
-        style={{
-          alignItems: 'center',
-          width: width,
-          backgroundColor: constants.BACKGROUND_COLOR,
-          paddingVertical: 10,
-        }}>
-        {reply ? (
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              width: width - 40,
-              paddingVertical: 5,
-            }}>
-            <Text
-              text={`Reply to ${reply.user.username}`}
-              style={{color: 'gray', fontWeight: 'normal'}}
-            />
-            <TouchableOpacity onPress={() => this.showReplyTab(null, false)}>
-              <View style={{padding: 5}}>
-                <Icon
-                  name="close"
-                  color="gray"
-                  type="material-community"
-                  size={16}
-                />
-              </View>
-            </TouchableOpacity>
-          </View>
-        ) : null}
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: width - 20,
-            borderRadius: 4,
-            backgroundColor: constants.BAR_COLOR,
-          }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <TextInput
-              ref={(input) => (this.textinput = input)}
-              placeholder="Add a comment"
-              style={{
-                fontFamily:
-                  Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
-                color: '#FFF',
-                width: width - 110,
-                fontSize: 16,
-                padding: 10,
-              }}
-              underlineColorAndroid="transparent"
-              onChangeText={(commentInput) =>
-                this.setState({comment: commentInput})
-              }
-              value={comment}
-              placeholderTextColor="#FFF"
-            />
-          </View>
-          {comment !== '' ? (
-            <TouchableOpacity onPress={() => this.sendComment()}>
-              <View style={{padding: 10}}>
-                <Icon
-                  name="send"
-                  color="#FFF"
-                  type="material-community"
-                  size={16}
-                />
-              </View>
-            </TouchableOpacity>
-          ) : null}
-        </View>
-      </View>
-    );
-  };
-
-  isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
-    return (
-      layoutMeasurement.height + contentOffset.y >= contentSize.height - 70
-    );
-  };
-
-  renderComments = () => {
-    const {refreshing, comments, endReached, isBanned} = this.state;
-
-    return (
-      <SafeAreaView style={{width, alignItems: 'center', flex: 1}}>
-        <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={170}>
-          <FlatList
-            ref={(ref) => (this.commentsFlatListRef = ref)}
-            data={comments}
-            inverted={comments.length > 0}
-            onScroll={({nativeEvent}) => {
-              if (
-                this.isCloseToBottom(nativeEvent) &&
-                this.scrollToEnd === false
-              ) {
-                this.scrollToEnd = true;
-              } else if (this.scrollToEnd === false) {
-                this.scrollToEnd = false;
-              }
-            }}
-            onEndReachedThreshold={0.5}
-            onEndReached={() => this.loadMessages(false)}
-            ListHeaderComponentStyle={{flexGrow: 1}}
-            ListHeaderComponent={
-              <>
-                {refreshing && !endReached ? (
-                  <ActivityIndicator size={'large'} color={'gray'} />
-                ) : null}
-              </>
-            }
-            ListEmptyComponent={() => {
-              return (
-                <View
-                  style={{
-                    width: width,
-                    alignItems: 'center',
-                  }}>
-                  <Text
-                    text={
-                      isBanned
-                        ? constants.CHAT_CANNOT_JOIN_BANNED_MESSAGE
-                        : 'There is no comments'
-                    }
-                    style={{color: 'gray', textAlign: 'center'}}
-                  />
-                </View>
-              );
-            }}
-            keyExtractor={(item, index) => index.toString()}
-            contentContainerStyle={{
-              flexGrow: 1,
-              // flexDirection:
-              //   comments.length === 0 ? 'column' : 'column-reverse',
-            }}
-            renderItem={({item, index}) => {
-              const propsForMessage = {
-                sendbird,
-                channel: this.roomConnection,
-                message: item.nativeMessageObject,
-                onPress: () => console.log('onPress'),
-                onLongPress: () => console.log('onLongPress'),
-              };
-
-              if (item.isAdmin || item.isOperator) return <AdminMessage {...propsForMessage} />;
-              else return <UserMessage {...propsForMessage} />;
-            }}
-          />
-          {!isBanned ? this.commentBar() : null}
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    );
-  };
-
-  renderReply = (reply, mainComment, mainCommentIndex) => {
-    return (
-      <FlatList
-        data={reply}
-        keyExtractor={(item) => item.uid}
-        renderItem={({item, index}) => (
-          <View
-            style={{
-              width: width,
-              alignItems: 'flex-end',
-              backgroundColor: constants.BACKGROUND_COLOR,
-            }}>
-            <View
-              style={{
-                backgroundColor: constants.BAR_COLOR,
-                marginTop: 10,
-                paddingTop: 10,
-                paddingHorizontal: 10,
-                borderTopLeftRadius: 8,
-                borderBottomLeftRadius: 8,
-              }}>
-              <View
-                style={{
-                  width: width - 60,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    width: width - 110,
-                    justifyContent: 'space-between',
-                  }}>
-                  <View style={{width: width - 110}}>
-                    <View style={{flexDirection: 'row'}}>
-                      <Text text={item.user.username} />
-                      {item.user.verified === true ? (
-                        <VerifiedIcon size={14} />
-                      ) : null}
-                    </View>
-                    <Text
-                      text={item.comment}
-                      style={{fontSize: 12, fontWeight: 'normal'}}
-                    />
-                  </View>
-                  <View
-                    style={{
-                      width: 60,
-                      alignItems: 'flex-end',
-                      paddingRight: 10,
-                    }}>
-                    <Text
-                      text={timeDifference(item.timestamp)}
-                      style={{color: 'gray', fontSize: 10}}
-                    />
-                  </View>
-                </View>
-              </View>
-              <View
-                style={{
-                  width: width - 60,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <TouchableOpacity
-                  onPress={() =>
-                    this.likeComment(
-                      item,
-                      index,
-                      item.likeStatus,
-                      true,
-                      mainComment,
-                      mainCommentIndex,
-                    )
-                  }>
-                  <View
-                    style={{
-                      paddingVertical: 10,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                    }}>
-                    <Icon
-                      name={item.likeStatus ? 'heart' : 'heart-outline'}
-                      color="#FFF"
-                      type="material-community"
-                      size={16}
-                    />
-                    {item.likeCount !== 0 ? (
-                      <Text
-                        text={followerCount(item.likeCount)}
-                        style={{fontSize: 12, marginLeft: 5}}
-                      />
-                    ) : null}
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        )}
-      />
-    );
-  };
-
-  renderPosts = () => {
-    return (
-      <PostsCard
-        onPress={(item) => this.goTo('Comments', item)}
-        posts={this.state.posts}
-        numCols={3}
-      />
-    );
-  };
-
   render() {
     const {
       loading,
@@ -805,13 +366,6 @@ class Chat extends Component {
         ) : (
           this.renderPosts()
         )}
-        <Options
-          list={optionsList}
-          visible={optionsVisible}
-          cancelPress={() =>
-            this.setState({optionsList: [], optionsVisible: false})
-          }
-        />
       </View>
     );
   }
