@@ -176,13 +176,27 @@ export function sendBirdLeaveChannel(connection) {
   );
 }
 
+export const SENDBIRD_MESSAGE_CALLBACK_TYPES = {
+  RECEIVE: "RECEIVE",
+  DELETE: "DELETE",
+};
 export function startSendBirdChannelHandler(channelUrl, callback) {
   const channelHandler = new sendbird.ChannelHandler();
   const channelHandlerId = makeid(12);
 
   channelHandler.onMessageReceived = (channel, message) => {
     if (channel.url === channelUrl) {
-      callback(channel, message);
+      callback(SENDBIRD_MESSAGE_CALLBACK_TYPES.RECEIVE, channel, message);
+    }
+  };
+  channelHandler.onMessageDeleted = (channel, messageId) => {
+    if (channel.url === channelUrl) {
+      callback(SENDBIRD_MESSAGE_CALLBACK_TYPES.DELETE, channel, {messageId});
+    }
+  };
+  channelHandler.onMessageUpdated = (channel, message) => {
+    if (channel.url === channelUrl) {
+      callback(SENDBIRD_MESSAGE_CALLBACK_TYPES.RECEIVE, channel, message);
     }
   };
 

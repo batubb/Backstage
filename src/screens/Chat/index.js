@@ -10,7 +10,6 @@ import {
   TextInput,
   Platform,
   SafeAreaView,
-  RefreshControl,
   KeyboardAvoidingView,
   Alert,
   ActivityIndicator,
@@ -24,6 +23,7 @@ import {
   MyImage,
   Button,
   VerifiedIcon,
+  Options,
 } from '../../components';
 import {constants} from '../../resources';
 import {
@@ -37,7 +37,6 @@ import Store from '../../store/Store';
 import {followerCount, timeDifference} from '../../lib';
 import {StackActions} from '@react-navigation/native';
 import database from '@react-native-firebase/database';
-import LinearGradient from 'react-native-linear-gradient';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
 import {
   sendBirdCreateChannel,
@@ -46,6 +45,7 @@ import {
   startSendBirdChannelHandler,
   sendMessageToSendBirdChannel,
   loadSendBirdChannelMessages,
+  SENDBIRD_MESSAGE_CALLBACK_TYPES,
 } from '../../services/connectSendbird';
 import {COLORS, SIZES} from '../../resources/theme';
 
@@ -56,9 +56,10 @@ class Chat extends Component {
     super(props);
     this.state = {
       offset: 0,
-      limit: 20,
+      limit: 7,
       loading: true,
       refreshing: false,
+      endReached: false,
       user: this.props.route.params.user,
       general: true,
       comments: [],
@@ -67,9 +68,12 @@ class Chat extends Component {
       posts: [],
       anonymus: this.props.route.params.anonymus,
       subscribtion: null,
+      optionsVisible: false,
+      optionsList: [],
     };
     this.roomConnection = null;
     this.channelHandler = null;
+    this.scrollToEnd = true;
   }
 
   componentDidMount = async () => {
@@ -140,26 +144,44 @@ class Chat extends Component {
   messageListener = () => {
     this.channelHandler = startSendBirdChannelHandler(
       this.roomConnection.url,
-      async (channel, message) => {
-        await this.buildMessages([message]);
-        this.commentsFlatListRef?.scrollToEnd();
+      async (type, channel, message) => {
+        switch (type) {
+          case SENDBIRD_MESSAGE_CALLBACK_TYPES.RECEIVE:
+            await this.buildMessages([message]);
+    
+            if (this.scrollToEnd) {
+              this.commentsFlatListRef?.scrollToEnd();
+            }
+            break;
+        
+          default:
+            const comments = this.state.comments.filter(
+              (comment) => comment.messageId !== message.messageId,
+            );
+            this.setState({comments});
+            break;
+        }
       },
     );
   };
 
-  loadMessages = async () => {
-    const {offset, limit, refreshing} = this.state;
-    if (refreshing || this.state.comments.length >= (offset + 1) * limit) {
+  loadMessages = async (scrollToEnd = true) => {
+    const {offset, limit, refreshing, endReached} = this.state;
+    if (refreshing || endReached) {
+      this.scrollToEnd = false;
       return;
     }
+    this.scrollToEnd = scrollToEnd;
     this.setState({refreshing: true});
 
     loadSendBirdChannelMessages(this.roomConnection, offset, limit, false)
       .then(async (messages) => {
         await this.buildMessages(messages);
 
-        if (this.state.comments.length >= (offset + 1) * limit) {
+        if (this.state.comments.length === (offset + 1) * limit) {
           this.setState({offset: offset + 1});
+        } else {
+          this.setState({endReached: true});
         }
       })
       .catch((error) => {
@@ -168,14 +190,10 @@ class Chat extends Component {
       .finally(() => this.setState({refreshing: false}));
   };
 
-  // TODO: Set admin messages.
   buildMessages = async (messagesData) => {
     let comments = [...this.state.comments];
 
     messagesData.forEach(async (messageData) => {
-      // if (messageData.messageType === 'admin') {
-      // }
-
       if (
         comments.some((comment) => comment.messageId === messageData.messageId)
       ) {
@@ -192,41 +210,55 @@ class Chat extends Component {
         timestampt: messageData.createdAt,
         isOperator: messageData.isOperatorMessage === true,
         messageId: messageData.messageId,
+        nativeMessageObject: messageData,
       };
+      if (messageData.messageType === 'admin') {
+        comments.push({
+          user: {
+            username: 'Admin Announcement',
+            photo: '',
+            role: '',
+          },
+          ...constantCommentData,
+          isAdmin: true,
+        });
+        return;
+      }
       if (messageData.isOperatorMessage === true) {
         comments.push({
           user: {
             username: messageData._sender.nickname,
             photo: messageData._sender.plainProfileUrl ?? '',
-            role: messageData._sender.role,
+            role: messageData._sender.role ?? '',
           },
           ...constantCommentData,
         });
-      } else {
-        if (Store.user.uid === messageData._sender.userId) {
-          comments.push({
-            user: {
-              username: Store.user.username,
-              photo: Store.user.photo,
-            },
-            ...constantCommentData,
-          });
-        } else {
-          await database()
-            .ref('users')
-            .child(messageData._sender.userId)
-            .once('value', (user) => {
-              user = user?.toJSON();
-
-              if (user) {
-                comments.push({
-                  user,
-                  ...constantCommentData,
-                });
-              }
-            });
-        }
+        return;
       }
+      if (Store.user.uid === messageData._sender.userId) {
+        comments.push({
+          user: {
+            ...Store.user,
+            username: Store.user.username,
+            photo: Store.user.photo,
+          },
+          ...constantCommentData,
+        });
+        return;
+      }
+      await database()
+        .ref('users')
+        .child(messageData._sender.userId)
+        .once('value', (user) => {
+          user = user?.toJSON();
+
+          if (user) {
+            comments.push({
+              user,
+              ...constantCommentData,
+            });
+          }
+        });
     });
 
     this.setState({
@@ -273,45 +305,20 @@ class Chat extends Component {
     this.setState({comments});
   };
 
-  likeComment = async (
-    item,
-    index,
-    status = false,
-    reply = false,
-    mainComment = null,
-    mainCommentIndex = 0,
-  ) => {
-    if (!reply) {
-      var comments = this.state.comments;
-      comments[index].likeStatus = !item.likeStatus;
+  likeComment = async (messageData) => {};
 
-      if (item.likeStatus) {
-        comments[index].likeCount = item.likeCount + 1;
-      } else {
-        comments[index].likeCount = item.likeCount - 1;
-      }
+  reportComment = async (messageData) => {};
 
-      this.setState({comments});
-    } else {
-      var comments = this.state.comments;
-      comments[mainCommentIndex].reply[index].likeStatus = !item.likeStatus;
-
-      if (item.likeStatus) {
-        comments[mainCommentIndex].reply[index].likeCount = item.likeCount + 1;
-      } else {
-        comments[mainCommentIndex].reply[index].likeCount = item.likeCount - 1;
-      }
-
-      this.setState({comments});
-    }
-
-    await setLikeCommentStatus(
-      Store.user,
-      this.state.user,
-      item,
-      status,
-      reply,
-      mainComment,
+  deleteComment = async (messageData) => {
+    this.roomConnection.deleteMessage(
+      messageData.nativeMessageObject,
+      (deletedMessage, error) => {
+        this.setState({optionsList: [], optionsVisible: false});
+        if (error) {
+          Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
+          return;
+        }
+      },
     );
   };
 
@@ -327,6 +334,33 @@ class Chat extends Component {
         );
     }
     this.setState({comment: '', reply: null});
+  };
+
+  showOptions = (messageData) => {
+    const constantOptionsList = [
+      {title: 'Like', onPress: () => this.likeComment(messageData)},
+      {title: 'Report', onPress: () => this.reportComment(messageData)},
+    ];
+    const adminOptionsList = [
+      ...constantOptionsList,
+      {
+        title: 'Delete',
+        onPress: () => this.deleteComment(messageData),
+        color: constants.RED,
+      },
+    ];
+    const optionsList =
+      !messageData.isOperator &&
+      !messageData.isAdmin &&
+      (Store.user.uid === this.state.user.uid ||
+        messageData.user.uid === Store.user.uid)
+        ? adminOptionsList
+        : constantOptionsList;
+
+    this.setState({
+      optionsVisible: true,
+      optionsList,
+    });
   };
 
   renderProfileTop = (user = this.state.user) => {
@@ -473,8 +507,14 @@ class Chat extends Component {
     );
   };
 
+  isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+    return (
+      layoutMeasurement.height + contentOffset.y >= contentSize.height - 70
+    );
+  };
+
   renderComments = () => {
-    const {refreshing, comments} = this.state;
+    const {refreshing, comments, endReached} = this.state;
 
     return (
       <SafeAreaView style={{width, alignItems: 'center', flex: 1}}>
@@ -483,17 +523,24 @@ class Chat extends Component {
             ref={(ref) => (this.commentsFlatListRef = ref)}
             data={comments}
             inverted={comments.length > 0}
+            onScroll={({nativeEvent}) => {
+              if (
+                this.isCloseToBottom(nativeEvent) &&
+                this.scrollToEnd === false
+              ) {
+                this.scrollToEnd = true;
+              } else if (this.scrollToEnd === false) {
+                this.scrollToEnd = false;
+              }
+            }}
             onEndReachedThreshold={0.8}
-            onEndReached={() => this.loadMessages()}
+            onEndReached={() => this.loadMessages(false)}
+            ListHeaderComponentStyle={{flexGrow: 1}}
             ListHeaderComponent={
               <>
-                {refreshing && (
-                  <ActivityIndicator
-                    size="large"
-                    color="white"
-                    style={{padding: SIZES.padding}}
-                  />
-                )}
+                {refreshing && !endReached ? (
+                  <ActivityIndicator size={'large'} color={'gray'} />
+                ) : null}
               </>
             }
             ListEmptyComponent={() => {
@@ -522,6 +569,7 @@ class Chat extends Component {
                   marginTop: SIZES.spacing * 3,
                   marginHorizontal: SIZES.padding,
                   paddingHorizontal: SIZES.padding,
+                  borderRadius: SIZES.border,
                 }}>
                 <View
                   style={{
@@ -538,15 +586,21 @@ class Chat extends Component {
                     }}>
                     <View style={{flexDirection: 'row', flex: 1}}>
                       <Text
-                        text={`${
-                          item.isOperator === true ? 'Moderator - ' : ''
-                        }${item.user.username}`}
+                        text={`${item.user.username}`}
+                        style={[
+                          item.isOperator === true
+                            ? {
+                                color: constants.BLUE,
+                              }
+                            : item.isAdmin === true
+                            ? {
+                                color: constants.RED,
+                              }
+                            : {},
+                        ]}
                       />
                       {item.user.verified === true ? (
                         <VerifiedIcon size={14} />
-                      ) : null}
-                      {item.isOperator === true ? (
-                        <VerifiedIcon size={14} color={COLORS.secondary} />
                       ) : null}
                     </View>
                     <Text
@@ -564,42 +618,21 @@ class Chat extends Component {
                 <View
                   style={{
                     flex: 1,
-                    flexDirection: 'row',
-                    alignSelf: 'flex-start',
+                    flexDirection: 'row-reverse',
                     justifyContent: 'space-between',
                   }}>
-                  <View style={{flexDirection: 'row'}}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.likeComment(item, index, item.likeStatus)
-                      }>
+                  <View
+                    style={{
+                      alignSelf: 'flex-end',
+                    }}>
+                    <TouchableOpacity onPress={() => this.showOptions(item)}>
                       <View
                         style={{
-                          padding: SIZES.padding * 0.8,
-                          paddingLeft: SIZES.spacing,
-                          flexDirection: 'row',
+                          paddingRight: SIZES.spacing,
+                          paddingBottom: SIZES.padding,
                         }}>
                         <Icon
-                          name={item.likeStatus ? 'heart' : 'heart-outline'}
-                          color="#FFF"
-                          type="material-community"
-                          size={16}
-                        />
-                        {item.likeCount !== 0 ? (
-                          <Text
-                            text={followerCount(item.likeCount)}
-                            style={{fontSize: 12, marginLeft: 5}}
-                          />
-                        ) : null}
-                      </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.showReplyTab(item)}>
-                      <View
-                        style={{
-                          padding: SIZES.padding,
-                        }}>
-                        <Icon
-                          name="reply"
+                          name="dots-horizontal"
                           color="#FFF"
                           type="material-community"
                           size={16}
@@ -607,28 +640,86 @@ class Chat extends Component {
                       </View>
                     </TouchableOpacity>
                   </View>
-                  {item.reply.length !== 0 ? (
-                    <TouchableOpacity
-                      onPress={() => this.seeThread(item, index)}>
-                      <View
-                        style={{padding: SIZES.padding, flexDirection: 'row'}}>
-                        <Icon
-                          name={item.showReply ? 'chevron-up' : 'chevron-down'}
-                          color="#FFF"
-                          type="material-community"
-                          size={16}
-                        />
-                        <Text
-                          text="See Thread"
-                          style={{fontSize: 12, marginLeft: SIZES.spacing}}
-                        />
-                      </View>
-                    </TouchableOpacity>
-                  ) : null}
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: 'row',
+                      alignSelf: 'flex-start',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <TouchableOpacity
+                        onPress={() =>
+                          this.likeComment(item, index, item.likeStatus)
+                        }>
+                        <View
+                          style={{
+                            padding: SIZES.padding * 0.8,
+                            paddingLeft: SIZES.spacing,
+                            flexDirection: 'row',
+                          }}>
+                          <Icon
+                            name={item.likeStatus ? 'heart' : 'heart-outline'}
+                            color="#FFF"
+                            type="material-community"
+                            size={16}
+                          />
+                          {item.likeCount !== 0 ? (
+                            <Text
+                              text={followerCount(item.likeCount)}
+                              style={{fontSize: 12, marginLeft: 5}}
+                            />
+                          ) : null}
+                        </View>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => this.showReplyTab(item)}>
+                        <View
+                          style={{
+                            padding: SIZES.padding,
+                          }}>
+                          <Icon
+                            name="reply"
+                            color="#FFF"
+                            type="material-community"
+                            size={16}
+                          />
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                    {item.reply.length !== 0 ? (
+                      <TouchableOpacity
+                        onPress={() => this.seeThread(item, index)}>
+                        <View
+                          style={{
+                            padding: SIZES.padding,
+                            flexDirection: 'row',
+                          }}>
+                          <Icon
+                            name={
+                              item.showReply ? 'chevron-up' : 'chevron-down'
+                            }
+                            color="#FFF"
+                            type="material-community"
+                            size={16}
+                          />
+                          <Text
+                            text="See Thread"
+                            style={{fontSize: 12, marginLeft: SIZES.spacing}}
+                          />
+                        </View>
+                      </TouchableOpacity>
+                    ) : null}
+                  </View>
+                  {item.showReply
+                    ? this.renderReply(item.reply.slice(0, 5), item, index)
+                    : null}
                 </View>
-                {item.showReply
-                  ? this.renderReply(item.reply.slice(0, 5), item, index)
-                  : null}
               </View>
             )}
           />
@@ -753,7 +844,7 @@ class Chat extends Component {
   };
 
   render() {
-    const {loading, general} = this.state;
+    const {loading, general, optionsVisible, optionsList} = this.state;
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
         <Header
@@ -783,6 +874,13 @@ class Chat extends Component {
         ) : (
           this.renderPosts()
         )}
+        <Options
+          list={optionsList}
+          visible={optionsVisible}
+          cancelPress={() =>
+            this.setState({optionsList: [], optionsVisible: false})
+          }
+        />
       </View>
     );
   }
