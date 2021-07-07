@@ -20,7 +20,7 @@ import {
   VerifiedIcon,
 } from '../../components';
 import {constants} from '../../resources';
-import {getUserPosts} from '../../services';
+import {getUserPosts, checkSubscribtion} from '../../services';
 import Store from '../../store/Store';
 import {timeDifference, generateStreamToken, makeid} from '../../lib';
 import {StackActions} from '@react-navigation/native';
@@ -33,86 +33,80 @@ import {
   Streami18n,
   Chat as StreamChatComponent,
   MessageInput,
+  Thread as StreamThreadComponent,
 } from 'stream-chat-react-native';
 import {StreamChat} from 'stream-chat';
 import jwt from 'react-native-pure-jwt';
 import {getBottomSpace, getStatusBarHeight} from '../../lib/iPhoneXHelper';
-import { COLORS } from '../../resources/theme';
+import {COLORS, SIZES} from '../../resources/theme';
 
-const {width} = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 const streami18n = new Streami18n({
   language: 'en',
 });
 
+const streamTheme = {
+  avatar: {
+    image: {
+      height: 70,
+      width: 70,
+    },
+  },
+  colors: {
+    accent_blue: COLORS.primary,
+    accent_green: '#20E070',
+    accent_red: constants.RED,
+    bg_gradient_end: COLORS.backgroundColor,
+    bg_gradient_start: COLORS.backgroundColor,
+    black: COLORS.white,
+    blue_alice: COLORS.black,
+    border: COLORS.black,
+    grey: COLORS.gray,
+    grey_gainsboro: COLORS.systemFill,
+    grey_whisper: COLORS.quaternaryLabel,
+    icon_background: '#FFFFFF',
+    modal_shadow: COLORS.secondaryBackgroundColor,
+    overlay: '#00000066',
+    overlay_dark: '#FFFFFFCC',
+    shadow_icon: '#00000080',
+    targetedMessageBackground: '#302D22',
+    transparent: 'transparent',
+    white: COLORS.black,
+    white_smoke: COLORS.secondaryBackgroundColor,
+    white_snow: COLORS.backgroundColor,
+  },
+  imageGallery: {
+    blurType: 'dark',
+  },
+  spinner: {
+    height: 30,
+    width: 30,
+  },
+};
+
 class Chat extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      offset: 0,
-      limit: 7,
+      thread: null,
       loading: true,
       refreshing: false,
-      endReached: false,
       user: this.props.route.params.user,
       general: true,
-      comments: [],
-      comment: '',
-      reply: null,
       posts: [],
       anonymus: this.props.route.params.anonymus,
       subscribtion: null,
-      optionsVisible: false,
-      optionsList: [],
-      emojies: [],
-      theme: {
-        avatar: {
-          image: {
-            height: 70,
-            width: 70,
-          },
-        },
-        colors: {
-          accent_blue: COLORS.primary,
-          accent_green: '#20E070',
-          accent_red: constants.RED,
-          bg_gradient_end: COLORS.backgroundColor,
-          bg_gradient_start: COLORS.backgroundColor,
-          black: COLORS.white,
-          blue_alice: COLORS.black,
-          border: COLORS.black,
-          grey: COLORS.gray,
-          grey_gainsboro: COLORS.systemFill,
-          grey_whisper: COLORS.quaternaryLabel,
-          icon_background: '#FFFFFF',
-          modal_shadow: COLORS.secondaryBackgroundColor,
-          overlay: '#00000066',
-          overlay_dark: '#FFFFFFCC',
-          shadow_icon: '#00000080',
-          targetedMessageBackground: '#302D22',
-          transparent: 'transparent',
-          white: COLORS.black,
-          white_smoke: COLORS.secondaryBackgroundColor,
-          white_snow: COLORS.backgroundColor,
-        },
-        imageGallery: {
-          blurType: 'dark',
-        },
-        spinner: {
-          height: 30,
-          width: 30,
-        },
-      },
     };
   }
 
   componentDidMount = async () => {
-    const subscribtion =
+    const {subscribtion} =
       Store.uid !== this.state.user.uid
         ? await checkSubscribtion(Store.uid, this.state.user.uid)
         : {subscribtion: true};
 
-    if (subscribtion.subscribtion === true) {
+    if (subscribtion === true) {
       const posts = await getUserPosts(this.state.user.uid);
       this.setState({posts, subscribtion});
 
@@ -200,6 +194,8 @@ class Chat extends Component {
               this.setState({loading: false});
             });
         });
+    } else {
+      this.setState({loading: false});
     }
   };
 
@@ -207,7 +203,9 @@ class Chat extends Component {
     if (this.channel) {
       await this.channel.stopWatching();
     }
-    await this.streamServerClient.disconnectUser();
+    if (this.streamServerClient) {
+      await this.streamServerClient.disconnectUser();
+    }
   };
 
   watchChannel = async () => {
@@ -225,29 +223,45 @@ class Chat extends Component {
     } else if (route === 'UserProfile') {
       const replaceActions = StackActions.push(route, {user: info});
       return this.props.navigation.dispatch(replaceActions);
+    } else if (route === 'Subscribe') {
+      const replaceActions = StackActions.push(route, {
+        influencer: this.state.user,
+        posts: this.state.posts,
+      });
+      return this.props.navigation.dispatch(replaceActions);
     }
   };
 
   renderComments = () => {
+    const {thread} = this.state;
+
     return (
       <ChatOverlayProvider
         i18nInstance={streami18n}
-        value={{style: this.state.theme}}
+        value={{style: streamTheme}}
         bottomInset={getBottomSpace()}>
-        <SafeAreaView style={{flex: 1, backgroundColor: this.state.theme.colors.white}}>
+        <SafeAreaView
+          style={{flex: 1, backgroundColor: streamTheme.colors.white}}>
           <StreamChatComponent
             client={this.streamServerClient}
             i18nInstance={streami18n}>
             <Channel
               channel={this.channel}
-              keyboardVerticalOffset={getStatusBarHeight()}>
+              keyboardVerticalOffset={getStatusBarHeight()}
+              thread={thread}>
               <View style={{flex: 1}}>
-                <MessageList
-                  onThreadSelect={(thread) => {
-                    console.log(thread);
-                  }}
-                />
-                <MessageInput />
+                {thread === null ? (
+                  <>
+                    <MessageList
+                      onThreadSelect={(thread) => this.setState({thread})}
+                    />
+                    <MessageInput />
+                  </>
+                ) : (
+                  <StreamThreadComponent
+                    onThreadDismount={() => this.setState({thread: null})}
+                  />
+                )}
               </View>
             </Channel>
           </StreamChatComponent>
@@ -328,25 +342,80 @@ class Chat extends Component {
     );
   };
 
+  renderSubscribe = () => {
+    return (
+      <View
+        style={{
+          width: '100%',
+          flex: 1,
+          paddingHorizontal: width * 0.1,
+          marginBottom: height * 0.15,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Text text="Membership" style={{fontSize: 24}} />
+        <Text
+          text={`$ ${this.state.user.price.toFixed(2)}`}
+          style={{fontSize: 32, marginTop: 10}}
+        />
+        <Text text="per month" style={{color: 'white', fontWeight: 'normal'}} />
+        <Text
+          text={`You must be a member to join the ${this.state.user.username} creator's room.`}
+          style={{
+            fontSize: 17,
+            color: COLORS.gray,
+            fontWeight: 'normal',
+            marginTop: SIZES.padding * 2,
+            textAlign: 'center',
+          }}
+        />
+        <Button
+          text={`Subscribe to ${this.state.user.username}`}
+          buttonStyle={{
+            backgroundColor: COLORS.primary,
+            borderRadius: SIZES.radius,
+            paddingVertical: SIZES.padding * 1.5,
+            paddingHorizontal: SIZES.padding * 4,
+            marginTop: SIZES.padding * 3,
+          }}
+          textStyle={{color: COLORS.white, fontSize: 16}}
+          onPress={() => this.goTo('Subscribe')}
+        />
+        <Text
+          text="As a member, you'll remain anonymus. Become a member The creator won't see your username."
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            fontSize: 12,
+            color: COLORS.gray,
+            fontWeight: 'normal',
+            textAlign: 'center',
+          }}
+        />
+      </View>
+    );
+  };
+
   render() {
-    const {
-      loading,
-      general,
-      optionsVisible,
-      optionsList,
-      isBanned,
-      subscribtion,
-    } = this.state;
+    const {loading, general, subscribtion, thread} = this.state;
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
         <Header
-          title="Room"
-          leftButtonPress={() =>
-            this.props.navigation.dispatch(StackActions.pop())
+          title={
+            thread === null
+              ? 'Room'
+              : `Thread of ${thread.user.username}'s Message`
           }
+          leftButtonPress={() => {
+            if (thread === null) {
+              this.props.navigation.dispatch(StackActions.pop());
+            } else {
+              this.setState({thread: null});
+            }
+          }}
           leftButtonIcon="chevron-left"
         />
-        {this.renderProfileTop()}
+        {thread === null ? this.renderProfileTop() : null}
         {loading ? (
           <Loading
             loadingStyle={{
@@ -357,10 +426,8 @@ class Chat extends Component {
             textStyle={{marginTop: 10, fontWeight: 'normal'}}
             text="Loading"
           />
-        ) : !subscribtion.subscribtion && !isBanned ? (
-          Alert.alert('Oops', 'You must be a member to view the content.', [
-            {text: 'Okay'},
-          ])
+        ) : !subscribtion ? (
+          this.renderSubscribe()
         ) : general ? (
           this.renderComments()
         ) : (
