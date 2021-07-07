@@ -178,9 +178,9 @@ export function sendBirdLeaveChannel(connection) {
 }
 
 export const SENDBIRD_MESSAGE_CALLBACK_TYPES = {
-  RECEIVE: "RECEIVE",
-  DELETE: "DELETE",
-  BAN: "BAN",
+  RECEIVE: 'RECEIVE',
+  DELETE: 'DELETE',
+  BAN: 'BAN',
 };
 
 export function startSendBirdChannelHandler(channelUrl, callback) {
@@ -188,6 +188,7 @@ export function startSendBirdChannelHandler(channelUrl, callback) {
   const channelHandlerId = makeid(12);
 
   channelHandler.onMessageReceived = (channel, message) => {
+    console.log(message);
     if (channel.url === channelUrl) {
       callback(SENDBIRD_MESSAGE_CALLBACK_TYPES.RECEIVE, channel, message);
     }
@@ -257,20 +258,23 @@ export function loadSendBirdChannelMessages(
     listQuery.limit = limit * (offset + 1);
     listQuery.reverse = reverse;
     return new Promise((resolve, reject) => {
-      listQuery.load(
-        (messages, error) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(messages);
-          }
-        },
-      );
+      listQuery.load((messages, error) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(messages);
+        }
+      });
     });
   }
 }
 
-export function banUserFromSendBirdChannel(connection, user_id, seconds = -1, description = 'Banned by the influencer.') {
+export function banUserFromSendBirdChannel(
+  connection,
+  user_id,
+  seconds = -1,
+  description = 'Banned by the influencer.',
+) {
   return new Promise((resolve, reject) =>
     axios
       .post(
@@ -281,7 +285,7 @@ export function banUserFromSendBirdChannel(connection, user_id, seconds = -1, de
               user_id,
               seconds,
               description,
-            }
+            },
           ],
           on_demand_upsert: false,
         },
@@ -293,12 +297,49 @@ export function banUserFromSendBirdChannel(connection, user_id, seconds = -1, de
         },
       )
       .then(async ({data}) => {
-        console.log('data', data);
         resolve(true);
       })
       .catch((error) => {
-        console.log('error', error);
         reject(error);
       }),
   );
 }
+
+export function getDefaultEmojisFromSendBird() {
+  return new Promise((resolve, reject) =>
+    axios
+      .get(
+        `${constants.SENDBIRD_API_REQUEST_URL}/${constants.SENDBIRD_API_VERSION}/emoji_categories`,
+        {
+          headers: {
+            'Api-Token': constants.SENDBIRD_ACCESS_TOKEN,
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      .then(async ({data}) => {
+        resolve(data.emoji_categories);
+      })
+      .catch((error) => {
+        reject(error);
+      }),
+  );
+}
+
+// export function addReactionToMessage() {
+//   axios.post(
+//     `${constants.SENDBIRD_API_REQUEST_URL}/${constants.SENDBIRD_API_VERSION}/emoji_categories`,
+//     {
+//       user_id: Store.user.uid,
+//       nickname: Store.user.username,
+//       profile_url: Store.user.photo,
+//       issue_access_token: true,
+//     },
+//     {
+//       headers: {
+//         'Api-Token': constants.SENDBIRD_ACCESS_TOKEN,
+//         'Content-Type': 'application/json',
+//       },
+//     },
+//   );
+// }

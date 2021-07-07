@@ -47,6 +47,7 @@ import {
   loadSendBirdChannelMessages,
   SENDBIRD_MESSAGE_CALLBACK_TYPES,
   banUserFromSendBirdChannel,
+  getDefaultEmojisFromSendBird,
 } from '../../services/connectSendbird';
 import {COLORS, SIZES} from '../../resources/theme';
 
@@ -72,17 +73,21 @@ class Chat extends Component {
       subscribtion: null,
       optionsVisible: false,
       optionsList: [],
+      emojies: [],
     };
     this.roomConnection = null;
+    this.roomConnectionActions = null;
     this.channelHandler = null;
     this.scrollToEnd = true;
   }
 
   componentDidMount = async () => {
-    const subscribtion =
-      Store.uid !== this.state.user.uid
-        ? await checkSubscribtion(Store.uid, this.state.user.uid)
-        : {subscribtion: true};
+    // const subscribtion =
+    //   Store.uid !== this.state.user.uid
+    //     ? await checkSubscribtion(Store.uid, this.state.user.uid)
+    //     : {subscribtion: true};
+    const subscribtion = {subscribtion: true};
+    console.log(this.state.user.uid);
 
     if (subscribtion.subscribtion === true) {
       const posts = await getUserPosts(this.state.user.uid);
@@ -151,9 +156,20 @@ class Chat extends Component {
   };
 
   messageListener = () => {
+    getDefaultEmojisFromSendBird()
+      .then((data) => {
+        this.setState({
+          emojies: data?.[0]?.emojis ?? [],
+        });
+      })
+      .catch((error) =>
+        Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]),
+      );
+
     this.channelHandler = startSendBirdChannelHandler(
       this.roomConnection.url,
       async (type, channel, message) => {
+        this.roomConnectionActions = channel;
         switch (type) {
           case SENDBIRD_MESSAGE_CALLBACK_TYPES.RECEIVE:
             await this.buildMessages([message]);
@@ -332,8 +348,6 @@ class Chat extends Component {
 
   likeComment = async (messageData) => {};
 
-  reportComment = async (messageData) => {};
-
   banUser = async (messageData) => {
     banUserFromSendBirdChannel(this.roomConnection, messageData.user.uid)
       .then(() => {
@@ -381,14 +395,16 @@ class Chat extends Component {
   showOptions = (messageData) => {
     const constantOptionsList = [
       {title: 'Like', onPress: () => this.likeComment(messageData)},
-      {title: 'Report', onPress: () => this.reportComment(messageData)},
     ];
-    const adminOptionsList = [
+    const myOptionsList = [
       ...constantOptionsList,
       {
         title: 'Delete Message',
         onPress: () => this.deleteComment(messageData),
       },
+    ];
+    const adminOptionsList = [
+      ...myOptionsList,
       {
         title: 'Mute User',
         onPress: () => this.muteUser(messageData),
@@ -402,10 +418,12 @@ class Chat extends Component {
     ];
     const optionsList =
       !messageData.isOperator &&
-      !messageData.isAdmin &&
-      (Store.user.uid === this.state.user.uid ||
-        messageData.user.uid === Store.user.uid)
-        ? adminOptionsList
+      !messageData.isAdmin ?
+        (messageData.user.uid === Store.user.uid && this.state.user.uid !== Store.user.uid)
+          ? myOptionsList
+          : this.state.user.uid === Store.user.uid
+            ? adminOptionsList
+            : constantOptionsList
         : constantOptionsList;
 
     this.setState({
@@ -766,6 +784,7 @@ class Chat extends Component {
                         <View
                           style={{
                             padding: SIZES.padding,
+                            paddingLeft: 0,
                           }}>
                           <Icon
                             name="reply"
