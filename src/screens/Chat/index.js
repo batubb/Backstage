@@ -27,11 +27,7 @@ import {
 } from '../../components';
 import {constants} from '../../resources';
 import {
-  sendComment,
-  setLikeCommentStatus,
-  shareItem,
   getUserPosts,
-  checkSubscribtion,
 } from '../../services';
 import Store from '../../store/Store';
 import {followerCount, timeDifference} from '../../lib';
@@ -48,8 +44,12 @@ import {
   SENDBIRD_MESSAGE_CALLBACK_TYPES,
   banUserFromSendBirdChannel,
   getDefaultEmojisFromSendBird,
+  sendbird,
 } from '../../services/connectSendbird';
 import {COLORS, SIZES} from '../../resources/theme';
+import UserMessage from '../../components/ScreenComponents/ChatComponents/UserMessage/UserMessage';
+import AdminMessage from '../../components/ScreenComponents/ChatComponents/AdminMessage/AdminMessage';
+import User from '../../components/ScreenComponents/ChatComponents/User/User';
 
 const {width} = Dimensions.get('window');
 
@@ -78,16 +78,15 @@ class Chat extends Component {
     this.roomConnection = null;
     this.roomConnectionActions = null;
     this.channelHandler = null;
+    this.clearChannelHandler = null;
     this.scrollToEnd = true;
   }
 
   componentDidMount = async () => {
-    // const subscribtion =
-    //   Store.uid !== this.state.user.uid
-    //     ? await checkSubscribtion(Store.uid, this.state.user.uid)
-    //     : {subscribtion: true};
-    const subscribtion = {subscribtion: true};
-    console.log(this.state.user.uid);
+    const subscribtion =
+      Store.uid !== this.state.user.uid
+        ? await checkSubscribtion(Store.uid, this.state.user.uid)
+        : {subscribtion: true};
 
     if (subscribtion.subscribtion === true) {
       const posts = await getUserPosts(this.state.user.uid);
@@ -166,7 +165,7 @@ class Chat extends Component {
         Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]),
       );
 
-    this.channelHandler = startSendBirdChannelHandler(
+    const [channelHandler, clearChannelHandler] = startSendBirdChannelHandler(
       this.roomConnection.url,
       async (type, channel, message) => {
         this.roomConnectionActions = channel;
@@ -188,7 +187,7 @@ class Chat extends Component {
 
           case SENDBIRD_MESSAGE_CALLBACK_TYPES.BAN:
             if (message.userId === Store.user.uid) {
-              this.channelHandler();
+              this.clearChannelHandler();
               sendBirdLeaveChannel(this.roomConnection);
               this.roomConnection = null;
               this.setState({isBanned: true, comments: []});
@@ -203,6 +202,8 @@ class Chat extends Component {
         }
       },
     );
+    this.channelHandler = channelHandler;
+    this.clearChannelHandler = () => clearChannelHandler();
   };
 
   loadMessages = async (scrollToEnd = true) => {
@@ -243,10 +244,7 @@ class Chat extends Component {
       }
       const constantCommentData = {
         comment: messageData.message,
-        reply: [],
-        showReply: false,
-        likeStatus: false,
-        likeCount: 0,
+        replies: [],
         createdTimestampt: messageData.createdAt,
         updatedTimestampt: messageData.updatedAt,
         isOperator: messageData.isOperatorMessage === true,
@@ -324,8 +322,8 @@ class Chat extends Component {
     if (this.roomConnection !== null) {
       sendBirdLeaveChannel(this.roomConnection);
     }
-    if (this.channelHandler !== null) {
-      this.channelHandler();
+    if (this.clearChannelHandler !== null) {
+      this.clearChannelHandler();
     }
   };
 
@@ -602,7 +600,7 @@ class Chat extends Component {
                 this.scrollToEnd = false;
               }
             }}
-            onEndReachedThreshold={0.8}
+            onEndReachedThreshold={0.5}
             onEndReached={() => this.loadMessages(false)}
             ListHeaderComponentStyle={{flexGrow: 1}}
             ListHeaderComponent={
@@ -632,199 +630,22 @@ class Chat extends Component {
             }}
             keyExtractor={(item, index) => index.toString()}
             contentContainerStyle={{
-              flexDirection:
-                comments.length === 0 ? 'column' : 'column-reverse',
+              flexGrow: 1,
+              // flexDirection:
+              //   comments.length === 0 ? 'column' : 'column-reverse',
             }}
-            renderItem={({item, index}) => (
-              <View
-                style={{
-                  paddingTop: 15,
-                  flex: 1,
-                  alignItems: 'center',
-                  backgroundColor: constants.BAR_COLOR,
-                  marginTop: SIZES.spacing * 3,
-                  marginHorizontal: SIZES.padding,
-                  paddingHorizontal: SIZES.padding,
-                  borderRadius: SIZES.border,
-                }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}>
-                  <View
-                    style={{
-                      flexDirection: 'column',
-                      flex: 1,
-                      justifyContent: 'space-between',
-                    }}>
-                    <View style={{flexDirection: 'row', flex: 1}}>
-                      <Text
-                        text={`${item.user.username}`}
-                        style={[
-                          item.isOperator === true
-                            ? {
-                                color: constants.BLUE,
-                              }
-                            : item.isAdmin === true
-                            ? {
-                                color: constants.RED,
-                              }
-                            : {},
-                        ]}
-                      />
-                      {item.user.verified === true ? (
-                        <VerifiedIcon size={14} />
-                      ) : null}
-                    </View>
-                    <Text
-                      text={item.comment}
-                      style={{fontSize: 12, fontWeight: 'normal'}}
-                    />
-                  </View>
-                  <View
-                    style={{
-                      width: 60,
-                      alignItems: 'flex-end',
-                      flexDirection: 'column',
-                    }}>
-                    <Text
-                      text={timeDifference(item.createdTimestampt)}
-                      style={{color: 'gray', fontSize: 10}}
-                    />
-                    {item.updatedTimestampt ? (
-                      <View
-                        style={{
-                          paddingTop: SIZES.spacing,
-                          flexDirection: 'row',
-                        }}>
-                        <Icon
-                          name="update"
-                          color="gray"
-                          type="material-community"
-                          size={13}
-                          style={{
-                            paddingRight: SIZES.spacing,
-                          }}
-                        />
-                        <Text
-                          text={timeDifference(item.updatedTimestampt)}
-                          style={{color: 'gray', fontSize: 10}}
-                        />
-                      </View>
-                    ) : null}
-                  </View>
-                </View>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: 'row-reverse',
-                    justifyContent: 'space-between',
-                  }}>
-                  <View
-                    style={{
-                      alignSelf: 'flex-end',
-                    }}>
-                    <TouchableOpacity onPress={() => this.showOptions(item)}>
-                      <View
-                        style={{
-                          paddingRight: SIZES.spacing,
-                          paddingBottom: SIZES.padding,
-                        }}>
-                        <Icon
-                          name="dots-horizontal"
-                          color="#FFF"
-                          type="material-community"
-                          size={16}
-                        />
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: 'row',
-                      alignSelf: 'flex-start',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    }}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <TouchableOpacity
-                        onPress={() =>
-                          this.likeComment(item, index, item.likeStatus)
-                        }>
-                        <View
-                          style={{
-                            padding: SIZES.padding * 0.8,
-                            paddingLeft: SIZES.spacing,
-                            flexDirection: 'row',
-                          }}>
-                          <Icon
-                            name={item.likeStatus ? 'heart' : 'heart-outline'}
-                            color="#FFF"
-                            type="material-community"
-                            size={16}
-                          />
-                          {item.likeCount !== 0 ? (
-                            <Text
-                              text={followerCount(item.likeCount)}
-                              style={{fontSize: 12, marginLeft: 5}}
-                            />
-                          ) : null}
-                        </View>
-                      </TouchableOpacity>
-                      <TouchableOpacity onPress={() => this.showReplyTab(item)}>
-                        <View
-                          style={{
-                            padding: SIZES.padding,
-                            paddingLeft: 0,
-                          }}>
-                          <Icon
-                            name="reply"
-                            color="#FFF"
-                            type="material-community"
-                            size={16}
-                          />
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                    {item.reply.length !== 0 ? (
-                      <TouchableOpacity
-                        onPress={() => this.seeThread(item, index)}>
-                        <View
-                          style={{
-                            padding: SIZES.padding,
-                            flexDirection: 'row',
-                          }}>
-                          <Icon
-                            name={
-                              item.showReply ? 'chevron-up' : 'chevron-down'
-                            }
-                            color="#FFF"
-                            type="material-community"
-                            size={16}
-                          />
-                          <Text
-                            text="See Thread"
-                            style={{fontSize: 12, marginLeft: SIZES.spacing}}
-                          />
-                        </View>
-                      </TouchableOpacity>
-                    ) : null}
-                  </View>
-                  {item.showReply
-                    ? this.renderReply(item.reply.slice(0, 5), item, index)
-                    : null}
-                </View>
-              </View>
-            )}
+            renderItem={({item, index}) => {
+              const propsForMessage = {
+                sendbird,
+                channel: this.roomConnection,
+                message: item.nativeMessageObject,
+                onPress: () => console.log('onPress'),
+                onLongPress: () => console.log('onLongPress'),
+              };
+
+              if (item.isAdmin || item.isOperator) return <AdminMessage {...propsForMessage} />;
+              else return <UserMessage {...propsForMessage} />;
+            }}
           />
           {!isBanned ? this.commentBar() : null}
         </KeyboardAvoidingView>

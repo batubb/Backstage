@@ -211,7 +211,7 @@ export function startSendBirdChannelHandler(channelUrl, callback) {
 
   sendbird.addChannelHandler(channelHandlerId, channelHandler);
 
-  return () => sendbird.removeChannelHandler(channelHandlerId);
+  return [channelHandler, () => sendbird.removeChannelHandler(channelHandlerId)];
 }
 
 export function sendMessageToSendBirdChannel(message, connection) {
