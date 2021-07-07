@@ -41,6 +41,8 @@ const constants = {
   SENDBIRD_API_REQUEST_URL: 'https://api-AF2352AC-8C23-47A5-82BD-149EA89DF508.sendbird.com',
   SENDBIRD_API_VERSION: 'v3',
   SENDBIRD_OPERATOR_USER_IDS: ['604576'],
+  CHAT_CANNOT_JOIN_BANNED_MESSAGE: 'You cannot join the influencer\'s room,\nbecause you\'re banned.',
+  CHAT_IN_BANNED_MESSAGE: 'You are banned from the influencer\'s room.',
 
   TIER_1: 'price_1ImhznKwkzsqkh9m3eAmW9kG',
   MONTHS: [

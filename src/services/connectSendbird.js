@@ -118,6 +118,7 @@ export function sendBirdCreateChannel(userData) {
       const params = new sendbird.OpenChannelParams();
       params.name = `${userData.uid}`;
       params.operatorUserIds = constants.SENDBIRD_OPERATOR_USER_IDS;
+      params.customType = `${userData.uid}`;
 
       sendbird.OpenChannel.createChannel(params, async (openChannel, error) => {
         if (error) {
@@ -179,7 +180,9 @@ export function sendBirdLeaveChannel(connection) {
 export const SENDBIRD_MESSAGE_CALLBACK_TYPES = {
   RECEIVE: "RECEIVE",
   DELETE: "DELETE",
+  BAN: "BAN",
 };
+
 export function startSendBirdChannelHandler(channelUrl, callback) {
   const channelHandler = new sendbird.ChannelHandler();
   const channelHandlerId = makeid(12);
@@ -197,6 +200,11 @@ export function startSendBirdChannelHandler(channelUrl, callback) {
   channelHandler.onMessageUpdated = (channel, message) => {
     if (channel.url === channelUrl) {
       callback(SENDBIRD_MESSAGE_CALLBACK_TYPES.RECEIVE, channel, message);
+    }
+  };
+  channelHandler.onUserBanned = (channel, user) => {
+    if (channel.url === channelUrl) {
+      callback(SENDBIRD_MESSAGE_CALLBACK_TYPES.BAN, channel, user);
     }
   };
 
@@ -260,4 +268,37 @@ export function loadSendBirdChannelMessages(
       );
     });
   }
+}
+
+export function banUserFromSendBirdChannel(connection, user_id, seconds = -1, description = 'Banned by the influencer.') {
+  return new Promise((resolve, reject) =>
+    axios
+      .post(
+        `${constants.SENDBIRD_API_REQUEST_URL}/${constants.SENDBIRD_API_VERSION}/applications/settings_by_channel_custom_type/${connection.customType}/ban`,
+        {
+          banned_list: [
+            {
+              user_id,
+              seconds,
+              description,
+            }
+          ],
+          on_demand_upsert: false,
+        },
+        {
+          headers: {
+            'Api-Token': constants.SENDBIRD_ACCESS_TOKEN,
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      .then(async ({data}) => {
+        console.log('data', data);
+        resolve(true);
+      })
+      .catch((error) => {
+        console.log('error', error);
+        reject(error);
+      }),
+  );
 }

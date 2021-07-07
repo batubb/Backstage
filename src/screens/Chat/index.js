@@ -46,6 +46,7 @@ import {
   sendMessageToSendBirdChannel,
   loadSendBirdChannelMessages,
   SENDBIRD_MESSAGE_CALLBACK_TYPES,
+  banUserFromSendBirdChannel,
 } from '../../services/connectSendbird';
 import {COLORS, SIZES} from '../../resources/theme';
 
@@ -61,6 +62,7 @@ class Chat extends Component {
       refreshing: false,
       endReached: false,
       user: this.props.route.params.user,
+      isBanned: false,
       general: true,
       comments: [],
       comment: '',
@@ -136,7 +138,14 @@ class Chat extends Component {
       })
       .catch((error) => {
         console.log(error);
-        Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
+        if (error?.code === 900100) {
+          this.setState({isBanned: true});
+          Alert.alert('Oops', constants.CHAT_CANNOT_JOIN_BANNED_MESSAGE, [
+            {text: 'Okay'},
+          ]);
+        } else {
+          Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
+        }
       })
       .finally(() => this.setState({loading: false}));
   };
@@ -148,17 +157,32 @@ class Chat extends Component {
         switch (type) {
           case SENDBIRD_MESSAGE_CALLBACK_TYPES.RECEIVE:
             await this.buildMessages([message]);
-    
+
             if (this.scrollToEnd) {
               this.commentsFlatListRef?.scrollToEnd();
             }
             break;
-        
-          default:
+
+          case SENDBIRD_MESSAGE_CALLBACK_TYPES.DELETE:
             const comments = this.state.comments.filter(
               (comment) => comment.messageId !== message.messageId,
             );
             this.setState({comments});
+            break;
+
+          case SENDBIRD_MESSAGE_CALLBACK_TYPES.BAN:
+            if (message.userId === Store.user.uid) {
+              this.channelHandler();
+              sendBirdLeaveChannel(this.roomConnection);
+              this.roomConnection = null;
+              this.setState({isBanned: true, comments: []});
+              Alert.alert('Oops', constants.CHAT_IN_BANNED_MESSAGE, [
+                {text: 'Okay'},
+              ]);
+            }
+            break;
+
+          default:
             break;
         }
       },
@@ -207,7 +231,8 @@ class Chat extends Component {
         showReply: false,
         likeStatus: false,
         likeCount: 0,
-        timestampt: messageData.createdAt,
+        createdTimestampt: messageData.createdAt,
+        updatedTimestampt: messageData.updatedAt,
         isOperator: messageData.isOperatorMessage === true,
         messageId: messageData.messageId,
         nativeMessageObject: messageData,
@@ -309,6 +334,23 @@ class Chat extends Component {
 
   reportComment = async (messageData) => {};
 
+  banUser = async (messageData) => {
+    banUserFromSendBirdChannel(this.roomConnection, messageData.user.uid)
+      .then(() => {
+        this.setState({optionsList: [], optionsVisible: false});
+        Alert.alert(
+          'Success',
+          `${messageData.user.username} has been successfully banned.`,
+          [{text: 'Okay'}],
+        );
+      })
+      .catch((error) =>
+        Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]),
+      );
+  };
+
+  muteUser = async (messageData) => {};
+
   deleteComment = async (messageData) => {
     this.roomConnection.deleteMessage(
       messageData.nativeMessageObject,
@@ -344,8 +386,17 @@ class Chat extends Component {
     const adminOptionsList = [
       ...constantOptionsList,
       {
-        title: 'Delete',
+        title: 'Delete Message',
         onPress: () => this.deleteComment(messageData),
+      },
+      {
+        title: 'Mute User',
+        onPress: () => this.muteUser(messageData),
+        color: constants.RED,
+      },
+      {
+        title: 'Ban User',
+        onPress: () => this.banUser(messageData),
         color: constants.RED,
       },
     ];
@@ -514,7 +565,7 @@ class Chat extends Component {
   };
 
   renderComments = () => {
-    const {refreshing, comments, endReached} = this.state;
+    const {refreshing, comments, endReached, isBanned} = this.state;
 
     return (
       <SafeAreaView style={{width, alignItems: 'center', flex: 1}}>
@@ -550,7 +601,14 @@ class Chat extends Component {
                     width: width,
                     alignItems: 'center',
                   }}>
-                  <Text text="There is no comments" style={{color: 'gray'}} />
+                  <Text
+                    text={
+                      isBanned
+                        ? constants.CHAT_CANNOT_JOIN_BANNED_MESSAGE
+                        : 'There is no comments'
+                    }
+                    style={{color: 'gray', textAlign: 'center'}}
+                  />
                 </View>
               );
             }}
@@ -608,11 +666,37 @@ class Chat extends Component {
                       style={{fontSize: 12, fontWeight: 'normal'}}
                     />
                   </View>
-                  <View style={{width: 60, alignItems: 'flex-end'}}>
+                  <View
+                    style={{
+                      width: 60,
+                      alignItems: 'flex-end',
+                      flexDirection: 'column',
+                    }}>
                     <Text
-                      text={timeDifference(item.timestamp)}
+                      text={timeDifference(item.createdTimestampt)}
                       style={{color: 'gray', fontSize: 10}}
                     />
+                    {item.updatedTimestampt ? (
+                      <View
+                        style={{
+                          paddingTop: SIZES.spacing,
+                          flexDirection: 'row',
+                        }}>
+                        <Icon
+                          name="update"
+                          color="gray"
+                          type="material-community"
+                          size={13}
+                          style={{
+                            paddingRight: SIZES.spacing,
+                          }}
+                        />
+                        <Text
+                          text={timeDifference(item.updatedTimestampt)}
+                          style={{color: 'gray', fontSize: 10}}
+                        />
+                      </View>
+                    ) : null}
                   </View>
                 </View>
                 <View
@@ -723,7 +807,7 @@ class Chat extends Component {
               </View>
             )}
           />
-          {this.commentBar()}
+          {!isBanned ? this.commentBar() : null}
         </KeyboardAvoidingView>
       </SafeAreaView>
     );
@@ -844,7 +928,14 @@ class Chat extends Component {
   };
 
   render() {
-    const {loading, general, optionsVisible, optionsList} = this.state;
+    const {
+      loading,
+      general,
+      optionsVisible,
+      optionsList,
+      isBanned,
+      subscribtion,
+    } = this.state;
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
         <Header
@@ -865,7 +956,7 @@ class Chat extends Component {
             textStyle={{marginTop: 10, fontWeight: 'normal'}}
             text="Loading"
           />
-        ) : !this.state.subscribtion.subscribtion ? (
+        ) : !subscribtion.subscribtion && !isBanned ? (
           Alert.alert('Oops', 'You must be a member to view the content.', [
             {text: 'Okay'},
           ])
