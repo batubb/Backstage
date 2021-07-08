@@ -87,12 +87,13 @@ class Rooms extends Component {
         <TouchableOpacity onPress={() => this.goTo('Chat', item)}>
           <View
             style={{
-              width: width - 20,
+              width: width,
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
               marginTop: 10,
               marginBottom: SIZES.spacing * 3,
+              paddingHorizontal: SIZES.padding * 2,
             }}>
             <MyImage
               style={{width: 60, height: 60, borderRadius: 30}}
@@ -100,8 +101,9 @@ class Rooms extends Component {
             />
             <View
               style={{
+                width: width,
+                paddingLeft: SIZES.padding2,
                 flexDirection: 'row',
-                width: width - 90,
                 justifyContent: 'space-between',
                 alignItems: 'center',
               }}>
@@ -112,7 +114,10 @@ class Rooms extends Component {
             </View>
           </View>
         </TouchableOpacity>
-        <Divider width={'90%'} />
+        <Divider
+          width={width}
+          style={{marginLeft: SIZES.padding + 170, opacity: 0.2}}
+        />
       </View>
     ));
   };
@@ -248,6 +253,7 @@ class Rooms extends Component {
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
         <Header title="Rooms" />
+        <SearchBar searchUser={(input) => this.searchUser(input)} />
         {loading ? (
           <Loading
             loadingStyle={{
@@ -264,8 +270,7 @@ class Rooms extends Component {
               <RefreshControl refreshing={refreshing} tintColor="white" />
             }>
             <View style={{width: width, alignItems: 'center'}}>
-              <SearchBar searchUser={(input) => this.searchUser(input)} />
-              <View
+              {/* <View
                 style={{
                   width: width,
                   flexDirection: 'row',
@@ -295,7 +300,7 @@ class Rooms extends Component {
                   }
                   value={anon}
                 />
-              </View>
+              </View> */}
               {this.renderSearchTerms(
                 searchArray.length === 0 && search.length === 0
                   ? userArray

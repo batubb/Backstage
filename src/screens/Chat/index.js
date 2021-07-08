@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {Icon} from 'react-native-elements';
@@ -34,56 +35,17 @@ import {
   Chat as StreamChatComponent,
   MessageInput,
   Thread as StreamThreadComponent,
+  MessageSimple,
+  Message,
+  MessageFooter,
+  MessageAvatar,
 } from 'stream-chat-react-native';
 import {StreamChat} from 'stream-chat';
 import jwt from 'react-native-pure-jwt';
 import {getBottomSpace, getStatusBarHeight} from '../../lib/iPhoneXHelper';
-import {COLORS, SIZES} from '../../resources/theme';
+import {COLORS, SIZES, STREAM_THEME} from '../../resources/theme';
 
 const {width, height} = Dimensions.get('window');
-
-const streami18n = new Streami18n({
-  language: 'en',
-});
-
-const streamTheme = {
-  avatar: {
-    image: {
-      height: 70,
-      width: 70,
-    },
-  },
-  colors: {
-    accent_blue: COLORS.primary,
-    accent_green: '#20E070',
-    accent_red: constants.RED,
-    bg_gradient_end: COLORS.backgroundColor,
-    bg_gradient_start: COLORS.backgroundColor,
-    black: COLORS.white,
-    blue_alice: COLORS.black,
-    border: COLORS.black,
-    grey: COLORS.gray,
-    grey_gainsboro: COLORS.systemFill,
-    grey_whisper: COLORS.quaternaryLabel,
-    icon_background: '#FFFFFF',
-    modal_shadow: COLORS.secondaryBackgroundColor,
-    overlay: '#00000066',
-    overlay_dark: '#FFFFFFCC',
-    shadow_icon: '#00000080',
-    targetedMessageBackground: '#302D22',
-    transparent: 'transparent',
-    white: COLORS.black,
-    white_smoke: COLORS.secondaryBackgroundColor,
-    white_snow: COLORS.backgroundColor,
-  },
-  imageGallery: {
-    blurType: 'dark',
-  },
-  spinner: {
-    height: 30,
-    width: 30,
-  },
-};
 
 class Chat extends Component {
   constructor(props) {
@@ -101,12 +63,12 @@ class Chat extends Component {
   }
 
   componentDidMount = async () => {
-    const {subscribtion} =
+    const subscribtion =
       Store.uid !== this.state.user.uid
         ? await checkSubscribtion(Store.uid, this.state.user.uid)
         : {subscribtion: true};
 
-    if (subscribtion === true) {
+    if (subscribtion.subscribtion === true) {
       const posts = await getUserPosts(this.state.user.uid);
       this.setState({posts, subscribtion});
 
@@ -116,7 +78,7 @@ class Chat extends Component {
 
       await database()
         .ref('users')
-        .child(this.state.user.uid)
+        .child(Store.user.uid)
         .once('value', async (snap) => {
           snap = snap.toJSON();
 
@@ -133,14 +95,16 @@ class Chat extends Component {
           const user = {
             id: streamUserUid,
             uid: snap.uid,
-            name: snap.name,
             username: snap.username,
             role: 'user',
             image: snap.photo,
+            verified: snap.verified === true,
           };
           this.streamServerClient
             .connectUser(user, token)
             .then(async (streamUserData) => {
+              this.streamUserData = streamUserData;
+
               if (snap.streamUserUid !== streamUserUid) {
                 if (Store.user.uid === snap.uid) {
                   Store.setUser({...Store.user, streamUserUid});
@@ -151,30 +115,47 @@ class Chat extends Component {
                   .update({streamUserUid});
               }
 
-              if (!snap.streamChannelUid) {
-                const streamChannelUid = makeid(40);
-                this.channel = this.streamServerClient.channel(
-                  'messaging',
-                  streamChannelUid,
-                  {
-                    name: streamChannelUid,
-                  },
-                );
-                await this.channel.create();
+              if (!this.state.user.streamChannelUid) {
+                await database()
+                  .ref('users')
+                  .child(this.state.user.uid)
+                  .once('value', async (influencerSnap) => {
+                    influencerSnap = influencerSnap.toJSON();
 
-                if (snap.streamChannelUid !== streamChannelUid) {
-                  if (Store.user.uid === snap.uid) {
-                    Store.setUser({...Store.user, streamChannelUid});
-                  }
-                  await database()
-                    .ref('users')
-                    .child(snap.uid)
-                    .update({streamChannelUid});
-                }
+                    if (!influencerSnap.streamChannelUid) {
+                      const streamChannelUid = makeid(40);
+                      this.channel = this.streamServerClient.channel(
+                        'messaging',
+                        streamChannelUid,
+                        {
+                          name: streamChannelUid,
+                        },
+                      );
+                      await this.channel.create();
+
+                      if (
+                        influencerSnap.streamChannelUid !== streamChannelUid
+                      ) {
+                        if (Store.user.uid === influencerSnap.uid) {
+                          Store.setUser({...Store.user, streamChannelUid});
+                        }
+                        await database()
+                          .ref('users')
+                          .child(influencerSnap.uid)
+                          .update({streamChannelUid});
+                      }
+                    } else {
+                      this.channel =
+                        await this.streamServerClient.getChannelById(
+                          'messaging',
+                          influencerSnap.streamChannelUid,
+                        );
+                    }
+                  });
               } else {
-                this.channel = this.streamServerClient.getChannelById(
+                this.channel = await this.streamServerClient.getChannelById(
                   'messaging',
-                  snap.streamChannelUid,
+                  this.state.user.streamChannelUid,
                 );
               }
 
@@ -182,9 +163,11 @@ class Chat extends Component {
                 id: snap.streamUserUid,
               });
               if (
-                !members.some((member) => member.user_id === snap.streamUserUid)
+                !members.some(
+                  (member) => member.user_id === streamUserData.me.id,
+                )
               ) {
-                await this.channel.addMembers([snap.streamUserUid]);
+                await this.channel.addMembers([streamUserData.me.id]);
               }
               this.watchChannel();
             })
@@ -195,16 +178,24 @@ class Chat extends Component {
             });
         });
     } else {
-      this.setState({loading: false});
+      this.setState({loading: false, subscribtion});
     }
+
+    this._unsubscribe = this.props.navigation.addListener('focus', async () => {
+      await this.setState({thread: null});
+    });
   };
 
   componentWillUnmount = async () => {
-    if (this.channel) {
-      await this.channel.stopWatching();
-    }
-    if (this.streamServerClient) {
-      await this.streamServerClient.disconnectUser();
+    this._unsubscribe();
+
+    if (this.state.thread === null) {
+      if (this.channel) {
+        await this.channel.stopWatching();
+      }
+      if (this.streamServerClient) {
+        await this.streamServerClient.disconnectUser();
+      }
     }
   };
 
@@ -229,116 +220,83 @@ class Chat extends Component {
         posts: this.state.posts,
       });
       return this.props.navigation.dispatch(replaceActions);
+    } else if (route === 'ChatThread') {
+      this.setState({thread: info}, () => {
+        const replaceActions = StackActions.push(route, {
+          thread: info,
+          influencer: this.state.user,
+          channel: this.channel,
+          streamServerClient: this.streamServerClient,
+        });
+        return this.props.navigation.dispatch(replaceActions);
+      });
     }
   };
 
-  renderComments = () => {
+  renderChat = () => {
     const {thread} = this.state;
 
     return (
-      <ChatOverlayProvider
-        i18nInstance={streami18n}
-        value={{style: streamTheme}}
-        bottomInset={getBottomSpace()}>
-        <SafeAreaView
-          style={{flex: 1, backgroundColor: streamTheme.colors.white}}>
+      <SafeAreaView
+        style={{flex: 1, backgroundColor: STREAM_THEME.colors.white}}>
+        <KeyboardAvoidingView
+          behavior="padding"
+          keyboardVerticalOffset={85 + getBottomSpace()}>
           <StreamChatComponent
             client={this.streamServerClient}
-            i18nInstance={streami18n}>
+            i18nInstance={constants.STREAM_I18N}>
             <Channel
               channel={this.channel}
               keyboardVerticalOffset={getStatusBarHeight()}
-              thread={thread}>
-              <View style={{flex: 1}}>
-                {thread === null ? (
-                  <>
-                    <MessageList
-                      onThreadSelect={(thread) => this.setState({thread})}
+              thread={thread}
+              hasFilePicker={false}
+              MessageAvatar={(props) => {
+                return (
+                  <View style={{height: '100%', paddingTop: SIZES.padding, alignItems: 'center'}}>
+                    <MessageAvatar {...props} />
+                  </View>
+                );
+              }}
+              MessageHeader={(props) =>
+                props.message.user.uid === Store.user.uid ? null : (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      width: '100%',
+                      justifyContent:
+                        props.message.user.uid === Store.user.uid
+                          ? 'flex-end'
+                          : 'flex-start',
+                      alignItems: 'center',
+                      marginVertical: SIZES.spacing,
+                    }}>
+                    <Text
+                      text={`${props.message.user.username}`}
+                      style={{
+                        color: STREAM_THEME.colors.black,
+                        opacity: 0.4,
+                        fontSize: 10,
+                      }}
                     />
-                    <MessageInput />
-                  </>
-                ) : (
-                  <StreamThreadComponent
-                    onThreadDismount={() => this.setState({thread: null})}
-                  />
-                )}
+                    {props.message.user.verified === true ? (
+                      <VerifiedIcon
+                        size={10}
+                        style={{paddingBottom: SIZES.spacing}}
+                      />
+                    ) : null}
+                  </View>
+                )
+              }>
+              <View style={{flex: 1}}>
+                <MessageList
+                  onThreadSelect={(thread) => this.goTo('ChatThread', thread)}
+                />
+                <MessageInput />
               </View>
             </Channel>
           </StreamChatComponent>
-        </SafeAreaView>
-      </ChatOverlayProvider>
-    );
-  };
-
-  renderPosts = () => {
-    return (
-      <PostsCard
-        onPress={(item) => this.goTo('Comments', item)}
-        posts={this.state.posts}
-        numCols={3}
-      />
-    );
-  };
-
-  renderProfileTop = (user = this.state.user) => {
-    return (
-      <View
-        style={{
-          width: width,
-          flexDirection: 'row',
-          padding: 15,
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
-        <TouchableOpacity onPress={() => this.goTo('UserProfile', user)}>
-          <MyImage
-            style={{width: 50, height: 50, borderRadius: 25}}
-            photo={user.photo}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => this.goTo('UserProfile', user)}>
-          <View style={{marginLeft: 10, width: 100, flexDirection: 'row'}}>
-            <Text text={user.username} />
-            {user.verified === true ? <VerifiedIcon size={14} /> : null}
-          </View>
-        </TouchableOpacity>
-        <Button
-          buttonStyle={{
-            width: (width - 200) / 2 - 5,
-            backgroundColor: this.state.general
-              ? '#FFF'
-              : constants.BACKGROUND_COLOR,
-            borderWidth: 1,
-            borderColor: '#FFF',
-            padding: 5,
-            borderRadius: 16,
-          }}
-          textStyle={{
-            color: this.state.general ? constants.BACKGROUND_COLOR : '#FFF',
-            fontSize: 12,
-          }}
-          text="Main"
-          onPress={() => this.setState({general: true})}
-        />
-        <Button
-          buttonStyle={{
-            width: (width - 200) / 2 - 5,
-            backgroundColor: this.state.general
-              ? constants.BACKGROUND_COLOR
-              : '#FFF',
-            borderWidth: 1,
-            borderColor: '#FFF',
-            padding: 5,
-            borderRadius: 16,
-          }}
-          textStyle={{
-            color: this.state.general ? '#FFF' : constants.BACKGROUND_COLOR,
-            fontSize: 12,
-          }}
-          text="Content"
-          onPress={() => this.setState({general: false})}
-        />
-      </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     );
   };
 
@@ -353,69 +311,83 @@ class Chat extends Component {
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-        <Text text="Membership" style={{fontSize: 24}} />
         <Text
-          text={`$ ${this.state.user.price.toFixed(2)}`}
-          style={{fontSize: 32, marginTop: 10}}
-        />
-        <Text text="per month" style={{color: 'white', fontWeight: 'normal'}} />
-        <Text
-          text={`You must be a member to join the ${this.state.user.username} creator's room.`}
+          text={`You must be a member to join ${this.state.user.username}'s room.`}
           style={{
-            fontSize: 17,
-            color: COLORS.gray,
-            fontWeight: 'normal',
+            fontSize: 24,
+            color: COLORS.white,
+            fontWeight: 'bold',
             marginTop: SIZES.padding * 2,
             textAlign: 'center',
           }}
         />
         <Button
-          text={`Subscribe to ${this.state.user.username}`}
+          text={`Subscribe`}
           buttonStyle={{
             backgroundColor: COLORS.primary,
-            borderRadius: SIZES.radius,
-            paddingVertical: SIZES.padding * 1.5,
-            paddingHorizontal: SIZES.padding * 4,
+            width: '100%',
             marginTop: SIZES.padding * 3,
           }}
           textStyle={{color: COLORS.white, fontSize: 16}}
           onPress={() => this.goTo('Subscribe')}
-        />
-        <Text
-          text="As a member, you'll remain anonymus. Become a member The creator won't see your username."
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            fontSize: 12,
-            color: COLORS.gray,
-            fontWeight: 'normal',
-            textAlign: 'center',
-          }}
         />
       </View>
     );
   };
 
   render() {
-    const {loading, general, subscribtion, thread} = this.state;
+    const {loading, general, subscribtion, user} = this.state;
+
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
         <Header
-          title={
-            thread === null
-              ? 'Room'
-              : `Thread of ${thread.user.username}'s Message`
+          centerComponent={
+            <TouchableOpacity
+              style={{
+                width: width - 120,
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                alignSelf: 'center',
+              }}
+              onPress={() => this.goTo('UserProfile', user)}>
+              <MyImage
+                photo={user.photo}
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 25,
+                  marginRight: SIZES.spacing * 2,
+                }}
+              />
+              <View style={{flexDirection: 'column'}}>
+                <Text
+                  text={
+                    user.name.length > 22
+                      ? user.name.substring(0, 22) + '...'
+                      : user.name
+                  }
+                  style={{fontSize: 18}}
+                />
+                <View style={{flexDirection: 'row'}}>
+                  <Text
+                    text={user.username}
+                    style={{
+                      fontSize: 15,
+                      color: COLORS.gray,
+                      paddingLeft: 1,
+                      paddingTop: 1,
+                    }}
+                  />
+                  {user.verified === true ? <VerifiedIcon size={15} /> : null}
+                </View>
+              </View>
+            </TouchableOpacity>
           }
-          leftButtonPress={() => {
-            if (thread === null) {
-              this.props.navigation.dispatch(StackActions.pop());
-            } else {
-              this.setState({thread: null});
-            }
-          }}
+          leftButtonPress={() =>
+            this.props.navigation.dispatch(StackActions.pop())
+          }
           leftButtonIcon="chevron-left"
         />
-        {thread === null ? this.renderProfileTop() : null}
         {loading ? (
           <Loading
             loadingStyle={{
@@ -426,10 +398,10 @@ class Chat extends Component {
             textStyle={{marginTop: 10, fontWeight: 'normal'}}
             text="Loading"
           />
-        ) : !subscribtion ? (
+        ) : !subscribtion.subscribtion ? (
           this.renderSubscribe()
         ) : general ? (
-          this.renderComments()
+          this.renderChat()
         ) : (
           this.renderPosts()
         )}

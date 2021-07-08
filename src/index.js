@@ -7,6 +7,8 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {View, LogBox} from 'react-native';
 import {Icon} from 'react-native-elements';
 import {constants} from './resources';
+import {STREAM_THEME} from './resources/theme';
+import {OverlayProvider as ChatOverlayProvider} from 'stream-chat-react-native';
 import CustomTabBarNavigator from './components/TabNavigatorComponents/CustomTabNavigator';
 
 import Login from './screens/Login';
@@ -25,6 +27,7 @@ import Highlights from './screens/Highlights';
 import Rooms from './screens/Rooms';
 import MyInfo from './screens/MyInfo';
 import Chat from './screens/Chat';
+import ChatThread from './screens/ChatThread';
 import AddContent from './screens/AddContent';
 import PrivacyPolicy from './screens/PrivacyPolicy';
 import Notifications from './screens/Notifications';
@@ -49,34 +52,40 @@ class MyStack extends React.Component {
   render() {
     return (
       <NavigationContainer>
-        <Stack.Navigator headerMode="none" mode="card">
-          <Stack.Screen
-            name="Welcome"
-            component={Welcome}
-            options={{animationEnabled: false}}
-          />
-          <Stack.Screen
-            name="Login"
-            component={Login}
-            options={{animationEnabled: false}}
-          />
-          <Stack.Screen name="Intro" component={Intro} />
-          <Stack.Screen
-            name="CheckInfo"
-            component={CheckInfo}
-            options={{animationEnabled: false}}
-          />
-          <Stack.Screen name="WatchVideo" component={WatchVideo} />
-          <Stack.Screen name="Comments" component={Comments} />
-          <Stack.Screen name="Chat" component={Chat} />
-          <Stack.Screen name="Subscribe" component={Subscribe} />
-          <Stack.Screen
-            name="TabBarMenu"
-            component={TabBarMenu}
-            options={{animationEnabled: false}}
-          />
-          <Stack.Screen name="UserProfile" component={UserProfile} />
-        </Stack.Navigator>
+        <ChatOverlayProvider
+          i18nInstance={constants.STREAM_I18N}
+          value={{style: STREAM_THEME}}
+          bottomInset={getBottomSpace()}>
+          <Stack.Navigator headerMode="none" mode="card">
+            <Stack.Screen
+              name="Welcome"
+              component={Welcome}
+              options={{animationEnabled: false}}
+            />
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{animationEnabled: false}}
+            />
+            <Stack.Screen name="Intro" component={Intro} />
+            <Stack.Screen
+              name="CheckInfo"
+              component={CheckInfo}
+              options={{animationEnabled: false}}
+            />
+            <Stack.Screen name="WatchVideo" component={WatchVideo} />
+            <Stack.Screen name="Comments" component={Comments} />
+            <Stack.Screen name="Chat" component={Chat} />
+            <Stack.Screen name="ChatThread" component={ChatThread} />
+            <Stack.Screen name="Subscribe" component={Subscribe} />
+            <Stack.Screen
+              name="TabBarMenu"
+              component={TabBarMenu}
+              options={{animationEnabled: false}}
+            />
+            <Stack.Screen name="UserProfile" component={UserProfile} />
+          </Stack.Navigator>
+        </ChatOverlayProvider>
       </NavigationContainer>
     );
   }

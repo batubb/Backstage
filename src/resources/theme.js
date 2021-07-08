@@ -1,6 +1,7 @@
 import {PlatformColor} from 'react-native';
 import {Dimensions} from 'react-native';
 const {width, height} = Dimensions.get('window');
+import constants from './constants';
 
 const ADAPTIVE_COLORS = {
   // base colors
@@ -119,6 +120,45 @@ export const FONTS = {
   body5: {fontFamily: 'Roboto-Regular', fontSize: SIZES.body5, lineHeight: 22},
 };
 
-const appTheme = {COLORS, SIZES, FONTS};
+export const STREAM_THEME = {
+  avatar: {
+    image: {
+      height: 70,
+      width: 70,
+    },
+  },
+  colors: {
+    accent_blue: COLORS.primary,
+    accent_green: '#20E070',
+    accent_red: constants.RED,
+    bg_gradient_end: COLORS.backgroundColor,
+    bg_gradient_start: COLORS.backgroundColor,
+    black: COLORS.white,
+    blue_alice: COLORS.black,
+    border: COLORS.black,
+    grey: COLORS.gray,
+    grey_gainsboro: COLORS.systemFill,
+    grey_whisper: COLORS.quaternaryLabel,
+    icon_background: '#FFFFFF',
+    modal_shadow: COLORS.secondaryBackgroundColor,
+    overlay: '#00000066',
+    overlay_dark: '#FFFFFFCC',
+    shadow_icon: '#00000080',
+    targetedMessageBackground: '#302D22',
+    transparent: 'transparent',
+    white: COLORS.black,
+    white_smoke: COLORS.secondaryBackgroundColor,
+    white_snow: COLORS.backgroundColor,
+  },
+  imageGallery: {
+    blurType: 'dark',
+  },
+  spinner: {
+    height: 30,
+    width: 30,
+  },
+};
+
+const appTheme = {COLORS, SIZES, FONTS, STREAM_THEME};
 
 export default appTheme;
