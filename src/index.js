@@ -40,18 +40,35 @@ import WithdrawSummary from './screens/WithdrawSummary';
 import WithdrawalHistory from './screens/WithdrawalHistory';
 import Welcome from './screens/Welcome';
 import {COLORS} from './resources/theme';
-import {PlatformColor} from 'react-native';
+import {PlatformColor, Linking} from 'react-native';
 import {getBottomSpace} from './lib/iPhoneXHelper';
+import {handleURLSchemes} from './lib';
 
 LogBox.ignoreAllLogs();
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
+const navigationContainerRef = React.createRef();
+
 class MyStack extends React.Component {
+  componentDidMount() {
+    Linking.addEventListener('url', (event) =>
+      handleURLSchemes(event, {dispatch: navigationContainerRef.current?.dispatch}),
+    );
+  }
+
+  componentWillUnmount() {
+    Linking.removeEventListener('url', (event) =>
+      handleURLSchemes(event, {dispatch: navigationContainerRef.current?.dispatch}),
+    );
+  }
+
   render() {
     return (
-      <NavigationContainer>
+      <NavigationContainer
+        ref={navigationContainerRef}
+        onReady={this.onNavigationReady}>
         <ChatOverlayProvider
           i18nInstance={constants.STREAM_I18N}
           value={{style: STREAM_THEME}}

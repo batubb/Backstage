@@ -10,7 +10,7 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
-  KeyboardAvoidingView,
+  Linking,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
@@ -40,6 +40,7 @@ import {COLORS, SIZES} from '../../resources/theme';
 import LoginFlowPage from '../../components/ScreenComponents/LoginComponents/LoginFlowPage';
 import LoginFlowTextInput from '../../components/ScreenComponents/LoginComponents/LoginFlowTextInput';
 import LinearGradient from 'react-native-linear-gradient';
+import {handleURLSchemes} from '../../lib';
 
 const {width} = Dimensions.get('window');
 const BORDER_RADIUS = 6;
@@ -63,14 +64,22 @@ class CheckInfo extends Component {
     const result = await checkUserInfo(Store.uid, true);
     await getFollowList(Store.uid);
 
-    if (!result) {
-      const userArray = await getDealsData();
-      this.setState({loading: false, userArray});
-    } else {
-      //this.setState({loading: false});
-      const replaceActions = StackActions.replace('TabBarMenu');
-      return this.props.navigation.dispatch(replaceActions);
-    }
+    Linking.getInitialURL().then(async (url) => {
+      if (!result) {
+        const userArray = await getDealsData();
+        this.setState({loading: false, userArray});
+      } else {
+        //this.setState({loading: false});
+        const replaceActions = StackActions.replace('TabBarMenu');
+        this.props.navigation.dispatch(replaceActions);
+        if (url !== null) {
+          setTimeout(
+            () => handleURLSchemes({url}, this.props.navigation),
+            1000,
+          );
+        }
+      }
+    });
   };
 
   createAccount = async () => {
@@ -158,7 +167,7 @@ class CheckInfo extends Component {
               step === 2 ? () => this.setState({step: step - 1}) : null
             }
             leftButtonIcon={step === 2 ? 'chevron-left' : null}
-            backgroundColor={"transparent"}
+            backgroundColor={'transparent'}
           />
           {step === 1 ? (
             <LoginFlowPage

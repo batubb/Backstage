@@ -10,6 +10,7 @@ import {
   RefreshControl,
   Alert,
   Image,
+  Linking,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import LinearGradient from 'react-native-linear-gradient';
@@ -26,6 +27,7 @@ import Store from '../../store/Store';
 import {COLORS, SIZES} from '../../resources/theme';
 import Story from '../../components/ScreenComponents/HomeComponents/Story/Story';
 import PostingCard from '../../components/ScreenComponents/HomeComponents/PostingCard/PostingCard';
+import {handleURLSchemes} from '../../lib';
 
 //const {width} = Dimensions.get('window');
 const width = Dimensions.get('window')['width'] - constants.PAGE_LEFT_PADDING;

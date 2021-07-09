@@ -15,6 +15,7 @@
 		17D596CED92E45519B210EC1 /* Oswald-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 94CB33515342404590F8E78A /* Oswald-Regular.ttf */; };
 		202C97FE267D4869006DBD2D /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 202C97FD267D4869006DBD2D /* StoreKit.framework */; };
 		212562DF26963C6F00CD0ABA /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 212562DE26963C6F00CD0ABA /* CloudKit.framework */; };
+		21317D1A2698686C0002F8CB /* infapp.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 20CDB36D267BE9BB00C85307 /* infapp.entitlements */; };
 		26EBE7426EA043929435542F /* Oswald-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4546ED7C35C41429F0860CF /* Oswald-SemiBold.ttf */; };
 		2932FA08364B4B978294CF32 /* SF-Pro-Display-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 09B4E2FF7E9E4D26819E29AF /* SF-Pro-Display-Medium.otf */; };
 		2B1E761F45024B22978F7750 /* SF-Pro-Display-RegularItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1C414DD1FD1C403F8AE3BA16 /* SF-Pro-Display-RegularItalic.otf */; };
@@ -470,6 +471,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				21317D1A2698686C0002F8CB /* infapp.entitlements in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				D4C0AA4A261F18CE00C6BECC /* GoogleService-Info.plist in Resources */,
