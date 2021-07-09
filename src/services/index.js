@@ -29,6 +29,7 @@ import createToken from './createToken';
 import unsubscribe from './unsubscribe';
 import withdraw from './withdraw';
 import connectSendbird from './connectSendbird';
+import likeVideo from './likeVideo';
 
 module.exports = {
     getDealsData,
@@ -61,4 +62,5 @@ module.exports = {
     unsubscribe,
     withdraw,
     connectSendbird,
+    likeVideo,
 };
