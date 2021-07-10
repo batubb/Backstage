@@ -7,6 +7,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {View, LogBox} from 'react-native';
 import {Icon} from 'react-native-elements';
 import {constants} from './resources';
+import CustomTabBarNavigator from './components/TabNavigatorComponents/CustomTabNavigator';
 
 import Login from './screens/Login';
 import Home from './screens/Home';
@@ -30,9 +31,14 @@ import Notifications from './screens/Notifications';
 import Subscribe from './screens/Subscribe';
 import MyBanks from './screens/MyBanks';
 import EditProfile from './screens/EditProfile';
-import Withdraw from './screens/Withdraw';
+import Earnings from './screens/Earnings';
+import EditBankAccount from './screens/EditBankAccount';
+import WithdrawSummary from './screens/WithdrawSummary';
+import WithdrawalHistory from './screens/WithdrawalHistory';
+import Welcome from './screens/Welcome';
 import {COLORS} from './resources/theme';
 import {PlatformColor} from 'react-native';
+import {getBottomSpace} from './lib/iPhoneXHelper';
 
 LogBox.ignoreAllLogs();
 
@@ -44,6 +50,11 @@ class MyStack extends React.Component {
     return (
       <NavigationContainer>
         <Stack.Navigator headerMode="none" mode="card">
+          <Stack.Screen
+            name="Welcome"
+            component={Welcome}
+            options={{animationEnabled: false}}
+          />
           <Stack.Screen
             name="Login"
             component={Login}
@@ -120,7 +131,10 @@ class ProfileMenu extends React.Component {
         <Stack.Screen name="Rooms" component={Rooms} />
         <Stack.Screen name="MyBanks" component={MyBanks} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
-        <Stack.Screen name="Withdraw" component={Withdraw} />
+        <Stack.Screen name="Earnings" component={Earnings} />
+        <Stack.Screen name="EditBankAccount" component={EditBankAccount} />
+        <Stack.Screen name="WithdrawSummary" component={WithdrawSummary} />
+        <Stack.Screen name="WithdrawalHistory" component={WithdrawalHistory} />
       </Stack.Navigator>
     );
   }
@@ -154,6 +168,23 @@ class TabBarBottom extends React.Component {
     return (
       <Tab.Navigator
         lazy
+        tabBar={(props) => (
+          <CustomTabBarNavigator
+            {...props}
+            style={{
+              height: 60 + getBottomSpace(),
+              width: '100%',
+              justifyContent: 'space-around',
+              alignItems: 'center',
+              backgroundColor: constants.BAR_COLOR,
+              flexDirection: 'row',
+            }}
+            buttonStyle={{
+              flex: 1,
+              height: 60,
+            }}
+          />
+        )}
         tabBarOptions={{
           tabBarPosition: 'bottom',
           swipeEnabled: false,
@@ -169,6 +200,7 @@ class TabBarBottom extends React.Component {
           name="HomeMenu"
           component={HomeMenu}
           options={{
+            tabBarAccessibilityLabel: 'Feed',
             tabBarLabel: 'Feed',
             tabBarIcon: ({color, focused}) => (
               <View
@@ -190,6 +222,7 @@ class TabBarBottom extends React.Component {
           name="SearchMenu"
           component={SearchMenu}
           options={{
+            tabBarAccessibilityLabel: 'Search',
             tabBarLabel: 'Search',
             tabBarIcon: ({color, focused}) => (
               <View
@@ -211,6 +244,7 @@ class TabBarBottom extends React.Component {
           name="AddContent"
           component={AddContentPlaceHolder}
           options={{
+            tabBarAccessibilityLabel: 'Create',
             tabBarLabel: 'Create',
             tabBarIcon: ({color, focused}) => (
               <View
@@ -238,6 +272,7 @@ class TabBarBottom extends React.Component {
           name="RoomsMenu"
           component={RoomsMenu}
           options={{
+            tabBarAccessibilityLabel: 'RoomsMenu',
             tabBarLabel: 'Rooms',
             tabBarIcon: ({color, focused}) => (
               <View
@@ -259,6 +294,7 @@ class TabBarBottom extends React.Component {
           name="ProfileMenu"
           component={ProfileMenu}
           options={{
+            tabBarAccessibilityLabel: 'Profile',
             tabBarLabel: 'Profile',
             tabBarIcon: ({color, focused}) => (
               <View

@@ -39,6 +39,7 @@ import {SafeAreaView} from 'react-native';
 import {COLORS, SIZES} from '../../resources/theme';
 import LoginFlowPage from '../../components/ScreenComponents/LoginComponents/LoginFlowPage';
 import LoginFlowTextInput from '../../components/ScreenComponents/LoginComponents/LoginFlowTextInput';
+import LinearGradient from 'react-native-linear-gradient';
 
 const {width} = Dimensions.get('window');
 const BORDER_RADIUS = 6;
@@ -97,6 +98,7 @@ class CheckInfo extends Component {
       return this.props.navigation.dispatch(replaceActions);
     }
   };
+
   onPressNextUsername = async () => {
     if (this.state.username === '' || this.state.username === '@') {
       Alert.alert('Oops', 'Username can not be empty', [{text: 'Okay'}]);
@@ -127,7 +129,6 @@ class CheckInfo extends Component {
   };
 
   render() {
-    console.log(this.props.navigation);
     const {loading, step} = this.state;
     if (loading) {
       return (
@@ -146,12 +147,18 @@ class CheckInfo extends Component {
       );
     } else {
       return (
-        <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
+        <LinearGradient
+          colors={constants.CUSTOM_PURPLE_GRADIENT}
+          start={{x: -0.2, y: 0.7}}
+          end={{x: 0.7, y: 0}}
+          locations={[0, 0.4, 1]}
+          style={{flex: 1}}>
           <Header
             leftButtonPress={
               step === 2 ? () => this.setState({step: step - 1}) : null
             }
             leftButtonIcon={step === 2 ? 'chevron-left' : null}
+            backgroundColor={"transparent"}
           />
           {step === 1 ? (
             <LoginFlowPage
@@ -194,7 +201,7 @@ class CheckInfo extends Component {
               onPressNext={() => this.onPressNextUsername()}
             />
           ) : null}
-        </View>
+        </LinearGradient>
       );
     }
   }

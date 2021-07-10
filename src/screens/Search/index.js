@@ -21,6 +21,7 @@ import {
   MyImage,
   SearchBar,
   Divider,
+  VerifiedIcon,
 } from '../../components';
 import {constants} from '../../resources';
 import {searchUser, getTrendingsData} from '../../services';
@@ -28,7 +29,7 @@ import {followerCount} from '../../lib';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
 import {Button} from 'react-native-share';
 import {PlatformColor} from 'react-native';
-import {COLORS, SIZES} from '../../resources/theme';
+import {SIZES} from '../../resources/theme';
 
 const {width} = Dimensions.get('window');
 
@@ -115,7 +116,10 @@ class Search extends Component {
                     alignItems: 'center',
                   }}>
                   <View style={{width: width - 150}}>
-                    <Text text={item.name} style={{fontSize: 16}} />
+                    <View style={{flexDirection: 'row'}}>
+                      <Text text={item.name} style={{fontSize: 16}} />
+                      {item.verified === true ? <VerifiedIcon size={16} /> : null}
+                    </View>
                     <Text
                       text={`@${item.username}`}
                       style={{
@@ -227,7 +231,11 @@ class Search extends Component {
                   onRefresh={() => this.onRefresh()}
                   tintColor="white"
                 />
-              }>
+              }
+              style={{
+                marginHorizontal: SIZES.padding,
+              }}
+              >
               {this.renderCards(trendingsArray)}
             </ScrollView>
           </>

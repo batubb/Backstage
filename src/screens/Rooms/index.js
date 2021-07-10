@@ -15,7 +15,6 @@ import {
   Platform,
 } from 'react-native';
 import {observer} from 'mobx-react';
-import {Icon} from 'react-native-elements';
 import {
   Loading,
   Header,
@@ -24,6 +23,7 @@ import {
   SearchBar,
   Button,
   Divider,
+  VerifiedIcon,
 } from '../../components';
 import {constants} from '../../resources';
 import {getDealsData, searchUser} from '../../services';
@@ -105,8 +105,9 @@ class Rooms extends Component {
                 justifyContent: 'space-between',
                 alignItems: 'center',
               }}>
-              <View style={{width: width - 150}}>
+              <View style={{width: width - 150, flexDirection: 'row'}}>
                 <Text text={`${item.username}`} style={{fontSize: 16}} />
+                {item.verified === true ? <VerifiedIcon /> : null}
               </View>
             </View>
           </View>

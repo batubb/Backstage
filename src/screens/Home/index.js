@@ -15,7 +15,7 @@ import {observer} from 'mobx-react';
 import LinearGradient from 'react-native-linear-gradient';
 import {Icon, Header} from 'react-native-elements';
 import {StackActions} from '@react-navigation/native';
-import {Loading, Text, MyImage, Divider, Button} from '../../components';
+import {Loading, Text, MyImage, Divider, VerifiedIcon} from '../../components';
 import {constants} from '../../resources';
 import {
   getFollowingLiveData,
@@ -146,7 +146,10 @@ class Home extends Component {
             photo={user.photo}
           />
         )}
-        <Text text={text} style={{fontSize: live ? 14 : 14}} />
+        <View style={{flexDirection: 'row'}}>
+          <Text text={text} style={{fontSize: live ? 14 : 14}} />
+          {user.verified === true ? <VerifiedIcon size={15} /> : null}
+        </View>
       </View>
     );
   };

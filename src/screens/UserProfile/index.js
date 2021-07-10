@@ -313,6 +313,7 @@ class UserProfile extends Component {
           title={user.username}
           rightButtonPress={() => this.setState({optionsVisible: true})}
           rightButtonIcon="dots-horizontal"
+          showVerificationIcon={user.verified === true}
         />
         {loading ? (
           <Loading

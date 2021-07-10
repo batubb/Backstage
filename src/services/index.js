@@ -27,6 +27,7 @@ import createStoryData from './createStoryData';
 import createCustomerAndSubscription from './createCustomerAndSubscription';
 import createToken from './createToken';
 import unsubscribe from './unsubscribe';
+import withdraw from './withdraw';
 
 module.exports = {
     getDealsData,
@@ -57,4 +58,5 @@ module.exports = {
     createCustomerAndSubscription,
     createToken,
     unsubscribe,
+    withdraw,
 };

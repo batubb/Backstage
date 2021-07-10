@@ -37,6 +37,22 @@ const constants = {
   NUM_POSTS_TO_VIEW_IN_HOME: 3,
 
   TIER_1: 'price_1ImhznKwkzsqkh9m3eAmW9kG',
+  MONTHS: [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ],
+  CUSTOM_PURPLE_GRADIENT: ['#872EC4', '#B150E2', '#D56DFB'],
+  SUCCESS_ICON_URL: 'https://i.pinimg.com/originals/46/d1/8f/46d18fc9c093bfcb248d1cc49b9a52fc.gif',
 };
 
 module.exports = constants;

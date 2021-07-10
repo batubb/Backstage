@@ -9,6 +9,8 @@ target 'infapp' do
   use_react_native!(:path => config["reactNativePath"])
 
 
+  pod 'RNTextGradientView', :path => '../node_modules/react-native-text-gradient'
+
   target 'infappTests' do
     inherit! :complete
     # Pods for testing

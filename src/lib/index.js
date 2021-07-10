@@ -7,6 +7,7 @@ import setPosts from './setPosts';
 import sleep from './sleep';
 import regexCheck from './regexCheck';
 import runTiming from './runTiming';
+import iPhoneXHelper from './iPhoneXHelper';
 
 module.exports = {
     makeid,
@@ -17,4 +18,5 @@ module.exports = {
     sleep,
     regexCheck,
     runTiming,
+    iPhoneXHelper,
 };

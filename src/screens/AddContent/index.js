@@ -37,7 +37,7 @@ import {KeyboardAvoidingView} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import database from '@react-native-firebase/database';
 import MyImage from '../../components/MyImage';
-import {SIZES} from '../../resources/theme';
+import {SIZES, COLORS} from '../../resources/theme';
 import PostButton from '../../components/ScreenComponents/AddContentComponents/PostButton/PostButton';
 import EditTitleModal from '../../components/ScreenComponents/AddContentComponents/EditTitleModal/EditTitleModal';
 import EditTitlePrompt from '../../components/ScreenComponents/AddContentComponents/EditTitlePrompt/EditTitlePrompt';
@@ -57,7 +57,7 @@ export default class App extends Component {
       publicKey: '',
       ratio: '16:9',
       isRecording: false,
-      indexButton:
+      indexButton: 
         this.props.route &&
         this.props.route.params &&
         this.props.route.params.startButtonIdx
@@ -66,12 +66,15 @@ export default class App extends Component {
       liveStreamId: '',
       loading: false,
       url: '',
+      thumbnailUrl: '',
+      thumbnailWidth: '',
+      thumnailHeight: '',
       title: '',
       assetId: '',
       uid: '',
       camera: 1,
       influencerPrice: 4.99,
-      influencer: false,
+      influencer: true,
       editTextModal: false,
       seconds: 0,
       timer: false,
@@ -232,18 +235,18 @@ export default class App extends Component {
     const onname = makeid(40, 'uuid');
 
     const data = await this.uploadVideo(url, onname);
-    const thumbnail = await createThumbnail({url: url, timeStamp: 10000});
-    const thumbnailUrl = await this.uploadThumbnail(thumbnail.path, onname);
+    const thumbnail = this.state.thumbnailUrl !== '' ? this.state.thumbnailUrl : await createThumbnail({url: url, timeStamp: 10000});
+    const thumbnailUrl = this.state.thumbnailUrl !== '' ? this.state.thumbnailUrl : await this.uploadThumbnail(thumbnail.path, onname);
 
-    const videoThumbURL = `${constants.VIDEO_THUMB_URL}${onname}_500x500.jpg?alt=media`;
+    const videoThumbURL = this.state.thumbnailUrl !== '' ? this.state.thumbnailUrl : `${constants.VIDEO_THUMB_URL}${onname}_500x500.jpg?alt=media`;
 
     var video = {
       uid: onname,
       url: data,
       thumbnail: {
         url: thumbnailUrl,
-        width: thumbnail.width,
-        height: thumbnail.height,
+        width: this.state.thumbnailWidth !== '' ? this.state.thumbnailWidth : thumbnail.width,
+        height: this.state.thumbnailWidth !== '' ? this.state.thumnailHeight : thumbnail.height,
       },
       title: this.state.title,
       photo: videoThumbURL,
@@ -379,7 +382,12 @@ export default class App extends Component {
 
   stopStoryVideo = async () => {
     this.camera.stopRecording();
-    this.setState({isRecording: false, seconds: 0, timer: false, isStoryVideoRecording: false});
+    this.setState({
+      isRecording: false,
+      seconds: 0,
+      timer: false,
+      isStoryVideoRecording: false,
+    });
   };
 
   startStoryVideo = async () => {
@@ -427,6 +435,21 @@ export default class App extends Component {
     ImagePicker.launchImageLibrary({mediaType: 'video'}, (result) => {
       if (!result.didCancel) {
         this.setState({url: result.uri, type: 'video'});
+      }
+    });
+  };
+
+  selectThumbnailFromRoll = async () => {
+    this.setState({loading: true, paused: true});
+    ImagePicker.launchImageLibrary({mediaType: 'photo'}, async (result) => {
+      if (!result.didCancel) {
+        const onname = makeid(40, 'uuid');
+        const thumbnailUrl = await this.uploadThumbnail(result.uri, onname);
+        const videoThumbURL = `${constants.VIDEO_THUMB_URL}${onname}_500x500.jpg?alt=media`;
+
+        this.setState({loading: false, thumbnailUrl: videoThumbURL, thumbnailWidth: result.width, thumnailHeight: result.height});
+      } else {
+        this.setState({loading: false});
       }
     });
   };
@@ -534,7 +557,7 @@ export default class App extends Component {
     );
   };
 
-  renderVideo = (title) => {
+  renderVideo = (title = '') => {
     return (
       <SafeAreaView
         style={{
@@ -581,6 +604,30 @@ export default class App extends Component {
               title={title}
               openModal={() => this.setState({editTextModal: true})}
             />
+            <TouchableOpacity
+              style={{paddingLeft: SIZES.spacing, flexDirection: 'row', alignItems: 'center', paddingTop: SIZES.padding}}
+              onPress={() => this.selectThumbnailFromRoll()}>
+              <Icon name={this.state.thumbnailUrl !== '' ? 'image-edit' : 'video-image'} color="#FFF" type="material-community" style={{left: 2}} />
+              <Text 
+                text={this.state.thumbnailUrl !== '' ? "Change\nThumbnail" : "Thumbnail"}
+                style={{
+                  paddingLeft: SIZES.spacing * 5,
+                }}
+              />
+            </TouchableOpacity>
+            {this.state.thumbnailUrl !== '' ? 
+              <TouchableOpacity
+                style={{paddingLeft: SIZES.spacing, flexDirection: 'row', alignItems: 'center', paddingTop: SIZES.padding * 2}}
+                onPress={() => this.setState({thumbnailUrl: ''})}>
+                <Icon name="delete-sweep" color="#FFF" type="material-community" style={{left: 2}} />
+                <Text 
+                  text={"Remove\nThumbnail"}
+                  style={{
+                    paddingLeft: SIZES.spacing * 5,
+                  }}
+                />
+              </TouchableOpacity>
+            : null}
           </View>
 
           <TouchableOpacity
@@ -854,71 +901,60 @@ export default class App extends Component {
                 backgroundColor: constants.BACKGROUND_COLOR,
                 justifyContent: 'center',
                 alignItems: 'center',
+                bottom: SIZES.padding * 2,
               }}>
               <Text
                 text="Set your subscription price"
-                style={{fontSize: 20, marginTop: 10}}
+                style={{fontSize: 20, marginBottom: SIZES.padding}}
               />
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <TouchableOpacity onPress={() => this.setPrice('minus')}>
-                  <View style={{padding: 5}}>
-                    <Icon
-                      name="chevron-left"
-                      color="#FFF"
-                      type="material-community"
-                    />
-                  </View>
+                <TouchableOpacity
+                  onPress={() => this.setPrice('minus')}
+                  style={{
+                    padding: 5,
+                    backgroundColor: COLORS.white,
+                    borderRadius: 100,
+                  }}>
+                  <Icon
+                    name="chevron-left"
+                    color={constants.BACKGROUND_COLOR}
+                    type="material-community"
+                  />
                 </TouchableOpacity>
                 <View style={{paddingHorizontal: 20}}>
                   <Text
-                    text={`${influencerPrice.toFixed(2)} $`}
+                    text={`$${influencerPrice.toFixed(2)}`}
                     style={{fontSize: 24, marginTop: 10}}
                   />
                   <Text
-                    text={'/per month'}
-                    style={{fontSize: 12, color: 'gray'}}
+                    text={'per month'}
+                    style={{fontSize: 12, color: 'gray', textAlign: 'center'}}
                   />
                 </View>
-                <TouchableOpacity onPress={() => this.setPrice('plus')}>
-                  <View style={{padding: 5}}>
-                    <Icon
-                      name="chevron-right"
-                      color="#FFF"
-                      type="material-community"
-                    />
-                  </View>
-                </TouchableOpacity>
-              </View>
-              <TouchableOpacity
-                onPress={() => this.setState({influencer: !influencer})}>
-                <View
+                <TouchableOpacity
+                  onPress={() => this.setPrice('plus')}
                   style={{
-                    flexDirection: 'row',
-                    marginTop: 10,
-                    width: width - 40,
-                    alignItems: 'center',
+                    padding: 5,
+                    backgroundColor: COLORS.white,
+                    borderRadius: 100,
                   }}>
                   <Icon
-                    name="check-circle"
-                    color={influencer ? constants.BLUE : 'gray'}
+                    name="chevron-right"
+                    color={constants.BACKGROUND_COLOR}
                     type="material-community"
                   />
-                  <Text
-                    text="I want to be as an influencer. I have readed Term & Conditions."
-                    style={{fontSize: 12, marginLeft: 5, fontWeight: 'normal'}}
-                  />
-                </View>
-              </TouchableOpacity>
+                </TouchableOpacity>
+              </View>
               <Button
                 text="Become an Creator"
                 buttonStyle={{
-                  backgroundColor: '#FFF',
-                  borderRadius: 24,
-                  padding: 13,
-                  width: width - 40,
-                  marginTop: 20,
+                  backgroundColor: COLORS.primary,
+                  borderRadius: SIZES.radius,
+                  paddingVertical: SIZES.padding * 1.5,
+                  paddingHorizontal: SIZES.padding * 4,
+                  marginTop: SIZES.padding * 4,
                 }}
-                textStyle={{color: '#000', fontSize: 16}}
+                textStyle={{color: COLORS.white, fontSize: 16}}
                 onPress={() => this.becomeInfluencer()}
               />
             </View>

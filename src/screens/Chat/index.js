@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {Icon} from 'react-native-elements';
-import {Loading, Header, Text, MyImage, Button} from '../../components';
+import {Loading, Header, Text, MyImage, Button, VerifiedIcon} from '../../components';
 import {constants} from '../../resources';
 import {
   sendComment,
@@ -259,8 +259,9 @@ class Chat extends Component {
           />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => this.goTo('UserProfile', user)}>
-          <View style={{marginLeft: 10, width: 100}}>
+          <View style={{marginLeft: 10, width: 100, flexDirection: 'row'}}>
             <Text text={user.username} />
+            {user.verified === true ? <VerifiedIcon size={14} /> : null} 
           </View>
         </TouchableOpacity>
         <Button
@@ -427,7 +428,10 @@ class Chat extends Component {
                       justifyContent: 'space-between',
                     }}>
                     <View style={{width: width - 80}}>
-                      <Text text={item.user.username} />
+                      <View style={{flexDirection: 'row'}}>
+                        <Text text={item.user.username} />
+                        {item.user.verified === true ? <VerifiedIcon size={14} /> : null}
+                      </View>
                       <Text
                         text={item.comment}
                         style={{fontSize: 12, fontWeight: 'normal'}}
@@ -549,7 +553,10 @@ class Chat extends Component {
                     justifyContent: 'space-between',
                   }}>
                   <View style={{width: width - 110}}>
-                    <Text text={item.user.username} />
+                    <View style={{flexDirection: 'row'}}>
+                      <Text text={item.user.username} />
+                      {item.user.verified === true ? <VerifiedIcon size={14} /> : null}
+                    </View> 
                     <Text
                       text={item.comment}
                       style={{fontSize: 12, fontWeight: 'normal'}}

@@ -6,7 +6,9 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {Icon, Header} from 'react-native-elements';
 import PropTypes from 'prop-types';
 import {constants} from '../../resources';
+import {COLORS, SIZES} from '../../resources/theme';
 import Text from '../Text';
+import VerifiedIcon from '../VerifiedIcon';
 
 const {width} = Dimensions.get('window');
 
@@ -25,6 +27,7 @@ export default class HeaderComponent extends React.Component {
       leftButtonPress,
       rightButtonColor,
       rightSecondButtonColor,
+      showVerificationIcon,
     } = this.props;
 
     return (
@@ -48,10 +51,13 @@ export default class HeaderComponent extends React.Component {
           ) : null
         }
         centerComponent={
-          <Text
-            text={title.length >= 22 ? `${title.substring(0, 22)}...` : title}
-            style={{fontSize: 18}}
-          />
+          <View style={{flexDirection: 'row'}}>
+            <Text
+              text={title.length >= 22 ? `${title.substring(0, 22)}...` : title}
+              style={{fontSize: 18}}
+            />
+            {showVerificationIcon ? <VerifiedIcon size={18} /> : null}
+          </View>
         }
         centerContainerStyle={{
           justifyContent: 'center',
@@ -64,7 +70,9 @@ export default class HeaderComponent extends React.Component {
                 onPress={() => rightSecondButtonPress()}>
                 <Icon
                   name={rightSecondButtonIcon}
-                  color={rightSecondButtonColor ? rightSecondButtonColor : '#FFF'}
+                  color={
+                    rightSecondButtonColor ? rightSecondButtonColor : '#FFF'
+                  }
                   type="material-community"
                 />
               </TouchableOpacity>
