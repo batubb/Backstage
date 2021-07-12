@@ -14,6 +14,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		17D596CED92E45519B210EC1 /* Oswald-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 94CB33515342404590F8E78A /* Oswald-Regular.ttf */; };
 		202C97FE267D4869006DBD2D /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 202C97FD267D4869006DBD2D /* StoreKit.framework */; };
+		203A4ED2269C42A2000EC917 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 203A4ED1269C42A2000EC917 /* main.jsbundle */; };
 		26EBE7426EA043929435542F /* Oswald-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4546ED7C35C41429F0860CF /* Oswald-SemiBold.ttf */; };
 		2932FA08364B4B978294CF32 /* SF-Pro-Display-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 09B4E2FF7E9E4D26819E29AF /* SF-Pro-Display-Medium.otf */; };
 		2B1E761F45024B22978F7750 /* SF-Pro-Display-RegularItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1C414DD1FD1C403F8AE3BA16 /* SF-Pro-Display-RegularItalic.otf */; };
@@ -36,19 +37,19 @@
 		72DA4104664A4C4D8D1F3D37 /* SF-Pro-Display-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = E34C6A164FFC4A6AB09D22D5 /* SF-Pro-Display-Bold.otf */; };
 		790654F598364966A544BADE /* libPods-infapp-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA05699607500D6A7733F588 /* libPods-infapp-tvOS.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		A4A729851DA8420AC85B2D07 /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16FF89CBE22122CB5E746215 /* libPods-OneSignalNotificationServiceExtension.a */; };
 		B09C60546B374F059B088BC6 /* SF-Pro-Display-SemiboldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 38A4AD08A6724CC9BA008BA9 /* SF-Pro-Display-SemiboldItalic.otf */; };
 		C180DAE9D1274B65860A41B1 /* SF-Pro-Display-BlackItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1CCCCC6AD1FA4D42AA1A82DB /* SF-Pro-Display-BlackItalic.otf */; };
 		CD327BE3332B429FAB04857C /* SF-Pro-Display-ThinItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = D02FC05625AA422AB68BFD8D /* SF-Pro-Display-ThinItalic.otf */; };
 		D3F5725AD3854E5785A6FC53 /* SF-Pro-Display-HeavyItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = A95C5DFB97FB457A852E6C09 /* SF-Pro-Display-HeavyItalic.otf */; };
+		D40A7587266AA4C9008DF1AE /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40A7586266AA4C9008DF1AE /* NotificationService.swift */; };
+		D40A758B266AA4C9008DF1AE /* OneSignalNotificationServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = D40A7584266AA4C9008DF1AE /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D4C0AA4A261F18CE00C6BECC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D4C0AA49261F18CE00C6BECC /* GoogleService-Info.plist */; };
+		D4CEC814266262D100924F18 /* Splash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D4CEC813266262D100924F18 /* Splash.storyboard */; };
+		D4CEC8162662631800924F18 /* 1024.png in Resources */ = {isa = PBXBuildFile; fileRef = D4CEC8152662631800924F18 /* 1024.png */; };
 		D52D7BC53AB74CE7801DC258 /* SF-Pro-Display-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4EDA7EC33593474A9FC256AF /* SF-Pro-Display-Black.otf */; };
 		EBD83E4CD47F4A4499F2A65D /* Oswald-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5242AB8B7D7C4F199BC4F459 /* Oswald-Light.ttf */; };
 		F12816D931D1466AACC51FE1 /* Oswald-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DD970EA1272B47EB838CC312 /* Oswald-ExtraLight.ttf */; };
-		A4A729851DA8420AC85B2D07 /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16FF89CBE22122CB5E746215 /* libPods-OneSignalNotificationServiceExtension.a */; };
-		D40A7587266AA4C9008DF1AE /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40A7586266AA4C9008DF1AE /* NotificationService.swift */; };
-		D40A758B266AA4C9008DF1AE /* OneSignalNotificationServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = D40A7584266AA4C9008DF1AE /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		D4CEC814266262D100924F18 /* Splash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D4CEC813266262D100924F18 /* Splash.storyboard */; };
-		D4CEC8162662631800924F18 /* 1024.png in Resources */ = {isa = PBXBuildFile; fileRef = D4CEC8152662631800924F18 /* 1024.png */; };
 		FA349FE2B2B8545250DDD2A0 /* libPods-infapp-infappTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7851B8E3F9F01EAB27266ACC /* libPods-infapp-infappTests.a */; };
 		FF047F10DB664C77883F972D /* SF-Pro-Display-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = D1F6C2252B2643FF9179907D /* SF-Pro-Display-Semibold.otf */; };
 /* End PBXBuildFile section */
@@ -92,7 +93,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		00E356EE1AD99517003FC87E /* infappTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = infappTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* infappTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = infappTests.m; sourceTree = "<group>"; };
@@ -105,13 +105,13 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = infapp/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = infapp/main.m; sourceTree = "<group>"; };
 		147730564AD26EC0AE48ABE4 /* libPods-infapp-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-infapp-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		16FF89CBE22122CB5E746215 /* libPods-OneSignalNotificationServiceExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OneSignalNotificationServiceExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		184C11434DD74B83B8A52FDB /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		1C414DD1FD1C403F8AE3BA16 /* SF-Pro-Display-RegularItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-RegularItalic.otf"; path = "../src/fonts/SF-Pro-Display-RegularItalic.otf"; sourceTree = "<group>"; };
 		1CCCCC6AD1FA4D42AA1A82DB /* SF-Pro-Display-BlackItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-BlackItalic.otf"; path = "../src/fonts/SF-Pro-Display-BlackItalic.otf"; sourceTree = "<group>"; };
 		202C97FD267D4869006DBD2D /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
-		20CDB36D267BE9BB00C85307 /* infapp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = infapp.entitlements; path = infapp/infapp.entitlements; sourceTree = "<group>"; };
+		203A4ED1269C42A2000EC917 /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		27433C2A34F84226BABD8041 /* SF-Pro-Display-LightItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-LightItalic.otf"; path = "../src/fonts/SF-Pro-Display-LightItalic.otf"; sourceTree = "<group>"; };
-		16FF89CBE22122CB5E746215 /* libPods-OneSignalNotificationServiceExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OneSignalNotificationServiceExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27D58EB1F3050AF805C81CFC /* Pods-infapp-infappTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-infapp-infappTests.debug.xcconfig"; path = "Target Support Files/Pods-infapp-infappTests/Pods-infapp-infappTests.debug.xcconfig"; sourceTree = "<group>"; };
 		292DBB7E6E9D7EE5003BF27C /* Pods-OneSignalNotificationServiceExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalNotificationServiceExtension.release.xcconfig"; path = "Target Support Files/Pods-OneSignalNotificationServiceExtension/Pods-OneSignalNotificationServiceExtension.release.xcconfig"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* infapp-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "infapp-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -153,18 +153,18 @@
 		D11A42C4A3494FAB905D8048 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		D1F6C2252B2643FF9179907D /* SF-Pro-Display-Semibold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Semibold.otf"; path = "../src/fonts/SF-Pro-Display-Semibold.otf"; sourceTree = "<group>"; };
 		D3D4F720E6AC4906B481E982 /* SF-Pro-Display-Ultralight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Ultralight.otf"; path = "../src/fonts/SF-Pro-Display-Ultralight.otf"; sourceTree = "<group>"; };
-		D4C0AA49261F18CE00C6BECC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		DD970EA1272B47EB838CC312 /* Oswald-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Oswald-ExtraLight.ttf"; path = "../src/fonts/Oswald-ExtraLight.ttf"; sourceTree = "<group>"; };
-		DDFE05F594F449948E71B1BA /* SF-Pro-Display-BoldItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-BoldItalic.otf"; path = "../src/fonts/SF-Pro-Display-BoldItalic.otf"; sourceTree = "<group>"; };
-		E34C6A164FFC4A6AB09D22D5 /* SF-Pro-Display-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Bold.otf"; path = "../src/fonts/SF-Pro-Display-Bold.otf"; sourceTree = "<group>"; };
-		E4546ED7C35C41429F0860CF /* Oswald-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Oswald-SemiBold.ttf"; path = "../src/fonts/Oswald-SemiBold.ttf"; sourceTree = "<group>"; };
 		D40A7584266AA4C9008DF1AE /* OneSignalNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OneSignalNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		D40A7586266AA4C9008DF1AE /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		D40A7588266AA4C9008DF1AE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D43E2E30266AA5D30047199D /* OneSignalNotificationServiceExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OneSignalNotificationServiceExtension.entitlements; sourceTree = "<group>"; };
 		D4BA35E7266957D400150590 /* infapp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = infapp.entitlements; path = infapp/infapp.entitlements; sourceTree = "<group>"; };
+		D4C0AA49261F18CE00C6BECC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D4CEC813266262D100924F18 /* Splash.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Splash.storyboard; sourceTree = "<group>"; };
 		D4CEC8152662631800924F18 /* 1024.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = 1024.png; path = infapp/Images.xcassets/AppIcon.appiconset/1024.png; sourceTree = "<group>"; };
+		DD970EA1272B47EB838CC312 /* Oswald-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Oswald-ExtraLight.ttf"; path = "../src/fonts/Oswald-ExtraLight.ttf"; sourceTree = "<group>"; };
+		DDFE05F594F449948E71B1BA /* SF-Pro-Display-BoldItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-BoldItalic.otf"; path = "../src/fonts/SF-Pro-Display-BoldItalic.otf"; sourceTree = "<group>"; };
+		E34C6A164FFC4A6AB09D22D5 /* SF-Pro-Display-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Bold.otf"; path = "../src/fonts/SF-Pro-Display-Bold.otf"; sourceTree = "<group>"; };
+		E4546ED7C35C41429F0860CF /* Oswald-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Oswald-SemiBold.ttf"; path = "../src/fonts/Oswald-SemiBold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		EEF962DE2A4744A981696B67 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
@@ -240,8 +240,8 @@
 			isa = PBXGroup;
 			children = (
 				D4BA35E7266957D400150590 /* infapp.entitlements */,
+				203A4ED1269C42A2000EC917 /* main.jsbundle */,
 				D4CEC8152662631800924F18 /* 1024.png */,
-				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -251,6 +251,14 @@
 				D4CEC813266262D100924F18 /* Splash.storyboard */,
 			);
 			name = infapp;
+			sourceTree = "<group>";
+		};
+		208FDD9C269C3B7400EE8B0B /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				D4C0AA49261F18CE00C6BECC /* GoogleService-Info.plist */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -295,7 +303,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				D47A1D5C266AA3800069FD7E /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* infapp */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* infappTests */,
@@ -304,6 +311,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				38FDB44B023396ABAD2BE6F4 /* Pods */,
 				A39BEB8AA4534202A704E89B /* Resources */,
+				208FDD9C269C3B7400EE8B0B /* Recovered References */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -369,7 +377,6 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
-
 		D40A7585266AA4C9008DF1AE /* OneSignalNotificationServiceExtension */ = {
 			isa = PBXGroup;
 			children = (
@@ -580,6 +587,7 @@
 				CD327BE3332B429FAB04857C /* SF-Pro-Display-ThinItalic.otf in Resources */,
 				30367AE67A8C48EFA393E93D /* SF-Pro-Display-Ultralight.otf in Resources */,
 				3F8D0872DB3F4748928DE350 /* SF-Pro-Display-UltralightItalic.otf in Resources */,
+				203A4ED2269C42A2000EC917 /* main.jsbundle in Resources */,
 				D4CEC814266262D100924F18 /* Splash.storyboard in Resources */,
 				D4CEC8162662631800924F18 /* 1024.png in Resources */,
 			);

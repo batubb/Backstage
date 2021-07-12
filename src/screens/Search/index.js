@@ -62,12 +62,11 @@ class Search extends Component {
   searchUser = async (search) => {
     this.setState({search: search});
 
-        if (search.length >= 1) {
-            const searchArray = await searchUser(search);
-            this.setState({ searchArray });
-        } else {
-            this.setState({ searchArray: [] });
-        }
+    if (search.length >= 1) {
+      const searchArray = await searchUser(search);
+      this.setState({searchArray});
+    } else {
+      this.setState({searchArray: []});
     }
   };
 
@@ -119,7 +118,9 @@ class Search extends Component {
                   <View style={{width: width - 150}}>
                     <View style={{flexDirection: 'row'}}>
                       <Text text={item.name} style={{fontSize: 16}} />
-                      {item.verified === true ? <VerifiedIcon size={16} /> : null}
+                      {item.verified === true ? (
+                        <VerifiedIcon size={16} />
+                      ) : null}
                     </View>
                     <Text
                       text={`@${item.username}`}
@@ -235,8 +236,7 @@ class Search extends Component {
               }
               style={{
                 marginHorizontal: SIZES.padding,
-              }}
-              >
+              }}>
               {this.renderCards(trendingsArray)}
             </ScrollView>
           </>
