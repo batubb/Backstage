@@ -38,6 +38,8 @@ import moment from 'moment';
 import ProfileTop from '../../components/ScreenComponents/ProfileComponents/ProfileTop/ProfileTop';
 import {SIZES} from '../../resources/theme';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
+import sleep from '../../lib/sleep';
+import RNIap from 'react-native-iap';
 
 const {width} = Dimensions.get('window');
 
@@ -54,11 +56,12 @@ class UserProfile extends Component {
       daily: [],
       optionsVisible: false,
       followerNumber: 0,
+      products: [],
     };
 
     this.list = [
       {title: 'Report', onPress: this.reportVideo},
-      {title: 'Share', onPress: this.shareVideo},
+      {title: 'Block', onPress: this.blockUser},
     ];
   }
 
@@ -66,6 +69,16 @@ class UserProfile extends Component {
     this.unsubscribe = this.props.navigation.addListener('focus', (e) => {
       this.checkInfluencerInfos();
     });
+    let productId = [];
+    productId.push(this.state.user.appStoreProductId);
+    const productsRes = await RNIap.getSubscriptions(productId);
+
+    console.log('got products ', productsRes);
+    if (!productsRes) {
+      this.setState({products: []});
+    } else {
+      this.setState({products: productsRes});
+    }
   };
 
   checkInfluencerInfos = async () => {
@@ -117,8 +130,20 @@ class UserProfile extends Component {
         [{text: 'Okay'}],
       );
     } else {
-      Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
+      Alert.alert('Oops', 'We are sorry for this. Please try again later.', [
+        {text: 'Okay'},
+      ]);
     }
+
+    this.setState({optionsVisible: false});
+  };
+
+  blockUser = async () => {
+    Alert.alert(
+      'Success',
+      'You have blocked this user. Now this user can not see your profile.',
+      [{text: 'Okay'}],
+    );
 
     this.setState({optionsVisible: false});
   };
@@ -156,67 +181,114 @@ class UserProfile extends Component {
       this.setState({loading: false});
 
       Alert.alert(
-        'Success',
+        'Oops',
         `You have cancelled your subscribtion. Your subscription will continue until ${moment(
           this.state.subscribtion.endTimestamp,
         ).format('LL')}.`,
         [{text: 'Okay'}],
       );
     } else {
-      Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
+      Alert.alert('Oops', 'We are sorry for this. Please try again later.', [
+        {text: 'Okay'},
+      ]);
     }
   };
 
-  renderPosts = (posts) => {
-    return (
-      <PostsCard
-        posts={posts}
-        navigation={this.props.navigation}
-        expired={!this.state.subscribtion.subscribtion}
-        numCols={constants.NUM_POSTS_PER_ROW_PROFILE}
-        extraData={Store.posts}
-        onPress={(item) => this.goTo('WatchVideo', item)}
-      />
-    );
+  requestRNISubscription = async () => {
+    try {
+      console.log('before request sub');
+      await RNIap.requestSubscription(this.state.products[0].productId);
+      this.setState({loading: true});
+      await sleep(5000);
+      console.log('after sub');
+      console.log('got subscription');
+      const subscribtion = await checkSubscribtion(
+        Store.uid,
+        this.state.user.uid,
+      );
+      console.log('got subscription', subscribtion);
+
+      this.setState({subscribtion});
+      console.log('after sub2');
+    } catch (error) {
+      console.log('Error requesting subscription ', error);
+    }
+    this.setState({loading: false});
   };
 
-  expiredCard = () => {
+  renderProfileTop = (user, posts) => {
+    const {subscribtion} = this.state;
+    const constWidth = width / 3;
     return (
       <View
         style={{
-          width: width / 2 - 10,
-          height: 1.5 * (width / 2 - 10),
-          borderRadius: 16,
+          width: width,
+          flexDirection: 'row',
+          padding: 15,
           alignItems: 'center',
-          justifyContent: 'center',
-          position: 'absolute',
         }}>
-        <View
+        <MyImage
           style={{
-            position: 'absolute',
-            width: width / 2 - 10,
-            height: 1.5 * (width / 2 - 10),
-            borderRadius: 16,
-            backgroundColor: 'black',
-            opacity: 0.8,
+            width: constWidth,
+            height: constWidth,
+            borderRadius: constWidth / 2,
           }}
+          photo={user.photo}
         />
         <View
           style={{
-            width: 80,
-            height: 80,
-            borderColor: '#FFF',
-            borderWidth: 2,
-            borderRadius: 40,
+            marginLeft: 10,
+            width: width - constWidth - 50,
             alignItems: 'center',
-            justifyContent: 'center',
           }}>
-          <Icon
-            name="lock-outline"
-            color="#FFF"
-            type="material-community"
-            size={48}
+          <Text text={user.name} style={{fontSize: 20}} />
+          <Text
+            text={
+              typeof user.biography === 'undefined'
+                ? 'No Biography'
+                : user.biography
+            }
+            style={{fontSize: 12, color: 'gray'}}
           />
+          {user.uid !== Store.user.uid && !subscribtion.cancel ? (
+            <Button
+              buttonStyle={{
+                width: width - constWidth - 50,
+                backgroundColor: '#FFF',
+                padding: 10,
+                marginTop: 10,
+                borderRadius: 24,
+              }}
+              textStyle={{fontSize: 12, color: 'black'}}
+              text={
+                subscribtion.subscribtion
+                  ? 'Unsubscribe'
+                  : `Subscribe / ${user.price.toFixed(2)} $`
+              }
+              onPress={() =>
+                subscribtion.subscribtion
+                  ? Alert.alert(
+                      'Please unsubscribe through your Apple Store Settings',
+                    )
+                  : this.requestRNISubscription()
+              }
+            />
+          ) : null}
+          {user.uid !== Store.user.uid && subscribtion.cancel ? (
+            <Button
+              buttonStyle={{
+                width: width - constWidth - 50,
+                backgroundColor: '#FFF',
+                padding: 10,
+                marginTop: 10,
+                borderRadius: 24,
+              }}
+              textStyle={{fontSize: 12, color: 'black'}}
+              text={`Last date is ${moment(
+                this.state.subscribtion.endTimestamp,
+              ).format('L')}.`}
+            />
+          ) : null}
         </View>
       </View>
     );
@@ -288,6 +360,61 @@ class UserProfile extends Component {
           onPress={() => this.goTo('Subscribe', this.state.user)}
         />
       </View>
+    );
+  };
+
+renderPosts = (posts) => {
+  return (
+    <PostsCard
+      posts={posts}
+      navigation={this.props.navigation}
+      expired={!this.state.subscribtion.subscribtion}
+      numCols={constants.NUM_POSTS_PER_ROW_PROFILE}
+      extraData={Store.posts}
+      onPress={(item) => this.goTo('WatchVideo', item)}
+    />
+  );
+}
+
+expiredCard = () => {
+  return (
+    <View
+      style={{
+        width: width / 2 - 10,
+        height: 1.5 * (width / 2 - 10),
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'absolute',
+      }}>
+      <View
+        style={{
+          position: 'absolute',
+          width: width / 2 - 10,
+          height: 1.5 * (width / 2 - 10),
+          borderRadius: 16,
+          backgroundColor: 'black',
+          opacity: 0.8,
+        }}
+      />
+      <View
+        style={{
+          width: 80,
+          height: 80,
+          borderColor: '#FFF',
+          borderWidth: 2,
+          borderRadius: 40,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Icon
+          name="lock-outline"
+          color="#FFF"
+          type="material-community"
+          size={48}
+        />
+        </View>
+        </View>
     );
   };
 

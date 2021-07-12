@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:234737203229:android:87ec8adc608d4f14f5eef4",
+        "mobilesdk_app_id": "1:234737203229:android:ffd2409d8f931580f5eef4",
         "android_client_info": {
-          "package_name": "com.backstage.cooldigital"
+          "package_name": "com.cooldigital.backstage"
         }
       },
       "oauth_client": [

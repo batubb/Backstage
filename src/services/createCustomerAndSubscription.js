@@ -1,8 +1,10 @@
 /* eslint-disable prettier/prettier */
 import axios from 'axios';
+import { constants } from '../resources';
 
-export default async function createCustomerAndSubscription(user, influencer, token, planId) {
-    var data = JSON.stringify({ user, token: token.id, planId, influencer });
+export default async function createCustomerAndSubscription(user, influencer, token, price) {
+    const tier = constants.TIERS.find(tierObj => tierObj.price === price);
+    var data = JSON.stringify({ user, token: token.id, planId: tier.stripe, influencer });
 
     var config = {
         method: 'post',

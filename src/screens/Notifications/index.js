@@ -171,7 +171,7 @@ class Notifications extends Component {
         var updates = {
           likes: this.state.likes,
           videos: this.state.videos,
-          roomActivities: false,
+          roomActivities: true,
         };
 
         database()
@@ -221,135 +221,158 @@ class Notifications extends Component {
   };
 
   render() {
-    const {
-      loading,
-      refreshing,
-      pauseAll,
-      roomActivities,
-      likes,
-      videos,
-    } = this.state;
+    return null;
+    //     const { loading, refreshing, pauseAll, roomActivities, likes, videos } = this.state;
 
-    return (
-      <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
-        <Header
-          leftButtonPress={() =>
-            this.props.navigation.dispatch(StackActions.pop())
-          }
-          leftButtonIcon="chevron-left"
-          title="Notifications"
-        />
-        {loading ? (
-          <Loading
-            loadingStyle={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            textStyle={{marginTop: 10, fontWeight: 'normal'}}
-            text="Loading"
-          />
-        ) : (
-          <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={refreshing} tintColor="white" />
-            }>
-            <View
-              style={{
-                width: width,
-                paddingHorizontal: 20,
-                marginTop: 20,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: 20,
-              }}>
-              <Text text="Pause All" style={{fontSize: 16}} />
-              <Switch
-                trackColor={{
-                  false: COLORS.systemFill,
-                  true: COLORS.primary,
-                }}
-                thumbColor="#FFF"
-                ios_backgroundColor={COLORS.systemFill}
-                onChange={() => this.changeSwitch()}
-                value={pauseAll}
-              />
-            </View>
-            <Divider />
-            <View
-              style={{
-                width: width,
-                paddingHorizontal: 20,
-                marginTop: 20,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: 20,
-              }}>
-              <Text text="Videos" style={{fontSize: 16}} />
-              <Switch
-                trackColor={{
-                  false: COLORS.systemFill,
-                  true: COLORS.primary,
-                }}
-                thumbColor="#FFF"
-                ios_backgroundColor={COLORS.systemFill}
-                onChange={() => this.changeSwitch('videos')}
-                value={videos}
-              />
-            </View>
-            <Divider />
-            <View
-              style={{
-                width: width,
-                paddingHorizontal: 20,
-                marginTop: 20,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: 20,
-              }}>
-              <Text text="Room Activities" style={{fontSize: 16}} />
-              <Switch
-                trackColor={{
-                  false: COLORS.systemFill,
-                  true: COLORS.primary,
-                }}
-                thumbColor="#FFF"
-                ios_backgroundColor={COLORS.systemFill}
-                onChange={() => this.changeSwitch('roomActivities')}
-                value={roomActivities}
-              />
-            </View>
-            <Divider />
-            <View
-              style={{
-                width: width,
-                paddingHorizontal: 20,
-                marginTop: 20,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: 20,
-              }}>
-              <Text text="Likes" style={{fontSize: 16}} />
-              <Switch
-                trackColor={{
-                  false: COLORS.systemFill,
-                  true: COLORS.primary,
-                }}
-                thumbColor="#FFF"
-                ios_backgroundColor={COLORS.systemFill}
-                onChange={() => this.changeSwitch('likes')}
-                value={likes}
-              />
-            </View>
-            <Divider />
-          </ScrollView>
-        )}
-      </View>
-    );
+    //     return (
+    //         <View style={{ flex: 1, backgroundColor: constants.BACKGROUND_COLOR }}>
+    //             <Header
+    //                 leftButtonPress={() => this.props.navigation.dispatch(StackActions.pop())}
+    //                 leftButtonIcon="chevron-left"
+    //                 title="Notifications"
+    //             />
+    //             {
+    //                 loading ?
+    //                     <Loading
+    //                         loadingStyle={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+    //                         textStyle={{ marginTop: 10, fontWeight: 'normal' }}
+    //                         text="Loading"
+    //                     />
+    //                     :(
+    //                     <ScrollView refreshControl={<RefreshControl refreshing={refreshing} tintColor="white" />}>
+    //                         <View style={{ width: width, paddingHorizontal: 20, marginTop: 10 }}>
+    //                             <Text
+    //                                 text="Push Notifications"
+    //                                 style={{ fontSize: 20 }}
+    //                             />
+    //                         </View>
+    //                         <View style={{ width: width, paddingHorizontal: 40, marginTop: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+    //                             <Text
+    //                                 text="Pause All"
+    //                                 style={{ fontSize: 16 }}
+    //                             />
+    //                             <Switch
+    //                                 trackColor={{ false: 'gray', true: 'gray' }}
+    //                                 thumbColor="#FFF"
+    //                                 ios_backgroundColor="gray"
+    //                                 onChange={() => this.changeSwitch()}
+    //                                 value={pauseAll}
+    //                             />
+    //                         </View>
+    //                         <View style={{ width: width, paddingHorizontal: 40, marginTop: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+    //                             <Text
+    //                                 text="Videos"
+    //                                 style={{ fontSize: 16 }}
+    //                             />
+    //                             <Switch
+    //                                 trackColor={{ false: 'gray', true: 'gray' }}
+    //                                 thumbColor="#FFF"
+    //                                 ios_backgroundColor="gray"
+    //                                 onChange={() => this.changeSwitch('videos')}
+    //                                 value={videos}
+    //                             />
+    //                         </View>
+    //                         <View style={{ width: width, paddingHorizontal: 40, marginTop: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+    //                             <Text
+    //                                 text="Comments"
+    //                                 style={{ fontSize: 16 }}
+    //                             />
+    //                             <Switch
+    //                                 trackColor={{ false: 'gray', true: 'gray' }}
+    //                                 thumbColor="#FFF"
+    //                                 ios_backgroundColor="gray"
+    //                                 onChange={() => this.changeSwitch('roomActivities')}
+    //                                 value={roomActivities}
+    //                             />
+    //                         </View>
+    //                         <View style={{ width: width, paddingHorizontal: 40, marginTop: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+    //                             <Text
+    //                                 text="Likes"
+    //                                 style={{ fontSize: 16 }}
+    //                             />
+    //                             <Switch
+    //                                 trackColor={{ false: 'gray', true: 'gray' }}
+    //                                 thumbColor="#FFF"
+    //                                 ios_backgroundColor="gray"
+    //                                 onChange={() => this.changeSwitch('likes')}
+    //                                 value={likes}
+    //                             />
+    //                         </View>
+    //                     </ScrollView>
+    //             }
+    //         </View>
+    //         <Divider />
+    //         <View
+    //           style={{
+    //             width: width,
+    //             paddingHorizontal: 20,
+    //             marginTop: 20,
+    //             flexDirection: 'row',
+    //             alignItems: 'center',
+    //             justifyContent: 'space-between',
+    //             marginBottom: 20,
+    //           }}>
+    //           <Text text="Videos" style={{fontSize: 16}} />
+    //           <Switch
+    //             trackColor={{
+    //               false: COLORS.systemFill,
+    //               true: COLORS.primary,
+    //             }}
+    //             thumbColor="#FFF"
+    //             ios_backgroundColor={COLORS.systemFill}
+    //             onChange={() => this.changeSwitch('videos')}
+    //             value={videos}
+    //           />
+    //         </View>
+    //         <Divider />
+    //         <View
+    //           style={{
+    //             width: width,
+    //             paddingHorizontal: 20,
+    //             marginTop: 20,
+    //             flexDirection: 'row',
+    //             alignItems: 'center',
+    //             justifyContent: 'space-between',
+    //             marginBottom: 20,
+    //           }}>
+    //           <Text text="Room Activities" style={{fontSize: 16}} />
+    //           <Switch
+    //             trackColor={{
+    //               false: COLORS.systemFill,
+    //               true: COLORS.primary,
+    //             }}
+    //             thumbColor="#FFF"
+    //             ios_backgroundColor={COLORS.systemFill}
+    //             onChange={() => this.changeSwitch('roomActivities')}
+    //             value={roomActivities}
+    //           />
+    //         </View>
+    //         <Divider />
+    //         <View
+    //           style={{
+    //             width: width,
+    //             paddingHorizontal: 20,
+    //             marginTop: 20,
+    //             flexDirection: 'row',
+    //             alignItems: 'center',
+    //             justifyContent: 'space-between',
+    //             marginBottom: 20,
+    //           }}>
+    //           <Text text="Likes" style={{fontSize: 16}} />
+    //           <Switch
+    //             trackColor={{
+    //               false: COLORS.systemFill,
+    //               true: COLORS.primary,
+    //             }}
+    //             thumbColor="#FFF"
+    //             ios_backgroundColor={COLORS.systemFill}
+    //             onChange={() => this.changeSwitch('likes')}
+    //             value={likes}
+    //           />
+    //         </View>
+    //         <Divider />
+    //       </ScrollView>
+    // );}
   }
 }
 

@@ -142,7 +142,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.backstage.cooldigital"
+        applicationId "com.cooldigital.backstage"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

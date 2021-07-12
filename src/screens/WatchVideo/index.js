@@ -38,14 +38,14 @@ import database from '@react-native-firebase/database';
 import WatchVideoIcon from '../../components/ScreenComponents/WatchVideoComponents/WatchVideoIcon/WatchVideoIcon';
 import {COLORS, SIZES} from '../../resources/theme';
 import {getBottomSpace, getStatusBarHeight} from '../../lib/iPhoneXHelper';
-import ReactNativeHapticFeedback from "react-native-haptic-feedback";
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 const {width, height} = Dimensions.get('window');
 const BOTTOM_PADDING = height >= 812 ? 40 : 20;
 
 const RNHapticFeedbackOptions = {
   enableVibrateFallback: true,
-  ignoreAndroidSystemSettings: false
+  ignoreAndroidSystemSettings: false,
 };
 
 // TODO Canlı yayın izleme eklenecek.
@@ -76,10 +76,7 @@ class WatchVideo extends Component {
       isLiked: false,
     };
 
-    this.list = [
-      {title: 'Report', onPress: this.reportVideo},
-      {title: 'Share', onPress: this.shareVideo},
-    ];
+    this.list = [{title: 'Report', onPress: this.reportVideo}];
 
     if (Store.user.uid === this.props.route.params.video.user.uid) {
       this.list = [
@@ -238,12 +235,14 @@ class WatchVideo extends Component {
   };
 
   likeVideoPressed = () => {
-    ReactNativeHapticFeedback.trigger("impactLight", RNHapticFeedbackOptions);
+    ReactNativeHapticFeedback.trigger('impactLight', RNHapticFeedbackOptions);
     this.setState({isLiked: !this.state.isLiked});
 
-    return likeVideo(Store.user, this.state.video, this.state.isLiked).catch(
-      () => this.setState({isLiked: !this.state.isLiked}),
-    );
+    return likeVideo(
+      Store.user,
+      this.state.video,
+      this.state.isLiked,
+    ).catch(() => this.setState({isLiked: !this.state.isLiked}));
   };
 
   renderVideoPlayer = (video, paused, videoInfo, dk, sn) => {
@@ -284,7 +283,6 @@ class WatchVideo extends Component {
             ]}
             paused={paused}
             repeat
-            poster={video.photo}
           />
           {this.state.controlsVisible ? (
             <View
@@ -352,7 +350,9 @@ class WatchVideo extends Component {
                       paddingBottom: SIZES.padding * 2,
                     }}>
                     <WatchVideoIcon
-                      name={this.state.isLiked ? 'ios-heart' : 'ios-heart-outline'}
+                      name={
+                        this.state.isLiked ? 'ios-heart' : 'ios-heart-outline'
+                      }
                       type="ionicon"
                       color={this.state.isLiked ? COLORS.primary : COLORS.white}
                     />
@@ -509,7 +509,6 @@ class WatchVideo extends Component {
             onEnd={() => this.setState({paused: true, finished: true})}
             style={{flex: 1, width: width, height: height}}
             paused={false}
-            poster={video.photo}
           />
         )}
         <SafeAreaView
@@ -626,30 +625,6 @@ class WatchVideo extends Component {
               </TouchableOpacity>
             ) : null}
           </View>
-          {!this.state.keyboard ? (
-            <TouchableOpacity
-              onPress={() =>
-                this.shareVideo(
-                  `Hey are you watching this live video? Let's watch ${this.state.influencer.username} together.`,
-                )
-              }>
-              <View
-                style={{
-                  width: 45,
-                  height: 45,
-                  backgroundColor: '#FFF',
-                  borderRadius: 22.5,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <Icon
-                  name="export-variant"
-                  color="#000"
-                  type="material-community"
-                />
-              </View>
-            </TouchableOpacity>
-          ) : null}
         </View>
       </KeyboardAvoidingView>
     );

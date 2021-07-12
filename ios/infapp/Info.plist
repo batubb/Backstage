@@ -29,7 +29,7 @@
 			<string/>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.234737203229-3o705fotnfletrrpq4qa4slv0tm4r1fj</string>
+				<string>com.googleusercontent.apps.234737203229-ul71ft0cjbkknvigok3cnbsnrb8dnvph</string>
 			</array>
 		</dict>
 		<dict>
@@ -113,8 +113,12 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
+	<string>Splash</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

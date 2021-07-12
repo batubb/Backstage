@@ -2,7 +2,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, {Component} from 'react';
-import {View, Dimensions, TouchableOpacity, Alert} from 'react-native';
+import {View, Dimensions, TouchableOpacity, Alert, Platform} from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
@@ -37,7 +37,6 @@ class Login extends Component {
   componentDidMount = async () => {
     auth().onAuthStateChanged(async (auth) => {
       if (auth) {
-        console.log('in here auth');
         Store.setPhone(auth.phoneNumber);
         Store.setUID(auth.uid);
         const replaceActions = StackActions.replace('CheckInfo');

@@ -1,7 +1,6 @@
 import {PlatformColor} from 'react-native';
 import {Dimensions} from 'react-native';
 const {width, height} = Dimensions.get('window');
-import constants from './constants';
 
 const ADAPTIVE_COLORS = {
   // base colors
@@ -60,6 +59,7 @@ const DARK_COLORS = {
 
   // colors
   black: '#1E1F20',
+  red: '#FF5733',
 
   lightGray: '#F5F5F6',
   lightGray2: '#F6F6F7',
@@ -130,7 +130,7 @@ export const STREAM_THEME = {
   colors: {
     accent_blue: COLORS.primary,
     accent_green: '#20E070',
-    accent_red: constants.RED,
+    accent_red: COLORS.red,
     bg_gradient_end: COLORS.backgroundColor,
     bg_gradient_start: COLORS.backgroundColor,
     black: COLORS.white,
