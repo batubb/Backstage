@@ -66,11 +66,11 @@
     "react-native-vector-icons": "^8.0.0",
     "react-native-video": "^5.1.1",
     "rn-fetch-blob": "^0.12.0",
+    "rn-sliding-up-panel": "^2.4.5",
     "sendbird": "^3.0.153",
     "stream-chat": "^3.11.0",
     "stream-chat-react-native": "^3.6.1",
     "stream-chat-react-native-core": "^3.6.1",
-    "rn-sliding-up-panel": "^2.4.5",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
