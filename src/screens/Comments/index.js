@@ -33,7 +33,11 @@ class Comments extends Component {
     }
 
     componentDidMount = async () => {
-        const subscribtion = await checkSubscribtion(Store.uid, this.state.video.user.uid);
+        const subscribtion =
+          Store.user.uid !== this.state.video.user.uid
+            ? await checkSubscribtion(Store.uid, this.state.video.user.uid)
+            : {subscribtion: true};
+
         const comments = await setVideoComment(Store.user.uid, this.state.video);
         this.setState({ loading: false, comments, subscribtion });
     }
@@ -43,7 +47,7 @@ class Comments extends Component {
             return Alert.alert('Oops', 'You must be a member to view the content.', [{ text: 'Okay' }]);
         }
 
-        if (!this.state.subscribtion.subscribtion) {
+        if (this.state.subscribtion.subscribtion !== true) {
             return Alert.alert('Oops', 'You must be a member to view the content.', [{ text: 'Okay' }]);
         }
 
