@@ -16,11 +16,12 @@ import {Icon} from 'react-native-elements';
 import Video from 'react-native-video';
 import {StackActions} from '@react-navigation/native';
 import Animated, {Easing} from 'react-native-reanimated';
-import {Loading, Text, MyImage} from '../../components';
+import {Loading, Text, MyImage, VerifiedIcon} from '../../components';
 import {constants} from '../../resources';
 import {checkSubscribtion, checkUserInfo, report} from '../../services';
 import Store from '../../store/Store';
 import runTiming from '../../lib/runTiming';
+import {SIZES} from '../../resources/theme';
 
 const {width, height} = Dimensions.get('window');
 var BOTTOM_PADDING = height >= 812 ? 44 : 20;
@@ -198,11 +199,7 @@ class WatchStory extends Component {
           }}
           onBuffer={() => {
             this.storyLoadingValue = new Animated.Value(0);
-            this.startProgressBar(
-              this.videoDuration,
-              0,
-              false,
-            );
+            this.startProgressBar(this.videoDuration, 0, false);
           }}
           onPlaybackResume={() => {
             this.setState({isVideoSeeked: false});
@@ -369,10 +366,18 @@ class WatchStory extends Component {
           <View style={{alignItems: 'center', flexDirection: 'row'}}>
             <MyImage
               photo={content.user.photo}
-              style={{width: 50, height: 50, borderRadius: 25}}
+              style={{
+                width: 45,
+                height: 45,
+                borderRadius: 25,
+                marginTop: SIZES.spacing,
+              }}
             />
             <View>
-              <Text text={content.user.name} style={{marginLeft: 5}} />
+              <View style={{flexDirection: 'row'}}>
+                <Text text={content.user.username} style={{marginLeft: SIZES.spacing * 2}} />
+                <VerifiedIcon size={18} style={{top: 0}} />
+              </View>
               {content.title !== '' ? (
                 <Text
                   text={content.title}
