@@ -145,11 +145,10 @@ class Chat extends Component {
                           .update({streamChannelUid});
                       }
                     } else {
-                      this.channel =
-                        await this.streamServerClient.getChannelById(
-                          'messaging',
-                          influencerSnap.streamChannelUid,
-                        );
+                      this.channel = await this.streamServerClient.getChannelById(
+                        'messaging',
+                        influencerSnap.streamChannelUid,
+                      );
                     }
                   });
               } else {
@@ -231,6 +230,7 @@ class Chat extends Component {
         return this.props.navigation.dispatch(replaceActions);
       });
     }
+  };
 
   renderChat = () => {
     const {thread} = this.state;
@@ -251,7 +251,12 @@ class Chat extends Component {
               hasFilePicker={false}
               MessageAvatar={(props) => {
                 return (
-                  <View style={{height: '100%', paddingTop: SIZES.padding, alignItems: 'center'}}>
+                  <View
+                    style={{
+                      height: '100%',
+                      paddingTop: SIZES.padding,
+                      alignItems: 'center',
+                    }}>
                     <MessageAvatar {...props} />
                   </View>
                 );

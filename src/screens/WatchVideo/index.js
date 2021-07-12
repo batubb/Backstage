@@ -38,14 +38,14 @@ import database from '@react-native-firebase/database';
 import WatchVideoIcon from '../../components/ScreenComponents/WatchVideoComponents/WatchVideoIcon/WatchVideoIcon';
 import {COLORS, SIZES} from '../../resources/theme';
 import {getBottomSpace, getStatusBarHeight} from '../../lib/iPhoneXHelper';
-import ReactNativeHapticFeedback from "react-native-haptic-feedback";
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 const {width, height} = Dimensions.get('window');
 const BOTTOM_PADDING = height >= 812 ? 40 : 20;
 
 const RNHapticFeedbackOptions = {
   enableVibrateFallback: true,
-  ignoreAndroidSystemSettings: false
+  ignoreAndroidSystemSettings: false,
 };
 
 // TODO Canlı yayın izleme eklenecek.
@@ -76,9 +76,7 @@ class WatchVideo extends Component {
       isLiked: false,
     };
 
-    this.list = [
-      {title: 'Report', onPress: this.reportVideo},
-    ];
+    this.list = [{title: 'Report', onPress: this.reportVideo}];
 
     if (Store.user.uid === this.props.route.params.video.user.uid) {
       this.list = [
@@ -88,28 +86,30 @@ class WatchVideo extends Component {
     }
   }
 
-    componentDidMount = async () => {
-        Keyboard.addListener('keyboardDidShow', () => {
-            this.setState({ keyboard: true });
-        });
+  componentDidMount = async () => {
+    Keyboard.addListener('keyboardDidShow', () => {
+      this.setState({keyboard: true});
+    });
 
-        Keyboard.addListener('keyboardDidHide', () => {
-            this.setState({ keyboard: false });
-        });
+    Keyboard.addListener('keyboardDidHide', () => {
+      this.setState({keyboard: false});
+    });
 
-        const subscribtion = await checkSubscribtion(Store.uid, this.state.video.user.uid);
+    const subscribtion = await checkSubscribtion(
+      Store.uid,
+      this.state.video.user.uid,
+    );
 
-        if (subscribtion.subscribtion) {
-            const influencer = await checkUserInfo(this.state.video.user.uid);
+    if (subscribtion.subscribtion) {
+      const influencer = await checkUserInfo(this.state.video.user.uid);
 
-            if (this.state.video.type === 'video') {
-                try {
-                    const video = await getVideoInfo(this.state.video.uid, influencer);
+      if (this.state.video.type === 'video') {
+        const video = await getVideoInfo(this.state.video.uid, influencer);
 
-                    if (typeof video.title !== 'undefined') {
-                        setVideoView(Store.user.uid, this.state.video);
-                    }
-                    
+        if (typeof video.title !== 'undefined') {
+          setVideoView(Store.user.uid, this.state.video);
+        }
+
         const isLiked = Object.values(video.likes).some(
           (like) => like.uid === Store.user.uid,
         );
@@ -123,33 +123,34 @@ class WatchVideo extends Component {
         );
         this.setState({video});
 
-                database().ref('comments').child(this.state.video.uid).orderByChild('timestamp').on('value', snap => {
-                    var comments = [];
+        database()
+          .ref('comments')
+          .child(this.state.video.uid)
+          .orderByChild('timestamp')
+          .on('value', (snap) => {
+            var comments = [];
 
-                    snap.forEach(element => {
-                        comments.push(element.val());
-                    });
+            snap.forEach((element) => {
+              comments.push(element.val());
+            });
 
-                    comments.reverse();
-                    comments = comments.slice(0, 3);
-                    comments.reverse();
-                    this.setState({ comments });
-                });
-            }
+            comments.reverse();
+            comments = comments.slice(0, 3);
+            comments.reverse();
+            this.setState({comments});
+          });
+      }
 
-            this.setState({ loading: false, paused: false, influencer });
-        } else {
-            Alert.alert(
-                'Oops',
-                'You must be a member to view the content.',
-                [
-                    {
-                        text: 'Okay', onPress: () => this.props.navigation.dispatch(StackActions.pop()),
-                    },
-                ]
-            );
-        }
+      this.setState({loading: false, paused: false, influencer});
+    } else {
+      Alert.alert('Oops', 'You must be a member to view the content.', [
+        {
+          text: 'Okay',
+          onPress: () => this.props.navigation.dispatch(StackActions.pop()),
+        },
+      ]);
     }
+  };
 
   componentWillUnmount = () => {
     Keyboard.removeListener('keyboardDidShow', () => {
@@ -234,12 +235,14 @@ class WatchVideo extends Component {
   };
 
   likeVideoPressed = () => {
-    ReactNativeHapticFeedback.trigger("impactLight", RNHapticFeedbackOptions);
+    ReactNativeHapticFeedback.trigger('impactLight', RNHapticFeedbackOptions);
     this.setState({isLiked: !this.state.isLiked});
 
-    return likeVideo(Store.user, this.state.video, this.state.isLiked).catch(
-      () => this.setState({isLiked: !this.state.isLiked}),
-    );
+    return likeVideo(
+      Store.user,
+      this.state.video,
+      this.state.isLiked,
+    ).catch(() => this.setState({isLiked: !this.state.isLiked}));
   };
 
   renderVideoPlayer = (video, paused, videoInfo, dk, sn) => {
@@ -347,7 +350,9 @@ class WatchVideo extends Component {
                       paddingBottom: SIZES.padding * 2,
                     }}>
                     <WatchVideoIcon
-                      name={this.state.isLiked ? 'ios-heart' : 'ios-heart-outline'}
+                      name={
+                        this.state.isLiked ? 'ios-heart' : 'ios-heart-outline'
+                      }
                       type="ionicon"
                       color={this.state.isLiked ? COLORS.primary : COLORS.white}
                     />
