@@ -52,13 +52,14 @@ class WatchStory extends Component {
       optionsVisible: false,
     };
 
-
     this.list = [{title: 'Report', onPress: this.reportVideo}];
 
-
     if (Store.user.uid === this.props.route.params.stories[0].user.uid) {
-      this.list = [...this.list, { title: 'Delete', color: constants.RED, onPress: this.deleteVideo }];
-  }
+      this.list = [
+        ...this.list,
+        {title: 'Delete', color: constants.RED, onPress: this.deleteVideo},
+      ];
+    }
 
     this.storyLoadingClock = new Animated.Clock();
     this.storyLoadingValue = new Animated.Value(0);
@@ -90,14 +91,17 @@ class WatchStory extends Component {
     if (this.storyLoadingNextAction) {
       clearTimeout(this.storyLoadingNextAction);
       this.storyLoadingNextAction = null;
-
+    }
   };
-}
   deleteVideo = async () => {
-    await database().ref('stories').child(Store.user.uid).child(this.state.content.uid).set(null);
-    this.setState({ optionsVisible: false });
+    await database()
+      .ref('stories')
+      .child(Store.user.uid)
+      .child(this.state.content.uid)
+      .set(null);
+    this.setState({optionsVisible: false});
     this.props.navigation.dispatch(StackActions.pop());
-}
+  };
 
   reportVideo = async () => {
     const result = await report(this.state.content);
@@ -388,10 +392,21 @@ class WatchStory extends Component {
             <View style={{alignItems: 'center', flexDirection: 'row'}}>
               <MyImage
                 photo={content.user.photo}
-                style={{width: 50, height: 50, borderRadius: 25}}
+                style={{
+                  width: 45,
+                  height: 45,
+                  borderRadius: 25,
+                  marginTop: SIZES.spacing,
+                }}
               />
               <View>
-                <Text text={content.user.name} style={{marginLeft: 5}} />
+                <View style={{flexDirection: 'row'}}>
+                  <Text
+                    text={content.user.username}
+                    style={{marginLeft: SIZES.spacing * 2}}
+                  />
+                  <VerifiedIcon size={18} style={{top: 0}} />
+                </View>
                 {content.title !== '' ? (
                   <Text
                     text={content.title}
@@ -400,38 +415,13 @@ class WatchStory extends Component {
                 ) : null}
               </View>
             </View>
-          ))}
-        </View>
-        <View
-          style={{
-            width,
-            flexDirection: 'row',
-            paddingHorizontal: 20,
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
-          <View style={{alignItems: 'center', flexDirection: 'row'}}>
-            <MyImage
-              photo={content.user.photo}
-              style={{
-                width: 45,
-                height: 45,
-                borderRadius: 25,
-                marginTop: SIZES.spacing,
-              }}
-            />
-            <View>
-              <View style={{flexDirection: 'row'}}>
-                <Text text={content.user.username} style={{marginLeft: SIZES.spacing * 2}} />
-                <VerifiedIcon size={18} style={{top: 0}} />
-              </View>
-              {content.title !== '' ? (
-                <Text
-                  text={content.title}
-                  style={{marginLeft: 5, fontSize: 12, fontWeight: 'normal'}}
-                />
-              ) : null}
-            </View>
+            <TouchableOpacity
+              style={{padding: 5}}
+              onPress={() =>
+                this.props.navigation.dispatch(StackActions.pop())
+              }>
+              <Icon name="close" color="#FFF" type="material-community" />
+            </TouchableOpacity>
           </View>
         </SlidingUpPanel>
       </View>
