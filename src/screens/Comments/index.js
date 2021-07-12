@@ -43,7 +43,7 @@ class Comments extends Component {
             return Alert.alert('Oops', 'You must be a member to view the content.', [{ text: 'Okay' }]);
         }
 
-        if (typeof this.state.subscribtion.subscribtion) {
+        if (!this.state.subscribtion.subscribtion) {
             return Alert.alert('Oops', 'You must be a member to view the content.', [{ text: 'Okay' }]);
         }
 

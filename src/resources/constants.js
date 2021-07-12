@@ -3,8 +3,10 @@ const {SIZES, COLORS} = require('./theme');
 
 /* eslint-disable prettier/prettier */
 const constants = {
-  APP_NAME: 'INFAPP',
-  APP_VERSION: '0.0.1',
+
+  APP_NAME: 'Backstage',
+  APP_VERSION: '1.0.0',
+
 
   MUX_USERNAME: '36bbe382-6820-4a76-b0be-f7e3a6e46564',
   MUX_PASSWORD:
@@ -36,7 +38,7 @@ const constants = {
   NUM_CARDS_IN_SCREEN: 2.5,
   NUM_POSTS_TO_VIEW_IN_HOME: 3,
 
-  TIER_1: 'price_1ImhznKwkzsqkh9m3eAmW9kG',
+
   MONTHS: [
     'January',
     'February',
@@ -53,6 +55,25 @@ const constants = {
   ],
   CUSTOM_PURPLE_GRADIENT: ['#872EC4', '#B150E2', '#D56DFB'],
   SUCCESS_ICON_URL: 'https://i.pinimg.com/originals/46/d1/8f/46d18fc9c093bfcb248d1cc49b9a52fc.gif',
+
+  TIER_1: 'price_1ImhznKwkzsqkh9m3eAmW9kG',
+  TIERS: [
+      {
+          name: 'Tier 1',
+          stripe: 'price_1IzPrSIZEMbfwJ3oNJrFHSM7',
+          price: 1.99,
+      },
+      {
+          name: 'Tier 2',
+          stripe: 'price_1IzPrLIZEMbfwJ3o7e3RGk6W',
+          price: 4.99,
+      },
+      {
+          name: 'Tier 3',
+          stripe: 'price_1IzPrPIZEMbfwJ3ov4Furhpj',
+          price: 9.99,
+      },
+  ],
 };
 
 module.exports = constants;

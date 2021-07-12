@@ -26,221 +26,157 @@ import {
   checkSubscribtion,
 } from '../../services';
 import Store from '../../store/Store';
-import {followerCount, timeDifference} from '../../lib';
-import {StackActions} from '@react-navigation/native';
+import { followerCount, timeDifference, setPosts } from '../../lib';
+import { StackActions } from '@react-navigation/native';
 import database from '@react-native-firebase/database';
 import LinearGradient from 'react-native-linear-gradient';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 // TODO Pagination Eklenecek.
 
 class Chat extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: true,
-      refreshing: false,
-      user: this.props.route.params.user,
-      general: true,
-      comments: [],
-      comment: '',
-      reply: null,
-      posts: [],
-      anonymus: this.props.route.params.anonymus,
-      subscribtion: null,
-    };
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            loading: true,
+            refreshing: false,
+            user: this.props.route.params.user,
+            general: true,
+            comments: [],
+            comment: '',
+            reply: null,
+            posts: [],
+            anonymus: this.props.route.params.anonymus,
+            subscribtion: null,
+            daily: [],
+        };
+    }
 
-  componentDidMount = async () => {
-    await database()
-      .ref('comments')
-      .child(this.state.user.uid)
-      .on('value', (snap) => {
-        var comments = [];
-        const uid = Store.user.uid;
+    componentDidMount = async () => {
+        await database().ref('comments').child(this.state.user.uid).on('value', snap => {
+            var comments = [];
+            const uid = Store.user.uid;
 
-        snap.forEach((element) => {
-          const {reply, likes} = element.val();
-          var replyArray = [];
-          var likeStatus = false;
-          var likeCount = 0;
-          var keys = [];
+            snap.forEach(element => {
+                const { reply, likes } = element.val();
+                var replyArray = [];
+                var likeStatus = false;
+                var likeCount = 0;
+                var keys = [];
 
-          if (typeof reply !== 'undefined') {
-            const replyKeys = Object.keys(reply);
+                if (typeof reply !== 'undefined') {
+                    const replyKeys = Object.keys(reply);
 
-            for (let i = 0; i < replyKeys.length; i++) {
-              const k = replyKeys[i];
+                    for (let i = 0; i < replyKeys.length; i++) {
+                        const k = replyKeys[i];
 
-              if (typeof reply[k].likes !== 'undefined') {
-                keys = Object.keys(reply[k].likes);
+                        if (typeof reply[k].likes !== 'undefined') {
+                            keys = Object.keys(reply[k].likes);
 
-                for (let j = 0; j < keys.length; j++) {
-                  const m = keys[j];
+                            for (let j = 0; j < keys.length; j++) {
+                                const m = keys[j];
 
-                  if (reply[k].likes[m]) {
-                    likeCount++;
-                  }
+                                if (reply[k].likes[m]) {
+                                    likeCount++;
+                                }
+                            }
+
+                            if (typeof reply[k].likes[uid] !== 'undefined') {
+                                likeStatus = reply[k].likes[uid];
+                            }
+                        }
+
+                        replyArray.push({ ...reply[k], likeStatus, likeCount });
+                    }
+
+                    replyArray.sort(function (a, b) { return b.timestamp - a.timestamp; });
                 }
 
-                if (typeof reply[k].likes[uid] !== 'undefined') {
-                  likeStatus = reply[k].likes[uid];
+                likeStatus = false;
+                likeCount = 0;
+
+                if (typeof likes !== 'undefined') {
+                    keys = Object.keys(likes);
+                    for (let j = 0; j < keys.length; j++) {
+                        const m = keys[j];
+
+                        if (likes[m]) {
+                            likeCount++;
+                        }
+                    }
+
+                    if (typeof likes[uid] !== 'undefined') {
+                        likeStatus = likes[uid];
+                    }
                 }
-              }
 
-              replyArray.push({...reply[k], likeStatus, likeCount});
-            }
+                const result = this.state.comments.filter(comment => comment.uid === element.val().uid);
 
-            replyArray.sort(function (a, b) {
-              return b.timestamp - a.timestamp;
+                var showReply = false;
+
+                if (result.length > 0) {
+                    showReply = result[0].showReply;
+                }
+
+                comments.push({ ...element.val(), reply: replyArray, showReply, likeStatus, likeCount });
             });
-          }
 
-          likeStatus = false;
-          likeCount = 0;
+            comments.sort(function (a, b) { return b.timestamp - a.timestamp; });
 
-          if (typeof likes !== 'undefined') {
-            keys = Object.keys(likes);
-            for (let j = 0; j < keys.length; j++) {
-              const m = keys[j];
-
-              if (likes[m]) {
-                likeCount++;
-              }
-            }
-
-            if (typeof likes[uid] !== 'undefined') {
-              likeStatus = likes[uid];
-            }
-          }
-
-          comments.push({
-            ...element.val(),
-            reply: replyArray,
-            showReply: false,
-            likeStatus,
-            likeCount,
-          });
+            this.setState({ comments, loading: false });
         });
 
-        comments.sort(function (a, b) {
-          return b.timestamp - a.timestamp;
-        });
+        const posts = await getUserPosts(this.state.user.uid);
+        const { daily } = setPosts(posts);
 
-        this.setState({comments});
-      });
-
-    const subscribtion = await checkSubscribtion(
-      Store.uid,
-      this.state.user.uid,
-    );
-    console.log(subscribtion);
-    const posts = await getUserPosts(this.state.user.uid);
-
-    this.setState({posts, subscribtion, loading: false});
-  };
-
-  goTo = (route, info = null) => {
-    if (route === 'Comments') {
-      const replaceActions = StackActions.push(route, {
-        video: info,
-        anonymus: this.state.anonymus,
-      });
-      return this.props.navigation.dispatch(replaceActions);
-    } else if (route === 'UserProfile') {
-      const replaceActions = StackActions.push(route, {user: info});
-      return this.props.navigation.dispatch(replaceActions);
-    }
-  };
-
-  componentWillUnmount = () => {
-    database().ref('comments').child(this.state.user.uid).off();
-  };
-
-  showReplyTab = (reply, set = true) => {
-    if (set) {
-      this.textinput.focus();
-      this.setState({comment: `@${reply.user.username} `});
-    } else {
-      this.setState({comment: ''});
+        this.setState({ posts, daily });
     }
 
-    this.setState({reply});
-  };
-
-  seeThread = (item, index) => {
-    var comments = this.state.comments;
-    comments[index].showReply = !item.showReply;
-    this.setState({comments});
-  };
-
-  likeComment = async (
-    item,
-    index,
-    status = false,
-    reply = false,
-    mainComment = null,
-    mainCommentIndex = 0,
-  ) => {
-    if (!reply) {
-      var comments = this.state.comments;
-      comments[index].likeStatus = !item.likeStatus;
-
-      if (item.likeStatus) {
-        comments[index].likeCount = item.likeCount + 1;
-      } else {
-        comments[index].likeCount = item.likeCount - 1;
-      }
-
-      this.setState({comments});
-    } else {
-      var comments = this.state.comments;
-      comments[mainCommentIndex].reply[index].likeStatus = !item.likeStatus;
-
-      if (item.likeStatus) {
-        comments[mainCommentIndex].reply[index].likeCount = item.likeCount + 1;
-      } else {
-        comments[mainCommentIndex].reply[index].likeCount = item.likeCount - 1;
-      }
-
-      this.setState({comments});
+    goTo = (route, info = null) => {
+        if (route === 'Comments') {
+            const replaceActions = StackActions.push(route, { video: info, anonymus: this.state.anonymus });
+            return this.props.navigation.dispatch(replaceActions);
+        } else if (route === 'UserProfile') {
+            const replaceActions = StackActions.push(route, { user: info });
+            return this.props.navigation.dispatch(replaceActions);
+        }
     }
 
-    await setLikeCommentStatus(
-      Store.user,
-      this.state.user,
-      item,
-      status,
-      reply,
-      mainComment,
-    );
-  };
-
-  sendComment = async () => {
-    if (this.state.anonymus) {
-      await sendComment(
-        {
-          ...Store.user,
-          type: 'anonymus',
-          name: this.state.anonymus.nickname,
-          photo: constants.DEFAULT_PHOTO,
-        },
-        this.state.user,
-        this.state.comment,
-        this.state.reply,
-      );
-    } else {
-      await sendComment(
-        Store.user,
-        this.state.user,
-        this.state.comment,
-        this.state.reply,
-      );
+    componentWillUnmount = () => {
+        database().ref('comments').child(this.state.user.uid).off();
     }
-    this.setState({comment: '', reply: null});
-  };
+
+    showReplyTab = (reply, set = true) => {
+        if (set) {
+            this.textinput.focus();
+            this.setState({ comment: `@${reply.user.username} ` });
+        } else {
+            this.setState({ comment: '' });
+        }
+
+        this.setState({ reply });
+    }
+
+    seeThread = (item, index) => {
+        var comments = this.state.comments;
+        comments[index].showReply = !item.showReply;
+        this.setState({ comments });
+    }
+
+    likeComment = async (item, index, status = false, reply = false, mainComment = null, mainCommentIndex = 0) => {
+        await setLikeCommentStatus(Store.user, this.state.user, item, status, reply, mainComment);
+    }
+
+    sendComment = async () => {
+        if (this.state.anonymus) {
+            await sendComment({ ...Store.user, type: 'anonymus', name: this.state.anonymus.nickname, photo: constants.DEFAULT_PHOTO }, this.state.user, this.state.comment, this.state.reply);
+        } else {
+            await sendComment(Store.user, this.state.user, this.state.comment, this.state.reply);
+        }
+        this.setState({ comment: '', reply: null });
+    }
 
   renderProfileTop = (user = this.state.user) => {
     return (
@@ -499,8 +435,8 @@ class Chat extends Component {
                           size={16}
                         />
                         <Text
-                          text="See Thread"
-                          style={{fontSize: 12, marginLeft: 3}}
+                            text={`${followerCount(user.follower)} members`}
+                            style={{ fontSize: 12, color: 'gray' }}
                         />
                       </View>
                     </TouchableOpacity>

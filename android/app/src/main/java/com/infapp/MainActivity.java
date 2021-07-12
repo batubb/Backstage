@@ -1,4 +1,4 @@
-package com.backstage.cooldigital;
+package com.cooldigital.backstage;
 
 import com.facebook.react.ReactActivity;
 

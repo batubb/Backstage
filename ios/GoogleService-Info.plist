@@ -3,9 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>234737203229-3o705fotnfletrrpq4qa4slv0tm4r1fj.apps.googleusercontent.com</string>
+	<string>234737203229-ul71ft0cjbkknvigok3cnbsnrb8dnvph.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.234737203229-3o705fotnfletrrpq4qa4slv0tm4r1fj</string>
+	<string>com.googleusercontent.apps.234737203229-ul71ft0cjbkknvigok3cnbsnrb8dnvph</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>234737203229-ce7r7kbh6qn9c8915qp301vieh3et7vd.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyBT1Es45WLzWT6dHKgpmHgkIexK0LVLzD0</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.backstage.cooldigital</string>
+	<string>com.cooldigital.backstage</string>
 	<key>PROJECT_ID</key>
 	<string>backstage-ceb27</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:234737203229:ios:1d4b1e0353b7eeb3f5eef4</string>
+	<string>1:234737203229:ios:671a0f2e1054c1f4f5eef4</string>
 	<key>DATABASE_URL</key>
 	<string>https://backstage-ceb27-default-rtdb.firebaseio.com</string>
 </dict>

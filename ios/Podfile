@@ -8,6 +8,7 @@ target 'infapp' do
 
   use_react_native!(:path => config["reactNativePath"])
 
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
   pod 'RNTextGradientView', :path => '../node_modules/react-native-text-gradient'
 
@@ -17,6 +18,7 @@ target 'infapp' do
   end
   
   pod 'RNInputMask', :path => '../node_modules/react-native-text-input-mask/ios/InputMask'
+  pod 'CodePush', :path => '../node_modules/react-native-code-push'
 
   # Enables Flipper.
   #
@@ -26,6 +28,10 @@ target 'infapp' do
   # post_install do |installer|
   #   flipper_post_install(installer)
   # end
+end
+
+target 'OneSignalNotificationServiceExtension' do
+  pod 'OneSignal', '>= 3.0', '< 4.0'
 end
 
 target 'infapp-tvOS' do

@@ -70,7 +70,6 @@ class WatchVideo extends Component {
 
     this.list = [
       {title: 'Report', onPress: this.reportVideo},
-      {title: 'Share', onPress: this.shareVideo},
     ];
 
     if (Store.user.uid === this.props.route.params.video.user.uid) {
@@ -81,67 +80,72 @@ class WatchVideo extends Component {
     }
   }
 
-  componentDidMount = async () => {
-    Keyboard.addListener('keyboardDidShow', () => {
-      this.setState({keyboard: true});
-    });
+    componentDidMount = async () => {
+        Keyboard.addListener('keyboardDidShow', () => {
+            this.setState({ keyboard: true });
+        });
 
-    Keyboard.addListener('keyboardDidHide', () => {
-      this.setState({keyboard: false});
-    });
+        Keyboard.addListener('keyboardDidHide', () => {
+            this.setState({ keyboard: false });
+        });
 
-    const subscribtion = await checkSubscribtion(
-      Store.uid,
-      this.state.video.user.uid,
-    );
+        const subscribtion = await checkSubscribtion(Store.uid, this.state.video.user.uid);
 
-    if (subscribtion.subscribtion) {
-      const influencer = await checkUserInfo(this.state.video.user.uid);
+        if (subscribtion.subscribtion) {
+            const influencer = await checkUserInfo(this.state.video.user.uid);
 
-      if (this.state.video.type === 'video') {
-        const video = await getVideoInfo(this.state.video.uid, influencer);
+            if (this.state.video.type === 'video') {
+                try {
+                    const video = await getVideoInfo(this.state.video.uid, influencer);
 
-        if (typeof video.title !== 'undefined') {
-          setVideoView(Store.user.uid, this.state.video);
+                    if (typeof video.title !== 'undefined') {
+                        setVideoView(Store.user.uid, this.state.video);
+                    }
+
+                    if (video) {
+                        this.setState({ video });
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+            } else if (this.state.video.type === 'live') {
+                try {
+                    const video = await getVideoInfo(this.state.video.uid, influencer, 'live');
+
+                    if (video) {
+                        this.setState({ video });
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+
+                database().ref('comments').child(this.state.video.uid).orderByChild('timestamp').on('value', snap => {
+                    var comments = [];
+
+                    snap.forEach(element => {
+                        comments.push(element.val());
+                    });
+
+                    comments.reverse();
+                    comments = comments.slice(0, 3);
+                    comments.reverse();
+                    this.setState({ comments });
+                });
+            }
+
+            this.setState({ loading: false, paused: false, influencer });
+        } else {
+            Alert.alert(
+                'Oops',
+                'You must be a member to view the content.',
+                [
+                    {
+                        text: 'Okay', onPress: () => this.props.navigation.dispatch(StackActions.pop()),
+                    },
+                ]
+            );
         }
-
-        this.setState({video});
-      } else if (this.state.video.type === 'live') {
-        const video = await getVideoInfo(
-          this.state.video.uid,
-          influencer,
-          'live',
-        );
-        this.setState({video});
-
-        database()
-          .ref('comments')
-          .child(this.state.video.uid)
-          .orderByChild('timestamp')
-          .on('value', (snap) => {
-            var comments = [];
-
-            snap.forEach((element) => {
-              comments.push(element.val());
-            });
-
-            comments.reverse();
-            comments = comments.slice(0, 3);
-            comments.reverse();
-            this.setState({comments});
-          });
-      }
-
-      this.setState({loading: false, paused: false, influencer});
-    } else {
-      Alert.alert('Oops', 'You must be a member to view the content.', [
-        {
-          text: 'Okay',
-          onPress: () => this.props.navigation.dispatch(StackActions.pop()),
-        },
-      ]);
     }
-  };
 
   componentWillUnmount = () => {
     Keyboard.removeListener('keyboardDidShow', () => {
@@ -263,7 +267,6 @@ class WatchVideo extends Component {
             ]}
             paused={paused}
             repeat
-            poster={video.photo}
           />
           {this.state.controlsVisible ? (
             <View
@@ -465,7 +468,6 @@ class WatchVideo extends Component {
             onEnd={() => this.setState({paused: true, finished: true})}
             style={{flex: 1, width: width, height: height}}
             paused={false}
-            poster={video.photo}
           />
         )}
         <SafeAreaView
@@ -582,30 +584,6 @@ class WatchVideo extends Component {
               </TouchableOpacity>
             ) : null}
           </View>
-          {!this.state.keyboard ? (
-            <TouchableOpacity
-              onPress={() =>
-                this.shareVideo(
-                  `Hey are you watching this live video? Let's watch ${this.state.influencer.username} together.`,
-                )
-              }>
-              <View
-                style={{
-                  width: 45,
-                  height: 45,
-                  backgroundColor: '#FFF',
-                  borderRadius: 22.5,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <Icon
-                  name="export-variant"
-                  color="#000"
-                  type="material-community"
-                />
-              </View>
-            </TouchableOpacity>
-          ) : null}
         </View>
       </KeyboardAvoidingView>
     );

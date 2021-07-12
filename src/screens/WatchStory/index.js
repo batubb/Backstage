@@ -22,6 +22,7 @@ import {checkSubscribtion, checkUserInfo, report} from '../../services';
 import Store from '../../store/Store';
 import {runTiming} from '../../lib';
 import SlidingUpPanel from 'rn-sliding-up-panel';
+import database from '@react-native-firebase/database';
 
 const {width, height} = Dimensions.get('window');
 const SCREEN_DIMENSIONS = Dimensions.get('screen');
@@ -47,16 +48,16 @@ class WatchStory extends Component {
       subscribtion: {
         subscribtion: false,
       },
+      optionsVisible: false,
     };
+
 
     this.list = [{title: 'Report', onPress: this.reportVideo}];
 
+
     if (Store.user.uid === this.props.route.params.stories[0].user.uid) {
-      this.list = [
-        ...this.list,
-        {title: 'Edit', color: constants.RED, onPress: this.editVideo},
-      ];
-    }
+      this.list = [...this.list, { title: 'Delete', color: constants.RED, onPress: this.deleteVideo }];
+  }
 
     this.storyLoadingClock = new Animated.Clock();
     this.storyLoadingValue = new Animated.Value(0);
@@ -88,8 +89,14 @@ class WatchStory extends Component {
     if (this.storyLoadingNextAction) {
       clearTimeout(this.storyLoadingNextAction);
       this.storyLoadingNextAction = null;
-    }
+
   };
+}
+  deleteVideo = async () => {
+    await database().ref('stories').child(Store.user.uid).child(this.state.content.uid).set(null);
+    this.setState({ optionsVisible: false });
+    this.props.navigation.dispatch(StackActions.pop());
+}
 
   reportVideo = async () => {
     const result = await report(this.state.content);
@@ -105,10 +112,6 @@ class WatchStory extends Component {
     }
 
     this.setState({optionsVisible: false});
-  };
-
-  editVideo = () => {
-    // TODO Video editleme
   };
 
   nextStory = (stories, content) => {

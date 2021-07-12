@@ -44,6 +44,11 @@
 		D52D7BC53AB74CE7801DC258 /* SF-Pro-Display-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4EDA7EC33593474A9FC256AF /* SF-Pro-Display-Black.otf */; };
 		EBD83E4CD47F4A4499F2A65D /* Oswald-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5242AB8B7D7C4F199BC4F459 /* Oswald-Light.ttf */; };
 		F12816D931D1466AACC51FE1 /* Oswald-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DD970EA1272B47EB838CC312 /* Oswald-ExtraLight.ttf */; };
+		A4A729851DA8420AC85B2D07 /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16FF89CBE22122CB5E746215 /* libPods-OneSignalNotificationServiceExtension.a */; };
+		D40A7587266AA4C9008DF1AE /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40A7586266AA4C9008DF1AE /* NotificationService.swift */; };
+		D40A758B266AA4C9008DF1AE /* OneSignalNotificationServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = D40A7584266AA4C9008DF1AE /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D4CEC814266262D100924F18 /* Splash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D4CEC813266262D100924F18 /* Splash.storyboard */; };
+		D4CEC8162662631800924F18 /* 1024.png in Resources */ = {isa = PBXBuildFile; fileRef = D4CEC8152662631800924F18 /* 1024.png */; };
 		FA349FE2B2B8545250DDD2A0 /* libPods-infapp-infappTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7851B8E3F9F01EAB27266ACC /* libPods-infapp-infappTests.a */; };
 		FF047F10DB664C77883F972D /* SF-Pro-Display-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = D1F6C2252B2643FF9179907D /* SF-Pro-Display-Semibold.otf */; };
 /* End PBXBuildFile section */
@@ -63,7 +68,28 @@
 			remoteGlobalIDString = 2D02E47A1E0B4A5D006451C7;
 			remoteInfo = "infapp-tvOS";
 		};
+		D40A7589266AA4C9008DF1AE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D40A7583266AA4C9008DF1AE;
+			remoteInfo = OneSignalNotificationServiceExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D40A758F266AA4C9008DF1AE /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				D40A758B266AA4C9008DF1AE /* OneSignalNotificationServiceExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
@@ -85,7 +111,9 @@
 		202C97FD267D4869006DBD2D /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		20CDB36D267BE9BB00C85307 /* infapp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = infapp.entitlements; path = infapp/infapp.entitlements; sourceTree = "<group>"; };
 		27433C2A34F84226BABD8041 /* SF-Pro-Display-LightItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-LightItalic.otf"; path = "../src/fonts/SF-Pro-Display-LightItalic.otf"; sourceTree = "<group>"; };
+		16FF89CBE22122CB5E746215 /* libPods-OneSignalNotificationServiceExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OneSignalNotificationServiceExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27D58EB1F3050AF805C81CFC /* Pods-infapp-infappTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-infapp-infappTests.debug.xcconfig"; path = "Target Support Files/Pods-infapp-infappTests/Pods-infapp-infappTests.debug.xcconfig"; sourceTree = "<group>"; };
+		292DBB7E6E9D7EE5003BF27C /* Pods-OneSignalNotificationServiceExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalNotificationServiceExtension.release.xcconfig"; path = "Target Support Files/Pods-OneSignalNotificationServiceExtension/Pods-OneSignalNotificationServiceExtension.release.xcconfig"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* infapp-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "infapp-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* infapp-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "infapp-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3619F44D240E44EABF3EEB94 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
@@ -130,12 +158,20 @@
 		DDFE05F594F449948E71B1BA /* SF-Pro-Display-BoldItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-BoldItalic.otf"; path = "../src/fonts/SF-Pro-Display-BoldItalic.otf"; sourceTree = "<group>"; };
 		E34C6A164FFC4A6AB09D22D5 /* SF-Pro-Display-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Bold.otf"; path = "../src/fonts/SF-Pro-Display-Bold.otf"; sourceTree = "<group>"; };
 		E4546ED7C35C41429F0860CF /* Oswald-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Oswald-SemiBold.ttf"; path = "../src/fonts/Oswald-SemiBold.ttf"; sourceTree = "<group>"; };
+		D40A7584266AA4C9008DF1AE /* OneSignalNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OneSignalNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		D40A7586266AA4C9008DF1AE /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		D40A7588266AA4C9008DF1AE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D43E2E30266AA5D30047199D /* OneSignalNotificationServiceExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OneSignalNotificationServiceExtension.entitlements; sourceTree = "<group>"; };
+		D4BA35E7266957D400150590 /* infapp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = infapp.entitlements; path = infapp/infapp.entitlements; sourceTree = "<group>"; };
+		D4CEC813266262D100924F18 /* Splash.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Splash.storyboard; sourceTree = "<group>"; };
+		D4CEC8152662631800924F18 /* 1024.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = 1024.png; path = infapp/Images.xcassets/AppIcon.appiconset/1024.png; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		EEF962DE2A4744A981696B67 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		F168BBDF0BA941C1BFDF1517 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		F937BE30E5266AA9EC888780 /* Pods-infapp-infappTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-infapp-infappTests.release.xcconfig"; path = "Target Support Files/Pods-infapp-infappTests/Pods-infapp-infappTests.release.xcconfig"; sourceTree = "<group>"; };
 		FCC1AABACFC74762A9B642EC /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
+		FF42273AA9C3F3AE36CCCD94 /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalNotificationServiceExtension.debug.xcconfig"; path = "Target Support Files/Pods-OneSignalNotificationServiceExtension/Pods-OneSignalNotificationServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,6 +208,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D40A7581266AA4C9008DF1AE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A4A729851DA8420AC85B2D07 /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -195,7 +239,8 @@
 		13B07FAE1A68108700A75B9A /* infapp */ = {
 			isa = PBXGroup;
 			children = (
-				20CDB36D267BE9BB00C85307 /* infapp.entitlements */,
+				D4BA35E7266957D400150590 /* infapp.entitlements */,
+				D4CEC8152662631800924F18 /* 1024.png */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -203,6 +248,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				D4CEC813266262D100924F18 /* Splash.storyboard */,
 			);
 			name = infapp;
 			sourceTree = "<group>";
@@ -217,6 +263,7 @@
 				7851B8E3F9F01EAB27266ACC /* libPods-infapp-infappTests.a */,
 				AA05699607500D6A7733F588 /* libPods-infapp-tvOS.a */,
 				147730564AD26EC0AE48ABE4 /* libPods-infapp-tvOSTests.a */,
+				16FF89CBE22122CB5E746215 /* libPods-OneSignalNotificationServiceExtension.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -232,6 +279,8 @@
 				46883C745214E5D0A7BB1815 /* Pods-infapp-tvOS.release.xcconfig */,
 				8A3A7A319C3308AD824B847D /* Pods-infapp-tvOSTests.debug.xcconfig */,
 				B019159690B6A1748C85C62A /* Pods-infapp-tvOSTests.release.xcconfig */,
+				FF42273AA9C3F3AE36CCCD94 /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */,
+				292DBB7E6E9D7EE5003BF27C /* Pods-OneSignalNotificationServiceExtension.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -246,10 +295,11 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				D4C0AA49261F18CE00C6BECC /* GoogleService-Info.plist */,
+				D47A1D5C266AA3800069FD7E /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* infapp */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* infappTests */,
+				D40A7585266AA4C9008DF1AE /* OneSignalNotificationServiceExtension */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				38FDB44B023396ABAD2BE6F4 /* Pods */,
@@ -267,6 +317,7 @@
 				00E356EE1AD99517003FC87E /* infappTests.xctest */,
 				2D02E47B1E0B4A5D006451C7 /* infapp-tvOS.app */,
 				2D02E4901E0B4A5D006451C7 /* infapp-tvOSTests.xctest */,
+				D40A7584266AA4C9008DF1AE /* OneSignalNotificationServiceExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -318,6 +369,17 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+
+		D40A7585266AA4C9008DF1AE /* OneSignalNotificationServiceExtension */ = {
+			isa = PBXGroup;
+			children = (
+				D43E2E30266AA5D30047199D /* OneSignalNotificationServiceExtension.entitlements */,
+				D40A7586266AA4C9008DF1AE /* NotificationService.swift */,
+				D40A7588266AA4C9008DF1AE /* Info.plist */,
+			);
+			path = OneSignalNotificationServiceExtension;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -353,10 +415,12 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				8D635EF49D5E8B3FF2912321 /* [CP] Copy Pods Resources */,
 				B8C55915799ABAAF082A9CF8 /* [CP-User] [RNFB] Core Configuration */,
+				D40A758F266AA4C9008DF1AE /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D40A758A266AA4C9008DF1AE /* PBXTargetDependency */,
 			);
 			name = infapp;
 			productName = infapp;
@@ -402,12 +466,31 @@
 			productReference = 2D02E4901E0B4A5D006451C7 /* infapp-tvOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		D40A7583266AA4C9008DF1AE /* OneSignalNotificationServiceExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D40A758C266AA4C9008DF1AE /* Build configuration list for PBXNativeTarget "OneSignalNotificationServiceExtension" */;
+			buildPhases = (
+				268252E566CFDFD22C8CE360 /* [CP] Check Pods Manifest.lock */,
+				D40A7580266AA4C9008DF1AE /* Sources */,
+				D40A7581266AA4C9008DF1AE /* Frameworks */,
+				D40A7582266AA4C9008DF1AE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OneSignalNotificationServiceExtension;
+			productName = OneSignalNotificationServiceExtension;
+			productReference = D40A7584266AA4C9008DF1AE /* OneSignalNotificationServiceExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1250;
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
@@ -429,6 +512,11 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = 2D02E47A1E0B4A5D006451C7;
 					};
+					D40A7583266AA4C9008DF1AE = {
+						CreatedOnToolsVersion = 12.5;
+						DevelopmentTeam = V7293GG6Z6;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "infapp" */;
@@ -448,6 +536,7 @@
 				00E356ED1AD99517003FC87E /* infappTests */,
 				2D02E47A1E0B4A5D006451C7 /* infapp-tvOS */,
 				2D02E48F1E0B4A5D006451C7 /* infapp-tvOSTests */,
+				D40A7583266AA4C9008DF1AE /* OneSignalNotificationServiceExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -491,6 +580,8 @@
 				CD327BE3332B429FAB04857C /* SF-Pro-Display-ThinItalic.otf in Resources */,
 				30367AE67A8C48EFA393E93D /* SF-Pro-Display-Ultralight.otf in Resources */,
 				3F8D0872DB3F4748928DE350 /* SF-Pro-Display-UltralightItalic.otf in Resources */,
+				D4CEC814266262D100924F18 /* Splash.storyboard in Resources */,
+				D4CEC8162662631800924F18 /* 1024.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -503,6 +594,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2D02E48E1E0B4A5D006451C7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D40A7582266AA4C9008DF1AE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -614,6 +712,28 @@
 			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-infapp-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		268252E566CFDFD22C8CE360 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-OneSignalNotificationServiceExtension-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -813,6 +933,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D40A7580266AA4C9008DF1AE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D40A7587266AA4C9008DF1AE /* NotificationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -825,6 +953,11 @@
 			isa = PBXTargetDependency;
 			target = 2D02E47A1E0B4A5D006451C7 /* infapp-tvOS */;
 			targetProxy = 2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */;
+		};
+		D40A758A266AA4C9008DF1AE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D40A7583266AA4C9008DF1AE /* OneSignalNotificationServiceExtension */;
+			targetProxy = D40A7589266AA4C9008DF1AE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -880,16 +1013,18 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 56EE39ACA5E48E121E19A8D3 /* Pods-infapp.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = infapp/infapp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = V7293GG6Z6;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 armv7s armv7";
 				INFOPLIST_FILE = infapp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0.5;
 				OTHER_LDFLAGS = (
@@ -897,7 +1032,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.backstageinf.cooldigital;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cooldigital.backstage;
 				PRODUCT_NAME = infapp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -910,15 +1045,17 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 641EA2D815702BCEBD448981 /* Pods-infapp.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = infapp/infapp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = V7293GG6Z6;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 armv7 armv7s";
 				INFOPLIST_FILE = infapp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0.5;
 				OTHER_LDFLAGS = (
@@ -926,7 +1063,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.backstageinf.cooldigital;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cooldigital.backstage;
 				PRODUCT_NAME = infapp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -1157,6 +1294,71 @@
 			};
 			name = Release;
 		};
+		D40A758D266AA4C9008DF1AE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FF42273AA9C3F3AE36CCCD94 /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = V7293GG6Z6;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = OneSignalNotificationServiceExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cooldigital.backstage.OneSignalNotificationServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		D40A758E266AA4C9008DF1AE /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 292DBB7E6E9D7EE5003BF27C /* Pods-OneSignalNotificationServiceExtension.release.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = V7293GG6Z6;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = OneSignalNotificationServiceExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cooldigital.backstage.OneSignalNotificationServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1201,6 +1403,15 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D40A758C266AA4C9008DF1AE /* Build configuration list for PBXNativeTarget "OneSignalNotificationServiceExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D40A758D266AA4C9008DF1AE /* Debug */,
+				D40A758E266AA4C9008DF1AE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -46,68 +46,68 @@ const {width, height} = Dimensions.get('window');
 const TOP_PADDING = height >= 812 ? 60 : 40;
 
 export default class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isPublishing: false,
-      hasPermission: false,
-      paused: true,
-      streamId: '',
-      streamKey: '',
-      publicKey: '',
-      ratio: '16:9',
-      isRecording: false,
-      indexButton: 
+    constructor(props) {
+        super(props);
+        this.state = {
+            isPublishing: false,
+            hasPermission: false,
+            paused: true,
+            streamId: '',
+            streamKey: '',
+            publicKey: '',
+            ratio: '16:9',
+            isRecording: false,
+            indexButton: 
         this.props.route &&
         this.props.route.params &&
         this.props.route.params.startButtonIdx
           ? this.props.route.params.startButtonIdx
           : 1,
-      liveStreamId: '',
-      loading: false,
-      url: '',
-      thumbnailUrl: '',
+          thumbnailUrl: '',
       thumbnailWidth: '',
       thumnailHeight: '',
-      title: '',
-      assetId: '',
-      uid: '',
-      camera: 1,
-      influencerPrice: 4.99,
-      influencer: true,
-      editTextModal: false,
-      seconds: 0,
-      timer: false,
-      type: '',
-      storyVideo: false,
-      isStoryVideoRecording: false,
-      onPage: true,
-    };
+            liveStreamId: '',
+            loading: false,
+            url: '',
+            title: '',
+            assetId: '',
+            uid: '',
+            camera: 1,
+            influencerPrice: constants.TIERS[0],
+            influencer: false,
+            editTextModal: false,
+            seconds: 0,
+            timer: false,
+            type: '',
+            storyVideo: false,
+            onPage: true,
+            isStoryVideoRecording: false,
+        };
 
-    this.settings = {
-      audio: {bitrate: 128000, profile: 1, samplerate: 44100},
-      video: {
-        preset: 4,
-        bitrate: 2000000,
-        profile: 2,
-        fps: 30,
-        videoFrontMirror: true,
-      },
-    };
+        this.settings = {
+            audio: { bitrate: 128000, profile: 1, samplerate: 44100 },
+            video: {
+                preset: 4,
+                bitrate: 2000000,
+                profile: 2,
+                fps: 30,
+                videoFrontMirror: true,
+            },
+        };
 
-    this.mux_instance = axios.create({
-      baseURL: constants.MUX_BASE_URL,
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-        mp4_support: 'standard',
-      },
-      auth: {
-        username: constants.MUX_USERNAME,
-        password: constants.MUX_PASSWORD,
-      },
-    });
-  }
+        this.mux_instance = axios.create({
+            baseURL: constants.MUX_BASE_URL,
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'mp4_support': 'standard',
+            },
+            auth: {
+                username: constants.MUX_USERNAME,
+                password: constants.MUX_PASSWORD,
+            },
+        });
+    }
 
   componentDidMount() {
     this.createStream();
@@ -120,61 +120,61 @@ export default class App extends Component {
     }
   };
 
-  getAssetInfo = async (id) => {
-    try {
-      const uid = makeid(40, 'uuid');
-      this.setState({uid});
 
-      var livestream = {
-        uid: uid,
-        url: `https://stream.mux.com/${this.state.publicKey}.m3u8`,
-        thumbnail: {
-          url: `https://image.mux.com/${this.state.publicKey}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
-          width: width,
-          height: height,
-        },
-        title: this.state.title === '' ? 'Livestream' : this.state.title,
-        photo: `https://image.mux.com/${this.state.publicKey}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
-      };
+    getAssetInfo = async (id) => {
+        try {
+            const uid = makeid(40, 'uuid');
+            this.setState({ uid });
 
-      await sleep(10000);
+            var livestream = {
+                uid: uid,
+                url: `https://stream.mux.com/${this.state.publicKey}.m3u8`,
+                thumbnail: {
+                    url: `https://image.mux.com/${this.state.publicKey}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
+                    width: width,
+                    height: height,
+                },
+                publicKey: this.state.publicKey,
+                liveId: id,
+                title: this.state.title === '' ? 'Livestream' : this.state.title,
+                photo: `https://image.mux.com/${this.state.publicKey}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
+            };
 
-      if (!this.state.onPage) {
-        return true;
-      }
+            if (!this.state.onPage) {
+                return true;
+            }
 
-      const livestreamResponse = await this.mux_instance.get(
-        '/video/v1/live-streams/' + id,
-      );
-      const assetResponse = await this.mux_instance.get(
-        '/video/v1/assets/' + livestreamResponse.data.data.active_asset_id,
-      );
+            await sleep(5000);
 
-      const assetPlaybackId = assetResponse.data.data.playback_ids[0].id;
-      var video = {
-        uid: uid,
-        url: `https://stream.mux.com/${assetPlaybackId}.m3u8`,
-        thumbnail: {
-          url: `https://image.mux.com/${assetPlaybackId}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
-          width: width,
-          height: height,
-        },
-        title: this.state.title,
-        photo: `https://image.mux.com/${assetPlaybackId}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
-        active: false,
-      };
+            const livestreamResponse = await this.mux_instance.get('/video/v1/live-streams/' + id);
+            const assetResponse = await this.mux_instance.get('/video/v1/assets/' + livestreamResponse.data.data.active_asset_id);
 
-      await createVideoData(Store.user, livestream, 'live');
-      await createVideoData(Store.user, video, 'video', 'video', 1);
+            const assetPlaybackId = assetResponse.data.data.playback_ids[0].id;
+            var video = {
+                uid: uid,
+                url: `https://stream.mux.com/${assetPlaybackId}.m3u8`,
+                thumbnail: {
+                    url: `https://image.mux.com/${assetPlaybackId}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
+                    width: width,
+                    height: height,
+                },
+                assetPlaybackId: assetPlaybackId,
+                title: this.state.title === '' ? 'New Video' : this.state.title,
+                photo: `https://image.mux.com/${assetPlaybackId}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
+                active: false,
+            };
 
-      this.setState({
-        assetId: livestreamResponse.data.data.active_asset_id,
-        assetPlaybackId,
-      });
-    } catch (err) {
-      console.log('err: ', err);
-    }
-  };
+            await createVideoData(Store.user, livestream, 'live');
+            await createVideoData(Store.user, video);
+
+            this.setState({ assetId: livestreamResponse.data.data.active_asset_id, assetPlaybackId });
+        } catch (err) {
+            console.log('err: ', err);
+            return Alert.alert('Oops', 'Something unexpected happens.', [{ text: 'Okay' }]);
+        }
+
+    };
+  
 
   createStream = async () => {
     try {
@@ -201,9 +201,9 @@ export default class App extends Component {
     }
   };
 
-  uploadVideo = async (uri, onname, type = 'photo') => {
-    var ref = storage().ref().child(`videos/${onname}.mp4`);
-    await ref.putFile(uri);
+    uploadVideo = async (uri, onname, type = 'photo') => {
+        var ref = storage().ref().child(`videos/${onname}.mp4`);
+        await ref.putFile(uri);
 
     return await ref.getDownloadURL();
   };
@@ -329,6 +329,7 @@ export default class App extends Component {
       codec: RNCamera.Constants.VideoCodec['H264'],
     };
 
+
     try {
       if (isRecording) {
         await this.camera.stopRecording();
@@ -344,41 +345,68 @@ export default class App extends Component {
     }
   };
 
-  onPressPublishBtn = async () => {
-    const {isPublishing: publishingState, hasPermission} = this.state;
+    onPressPublishBtn = async () => {
+        const { isPublishing: publishingState, hasPermission } = this.state;
 
-    if (Platform.OS === 'android') {
-      if (!hasPermission) {
-        this.checkPermissions();
-        return;
+        if (Platform.OS === 'android') {
+            if (!hasPermission) {
+                this.checkPermissions();
+                return;
+            }
+        }
+
+        if (publishingState) {
+            this.vb.stop();
+            this.stopLiveAndPublishPost();
+            this.props.navigation.dispatch(StackActions.pop());
+            this.setState({ timer: false, seconds: 0 });
+        } else {
+            const activeLive = await this.checkActiveLive();
+
+            if (activeLive) {
+                return Alert.alert('Oops', 'The previous live broadcast is still in progress. Please try again in 1-2 minutes.', [{ text: 'Okay' }]);
+            } else {
+                this.vb.start();
+                this.getAssetInfo(this.state.liveStreamId);
+                this.setState({ timer: true }, () => {
+                    this.startTimer();
+                });
+            }
+        }
       }
+
+    checkActiveLive = async () => {
+        try {
+            const result = await database().ref('live').once('value');
+            const data = result.val();
+            const keys = Object.keys(data);
+
+            for (let i = 0; i < keys.length; i++) {
+                const k = keys[i];
+                const element = data[k];
+
+                if (element.user.uid === Store.user.uid) {
+                    return true;
+                }
+            }
+
+            return false;
+        } catch (error) {
+            return false;
+        }
     }
 
-    if (publishingState) {
-      this.vb.stop();
-      this.stopLiveAndPublishPost();
-      this.setState({timer: false, title: ''});
-    } else {
-      this.vb.start();
-      this.getAssetInfo(this.state.liveStreamId);
-      this.setState({timer: true}, () => {
-        this.startTimer();
-      });
-    }
+    startTimer = async () => {
+        while (this.state.timer) {
+            await sleep(1000);
+            this.setState({ seconds: this.state.seconds + 1 });
+            if (this.state.indexButton === 2 && this.state.seconds >= 10) {
+                this.stopStoryVideo();
+                break;
+            }
+        }
 
-    this.setState({isPublishing: !publishingState});
-  };
-
-  startTimer = async () => {
-    while (this.state.timer) {
-      await sleep(1000);
-      this.setState({seconds: this.state.seconds + 1});
-      if (this.state.indexButton === 2 && this.state.seconds >= 10) {
-        this.stopStoryVideo();
-        break;
-      }
     }
-  };
 
   stopStoryVideo = async () => {
     this.camera.stopRecording();
@@ -404,32 +432,23 @@ export default class App extends Component {
 
     this.setState({isRecording: true, isStoryVideoRecording: true});
     const result = await data;
-
     this.setState({url: result.uri, type: 'storyVideo', timer: true});
   };
 
-  stopLiveAndPublishPost = async () => {
-    const result = await database()
-      .ref('posts')
-      .child(Store.user.uid)
-      .child(this.state.uid)
-      .once('value');
+    stopLiveAndPublishPost = async () => {
+        // const result = await database().ref('posts').child(Store.user.uid).child(this.state.uid).once('value');
 
-    var updates = {};
+        // var updates = {};
 
-    updates[`live/${this.state.uid}`] = null;
+        // updates[`live/${this.state.uid}`] = null;
 
-    if (result.val()) {
-      updates[`posts/${Store.user.uid}/${this.state.uid}/active`] = true;
-      updates[`posts/${Store.user.uid}/${this.state.uid}/isLive`] = 0;
+        // if (result.val()) {
+        //     updates[`posts/${Store.user.uid}/${this.state.uid}/active`] = true;
+        // }
+
+        // database().ref().update(updates);
+        return Alert.alert('Yeyy', 'Your live stream is over. Your live broadcast will appear in your videos section in 1-2 minutes.', [{ text: 'Okay' }]);
     }
-
-    database().ref().update(updates);
-
-    return Alert.alert('Success', 'Your live stream has finished. ', [
-      {text: 'Okay'},
-    ]);
-  };
 
   selectVideoFromRoll = async () => {
     ImagePicker.launchImageLibrary({mediaType: 'video'}, (result) => {
@@ -495,6 +514,7 @@ export default class App extends Component {
       ]);
     }
 
+
     updates[`users/${Store.user.uid}/type`] = 'influencer';
     updates[`users/${Store.user.uid}/price`] = parseFloat(
       this.state.influencerPrice.toFixed(2),
@@ -507,24 +527,46 @@ export default class App extends Component {
   };
 
   setPrice = (type) => {
-    const {influencerPrice} = this.state;
+    const { influencerPrice } = this.state;
+    var counter = 0;
+
+    for (let i = 0; i < constants.TIERS.length; i++) {
+        const element = constants.TIERS[i];
+
+        if (element.price === influencerPrice.price) {
+            counter = i;
+            break;
+        }
+    }
 
     if (type === 'minus') {
-      if (influencerPrice <= 4.99) {
-        this.setState({influencerPrice: 1.99});
-      } else {
-        this.setState({influencerPrice: influencerPrice - 5});
-      }
+        if (influencerPrice.price === constants.TIERS[0].price) {
+            this.setState({ influencerPrice: constants.TIERS[constants.TIERS.length - 1] });
+        } else {
+            this.setState({ influencerPrice: constants.TIERS[counter - 1] });
+        }
     } else {
-      if (influencerPrice === 1.99) {
-        this.setState({influencerPrice: 4.99});
-      } else if (influencerPrice >= 19.99) {
-        this.setState({influencerPrice: 19.99});
-      } else {
-        this.setState({influencerPrice: influencerPrice + 5});
-      }
+        if (influencerPrice.price === constants.TIERS[constants.TIERS.length - 1].price) {
+            this.setState({ influencerPrice: constants.TIERS[0] });
+        } else {
+            this.setState({ influencerPrice: constants.TIERS[counter + 1] });
+        }
     }
-  };
+  } 
+
+    setSnapToItem = (index) => {
+        const { isPublishing, isRecording } = this.state;
+
+        if (index === 0) {
+            this.carousel.snapToItem(1, true, true);
+            return this.selectVideoFromRoll();
+        }
+
+        if (!isPublishing && !isRecording) {
+            return this.setState({ indexButton: index });
+        }
+    }
+
 
   takeStoryPhoto = async () => {
     const data = await this.camera.takePictureAsync({quality: 0.2});
