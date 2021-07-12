@@ -1,4 +1,4 @@
-import React, {Component, createRef} from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Dimensions,
@@ -8,6 +8,7 @@ import {
   Alert,
   ScrollView,
   RefreshControl,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
 import {observer} from 'mobx-react';
@@ -20,6 +21,7 @@ import {COLORS, FONTS, SIZES} from '../../resources/theme';
 import {StackActions} from '@react-navigation/native';
 import PhoneInput from 'react-native-phone-number-input';
 import database from '@react-native-firebase/database';
+import {getBottomSpace} from '../../lib/iPhoneXHelper';
 
 const {width, height} = Dimensions.get('window');
 
@@ -32,12 +34,12 @@ class EditBankAccount extends Component {
       isAdding: true,
       phoneFormatted: '',
       phoneExtracted: '',
+      phoneCountryCode: 'US',
       recipientFullName: '',
       recipientAddress: '',
       swiftCode: '',
       ibanCode: '',
     };
-    this.phoneRef = createRef();
   }
 
   componentDidMount = async () => {
@@ -52,7 +54,13 @@ class EditBankAccount extends Component {
         swiftCode: Store.user.bank.swift ?? '',
         ibanCode: Store.user.bank.iban ?? '',
         phoneFormatted: Store.user.bank.phoneNumber ?? '',
-        phoneExtracted: Store.user.bank.phoneNumber ?? '',
+        phoneExtracted: Store.user.bank.phoneNumber
+          ? Store.user.bank.phoneNumber.replace(
+              Store.user.bank.phoneCallingCode,
+              '',
+            )
+          : '',
+        phoneCountryCode: Store.user.bank.phoneCountryCode ?? 'US',
         isAdding: false,
       });
     }
@@ -85,13 +93,19 @@ class EditBankAccount extends Component {
       recipientFullName,
       recipientAddress,
       phoneNumber: phoneFormatted,
+      phoneCallingCode: `+${this.phoneRef.getCallingCode()}`,
+      phoneCountryCode: this.phoneRef.getCountryCode(),
       swift: swiftCode,
       iban: ibanCode,
       lastUpdateTimestamp: new Date().getTime(),
     };
 
     try {
-      await database().ref('users').child(Store.user.uid).child('bank').update(updates);
+      await database()
+        .ref('users')
+        .child(Store.user.uid)
+        .child('bank')
+        .update(updates);
       await Store.setUser({...Store.user, bank: updates});
     } catch (error) {
       return Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
@@ -153,132 +167,138 @@ class EditBankAccount extends Component {
           }
           leftButtonIcon="chevron-left"
         />
-        {loading ? (
-          <Loading
-            loadingStyle={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            textStyle={{marginTop: 10, fontWeight: 'normal'}}
-            text="Loading"
-          />
-        ) : (
-          <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={refreshing} tintColor="white" />
-            }>
-            <Text
-              text={`${isAdding ? 'Add' : 'Edit'} your bank account`}
-              style={{
-                textAlign: 'left',
-                marginTop: SIZES.padding,
-                paddingLeft: SIZES.padding * 2,
-                fontSize: SIZES.h1,
-              }}
-            />
-            <Text
-              text="We will send your money to this bank account."
-              style={{
-                textAlign: 'left',
-                paddingLeft: SIZES.padding * 2,
-                paddingTop: SIZES.padding,
-                fontSize: SIZES.h3,
-                color: COLORS.gray,
-              }}
-            />
-            <Label
-              text="Recipient Details"
-              showLeftIcon={false}
-              showRightIcon={false}
-              style={{
-                marginTop: SIZES.spacing * 6,
-                marginBottom: SIZES.spacing * 3,
-              }}
-              onPressFunction={() => {}}
-            />
-            {this.renderInput(
-              'Recipient Legal Full Name',
-              this.state.recipientFullName,
-              (recipientFullName) => this.setState({recipientFullName}),
-              0,
-            )}
-            {this.renderInput(
-              'Recipient Address',
-              this.state.recipientAddress,
-              (recipientAddress) => this.setState({recipientAddress}),
-            )}
-            <PhoneInput
-              ref={this.phoneRef}
-              defaultValue={this.state.phoneExtracted}
-              codeTextStyle={{
-                color: COLORS.primaryLabelColor,
-              }}
-              textInputStyle={{
-                color: COLORS.primaryLabelColor,
-              }}
-              containerStyle={{
-                borderRadius: constants.BORDER_RADIUS,
-                width: '91%',
-                marginHorizontal: SIZES.spacing * 6,
-                marginTop: SIZES.spacing * 7.5,
-                backgroundColor: COLORS.systemFill,
-              }}
-              textContainerStyle={{
-                borderTopRightRadius: constants.BORDER_RADIUS,
-                borderBottomRightRadius: constants.BORDER_RADIUS,
-                backgroundColor: COLORS.systemFill,
-              }}
-              defaultCode="US"
-              layout="first"
-              onChangeText={(text) => {
-                this.setState({phoneExtracted: text});
-              }}
-              onChangeFormattedText={(text) => {
-                this.setState({phoneFormatted: text});
-              }}
-              withShadow
-              autoFocus
-            />
-            <Label
-              text="Bank Details"
-              showLeftIcon={false}
-              showRightIcon={false}
-              style={{
-                marginTop: SIZES.spacing * 6,
-                marginBottom: SIZES.spacing * 3,
-              }}
-              onPressFunction={() => {}}
-            />
-            {this.renderInput(
-              'IBAN',
-              this.state.ibanCode,
-              (ibanCode) => this.setState({ibanCode}),
-              0,
-            )}
-            {this.renderInput('SWIFT Code', this.state.swiftCode, (swiftCode) =>
-              this.setState({swiftCode}),
-            )}
-            <View
-              style={{
+          {loading ? (
+            <Loading
+              loadingStyle={{
+                flex: 1,
                 alignItems: 'center',
-                marginTop: SIZES.padding * 4,
-              }}>
-              <Button
-                onPress={() => this.saveBankAccount()}
-                text="Save"
-                primary
-                buttonStyle={{
-                  paddingVertical: SIZES.padding * 1.5,
-                  paddingHorizontal: SIZES.padding * 6,
-                }}
-                textStyle={{
-                  fontSize: SIZES.body3,
+                justifyContent: 'center',
+              }}
+              textStyle={{marginTop: 10, fontWeight: 'normal'}}
+              text="Loading"
+            />
+          ) : (
+            <KeyboardAvoidingView
+              behavior="padding"
+              keyboardVerticalOffset={getBottomSpace()}>
+            <ScrollView
+              refreshControl={
+                <RefreshControl refreshing={refreshing} tintColor="white" />
+              }>
+              <Text
+                text={`${isAdding ? 'Add' : 'Edit'} your bank account`}
+                style={{
+                  textAlign: 'left',
+                  marginTop: SIZES.padding,
+                  paddingLeft: SIZES.padding * 2,
+                  fontSize: SIZES.h1,
                 }}
               />
-            </View>
-          </ScrollView>
-        )}
+              <Text
+                text="We will send your money to this bank account."
+                style={{
+                  textAlign: 'left',
+                  paddingLeft: SIZES.padding * 2,
+                  paddingTop: SIZES.padding,
+                  fontSize: SIZES.h3,
+                  color: COLORS.gray,
+                }}
+              />
+              <Label
+                text="Recipient Details"
+                showLeftIcon={false}
+                showRightIcon={false}
+                style={{
+                  marginTop: SIZES.spacing * 6,
+                  marginBottom: SIZES.spacing * 3,
+                }}
+                onPressFunction={() => {}}
+              />
+              {this.renderInput(
+                'Recipient Legal Full Name',
+                this.state.recipientFullName,
+                (recipientFullName) => this.setState({recipientFullName}),
+                0,
+              )}
+              {this.renderInput(
+                'Recipient Address',
+                this.state.recipientAddress,
+                (recipientAddress) => this.setState({recipientAddress}),
+              )}
+              <PhoneInput
+                ref={(ref) => (this.phoneRef = ref)}
+                defaultValue={this.state.phoneExtracted}
+                codeTextStyle={{
+                  color: COLORS.primaryLabelColor,
+                }}
+                textInputStyle={{
+                  color: COLORS.primaryLabelColor,
+                }}
+                containerStyle={{
+                  borderRadius: constants.BORDER_RADIUS,
+                  width: '91%',
+                  marginHorizontal: SIZES.spacing * 6,
+                  marginTop: SIZES.spacing * 7.5,
+                  backgroundColor: COLORS.systemFill,
+                }}
+                textContainerStyle={{
+                  borderTopRightRadius: constants.BORDER_RADIUS,
+                  borderBottomRightRadius: constants.BORDER_RADIUS,
+                  backgroundColor: COLORS.systemFill,
+                }}
+                defaultCode={this.state.phoneCountryCode}
+                layout="first"
+                onChangeText={(text) => {
+                  this.setState({phoneExtracted: text});
+                }}
+                onChangeFormattedText={(text) => {
+                  this.setState({phoneFormatted: text});
+                }}
+                withShadow
+                autoFocus={false}
+              />
+              <Label
+                text="Bank Details"
+                showLeftIcon={false}
+                showRightIcon={false}
+                style={{
+                  marginTop: SIZES.spacing * 6,
+                  marginBottom: SIZES.spacing * 3,
+                }}
+                onPressFunction={() => {}}
+              />
+              {this.renderInput(
+                'IBAN',
+                this.state.ibanCode,
+                (ibanCode) => this.setState({ibanCode}),
+                0,
+              )}
+              {this.renderInput(
+                'SWIFT Code',
+                this.state.swiftCode,
+                (swiftCode) => this.setState({swiftCode}),
+              )}
+              <View
+                style={{
+                  alignItems: 'center',
+                  marginTop: SIZES.padding * 4,
+                }}>
+                <Button
+                  onPress={() => this.saveBankAccount()}
+                  text="Save"
+                  primary
+                  buttonStyle={{
+                    paddingVertical: SIZES.padding * 1.5,
+                    paddingHorizontal: SIZES.padding * 6,
+                  }}
+                  textStyle={{
+                    fontSize: SIZES.body3,
+                  }}
+                />
+              </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
+          )}
       </View>
     );
   }
