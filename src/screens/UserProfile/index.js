@@ -30,6 +30,7 @@ import {
   report,
   getFollowerCount,
   unsubscribe,
+  getSubscriberCount,
 } from '../../services';
 import Store from '../../store/Store';
 import {Icon} from 'react-native-elements';
@@ -62,6 +63,7 @@ class UserProfile extends Component {
       daily: [],
       optionsVisible: false,
       followerNumber: 0,
+      subscriberNumber: 0,
       products: [],
     };
 
@@ -90,6 +92,7 @@ class UserProfile extends Component {
 
   checkInfluencerInfos = async () => {
     const followerNumber = await getFollowerCount(this.state.user.uid);
+    const subscriberNumber = await getSubscriberCount(this.state.user.uid);
     const subscribtion = await checkSubscribtion(
       Store.uid,
       this.state.user.uid,
@@ -104,6 +107,7 @@ class UserProfile extends Component {
       subscribtion,
       loading: false,
       followerNumber,
+      subscriberNumber,
     });
   };
 
@@ -612,6 +616,8 @@ class UserProfile extends Component {
                   : this.state.user.cumulativeViewsUser
               }
               followerNumber={this.state.followerNumber}
+              subscriberNumber={this.state.subscriberNumber}
+              showSubscriberNumber={true}
               onChatPress={() => this.goTo('Chat', this.state.user)}
               editProfileVisible={user.uid === Store.user.uid}
               navigation={this.props.navigation}

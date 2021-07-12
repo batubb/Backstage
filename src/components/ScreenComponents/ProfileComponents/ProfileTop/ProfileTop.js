@@ -41,11 +41,7 @@ export default function ProfileTop(props) {
             marginLeft: SIZES.spacing * 8,
           }}>
           <View>
-            <Text
-              text={props.name}
-              numberOfLines={1}
-              style={{fontSize: 20}}
-            />
+            <Text text={props.name} numberOfLines={1} style={{fontSize: 20}} />
             <Text
               numberOfLines={2}
               text={props.biography}
@@ -57,11 +53,28 @@ export default function ProfileTop(props) {
               }}
             />
           </View>
-          <View style={{marginTop: 'auto'}}>
+          <View
+            style={{
+              marginTop: 'auto',
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+            }}>
             <Text
               text={`${props.views ? props.views : 0} views`}
-              style={{fontWeight: 'bold', fontSize: 10}}
+              style={{fontWeight: 'bold', fontSize: 11}}
             />
+            {props.showSubscriberNumber && (
+              <Text
+                text={`${
+                  props.subscriberNumber ? props.subscriberNumber : 0
+                } subscribers`}
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: 11,
+                  paddingLeft: SIZES.padding * 2,
+                }}
+              />
+            )}
           </View>
         </View>
       </View>

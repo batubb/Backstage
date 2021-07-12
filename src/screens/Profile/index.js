@@ -26,6 +26,7 @@ import {
   getFollowingUserPosts,
   setHighlights,
   checkUserInfo,
+  getSubscriberCount,
 } from '../../services';
 import {Icon} from 'react-native-elements';
 import {followerCount, setPosts, makeid, timeDifference} from '../../lib';
@@ -68,6 +69,7 @@ class Profile extends Component {
       daily: [],
       optionsVisible: false,
       optionsData: null,
+      subscriberNumber: 0,
     };
 
     this.list = [
@@ -102,12 +104,14 @@ class Profile extends Component {
       });
     } else if (Store.user.type === 'influencer') {
       const posts = await getUserPosts(Store.user.uid, true);
+      const subscriberNumber = await getSubscriberCount(Store.user.uid);
       const {postsArray, daily} = setPosts(posts);
       this.setState({
         posts: posts,
         postsArray: postsArray,
         daily: daily,
         loading: false,
+        subscriberNumber,
       });
 
       this.unsubscribe = this.props.navigation.addListener('focus', (e) => {
@@ -440,6 +444,8 @@ class Profile extends Component {
                 editProfileVisible
                 navigation={this.props.navigation}
                 views={cumulativeViews}
+                subscriberNumber={this.state.subscriberNumber}
+                showSubscriberNumber={Store.user.type === 'influencer'}
               />
             </View>
 
