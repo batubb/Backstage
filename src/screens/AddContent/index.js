@@ -649,7 +649,7 @@ export default class App extends Component {
             <TouchableOpacity
               style={{paddingLeft: SIZES.spacing, flexDirection: 'row', alignItems: 'center', paddingTop: SIZES.padding}}
               onPress={() => this.selectThumbnailFromRoll()}>
-              <Icon name={this.state.thumbnailUrl !== '' ? 'image-edit' : 'video-image'} color="#FFF" type="material-community" style={{left: 2}} />
+              <Icon name={'add-photo-alternate'} color="#FFF" type="material-icons" style={{left: 2}} />
               <Text 
                 text={this.state.thumbnailUrl !== '' ? "Change\nThumbnail" : "Thumbnail"}
                 style={{
@@ -661,7 +661,7 @@ export default class App extends Component {
               <TouchableOpacity
                 style={{paddingLeft: SIZES.spacing, flexDirection: 'row', alignItems: 'center', paddingTop: SIZES.padding * 2}}
                 onPress={() => this.setState({thumbnailUrl: ''})}>
-                <Icon name="delete-sweep" color="#FFF" type="material-community" style={{left: 2}} />
+                <Icon name="trash" color="#FFF" type="ionicon" style={{left: 2}} />
                 <Text 
                   text={"Remove\nThumbnail"}
                   style={{

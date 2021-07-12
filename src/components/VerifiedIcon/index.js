@@ -5,12 +5,13 @@ import {COLORS, SIZES} from '../../resources/theme';
 export default function VerifiedIcon({
     size = 18,
     style,
+    color = COLORS.primary,
 }) {
   return (
     <Icon
       name="verified"
       size={size}
-      color={COLORS.primary}
+      color={color}
       type="material-icons"
       style={{
         paddingLeft: SIZES.padding * 0.3,

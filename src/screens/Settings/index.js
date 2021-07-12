@@ -16,6 +16,7 @@ import {Loading, Header, Text, Label} from '../../components';
 import {constants} from '../../resources';
 import auth from '@react-native-firebase/auth';
 import Store from '../../store/Store';
+import { sendBirdDisconnect } from '../../services/connectSendbird';
 
 const {width} = Dimensions.get('window');
 
@@ -58,7 +59,8 @@ class Home extends Component {
           this.setState({loading: true});
           auth()
             .signOut()
-            .then(() => {
+            .then(async () => {
+              await sendBirdDisconnect();
               this.goTo('Welcome');
             })
             .catch(() => {

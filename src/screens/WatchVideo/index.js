@@ -28,6 +28,7 @@ import {
   shareItem,
   report,
   sendComment,
+  likeVideo,
 } from '../../services';
 import Store from '../../store/Store';
 import {followerCount, timeDifference} from '../../lib';
@@ -37,9 +38,15 @@ import database from '@react-native-firebase/database';
 import WatchVideoIcon from '../../components/ScreenComponents/WatchVideoComponents/WatchVideoIcon/WatchVideoIcon';
 import {COLORS, SIZES} from '../../resources/theme';
 import {getBottomSpace, getStatusBarHeight} from '../../lib/iPhoneXHelper';
+import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 
 const {width, height} = Dimensions.get('window');
 const BOTTOM_PADDING = height >= 812 ? 40 : 20;
+
+const RNHapticFeedbackOptions = {
+  enableVibrateFallback: true,
+  ignoreAndroidSystemSettings: false
+};
 
 // TODO Canlı yayın izleme eklenecek.
 
@@ -66,6 +73,7 @@ class WatchVideo extends Component {
       controlsVisible: true,
       months: constants.MONTHS,
       fullScreen: true,
+      isLiked: false,
     };
 
     this.list = [
@@ -101,23 +109,19 @@ class WatchVideo extends Component {
                     if (typeof video.title !== 'undefined') {
                         setVideoView(Store.user.uid, this.state.video);
                     }
+                    
+        const isLiked = Object.values(video.likes).some(
+          (like) => like.uid === Store.user.uid,
+        );
 
-                    if (video) {
-                        this.setState({ video });
-                    }
-                } catch (error) {
-                    console.log(error);
-                }
-            } else if (this.state.video.type === 'live') {
-                try {
-                    const video = await getVideoInfo(this.state.video.uid, influencer, 'live');
-
-                    if (video) {
-                        this.setState({ video });
-                    }
-                } catch (error) {
-                    console.log(error);
-                }
+        this.setState({video, isLiked});
+      } else if (this.state.video.type === 'live') {
+        const video = await getVideoInfo(
+          this.state.video.uid,
+          influencer,
+          'live',
+        );
+        this.setState({video});
 
                 database().ref('comments').child(this.state.video.uid).orderByChild('timestamp').on('value', snap => {
                     var comments = [];
@@ -229,6 +233,15 @@ class WatchVideo extends Component {
     this.setState({comment: ''});
   };
 
+  likeVideoPressed = () => {
+    ReactNativeHapticFeedback.trigger("impactLight", RNHapticFeedbackOptions);
+    this.setState({isLiked: !this.state.isLiked});
+
+    return likeVideo(Store.user, this.state.video, this.state.isLiked).catch(
+      () => this.setState({isLiked: !this.state.isLiked}),
+    );
+  };
+
   renderVideoPlayer = (video, paused, videoInfo, dk, sn) => {
     const date = new Date(video.timestamp);
     const month = this.state.months[date.getMonth()].slice(0, 3);
@@ -255,7 +268,7 @@ class WatchVideo extends Component {
             onProgress={(data) => this.setTime(data)}
             onEnd={() => this.setState({paused: true, controlsVisible: true})}
             fullScreen={this.state.fullScreen}
-            resizeMode={this.state.fullScreen ? "cover" : "contain"}
+            resizeMode={this.state.fullScreen ? 'cover' : 'contain'}
             style={[
               this.state.fullScreen
                 ? {
@@ -314,8 +327,13 @@ class WatchVideo extends Component {
                     alignItems: 'center',
                     display: 'flex',
                     justifyContent: 'space-between',
+                    bottom: SIZES.padding,
                   }}>
-                  <View style={{alignItems: 'center'}}>
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      paddingBottom: SIZES.padding * 2,
+                    }}>
                     <WatchVideoIcon name="play-outline" type="ionicon" />
                     <Text
                       text={`${followerCount(video.cumulativeViews)}`}
@@ -323,17 +341,33 @@ class WatchVideo extends Component {
                     />
                   </View>
                   <TouchableOpacity
+                    onPress={() => this.likeVideoPressed()}
+                    style={{
+                      alignItems: 'center',
+                      paddingBottom: SIZES.padding * 2,
+                    }}>
+                    <WatchVideoIcon
+                      name={this.state.isLiked ? 'ios-heart' : 'ios-heart-outline'}
+                      type="ionicon"
+                      color={this.state.isLiked ? COLORS.primary : COLORS.white}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
                     onPress={() => this.goTo('Comments', video)}>
-                    <View style={{alignItems: 'center'}}>
+                    <View
+                      style={{
+                        alignItems: 'center',
+                        paddingBottom: SIZES.padding * 2,
+                      }}>
                       <WatchVideoIcon
                         name="chatbubble-outline"
                         type="ionicon"
                         size={28}
                       />
-                      <Text
+                      {/* <Text
                         text={`${followerCount(video.comments)}`}
                         style={{fontSize: 12}}
-                      />
+                      /> */}
                     </View>
                   </TouchableOpacity>
                   <WatchVideoIcon
@@ -386,7 +420,9 @@ class WatchVideo extends Component {
                   }
                   style={{bottom: 1}}>
                   <Icon
-                    name={!this.state.fullScreen ? 'fullscreen' : 'fullscreen-exit'}
+                    name={
+                      !this.state.fullScreen ? 'fullscreen' : 'fullscreen-exit'
+                    }
                     color="#FFF"
                     type="material-community"
                     size={28}
@@ -606,7 +642,7 @@ class WatchVideo extends Component {
           ? this.renderVideoPlayer(video, paused, videoInfo, dk, sn)
           : null}
         {video.type === 'live' ? this.renderLivePlayer(video) : null}
-        {loading || videoLoading ? (
+        {/* {loading || videoLoading ? (
           <Loading
             loadingStyle={{
               position: 'absolute',
@@ -620,7 +656,7 @@ class WatchVideo extends Component {
             textStyle={{marginTop: 10}}
             text="Loading"
           />
-        ) : null}
+        ) : null} */}
         <Header
           leftButtonPress={() =>
             this.props.navigation.dispatch(StackActions.pop())

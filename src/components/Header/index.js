@@ -9,6 +9,7 @@ import {constants} from '../../resources';
 import {COLORS, SIZES} from '../../resources/theme';
 import Text from '../Text';
 import VerifiedIcon from '../VerifiedIcon';
+import MyImage from '../MyImage';
 
 const {width} = Dimensions.get('window');
 
@@ -22,6 +23,7 @@ export default class HeaderComponent extends React.Component {
       placement,
       leftButtonIcon,
       title,
+      centerComponent,
       rightButtonPress,
       rightSecondButtonPress,
       leftButtonPress,
@@ -51,13 +53,19 @@ export default class HeaderComponent extends React.Component {
           ) : null
         }
         centerComponent={
-          <View style={{flexDirection: 'row'}}>
-            <Text
-              text={title.length >= 22 ? `${title.substring(0, 22)}...` : title}
-              style={{fontSize: 18}}
-            />
-            {showVerificationIcon ? <VerifiedIcon size={18} /> : null}
-          </View>
+          !centerComponent ? (
+            <View style={{flexDirection: 'row'}}>
+              <Text
+                text={
+                  title.length >= 22 ? `${title.substring(0, 22)}...` : title
+                }
+                style={{fontSize: 18}}
+              />
+              {showVerificationIcon ? <VerifiedIcon size={18} /> : null}
+            </View>
+          ) : (
+            centerComponent
+          )
         }
         centerContainerStyle={{
           justifyContent: 'center',

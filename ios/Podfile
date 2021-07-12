@@ -12,6 +12,14 @@ target 'infapp' do
 
   pod 'RNTextGradientView', :path => '../node_modules/react-native-text-gradient'
 
+  pod 'react-native-blur', :path => '../node_modules/@react-native-community/blur'
+
+  pod 'react-native-cameraroll', :path => '../node_modules/@react-native-community/cameraroll'
+
+  pod 'react-native-image-resizer', :path => '../node_modules/react-native-image-resizer'
+
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
+
   target 'infappTests' do
     inherit! :complete
     # Pods for testing

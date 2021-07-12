@@ -1,5 +1,6 @@
 const {PlatformColor} = require('react-native');
 const {SIZES, COLORS} = require('./theme');
+const {Streami18n} = require('stream-chat-react-native');
 
 /* eslint-disable prettier/prettier */
 const constants = {
@@ -38,6 +39,12 @@ const constants = {
   NUM_CARDS_IN_SCREEN: 2.5,
   NUM_POSTS_TO_VIEW_IN_HOME: 3,
 
+  STREAM_API_KEY: 'qhfvewj4k2zp',
+  STREAM_API_SECRET: 'ufw2m72mvr5cx8andn3ezk8ay9vhcy9aehywaujgptk9s2e9h8wcr74gafbxprsw',
+  STREAM_APP_ID: '1132017',
+  STREAM_I18N: new Streami18n({
+    language: 'en',
+  }),
 
   MONTHS: [
     'January',

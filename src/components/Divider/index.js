@@ -7,6 +7,7 @@ export default function Divider2(props) {
   return (
     <Divider
       style={{
+        ...props.style,
         backgroundColor: COLORS.separatorColor,
         width: props.width ? props.width : '100%',
       }}

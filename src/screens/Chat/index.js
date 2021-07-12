@@ -5,579 +5,388 @@ import React, {Component} from 'react';
 import {
   View,
   Dimensions,
-  FlatList,
   TouchableOpacity,
-  TextInput,
-  Platform,
   SafeAreaView,
-  RefreshControl,
-  KeyboardAvoidingView,
   Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {Icon} from 'react-native-elements';
-import {Loading, Header, Text, MyImage, Button, VerifiedIcon} from '../../components';
-import {constants} from '../../resources';
 import {
-  sendComment,
-  setLikeCommentStatus,
-  shareItem,
-  getUserPosts,
-  checkSubscribtion,
-} from '../../services';
+  Loading,
+  Header,
+  Text,
+  MyImage,
+  Button,
+  VerifiedIcon,
+} from '../../components';
+import {constants} from '../../resources';
+import {getUserPosts, checkSubscribtion} from '../../services';
 import Store from '../../store/Store';
-import { followerCount, timeDifference, setPosts } from '../../lib';
-import { StackActions } from '@react-navigation/native';
+import {timeDifference, generateStreamToken, makeid} from '../../lib';
+import {StackActions} from '@react-navigation/native';
 import database from '@react-native-firebase/database';
-import LinearGradient from 'react-native-linear-gradient';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
+import {
+  OverlayProvider as ChatOverlayProvider,
+  Channel,
+  MessageList,
+  Streami18n,
+  Chat as StreamChatComponent,
+  MessageInput,
+  Thread as StreamThreadComponent,
+  MessageSimple,
+  Message,
+  MessageFooter,
+  MessageAvatar,
+} from 'stream-chat-react-native';
+import {StreamChat} from 'stream-chat';
+import jwt from 'react-native-pure-jwt';
+import {getBottomSpace, getStatusBarHeight} from '../../lib/iPhoneXHelper';
+import {COLORS, SIZES, STREAM_THEME} from '../../resources/theme';
 
-const { width } = Dimensions.get('window');
-
-// TODO Pagination Eklenecek.
+const {width, height} = Dimensions.get('window');
 
 class Chat extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            loading: true,
-            refreshing: false,
-            user: this.props.route.params.user,
-            general: true,
-            comments: [],
-            comment: '',
-            reply: null,
-            posts: [],
-            anonymus: this.props.route.params.anonymus,
-            subscribtion: null,
-            daily: [],
-        };
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      thread: null,
+      loading: true,
+      refreshing: false,
+      user: this.props.route.params.user,
+      general: true,
+      posts: [],
+      anonymus: this.props.route.params.anonymus,
+      subscribtion: null,
+    };
+  }
 
-    componentDidMount = async () => {
-        await database().ref('comments').child(this.state.user.uid).on('value', snap => {
-            var comments = [];
-            const uid = Store.user.uid;
+  componentDidMount = async () => {
+    const subscribtion =
+      Store.uid !== this.state.user.uid
+        ? await checkSubscribtion(Store.uid, this.state.user.uid)
+        : {subscribtion: true};
 
-            snap.forEach(element => {
-                const { reply, likes } = element.val();
-                var replyArray = [];
-                var likeStatus = false;
-                var likeCount = 0;
-                var keys = [];
+    if (subscribtion.subscribtion === true) {
+      const posts = await getUserPosts(this.state.user.uid);
+      this.setState({posts, subscribtion});
 
-                if (typeof reply !== 'undefined') {
-                    const replyKeys = Object.keys(reply);
+      this.streamServerClient = StreamChat.getInstance(
+        constants.STREAM_API_KEY,
+      );
 
-                    for (let i = 0; i < replyKeys.length; i++) {
-                        const k = replyKeys[i];
+      await database()
+        .ref('users')
+        .child(Store.user.uid)
+        .once('value', async (snap) => {
+          snap = snap.toJSON();
 
-                        if (typeof reply[k].likes !== 'undefined') {
-                            keys = Object.keys(reply[k].likes);
+          const streamUserUid = snap.streamUserUid ?? makeid(40);
+          const token = await jwt.sign(
+            {
+              user_id: streamUserUid,
+            },
+            streamUserUid,
+            {
+              alg: 'HS256',
+            },
+          );
+          const user = {
+            id: streamUserUid,
+            uid: snap.uid,
+            username: snap.username,
+            role: 'user',
+            image: snap.photo,
+            verified: snap.verified === true,
+          };
+          this.streamServerClient
+            .connectUser(user, token)
+            .then(async (streamUserData) => {
+              this.streamUserData = streamUserData;
 
-                            for (let j = 0; j < keys.length; j++) {
-                                const m = keys[j];
-
-                                if (reply[k].likes[m]) {
-                                    likeCount++;
-                                }
-                            }
-
-                            if (typeof reply[k].likes[uid] !== 'undefined') {
-                                likeStatus = reply[k].likes[uid];
-                            }
-                        }
-
-                        replyArray.push({ ...reply[k], likeStatus, likeCount });
-                    }
-
-                    replyArray.sort(function (a, b) { return b.timestamp - a.timestamp; });
+              if (snap.streamUserUid !== streamUserUid) {
+                if (Store.user.uid === snap.uid) {
+                  Store.setUser({...Store.user, streamUserUid});
                 }
-
-                likeStatus = false;
-                likeCount = 0;
-
-                if (typeof likes !== 'undefined') {
-                    keys = Object.keys(likes);
-                    for (let j = 0; j < keys.length; j++) {
-                        const m = keys[j];
-
-                        if (likes[m]) {
-                            likeCount++;
-                        }
-                    }
-
-                    if (typeof likes[uid] !== 'undefined') {
-                        likeStatus = likes[uid];
-                    }
-                }
-
-                const result = this.state.comments.filter(comment => comment.uid === element.val().uid);
-
-                var showReply = false;
-
-                if (result.length > 0) {
-                    showReply = result[0].showReply;
-                }
-
-                comments.push({ ...element.val(), reply: replyArray, showReply, likeStatus, likeCount });
-            });
-
-            comments.sort(function (a, b) { return b.timestamp - a.timestamp; });
-
-            this.setState({ comments, loading: false });
-        });
-
-        const posts = await getUserPosts(this.state.user.uid);
-        const { daily } = setPosts(posts);
-
-        this.setState({ posts, daily });
-    }
-
-    goTo = (route, info = null) => {
-        if (route === 'Comments') {
-            const replaceActions = StackActions.push(route, { video: info, anonymus: this.state.anonymus });
-            return this.props.navigation.dispatch(replaceActions);
-        } else if (route === 'UserProfile') {
-            const replaceActions = StackActions.push(route, { user: info });
-            return this.props.navigation.dispatch(replaceActions);
-        }
-    }
-
-    componentWillUnmount = () => {
-        database().ref('comments').child(this.state.user.uid).off();
-    }
-
-    showReplyTab = (reply, set = true) => {
-        if (set) {
-            this.textinput.focus();
-            this.setState({ comment: `@${reply.user.username} ` });
-        } else {
-            this.setState({ comment: '' });
-        }
-
-        this.setState({ reply });
-    }
-
-    seeThread = (item, index) => {
-        var comments = this.state.comments;
-        comments[index].showReply = !item.showReply;
-        this.setState({ comments });
-    }
-
-    likeComment = async (item, index, status = false, reply = false, mainComment = null, mainCommentIndex = 0) => {
-        await setLikeCommentStatus(Store.user, this.state.user, item, status, reply, mainComment);
-    }
-
-    sendComment = async () => {
-        if (this.state.anonymus) {
-            await sendComment({ ...Store.user, type: 'anonymus', name: this.state.anonymus.nickname, photo: constants.DEFAULT_PHOTO }, this.state.user, this.state.comment, this.state.reply);
-        } else {
-            await sendComment(Store.user, this.state.user, this.state.comment, this.state.reply);
-        }
-        this.setState({ comment: '', reply: null });
-    }
-
-  renderProfileTop = (user = this.state.user) => {
-    return (
-      <View
-        style={{
-          width: width,
-          flexDirection: 'row',
-          padding: 15,
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
-        <TouchableOpacity onPress={() => this.goTo('UserProfile', user)}>
-          <MyImage
-            style={{width: 50, height: 50, borderRadius: 25}}
-            photo={user.photo}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => this.goTo('UserProfile', user)}>
-          <View style={{marginLeft: 10, width: 100, flexDirection: 'row'}}>
-            <Text text={user.username} />
-            {user.verified === true ? <VerifiedIcon size={14} /> : null} 
-          </View>
-        </TouchableOpacity>
-        <Button
-          buttonStyle={{
-            width: (width - 200) / 2 - 5,
-            backgroundColor: this.state.general
-              ? '#FFF'
-              : constants.BACKGROUND_COLOR,
-            borderWidth: 1,
-            borderColor: '#FFF',
-            padding: 5,
-            borderRadius: 16,
-          }}
-          textStyle={{
-            color: this.state.general ? constants.BACKGROUND_COLOR : '#FFF',
-            fontSize: 12,
-          }}
-          text="Main"
-          onPress={() => this.setState({general: true})}
-        />
-        <Button
-          buttonStyle={{
-            width: (width - 200) / 2 - 5,
-            backgroundColor: this.state.general
-              ? constants.BACKGROUND_COLOR
-              : '#FFF',
-            borderWidth: 1,
-            borderColor: '#FFF',
-            padding: 5,
-            borderRadius: 16,
-          }}
-          textStyle={{
-            color: this.state.general ? '#FFF' : constants.BACKGROUND_COLOR,
-            fontSize: 12,
-          }}
-          text="Content"
-          onPress={() => this.setState({general: false})}
-        />
-      </View>
-    );
-  };
-
-  commentBar = () => {
-    const {comment, reply} = this.state;
-
-    return (
-      <View
-        style={{
-          alignItems: 'center',
-          width: width,
-          backgroundColor: constants.BACKGROUND_COLOR,
-          paddingVertical: 10,
-        }}>
-        {reply ? (
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              width: width - 40,
-              paddingVertical: 5,
-            }}>
-            <Text
-              text={`Reply to ${reply.user.username}`}
-              style={{color: 'gray', fontWeight: 'normal'}}
-            />
-            <TouchableOpacity onPress={() => this.showReplyTab(null, false)}>
-              <View style={{padding: 5}}>
-                <Icon
-                  name="close"
-                  color="gray"
-                  type="material-community"
-                  size={16}
-                />
-              </View>
-            </TouchableOpacity>
-          </View>
-        ) : null}
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: width - 20,
-            borderRadius: 4,
-            backgroundColor: constants.BAR_COLOR,
-          }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <TextInput
-              ref={(input) => (this.textinput = input)}
-              placeholder="Add a comment"
-              style={{
-                fontFamily:
-                  Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
-                color: '#FFF',
-                width: width - 110,
-                fontSize: 16,
-                padding: 10,
-              }}
-              underlineColorAndroid="transparent"
-              onChangeText={(commentInput) =>
-                this.setState({comment: commentInput})
+                await database()
+                  .ref('users')
+                  .child(snap.uid)
+                  .update({streamUserUid});
               }
-              value={comment}
-              placeholderTextColor="#FFF"
-            />
-          </View>
-          {comment !== '' ? (
-            <TouchableOpacity onPress={() => this.sendComment()}>
-              <View style={{padding: 10}}>
-                <Icon
-                  name="send"
-                  color="#FFF"
-                  type="material-community"
-                  size={16}
-                />
-              </View>
-            </TouchableOpacity>
-          ) : null}
-        </View>
-      </View>
-    );
+
+              if (!this.state.user.streamChannelUid) {
+                await database()
+                  .ref('users')
+                  .child(this.state.user.uid)
+                  .once('value', async (influencerSnap) => {
+                    influencerSnap = influencerSnap.toJSON();
+
+                    if (!influencerSnap.streamChannelUid) {
+                      const streamChannelUid = makeid(40);
+                      this.channel = this.streamServerClient.channel(
+                        'messaging',
+                        streamChannelUid,
+                        {
+                          name: streamChannelUid,
+                        },
+                      );
+                      await this.channel.create();
+
+                      if (
+                        influencerSnap.streamChannelUid !== streamChannelUid
+                      ) {
+                        if (Store.user.uid === influencerSnap.uid) {
+                          Store.setUser({...Store.user, streamChannelUid});
+                        }
+                        await database()
+                          .ref('users')
+                          .child(influencerSnap.uid)
+                          .update({streamChannelUid});
+                      }
+                    } else {
+                      this.channel =
+                        await this.streamServerClient.getChannelById(
+                          'messaging',
+                          influencerSnap.streamChannelUid,
+                        );
+                    }
+                  });
+              } else {
+                this.channel = await this.streamServerClient.getChannelById(
+                  'messaging',
+                  this.state.user.streamChannelUid,
+                );
+              }
+
+              const {members} = await this.channel.queryMembers({
+                id: snap.streamUserUid,
+              });
+              if (
+                !members.some(
+                  (member) => member.user_id === streamUserData.me.id,
+                )
+              ) {
+                await this.channel.addMembers([streamUserData.me.id]);
+              }
+              this.watchChannel();
+            })
+            .catch((error) => {
+              console.log(error);
+              Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
+              this.setState({loading: false});
+            });
+        });
+    } else {
+      this.setState({loading: false, subscribtion});
+    }
+
+    this._unsubscribe = this.props.navigation.addListener('focus', async () => {
+      await this.setState({thread: null});
+    });
   };
 
-  renderComments = () => {
-    const {refreshing, comments} = this.state;
+  componentWillUnmount = async () => {
+    this._unsubscribe();
+
+    if (this.state.thread === null) {
+      if (this.channel) {
+        await this.channel.stopWatching();
+      }
+      if (this.streamServerClient) {
+        await this.streamServerClient.disconnectUser();
+      }
+    }
+  };
+
+  watchChannel = async () => {
+    const channelState = await this.channel.watch();
+    this.setState({loading: false});
+  };
+
+  goTo = (route, info = null) => {
+    if (route === 'Comments') {
+      const replaceActions = StackActions.push(route, {
+        video: info,
+        anonymus: this.state.anonymus,
+      });
+      return this.props.navigation.dispatch(replaceActions);
+    } else if (route === 'UserProfile') {
+      const replaceActions = StackActions.push(route, {user: info});
+      return this.props.navigation.dispatch(replaceActions);
+    } else if (route === 'Subscribe') {
+      const replaceActions = StackActions.push(route, {
+        influencer: this.state.user,
+        posts: this.state.posts,
+      });
+      return this.props.navigation.dispatch(replaceActions);
+    } else if (route === 'ChatThread') {
+      this.setState({thread: info}, () => {
+        const replaceActions = StackActions.push(route, {
+          thread: info,
+          influencer: this.state.user,
+          channel: this.channel,
+          streamServerClient: this.streamServerClient,
+        });
+        return this.props.navigation.dispatch(replaceActions);
+      });
+    }
+
+  renderChat = () => {
+    const {thread} = this.state;
 
     return (
-      <SafeAreaView style={{width, alignItems: 'center', flex: 1}}>
-        <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={170}>
-          <FlatList
-            data={comments}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} tintColor="white" />
-            }
-            ListEmptyComponent={() => {
-              return (
-                <View style={{width: width, alignItems: 'center'}}>
-                  <Text text="There is no comments" style={{color: 'gray'}} />
-                </View>
-              );
-            }}
-            keyExtractor={(item) => item.uid}
-            renderItem={({item, index}) => (
-              <View
-                style={{
-                  paddingTop: 15,
-                  width: width,
-                  alignItems: 'center',
-                  backgroundColor: constants.BAR_COLOR,
-                  marginTop: 10,
-                }}>
-                <View
-                  style={{
-                    width: width - 20,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}>
+      <SafeAreaView
+        style={{flex: 1, backgroundColor: STREAM_THEME.colors.white}}>
+        <KeyboardAvoidingView
+          behavior="padding"
+          keyboardVerticalOffset={85 + getBottomSpace()}>
+          <StreamChatComponent
+            client={this.streamServerClient}
+            i18nInstance={constants.STREAM_I18N}>
+            <Channel
+              channel={this.channel}
+              keyboardVerticalOffset={getStatusBarHeight()}
+              thread={thread}
+              hasFilePicker={false}
+              MessageAvatar={(props) => {
+                return (
+                  <View style={{height: '100%', paddingTop: SIZES.padding, alignItems: 'center'}}>
+                    <MessageAvatar {...props} />
+                  </View>
+                );
+              }}
+              MessageHeader={(props) =>
+                props.message.user.uid === Store.user.uid ? null : (
                   <View
                     style={{
                       flexDirection: 'row',
-                      width: width - 80,
-                      justifyContent: 'space-between',
+                      width: '100%',
+                      justifyContent:
+                        props.message.user.uid === Store.user.uid
+                          ? 'flex-end'
+                          : 'flex-start',
+                      alignItems: 'center',
+                      marginVertical: SIZES.spacing,
                     }}>
-                    <View style={{width: width - 80}}>
-                      <View style={{flexDirection: 'row'}}>
-                        <Text text={item.user.username} />
-                        {item.user.verified === true ? <VerifiedIcon size={14} /> : null}
-                      </View>
-                      <Text
-                        text={item.comment}
-                        style={{fontSize: 12, fontWeight: 'normal'}}
+                    <Text
+                      text={`${props.message.user.username}`}
+                      style={{
+                        color: STREAM_THEME.colors.black,
+                        opacity: 0.4,
+                        fontSize: 10,
+                      }}
+                    />
+                    {props.message.user.verified === true ? (
+                      <VerifiedIcon
+                        size={10}
+                        style={{paddingBottom: SIZES.spacing}}
                       />
-                    </View>
-                    <View style={{width: 60, alignItems: 'flex-end'}}>
-                      <Text
-                        text={timeDifference(item.timestamp)}
-                        style={{color: 'gray', fontSize: 10}}
-                      />
-                    </View>
+                    ) : null}
                   </View>
-                </View>
-                <View
-                  style={{
-                    width: width,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.likeComment(item, index, item.likeStatus)
-                      }>
-                      <View
-                        style={{
-                          padding: 10,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                        }}>
-                        <Icon
-                          name={item.likeStatus ? 'heart' : 'heart-outline'}
-                          color="#FFF"
-                          type="material-community"
-                          size={16}
-                        />
-                        {item.likeCount !== 0 ? (
-                          <Text
-                            text={followerCount(item.likeCount)}
-                            style={{fontSize: 12, marginLeft: 5}}
-                          />
-                        ) : null}
-                      </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.showReplyTab(item)}>
-                      <View style={{padding: 10}}>
-                        <Icon
-                          name="reply"
-                          color="#FFF"
-                          type="material-community"
-                          size={16}
-                        />
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                  {item.reply.length !== 0 ? (
-                    <TouchableOpacity
-                      onPress={() => this.seeThread(item, index)}>
-                      <View style={{padding: 10, flexDirection: 'row'}}>
-                        <Icon
-                          name={item.showReply ? 'chevron-up' : 'chevron-down'}
-                          color="#FFF"
-                          type="material-community"
-                          size={16}
-                        />
-                        <Text
-                            text={`${followerCount(user.follower)} members`}
-                            style={{ fontSize: 12, color: 'gray' }}
-                        />
-                      </View>
-                    </TouchableOpacity>
-                  ) : null}
-                </View>
-                {item.showReply
-                  ? this.renderReply(item.reply.slice(0, 5), item, index)
-                  : null}
+                )
+              }>
+              <View style={{flex: 1}}>
+                <MessageList
+                  onThreadSelect={(thread) => this.goTo('ChatThread', thread)}
+                />
+                <MessageInput />
               </View>
-            )}
-          />
-          {this.commentBar()}
+            </Channel>
+          </StreamChatComponent>
         </KeyboardAvoidingView>
       </SafeAreaView>
     );
   };
 
-  renderReply = (reply, mainComment, mainCommentIndex) => {
+  renderSubscribe = () => {
     return (
-      <FlatList
-        data={reply}
-        keyExtractor={(item) => item.uid}
-        renderItem={({item, index}) => (
-          <View
-            style={{
-              width: width,
-              alignItems: 'flex-end',
-              backgroundColor: constants.BACKGROUND_COLOR,
-            }}>
-            <View
-              style={{
-                backgroundColor: constants.BAR_COLOR,
-                marginTop: 10,
-                paddingTop: 10,
-                paddingHorizontal: 10,
-                borderTopLeftRadius: 8,
-                borderBottomLeftRadius: 8,
-              }}>
-              <View
-                style={{
-                  width: width - 60,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    width: width - 110,
-                    justifyContent: 'space-between',
-                  }}>
-                  <View style={{width: width - 110}}>
-                    <View style={{flexDirection: 'row'}}>
-                      <Text text={item.user.username} />
-                      {item.user.verified === true ? <VerifiedIcon size={14} /> : null}
-                    </View> 
-                    <Text
-                      text={item.comment}
-                      style={{fontSize: 12, fontWeight: 'normal'}}
-                    />
-                  </View>
-                  <View
-                    style={{
-                      width: 60,
-                      alignItems: 'flex-end',
-                      paddingRight: 10,
-                    }}>
-                    <Text
-                      text={timeDifference(item.timestamp)}
-                      style={{color: 'gray', fontSize: 10}}
-                    />
-                  </View>
-                </View>
-              </View>
-              <View
-                style={{
-                  width: width - 60,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <TouchableOpacity
-                  onPress={() =>
-                    this.likeComment(
-                      item,
-                      index,
-                      item.likeStatus,
-                      true,
-                      mainComment,
-                      mainCommentIndex,
-                    )
-                  }>
-                  <View
-                    style={{
-                      paddingVertical: 10,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                    }}>
-                    <Icon
-                      name={item.likeStatus ? 'heart' : 'heart-outline'}
-                      color="#FFF"
-                      type="material-community"
-                      size={16}
-                    />
-                    {item.likeCount !== 0 ? (
-                      <Text
-                        text={followerCount(item.likeCount)}
-                        style={{fontSize: 12, marginLeft: 5}}
-                      />
-                    ) : null}
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        )}
-      />
-    );
-  };
-
-  renderPosts = () => {
-    return (
-      <PostsCard
-        onPress={(item) => this.goTo('Comments', item)}
-        posts={this.state.posts}
-        numCols={3}
-      />
+      <View
+        style={{
+          width: '100%',
+          flex: 1,
+          paddingHorizontal: width * 0.1,
+          marginBottom: height * 0.15,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Text
+          text={`You must be a member to join ${this.state.user.username}'s room.`}
+          style={{
+            fontSize: 24,
+            color: COLORS.white,
+            fontWeight: 'bold',
+            marginTop: SIZES.padding * 2,
+            textAlign: 'center',
+          }}
+        />
+        <Button
+          text={`Subscribe`}
+          buttonStyle={{
+            backgroundColor: COLORS.primary,
+            width: '100%',
+            marginTop: SIZES.padding * 3,
+          }}
+          textStyle={{color: COLORS.white, fontSize: 16}}
+          onPress={() => this.goTo('Subscribe')}
+        />
+      </View>
     );
   };
 
   render() {
-    const {loading, general} = this.state;
+    const {loading, general, subscribtion, user} = this.state;
+
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
         <Header
-          title="Room"
+          centerComponent={
+            <TouchableOpacity
+              style={{
+                width: width - 120,
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                alignSelf: 'center',
+              }}
+              onPress={() => this.goTo('UserProfile', user)}>
+              <MyImage
+                photo={user.photo}
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 25,
+                  marginRight: SIZES.spacing * 2,
+                }}
+              />
+              <View style={{flexDirection: 'column'}}>
+                <Text
+                  text={
+                    user.name.length > 22
+                      ? user.name.substring(0, 22) + '...'
+                      : user.name
+                  }
+                  style={{fontSize: 18}}
+                />
+                <View style={{flexDirection: 'row'}}>
+                  <Text
+                    text={user.username}
+                    style={{
+                      fontSize: 15,
+                      color: COLORS.gray,
+                      paddingLeft: 1,
+                      paddingTop: 1,
+                    }}
+                  />
+                  {user.verified === true ? <VerifiedIcon size={15} /> : null}
+                </View>
+              </View>
+            </TouchableOpacity>
+          }
           leftButtonPress={() =>
             this.props.navigation.dispatch(StackActions.pop())
           }
           leftButtonIcon="chevron-left"
         />
-        {this.renderProfileTop()}
         {loading ? (
           <Loading
             loadingStyle={{
@@ -588,12 +397,10 @@ class Chat extends Component {
             textStyle={{marginTop: 10, fontWeight: 'normal'}}
             text="Loading"
           />
-        ) : !this.state.subscribtion.subscribtion ? (
-          Alert.alert('Oops', 'You must be a member to view the content.', [
-            {text: 'Okay'},
-          ])
+        ) : !subscribtion.subscribtion ? (
+          this.renderSubscribe()
         ) : general ? (
-          this.renderComments()
+          this.renderChat()
         ) : (
           this.renderPosts()
         )}

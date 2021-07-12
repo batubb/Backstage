@@ -6,7 +6,7 @@ import {constants} from '../../resources';
 import {SafeAreaView} from 'react-native';
 import {COLORS, SIZES} from '../../resources/theme';
 import LinearGradient from 'react-native-linear-gradient';
-import { LinearTextGradient } from "react-native-text-gradient";
+import {LinearTextGradient} from 'react-native-text-gradient';
 import {Icon} from 'react-native-elements';
 import {StackActions} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
@@ -22,7 +22,6 @@ class Welcome extends Component {
   componentDidMount() {
     auth().onAuthStateChanged((auth) => {
       if (auth) {
-        console.log('in here auth');
         Store.setPhone(auth.phoneNumber);
         Store.setUID(auth.uid);
         const replaceActions = StackActions.replace('CheckInfo');
@@ -109,7 +108,9 @@ class Welcome extends Component {
                 </GradientText>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => this.props.navigation.dispatch(StackActions.push('Login'))}
+                onPress={() =>
+                  this.props.navigation.dispatch(StackActions.push('Login'))
+                }
                 style={{
                   flex: 1,
                   backgroundColor: '#ffffff7D',

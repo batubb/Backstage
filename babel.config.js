@@ -1,5 +1,8 @@
 /* eslint-disable prettier/prettier */
 module.exports = {
   presets: ['module:metro-react-native-babel-preset'],
-  plugins: [[require('@babel/plugin-proposal-decorators').default, { legacy: true }]],
+  plugins: [
+    [require('@babel/plugin-proposal-decorators').default, {legacy: true}],
+    'react-native-reanimated/plugin',
+  ],
 };

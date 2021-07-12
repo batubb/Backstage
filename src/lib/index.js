@@ -8,6 +8,7 @@ import sleep from './sleep';
 import regexCheck from './regexCheck';
 import runTiming from './runTiming';
 import iPhoneXHelper from './iPhoneXHelper';
+import handleURLSchemes from './handleURLSchemes';
 
 module.exports = {
     makeid,
@@ -19,4 +20,5 @@ module.exports = {
     regexCheck,
     runTiming,
     iPhoneXHelper,
+    handleURLSchemes,
 };
