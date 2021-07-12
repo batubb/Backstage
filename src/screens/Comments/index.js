@@ -12,6 +12,7 @@ import { sendComment, setVideoComment, setLikeCommentStatus, checkSubscribtion }
 import { timeDifference } from '../../lib';
 import Store from '../../store/Store';
 import followerCount from '../../lib/followerCount';
+import { getBottomSpace } from '../../lib/iPhoneXHelper';
 
 const { width } = Dimensions.get('window');
 
@@ -167,7 +168,7 @@ class Comments extends Component {
             <SafeAreaView style={{ width, alignItems: 'center', flex: 1 }}>
                 <KeyboardAvoidingView
                     behavior="padding"
-                    keyboardVerticalOffset={90}
+                    keyboardVerticalOffset={80 + getBottomSpace()}
                 >
                     <FlatList
                         data={comments}

@@ -15,12 +15,13 @@ import {observer} from 'mobx-react';
 import {Icon} from 'react-native-elements';
 import Video from 'react-native-video';
 import {StackActions} from '@react-navigation/native';
-import Animated from 'react-native-reanimated';
-import {Loading, Text, MyImage} from '../../components';
+import Animated, {Easing} from 'react-native-reanimated';
+import {Loading, Text, MyImage, VerifiedIcon} from '../../components';
 import {constants} from '../../resources';
 import {checkSubscribtion, checkUserInfo, report} from '../../services';
 import Store from '../../store/Store';
-import {runTiming} from '../../lib';
+import runTiming from '../../lib/runTiming';
+import {SIZES} from '../../resources/theme';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import database from '@react-native-firebase/database';
 
@@ -399,13 +400,38 @@ class WatchStory extends Component {
                 ) : null}
               </View>
             </View>
-            <TouchableOpacity
-              style={{padding: 5}}
-              onPress={() =>
-                this.props.navigation.dispatch(StackActions.pop())
-              }>
-              <Icon name="close" color="#FFF" type="material-community" />
-            </TouchableOpacity>
+          ))}
+        </View>
+        <View
+          style={{
+            width,
+            flexDirection: 'row',
+            paddingHorizontal: 20,
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <View style={{alignItems: 'center', flexDirection: 'row'}}>
+            <MyImage
+              photo={content.user.photo}
+              style={{
+                width: 45,
+                height: 45,
+                borderRadius: 25,
+                marginTop: SIZES.spacing,
+              }}
+            />
+            <View>
+              <View style={{flexDirection: 'row'}}>
+                <Text text={content.user.username} style={{marginLeft: SIZES.spacing * 2}} />
+                <VerifiedIcon size={18} style={{top: 0}} />
+              </View>
+              {content.title !== '' ? (
+                <Text
+                  text={content.title}
+                  style={{marginLeft: 5, fontSize: 12, fontWeight: 'normal'}}
+                />
+              ) : null}
+            </View>
           </View>
         </SlidingUpPanel>
       </View>
