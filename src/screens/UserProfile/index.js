@@ -19,6 +19,7 @@ import {
   MyImage,
   Button,
   Options,
+  VerifiedIcon,
 } from '../../components';
 import {constants} from '../../resources';
 import {followerCount, setPosts} from '../../lib';
@@ -36,12 +37,17 @@ import LinearGradient from 'react-native-linear-gradient';
 import database from '@react-native-firebase/database';
 import moment from 'moment';
 import ProfileTop from '../../components/ScreenComponents/ProfileComponents/ProfileTop/ProfileTop';
-import {SIZES} from '../../resources/theme';
+import SubscribeButton from '../../components/ScreenComponents/ProfileComponents/ProfileTop/SubscribeButton';
+import {COLORS, SIZES} from '../../resources/theme';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
 import sleep from '../../lib/sleep';
 import RNIap from 'react-native-iap';
+import SlidingUpPanel from 'rn-sliding-up-panel';
 
-const {width} = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
+const SCREEN_DIMENSIONS = Dimensions.get('window');
+var BOTTOM_PADDING = height >= 812 ? 44 : 20;
+BOTTOM_PADDING = Platform.OS === 'android' ? 0 : BOTTOM_PADDING;
 
 class UserProfile extends Component {
   constructor(props) {
@@ -79,6 +85,7 @@ class UserProfile extends Component {
     } else {
       this.setState({products: productsRes});
     }
+    this.bottomSheetRef.show();
   };
 
   checkInfluencerInfos = async () => {
@@ -102,6 +109,7 @@ class UserProfile extends Component {
 
   componentWillUnmount = () => {
     this.unsubscribe();
+    this.bottomSheetRef.hide();
   };
 
   goTo = (route, info = null) => {
@@ -363,58 +371,181 @@ class UserProfile extends Component {
     );
   };
 
-renderPosts = (posts) => {
-  return (
-    <PostsCard
-      posts={posts}
-      navigation={this.props.navigation}
-      expired={!this.state.subscribtion.subscribtion}
-      numCols={constants.NUM_POSTS_PER_ROW_PROFILE}
-      extraData={Store.posts}
-      onPress={(item) => this.goTo('WatchVideo', item)}
-    />
-  );
-}
+  renderPosts = (posts) => {
+    return (
+      <PostsCard
+        posts={posts}
+        navigation={this.props.navigation}
+        expired={!this.state.subscribtion.subscribtion}
+        numCols={constants.NUM_POSTS_PER_ROW_PROFILE}
+        extraData={Store.posts}
+        onPress={(item) => this.goTo('WatchVideo', item)}
+      />
+    );
+  };
 
-expiredCard = () => {
-  return (
-    <View
-      style={{
-        width: width / 2 - 10,
-        height: 1.5 * (width / 2 - 10),
-        borderRadius: 16,
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'absolute',
-      }}>
+  expiredCard = () => {
+    return (
       <View
         style={{
-          position: 'absolute',
           width: width / 2 - 10,
           height: 1.5 * (width / 2 - 10),
           borderRadius: 16,
-          backgroundColor: 'black',
-          opacity: 0.8,
-        }}
-      />
-      <View
-        style={{
-          width: 80,
-          height: 80,
-          borderColor: '#FFF',
-          borderWidth: 2,
-          borderRadius: 40,
           alignItems: 'center',
           justifyContent: 'center',
+          position: 'absolute',
         }}>
-        <Icon
-          name="lock-outline"
-          color="#FFF"
-          type="material-community"
-          size={48}
+        <View
+          style={{
+            position: 'absolute',
+            width: width / 2 - 10,
+            height: 1.5 * (width / 2 - 10),
+            borderRadius: 16,
+            backgroundColor: 'black',
+            opacity: 0.8,
+          }}
         />
+        <View
+          style={{
+            width: 80,
+            height: 80,
+            borderColor: '#FFF',
+            borderWidth: 2,
+            borderRadius: 40,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Icon
+            name="lock-outline"
+            color="#FFF"
+            type="material-community"
+            size={48}
+          />
         </View>
+      </View>
+    );
+  };
+
+  renderSubscriptionPanel = () => {
+    return (
+      <SlidingUpPanel
+        ref={(ref) => (this.bottomSheetRef = ref)}
+        height={SCREEN_DIMENSIONS.height * 0.8}
+        snappingPoints={[SCREEN_DIMENSIONS.height * 0.8, 0]}
+        avoidKeyboard={true}
+        allowDragging={true}
+        containerStyle={{
+          flex: 1,
+          top: SCREEN_DIMENSIONS.height * 1.2,
+          width,
+          position: 'absolute',
+          left: 0,
+        }}
+        friction={0.7}
+        backdropOpacity={0.95}
+        showBackdrop={true}
+        onBottomReached={() => this.bottomSheetRef.hide()}>
+        <View
+          style={{
+            flex: 1,
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            backgroundColor: COLORS.systemFill,
+            flexDirection: 'column',
+            paddingHorizontal: 20,
+            paddingVertical: 10,
+            marginTop: BOTTOM_PADDING,
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingBotom: SIZES.spacing * 8,
+          }}>
+          <MyImage
+            style={{
+              marginTop: SIZES.padding * 4,
+              width: constants.PROFILE_PIC_SIZE,
+              height: constants.PROFILE_PIC_SIZE,
+              borderRadius: constants.PROFILE_PIC_SIZE / 2,
+            }}
+            photo={this.state.user.photo}
+          />
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              top: SIZES.padding * 2,
+              right: SIZES.padding * 2,
+            }}
+            onPress={() => this.bottomSheetRef.hide()}>
+            <Icon name="close" color="#FFF" type="material-community" />
+          </TouchableOpacity>
+          <View
+            style={{
+              flex: 1,
+              marginTop: SIZES.padding * 2,
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+            }}>
+            <View style={{flexDirection: 'row'}}>
+              <Text
+                text={this.state.user.username}
+                numberOfLines={1}
+                style={{fontSize: 20}}
+              />
+              {this.state.user.verified === true && (
+                <VerifiedIcon size={18} style={{top: 4}} />
+              )}
+            </View>
+            <View style={{marginTop: SIZES.padding * 4}}>
+              <Text
+                text={`Subscribe to ${this.state.user.username} in order to access to the creator's exclusive content and chat room.`}
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: 16,
+                  textAlign: 'center',
+                  color: COLORS.white,
+                }}
+              />
+              <Text
+                text={`$${this.state.user.price.toFixed(2)}`}
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: 32,
+                  textAlign: 'center',
+                  color: COLORS.white,
+                  marginTop: SIZES.padding * 2,
+                }}
+              />
+              <Text
+                text={'per month'}
+                style={{fontSize: 12, color: 'gray', textAlign: 'center'}}
+              />
+              <Button
+                text={'Subscribe'}
+                buttonStyle={{
+                  backgroundColor: COLORS.primary,
+                  borderRadius: SIZES.radius,
+                  paddingVertical: SIZES.padding * 1.5,
+                  paddingHorizontal: SIZES.padding * 4,
+                  marginTop: SIZES.padding * 4,
+                  width: 250,
+                  alignSelf: 'center',
+                }}
+                textStyle={{color: COLORS.secondary, fontSize: 16}}
+                onPress={() => this.requestRNISubscription()}
+              />
+              <Text
+                text={`This subscription will not auto-renew. You cannot cancel when you subscribe. As a member, you'll remain anonymous. Become a member, the creator won't see your username.`}
+                style={{
+                  marginTop: SIZES.padding * 4,
+                  fontWeight: 'bold',
+                  fontSize: 12,
+                  textAlign: 'center',
+                  color: COLORS.darkgray,
+                }}
+              />
+            </View>
+          </View>
         </View>
+      </SlidingUpPanel>
     );
   };
 
@@ -473,7 +604,7 @@ expiredCard = () => {
               onSubscribePress={() =>
                 subscribtion.subscribtion
                   ? this.unsubscribeInf()
-                  : this.goTo('Subscribe', this.state.user)
+                  : this.bottomSheetRef.show()
               }
               views={
                 !this.state.user.cumulativeViewsUser
@@ -493,6 +624,7 @@ expiredCard = () => {
           visible={optionsVisible}
           cancelPress={() => this.setState({optionsVisible: false})}
         />
+        {this.renderSubscriptionPanel()}
       </View>
     );
   }
