@@ -41,73 +41,73 @@ import {SIZES, COLORS} from '../../resources/theme';
 import PostButton from '../../components/ScreenComponents/AddContentComponents/PostButton/PostButton';
 import EditTitleModal from '../../components/ScreenComponents/AddContentComponents/EditTitleModal/EditTitleModal';
 import EditTitlePrompt from '../../components/ScreenComponents/AddContentComponents/EditTitlePrompt/EditTitlePrompt';
+import {TIERS} from '../../resources/constants';
 
 const {width, height} = Dimensions.get('window');
 const TOP_PADDING = height >= 812 ? 60 : 40;
 
 export default class App extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isPublishing: false,
-            hasPermission: false,
-            paused: true,
-            streamId: '',
-            streamKey: '',
-            publicKey: '',
-            ratio: '16:9',
-            isRecording: false,
-            indexButton: 
+  constructor(props) {
+    super(props);
+    this.state = {
+      isPublishing: false,
+      hasPermission: false,
+      paused: true,
+      streamId: '',
+      streamKey: '',
+      publicKey: '',
+      ratio: '16:9',
+      isRecording: false,
+      indexButton:
         this.props.route &&
         this.props.route.params &&
         this.props.route.params.startButtonIdx
           ? this.props.route.params.startButtonIdx
           : 1,
-          thumbnailUrl: '',
+      thumbnailUrl: '',
       thumbnailWidth: '',
       thumnailHeight: '',
-            liveStreamId: '',
-            loading: false,
-            url: '',
-            title: '',
-            assetId: '',
-            uid: '',
-            camera: 1,
-            influencerPrice: constants.TIERS[0],
-            influencer: false,
-            editTextModal: false,
-            seconds: 0,
-            timer: false,
-            type: '',
-            storyVideo: false,
-            onPage: true,
-            isStoryVideoRecording: false,
-        };
+      liveStreamId: '',
+      loading: false,
+      url: '',
+      title: '',
+      assetId: '',
+      uid: '',
+      camera: 1,
+      influencerPriceIdx: 0,
+      editTextModal: false,
+      seconds: 0,
+      timer: false,
+      type: '',
+      storyVideo: false,
+      onPage: true,
+      isStoryVideoRecording: false,
+    };
 
-        this.settings = {
-            audio: { bitrate: 128000, profile: 1, samplerate: 44100 },
-            video: {
-                preset: 4,
-                bitrate: 2000000,
-                profile: 2,
-                fps: 30,
-                videoFrontMirror: true,
-            },
-        };
+    this.settings = {
+      audio: {bitrate: 128000, profile: 1, samplerate: 44100},
+      video: {
+        preset: 4,
+        bitrate: 2000000,
+        profile: 2,
+        fps: 30,
+        videoFrontMirror: true,
+      },
+    };
 
-        this.mux_instance = axios.create({
-            baseURL: constants.MUX_BASE_URL,
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-                'mp4_support': 'standard',
-            },
-            auth: {
-                username: constants.MUX_USERNAME,
-                password: constants.MUX_PASSWORD,
-            },
-        });
-    }
+    this.mux_instance = axios.create({
+      baseURL: constants.MUX_BASE_URL,
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+        mp4_support: 'standard',
+      },
+      auth: {
+        username: constants.MUX_USERNAME,
+        password: constants.MUX_PASSWORD,
+      },
+    });
+  }
 
   componentDidMount() {
     this.createStream();
@@ -120,61 +120,67 @@ export default class App extends Component {
     }
   };
 
+  getAssetInfo = async (id) => {
+    try {
+      const uid = makeid(40, 'uuid');
+      this.setState({uid});
 
-    getAssetInfo = async (id) => {
-        try {
-            const uid = makeid(40, 'uuid');
-            this.setState({ uid });
+      var livestream = {
+        uid: uid,
+        url: `https://stream.mux.com/${this.state.publicKey}.m3u8`,
+        thumbnail: {
+          url: `https://image.mux.com/${this.state.publicKey}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
+          width: width,
+          height: height,
+        },
+        publicKey: this.state.publicKey,
+        liveId: id,
+        title: this.state.title === '' ? 'Livestream' : this.state.title,
+        photo: `https://image.mux.com/${this.state.publicKey}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
+      };
 
-            var livestream = {
-                uid: uid,
-                url: `https://stream.mux.com/${this.state.publicKey}.m3u8`,
-                thumbnail: {
-                    url: `https://image.mux.com/${this.state.publicKey}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
-                    width: width,
-                    height: height,
-                },
-                publicKey: this.state.publicKey,
-                liveId: id,
-                title: this.state.title === '' ? 'Livestream' : this.state.title,
-                photo: `https://image.mux.com/${this.state.publicKey}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
-            };
+      if (!this.state.onPage) {
+        return true;
+      }
 
-            if (!this.state.onPage) {
-                return true;
-            }
+      await sleep(5000);
 
-            await sleep(5000);
+      const livestreamResponse = await this.mux_instance.get(
+        '/video/v1/live-streams/' + id,
+      );
+      const assetResponse = await this.mux_instance.get(
+        '/video/v1/assets/' + livestreamResponse.data.data.active_asset_id,
+      );
 
-            const livestreamResponse = await this.mux_instance.get('/video/v1/live-streams/' + id);
-            const assetResponse = await this.mux_instance.get('/video/v1/assets/' + livestreamResponse.data.data.active_asset_id);
+      const assetPlaybackId = assetResponse.data.data.playback_ids[0].id;
+      var video = {
+        uid: uid,
+        url: `https://stream.mux.com/${assetPlaybackId}.m3u8`,
+        thumbnail: {
+          url: `https://image.mux.com/${assetPlaybackId}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
+          width: width,
+          height: height,
+        },
+        assetPlaybackId: assetPlaybackId,
+        title: this.state.title === '' ? 'New Video' : this.state.title,
+        photo: `https://image.mux.com/${assetPlaybackId}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
+        active: false,
+      };
 
-            const assetPlaybackId = assetResponse.data.data.playback_ids[0].id;
-            var video = {
-                uid: uid,
-                url: `https://stream.mux.com/${assetPlaybackId}.m3u8`,
-                thumbnail: {
-                    url: `https://image.mux.com/${assetPlaybackId}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
-                    width: width,
-                    height: height,
-                },
-                assetPlaybackId: assetPlaybackId,
-                title: this.state.title === '' ? 'New Video' : this.state.title,
-                photo: `https://image.mux.com/${assetPlaybackId}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
-                active: false,
-            };
+      await createVideoData(Store.user, livestream, 'live');
+      await createVideoData(Store.user, video);
 
-            await createVideoData(Store.user, livestream, 'live');
-            await createVideoData(Store.user, video);
-
-            this.setState({ assetId: livestreamResponse.data.data.active_asset_id, assetPlaybackId });
-        } catch (err) {
-            console.log('err: ', err);
-            return Alert.alert('Oops', 'Something unexpected happens.', [{ text: 'Okay' }]);
-        }
-
-    };
-  
+      this.setState({
+        assetId: livestreamResponse.data.data.active_asset_id,
+        assetPlaybackId,
+      });
+    } catch (err) {
+      console.log('err: ', err);
+      return Alert.alert('Oops', 'Something unexpected happens.', [
+        {text: 'Okay'},
+      ]);
+    }
+  };
 
   createStream = async () => {
     try {
@@ -201,9 +207,9 @@ export default class App extends Component {
     }
   };
 
-    uploadVideo = async (uri, onname, type = 'photo') => {
-        var ref = storage().ref().child(`videos/${onname}.mp4`);
-        await ref.putFile(uri);
+  uploadVideo = async (uri, onname, type = 'photo') => {
+    var ref = storage().ref().child(`videos/${onname}.mp4`);
+    await ref.putFile(uri);
 
     return await ref.getDownloadURL();
   };
@@ -235,18 +241,33 @@ export default class App extends Component {
     const onname = makeid(40, 'uuid');
 
     const data = await this.uploadVideo(url, onname);
-    const thumbnail = this.state.thumbnailUrl !== '' ? this.state.thumbnailUrl : await createThumbnail({url: url, timeStamp: 10000});
-    const thumbnailUrl = this.state.thumbnailUrl !== '' ? this.state.thumbnailUrl : await this.uploadThumbnail(thumbnail.path, onname);
+    const thumbnail =
+      this.state.thumbnailUrl !== ''
+        ? this.state.thumbnailUrl
+        : await createThumbnail({url: url, timeStamp: 10000});
+    const thumbnailUrl =
+      this.state.thumbnailUrl !== ''
+        ? this.state.thumbnailUrl
+        : await this.uploadThumbnail(thumbnail.path, onname);
 
-    const videoThumbURL = this.state.thumbnailUrl !== '' ? this.state.thumbnailUrl : `${constants.VIDEO_THUMB_URL}${onname}_500x500.jpg?alt=media`;
+    const videoThumbURL =
+      this.state.thumbnailUrl !== ''
+        ? this.state.thumbnailUrl
+        : `${constants.VIDEO_THUMB_URL}${onname}_500x500.jpg?alt=media`;
 
     var video = {
       uid: onname,
       url: data,
       thumbnail: {
         url: thumbnailUrl,
-        width: this.state.thumbnailWidth !== '' ? this.state.thumbnailWidth : thumbnail.width,
-        height: this.state.thumbnailWidth !== '' ? this.state.thumnailHeight : thumbnail.height,
+        width:
+          this.state.thumbnailWidth !== ''
+            ? this.state.thumbnailWidth
+            : thumbnail.width,
+        height:
+          this.state.thumbnailWidth !== ''
+            ? this.state.thumnailHeight
+            : thumbnail.height,
       },
       title: this.state.title,
       photo: videoThumbURL,
@@ -329,7 +350,6 @@ export default class App extends Component {
       codec: RNCamera.Constants.VideoCodec['H264'],
     };
 
-
     try {
       if (isRecording) {
         await this.camera.stopRecording();
@@ -345,68 +365,71 @@ export default class App extends Component {
     }
   };
 
-    onPressPublishBtn = async () => {
-        const { isPublishing: publishingState, hasPermission } = this.state;
+  onPressPublishBtn = async () => {
+    const {isPublishing: publishingState, hasPermission} = this.state;
 
-        if (Platform.OS === 'android') {
-            if (!hasPermission) {
-                this.checkPermissions();
-                return;
-            }
-        }
+    if (Platform.OS === 'android') {
+      if (!hasPermission) {
+        this.checkPermissions();
+        return;
+      }
+    }
 
-        if (publishingState) {
-            this.vb.stop();
-            this.stopLiveAndPublishPost();
-            this.props.navigation.dispatch(StackActions.pop());
-            this.setState({ timer: false, seconds: 0 });
-        } else {
-            const activeLive = await this.checkActiveLive();
+    if (publishingState) {
+      this.vb.stop();
+      this.stopLiveAndPublishPost();
+      this.props.navigation.dispatch(StackActions.pop());
+      this.setState({timer: false, seconds: 0});
+    } else {
+      const activeLive = await this.checkActiveLive();
 
-            if (activeLive) {
-                return Alert.alert('Oops', 'The previous live broadcast is still in progress. Please try again in 1-2 minutes.', [{ text: 'Okay' }]);
-            } else {
-                this.vb.start();
-                this.getAssetInfo(this.state.liveStreamId);
-                this.setState({ timer: true }, () => {
-                    this.startTimer();
-                });
-            }
+      if (activeLive) {
+        return Alert.alert(
+          'Oops',
+          'The previous live broadcast is still in progress. Please try again in 1-2 minutes.',
+          [{text: 'Okay'}],
+        );
+      } else {
+        this.vb.start();
+        this.getAssetInfo(this.state.liveStreamId);
+        this.setState({timer: true}, () => {
+          this.startTimer();
+        });
+      }
+    }
+  };
+
+  checkActiveLive = async () => {
+    try {
+      const result = await database().ref('live').once('value');
+      const data = result.val();
+      const keys = Object.keys(data);
+
+      for (let i = 0; i < keys.length; i++) {
+        const k = keys[i];
+        const element = data[k];
+
+        if (element.user.uid === Store.user.uid) {
+          return true;
         }
       }
 
-    checkActiveLive = async () => {
-        try {
-            const result = await database().ref('live').once('value');
-            const data = result.val();
-            const keys = Object.keys(data);
-
-            for (let i = 0; i < keys.length; i++) {
-                const k = keys[i];
-                const element = data[k];
-
-                if (element.user.uid === Store.user.uid) {
-                    return true;
-                }
-            }
-
-            return false;
-        } catch (error) {
-            return false;
-        }
+      return false;
+    } catch (error) {
+      return false;
     }
+  };
 
-    startTimer = async () => {
-        while (this.state.timer) {
-            await sleep(1000);
-            this.setState({ seconds: this.state.seconds + 1 });
-            if (this.state.indexButton === 2 && this.state.seconds >= 10) {
-                this.stopStoryVideo();
-                break;
-            }
-        }
-
+  startTimer = async () => {
+    while (this.state.timer) {
+      await sleep(1000);
+      this.setState({seconds: this.state.seconds + 1});
+      if (this.state.indexButton === 2 && this.state.seconds >= 10) {
+        this.stopStoryVideo();
+        break;
+      }
     }
+  };
 
   stopStoryVideo = async () => {
     this.camera.stopRecording();
@@ -435,20 +458,24 @@ export default class App extends Component {
     this.setState({url: result.uri, type: 'storyVideo', timer: true});
   };
 
-    stopLiveAndPublishPost = async () => {
-        // const result = await database().ref('posts').child(Store.user.uid).child(this.state.uid).once('value');
+  stopLiveAndPublishPost = async () => {
+    // const result = await database().ref('posts').child(Store.user.uid).child(this.state.uid).once('value');
 
-        // var updates = {};
+    // var updates = {};
 
-        // updates[`live/${this.state.uid}`] = null;
+    // updates[`live/${this.state.uid}`] = null;
 
-        // if (result.val()) {
-        //     updates[`posts/${Store.user.uid}/${this.state.uid}/active`] = true;
-        // }
+    // if (result.val()) {
+    //     updates[`posts/${Store.user.uid}/${this.state.uid}/active`] = true;
+    // }
 
-        // database().ref().update(updates);
-        return Alert.alert('Yeyy', 'Your live stream is over. Your live broadcast will appear in your videos section in 1-2 minutes.', [{ text: 'Okay' }]);
-    }
+    // database().ref().update(updates);
+    return Alert.alert(
+      'Yeyy',
+      'Your live stream is over. Your live broadcast will appear in your videos section in 1-2 minutes.',
+      [{text: 'Okay'}],
+    );
+  };
 
   selectVideoFromRoll = async () => {
     ImagePicker.launchImageLibrary({mediaType: 'video'}, (result) => {
@@ -458,7 +485,7 @@ export default class App extends Component {
     });
   };
 
-  selectThumbnailFromRoll = async () => {
+  selectThumbnailFromRoll = async () => {
     this.setState({loading: true, paused: true});
     ImagePicker.launchImageLibrary({mediaType: 'photo'}, async (result) => {
       if (!result.didCancel) {
@@ -466,7 +493,12 @@ export default class App extends Component {
         const thumbnailUrl = await this.uploadThumbnail(result.uri, onname);
         const videoThumbURL = `${constants.VIDEO_THUMB_URL}${onname}_500x500.jpg?alt=media`;
 
-        this.setState({loading: false, thumbnailUrl: videoThumbURL, thumbnailWidth: result.width, thumnailHeight: result.height});
+        this.setState({
+          loading: false,
+          thumbnailUrl: videoThumbURL,
+          thumbnailWidth: result.width,
+          thumnailHeight: result.height,
+        });
       } else {
         this.setState({loading: false});
       }
@@ -508,16 +540,9 @@ export default class App extends Component {
   becomeInfluencer = async () => {
     var updates = {};
 
-    if (!this.state.influencer) {
-      return Alert.alert('Oops', 'You have to accept the Terms & Conditions.', [
-        {text: 'Okay'},
-      ]);
-    }
-
-
     updates[`users/${Store.user.uid}/type`] = 'influencer';
     updates[`users/${Store.user.uid}/price`] = parseFloat(
-      this.state.influencerPrice.toFixed(2),
+      constants.TIERS[this.state.influencerPriceIdx].price.toFixed(2),
     );
 
     this.setState({loading: true});
@@ -526,47 +551,25 @@ export default class App extends Component {
     this.setState({loading: false});
   };
 
-  setPrice = (type) => {
-    const { influencerPrice } = this.state;
-    var counter = 0;
+  setPriceIdx = (offset) => {
+    this.setState({
+      influencerPriceIdx:
+        (this.state.influencerPriceIdx + offset + TIERS.length) % TIERS.length,
+    });
+  };
 
-    for (let i = 0; i < constants.TIERS.length; i++) {
-        const element = constants.TIERS[i];
+  setSnapToItem = (index) => {
+    const {isPublishing, isRecording} = this.state;
 
-        if (element.price === influencerPrice.price) {
-            counter = i;
-            break;
-        }
+    if (index === 0) {
+      this.carousel.snapToItem(1, true, true);
+      return this.selectVideoFromRoll();
     }
 
-    if (type === 'minus') {
-        if (influencerPrice.price === constants.TIERS[0].price) {
-            this.setState({ influencerPrice: constants.TIERS[constants.TIERS.length - 1] });
-        } else {
-            this.setState({ influencerPrice: constants.TIERS[counter - 1] });
-        }
-    } else {
-        if (influencerPrice.price === constants.TIERS[constants.TIERS.length - 1].price) {
-            this.setState({ influencerPrice: constants.TIERS[0] });
-        } else {
-            this.setState({ influencerPrice: constants.TIERS[counter + 1] });
-        }
+    if (!isPublishing && !isRecording) {
+      return this.setState({indexButton: index});
     }
-  } 
-
-    setSnapToItem = (index) => {
-        const { isPublishing, isRecording } = this.state;
-
-        if (index === 0) {
-            this.carousel.snapToItem(1, true, true);
-            return this.selectVideoFromRoll();
-        }
-
-        if (!isPublishing && !isRecording) {
-            return this.setState({ indexButton: index });
-        }
-    }
-
+  };
 
   takeStoryPhoto = async () => {
     const data = await this.camera.takePictureAsync({quality: 0.2});
@@ -647,29 +650,53 @@ export default class App extends Component {
               openModal={() => this.setState({editTextModal: true})}
             />
             <TouchableOpacity
-              style={{paddingLeft: SIZES.spacing, flexDirection: 'row', alignItems: 'center', paddingTop: SIZES.padding}}
+              style={{
+                paddingLeft: SIZES.spacing,
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingTop: SIZES.padding,
+              }}
               onPress={() => this.selectThumbnailFromRoll()}>
-              <Icon name={'add-photo-alternate'} color="#FFF" type="material-icons" style={{left: 2}} />
-              <Text 
-                text={this.state.thumbnailUrl !== '' ? "Change\nThumbnail" : "Thumbnail"}
+              <Icon
+                name={'add-photo-alternate'}
+                color="#FFF"
+                type="material-icons"
+                style={{left: 2}}
+              />
+              <Text
+                text={
+                  this.state.thumbnailUrl !== ''
+                    ? 'Change\nThumbnail'
+                    : 'Thumbnail'
+                }
                 style={{
                   paddingLeft: SIZES.spacing * 5,
                 }}
               />
             </TouchableOpacity>
-            {this.state.thumbnailUrl !== '' ? 
+            {this.state.thumbnailUrl !== '' ? (
               <TouchableOpacity
-                style={{paddingLeft: SIZES.spacing, flexDirection: 'row', alignItems: 'center', paddingTop: SIZES.padding * 2}}
+                style={{
+                  paddingLeft: SIZES.spacing,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingTop: SIZES.padding * 2,
+                }}
                 onPress={() => this.setState({thumbnailUrl: ''})}>
-                <Icon name="trash" color="#FFF" type="ionicon" style={{left: 2}} />
-                <Text 
-                  text={"Remove\nThumbnail"}
+                <Icon
+                  name="trash"
+                  color="#FFF"
+                  type="ionicon"
+                  style={{left: 2}}
+                />
+                <Text
+                  text={'Remove\nThumbnail'}
                   style={{
                     paddingLeft: SIZES.spacing * 5,
                   }}
                 />
               </TouchableOpacity>
-            : null}
+            ) : null}
           </View>
 
           <TouchableOpacity
@@ -907,10 +934,8 @@ export default class App extends Component {
       indexButton,
       url,
       isRecording,
-      influencerPrice,
-      influencer,
+      influencerPriceIdx,
       editTextModal,
-      seconds,
       type,
       title,
     } = this.state;
@@ -951,7 +976,7 @@ export default class App extends Component {
               />
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity
-                  onPress={() => this.setPrice('minus')}
+                  onPress={() => this.setPriceIdx(-1)}
                   style={{
                     padding: 5,
                     backgroundColor: COLORS.white,
@@ -965,7 +990,9 @@ export default class App extends Component {
                 </TouchableOpacity>
                 <View style={{paddingHorizontal: 20}}>
                   <Text
-                    text={`$${influencerPrice.toFixed(2)}`}
+                    text={`$${constants.TIERS[influencerPriceIdx].price.toFixed(
+                      2,
+                    )}`}
                     style={{fontSize: 24, marginTop: 10}}
                   />
                   <Text
@@ -974,7 +1001,7 @@ export default class App extends Component {
                   />
                 </View>
                 <TouchableOpacity
-                  onPress={() => this.setPrice('plus')}
+                  onPress={() => this.setPriceIdx(1)}
                   style={{
                     padding: 5,
                     backgroundColor: COLORS.white,
@@ -988,7 +1015,7 @@ export default class App extends Component {
                 </TouchableOpacity>
               </View>
               <Button
-                text="Become an Creator"
+                text="Become a Creator"
                 buttonStyle={{
                   backgroundColor: COLORS.primary,
                   borderRadius: SIZES.radius,
