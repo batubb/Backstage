@@ -188,6 +188,9 @@ class Profile extends Component {
     } else if (route === 'Earnings') {
       const replaceActions = StackActions.push(route);
       return this.props.navigation.dispatch(replaceActions);
+    } else if (route === 'Subscribers') {
+      const replaceActions = StackActions.push(route);
+      return this.props.navigation.dispatch(replaceActions);
     }
   };
 
@@ -446,6 +449,7 @@ class Profile extends Component {
                 views={cumulativeViews}
                 subscriberNumber={this.state.subscriberNumber}
                 showSubscriberNumber={Store.user.type === 'influencer'}
+                subscriberOnPress={() => this.goTo('Subscribers')}
               />
             </View>
 

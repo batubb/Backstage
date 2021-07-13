@@ -31,6 +31,7 @@ import withdraw from './withdraw';
 import connectSendbird from './connectSendbird';
 import likeVideo from './likeVideo';
 import getSubscriberCount from './getSubscriberCount';
+import getUserSubscribers from './getUserSubscribers';
 
 module.exports = {
     getDealsData,
@@ -65,4 +66,5 @@ module.exports = {
     connectSendbird,
     likeVideo,
     getSubscriberCount,
+    getUserSubscribers,
 };

@@ -39,6 +39,7 @@ import EditBankAccount from './screens/EditBankAccount';
 import WithdrawSummary from './screens/WithdrawSummary';
 import WithdrawalHistory from './screens/WithdrawalHistory';
 import Welcome from './screens/Welcome';
+import Subscribers from './screens/Subscribers';
 import {COLORS} from './resources/theme';
 import {PlatformColor, Linking} from 'react-native';
 import {getBottomSpace} from './lib/iPhoneXHelper';
@@ -161,6 +162,7 @@ class ProfileMenu extends React.Component {
         <Stack.Screen name="EditBankAccount" component={EditBankAccount} />
         <Stack.Screen name="WithdrawSummary" component={WithdrawSummary} />
         <Stack.Screen name="WithdrawalHistory" component={WithdrawalHistory} />
+        <Stack.Screen name="Subscribers" component={Subscribers} />
       </Stack.Navigator>
     );
   }

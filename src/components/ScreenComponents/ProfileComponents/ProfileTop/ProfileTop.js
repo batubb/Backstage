@@ -8,6 +8,7 @@ import SubscribeButton from './SubscribeButton';
 import Databar from './Databar';
 import {StackActions} from '@react-navigation/native';
 import {Icon} from 'react-native-elements';
+import {TouchableOpacity} from 'react-native';
 
 // photo, name, biograohy, subscribeButtonVisible, user, subscribtion
 
@@ -64,16 +65,22 @@ export default function ProfileTop(props) {
               style={{fontWeight: 'bold', fontSize: 11}}
             />
             {props.showSubscriberNumber && (
-              <Text
-                text={`${
-                  props.subscriberNumber ? props.subscriberNumber : 0
-                } subscribers`}
-                style={{
-                  fontWeight: 'bold',
-                  fontSize: 11,
-                  paddingLeft: SIZES.padding * 2,
-                }}
-              />
+              <TouchableOpacity
+                activeOpacity={props.subscriberOnPress ? 0.5 : 1}
+                onPress={() =>
+                  props.subscriberOnPress && props.subscriberOnPress()
+                }>
+                <Text
+                  text={`${
+                    props.subscriberNumber ? props.subscriberNumber : 0
+                  } subscribers`}
+                  style={{
+                    fontWeight: 'bold',
+                    fontSize: 11,
+                    paddingLeft: SIZES.padding * 2,
+                  }}
+                />
+              </TouchableOpacity>
             )}
           </View>
         </View>
