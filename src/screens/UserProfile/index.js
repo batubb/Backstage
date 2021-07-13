@@ -1,3 +1,4 @@
+/* eslint-disable react/no-did-mount-set-state */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, {Component} from 'react';
@@ -85,7 +86,15 @@ class UserProfile extends Component {
     } else {
       this.setState({products: productsRes});
     }
-    this.bottomSheetRef.show();
+    const subscription = await checkSubscribtion(
+      Store.uid,
+      this.state.user.uid,
+    );
+    console.log('subscription is ', subscription);
+    console.log('subscription is2 ', subscription.subscribtion);
+    if (!subscription.subscribtion) {
+      this.bottomSheetRef?.show();
+    }
   };
 
   checkInfluencerInfos = async () => {
@@ -109,7 +118,7 @@ class UserProfile extends Component {
 
   componentWillUnmount = () => {
     this.unsubscribe();
-    this.bottomSheetRef.hide();
+    this.bottomSheetRef?.hide();
   };
 
   goTo = (route, info = null) => {
@@ -156,56 +165,10 @@ class UserProfile extends Component {
     this.setState({optionsVisible: false});
   };
 
-  shareVideo = async () => {
-    await shareItem(
-      `Hey did you see this user on BackStage. ${this.state.user.name} is live!`,
-    );
-    this.setState({optionsVisible: false});
-  };
-
-  unsubscribeInf = () => {
-    Alert.alert(
-      'Are you sure?',
-      `Do you want to unsubscribe ${this.state.user.name}.`,
-      [
-        {text: 'Yes', onPress: () => this.cancelSubscribtion()},
-        {text: 'No', style: 'cancel'},
-      ],
-    );
-  };
-
-  cancelSubscribtion = async () => {
-    this.setState({loading: true});
-    const result = await unsubscribe(this.state.subscribtion.stripeId);
-
-    if (result) {
-      var updates = {};
-
-      updates[
-        `followList/${Store.user.uid}/${this.state.user.uid}/cancel`
-      ] = true;
-      await database().ref().update(updates);
-      await this.checkInfluencerInfos();
-      this.setState({loading: false});
-
-      Alert.alert(
-        'Oops',
-        `You have cancelled your subscribtion. Your subscription will continue until ${moment(
-          this.state.subscribtion.endTimestamp,
-        ).format('LL')}.`,
-        [{text: 'Okay'}],
-      );
-    } else {
-      Alert.alert('Oops', 'We are sorry for this. Please try again later.', [
-        {text: 'Okay'},
-      ]);
-    }
-  };
-
   requestRNISubscription = async () => {
     try {
-      console.log('before request sub');
       await RNIap.requestSubscription(this.state.products[0].productId);
+      this.bottomSheetRef?.hide();
       this.setState({loading: true});
       await sleep(5000);
       console.log('after sub');
@@ -222,114 +185,6 @@ class UserProfile extends Component {
       console.log('Error requesting subscription ', error);
     }
     this.setState({loading: false});
-  };
-
-  renderProfileTop = (user, posts) => {
-    const {subscribtion} = this.state;
-    const constWidth = width / 3;
-    return (
-      <View
-        style={{
-          width: width,
-          flexDirection: 'row',
-          padding: 15,
-          alignItems: 'center',
-        }}>
-        <MyImage
-          style={{
-            width: constWidth,
-            height: constWidth,
-            borderRadius: constWidth / 2,
-          }}
-          photo={user.photo}
-        />
-        <View
-          style={{
-            marginLeft: 10,
-            width: width - constWidth - 50,
-            alignItems: 'center',
-          }}>
-          <Text text={user.name} style={{fontSize: 20}} />
-          <Text
-            text={
-              typeof user.biography === 'undefined'
-                ? 'No Biography'
-                : user.biography
-            }
-            style={{fontSize: 12, color: 'gray'}}
-          />
-          {user.uid !== Store.user.uid && !subscribtion.cancel ? (
-            <Button
-              buttonStyle={{
-                width: width - constWidth - 50,
-                backgroundColor: '#FFF',
-                padding: 10,
-                marginTop: 10,
-                borderRadius: 24,
-              }}
-              textStyle={{fontSize: 12, color: 'black'}}
-              text={
-                subscribtion.subscribtion
-                  ? 'Unsubscribe'
-                  : `Subscribe / ${user.price.toFixed(2)} $`
-              }
-              onPress={() =>
-                subscribtion.subscribtion
-                  ? Alert.alert(
-                      'Please unsubscribe through your Apple Store Settings',
-                    )
-                  : this.requestRNISubscription()
-              }
-            />
-          ) : null}
-          {user.uid !== Store.user.uid && subscribtion.cancel ? (
-            <Button
-              buttonStyle={{
-                width: width - constWidth - 50,
-                backgroundColor: '#FFF',
-                padding: 10,
-                marginTop: 10,
-                borderRadius: 24,
-              }}
-              textStyle={{fontSize: 12, color: 'black'}}
-              text={`Last date is ${moment(
-                this.state.subscribtion.endTimestamp,
-              ).format('L')}.`}
-            />
-          ) : null}
-        </View>
-      </View>
-    );
-  };
-
-  renderDataBar = (user) => {
-    return (
-      <View
-        style={{
-          flexDirection: 'row',
-          width: width,
-          paddingVertical: 10,
-          marginBottom: 10,
-        }}>
-        <View style={{alignItems: 'center', width: width / 2}}>
-          <Text
-            text={followerCount(this.state.followerNumber)}
-            style={{fontSize: 18}}
-          />
-          <Text text="Members" style={{fontSize: 16}} />
-        </View>
-        <TouchableOpacity onPress={() => this.goTo('Chat', this.state.user)}>
-          <View style={{alignItems: 'center', width: width / 2}}>
-            <Icon
-              name="account-group-outline"
-              color="#FFF"
-              type="material-community"
-            />
-            <Text text="Rooms" style={{fontSize: 16}} />
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
   };
 
   renderEmptyPost = () => {
@@ -384,49 +239,10 @@ class UserProfile extends Component {
     );
   };
 
-  expiredCard = () => {
-    return (
-      <View
-        style={{
-          width: width / 2 - 10,
-          height: 1.5 * (width / 2 - 10),
-          borderRadius: 16,
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'absolute',
-        }}>
-        <View
-          style={{
-            position: 'absolute',
-            width: width / 2 - 10,
-            height: 1.5 * (width / 2 - 10),
-            borderRadius: 16,
-            backgroundColor: 'black',
-            opacity: 0.8,
-          }}
-        />
-        <View
-          style={{
-            width: 80,
-            height: 80,
-            borderColor: '#FFF',
-            borderWidth: 2,
-            borderRadius: 40,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Icon
-            name="lock-outline"
-            color="#FFF"
-            type="material-community"
-            size={48}
-          />
-        </View>
-      </View>
-    );
-  };
-
   renderSubscriptionPanel = () => {
+    if (this.state.products.length === 0) {
+      return null;
+    }
     return (
       <SlidingUpPanel
         ref={(ref) => (this.bottomSheetRef = ref)}
@@ -505,7 +321,7 @@ class UserProfile extends Component {
                 }}
               />
               <Text
-                text={`$${this.state.user.price.toFixed(2)}`}
+                text={this.state.products[0].price}
                 style={{
                   fontWeight: 'bold',
                   fontSize: 32,
@@ -602,9 +418,7 @@ class UserProfile extends Component {
               subscribtion={subscribtion}
               user={user}
               onSubscribePress={() =>
-                subscribtion.subscribtion
-                  ? this.unsubscribeInf()
-                  : this.bottomSheetRef.show()
+                subscribtion.subscribtion ? null : this.bottomSheetRef?.show()
               }
               views={
                 !this.state.user.cumulativeViewsUser

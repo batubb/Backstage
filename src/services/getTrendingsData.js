@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import database from '@react-native-firebase/database';
+import isInfluencer from '../lib/isInfluencer';
 import Store from '../store/Store';
 
 export default async function getTrendingsData(uid = Store.uid) {
@@ -11,7 +12,7 @@ export default async function getTrendingsData(uid = Store.uid) {
 
   var trendingsArray = [];
   value.forEach((element) => {
-    if (uid !== element.val().uid) {
+    if (uid !== element.val().uid && isInfluencer(element.val())) {
       trendingsArray.push(element.val());
     }
   });

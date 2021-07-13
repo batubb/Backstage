@@ -26,7 +26,7 @@ import {
   VerifiedIcon,
 } from '../../components';
 import {constants} from '../../resources';
-import {getDealsData, searchUser} from '../../services';
+import {searchUser, getTrendingsData} from '../../services';
 import {followerCount} from '../../lib';
 import {StackActions} from '@react-navigation/native';
 import {COLORS, SIZES} from '../../resources/theme';
@@ -51,7 +51,7 @@ class Rooms extends Component {
   }
 
   componentDidMount = async () => {
-    const userArray = await getDealsData();
+    const userArray = await getTrendingsData();
     this.setState({loading: false, userArray});
   };
 
@@ -67,7 +67,7 @@ class Rooms extends Component {
 
   searchUser = async (search) => {
     if (search.length >= 3) {
-      const searchArray = await searchUser(search, 'all', null);
+      const searchArray = await searchUser(search, 'influencer', null);
       this.setState({searchArray, search});
     } else {
       this.setState({searchArray: [], search});

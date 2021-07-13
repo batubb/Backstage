@@ -63,7 +63,7 @@ class Search extends Component {
     this.setState({search: search});
 
     if (search.length >= 1) {
-      const searchArray = await searchUser(search);
+      const searchArray = await searchUser(search, 'influencer');
       this.setState({searchArray});
     } else {
       this.setState({searchArray: []});

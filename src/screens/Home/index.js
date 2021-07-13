@@ -28,7 +28,7 @@ import {COLORS, SIZES} from '../../resources/theme';
 import Story from '../../components/ScreenComponents/HomeComponents/Story/Story';
 import PostingCard from '../../components/ScreenComponents/HomeComponents/PostingCard/PostingCard';
 import {handleURLSchemes} from '../../lib';
-import { followerCount } from '../../lib';
+import {followerCount} from '../../lib';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import database from '@react-native-firebase/database';
 import axios from 'axios';
@@ -37,42 +37,48 @@ import axios from 'axios';
 const width = Dimensions.get('window')['width'] - constants.PAGE_LEFT_PADDING;
 
 class Home extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            loading: true,
-            refreshing: false,
-            liveArray: [],
-            userPostsArray: [],
-            userStoriesArray: [],
-            myStoriesArray: [],
-        };
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: true,
+      refreshing: false,
+      liveArray: [],
+      userPostsArray: [],
+      userStoriesArray: [],
+      myStoriesArray: [],
+    };
 
-        this.mux_instance = axios.create({
-            baseURL: constants.MUX_BASE_URL,
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-                'mp4_support': 'standard',
-            },
-            auth: {
-                username: constants.MUX_USERNAME,
-                password: constants.MUX_PASSWORD,
-            },
-        });
-    }
+    this.mux_instance = axios.create({
+      baseURL: constants.MUX_BASE_URL,
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+        mp4_support: 'standard',
+      },
+      auth: {
+        username: constants.MUX_USERNAME,
+        password: constants.MUX_PASSWORD,
+      },
+    });
+  }
 
-    componentDidMount = async () => {
-        Promise.all([
-            getFollowingLiveData(Store.uid, Store.followList),
-            getFollowingUserPosts(Store.uid, Store.followList),
-            getFollowingUserStories(Store.uid, Store.followList),
-        ]).then((values) => {
-            this.setState({ loading: false, liveArray: values[0], userPostsArray: values[1], userStoriesArray: values[2].userStoriesArray, myStoriesArray: values[2].myStoriesArray });
-        });
+  componentDidMount = async () => {
+    Promise.all([
+      getFollowingLiveData(Store.uid, Store.followList),
+      getFollowingUserPosts(Store.uid, Store.followList),
+      getFollowingUserStories(Store.uid, Store.followList),
+    ]).then((values) => {
+      this.setState({
+        loading: false,
+        liveArray: values[0],
+        userPostsArray: values[1],
+        userStoriesArray: values[2].userStoriesArray,
+        myStoriesArray: values[2].myStoriesArray,
+      });
+    });
 
-        this.setPushId()
-    }
+    this.setPushId();
+  };
 
   onRefresh = async () => {
     this.setState({refreshing: true});
@@ -92,40 +98,44 @@ class Home extends Component {
     });
   };
 
-    setPushId = async () => {
-        try {
-            const push = await AsyncStorage.getItem('pushInfo');
+  setPushId = async () => {
+    try {
+      const push = await AsyncStorage.getItem('pushInfo');
 
-            if (push) {
-                database().ref('users').child(Store.uid).child('token').set(push);
-            }
-        } catch (e) {
-            // saving error
-        }
+      if (push) {
+        database().ref('users').child(Store.uid).child('token').set(push);
+      }
+    } catch (e) {
+      // saving error
     }
+  };
 
-    goTo = async (route, info = null) => {
-        if (route === 'UserProfile') {
-            const replaceActions = StackActions.push(route, { user: info });
-            return this.props.navigation.dispatch(replaceActions);
-        } else if (route === 'WatchVideo') {
-            if (info.type === 'live') {
-                const livestreamResponse = await this.mux_instance.get('/video/v1/live-streams/' + info.liveId);
-                const status = livestreamResponse.data.data.status;
+  goTo = async (route, info = null) => {
+    if (route === 'UserProfile') {
+      const replaceActions = StackActions.push(route, {user: info});
+      return this.props.navigation.dispatch(replaceActions);
+    } else if (route === 'WatchVideo') {
+      if (info.type === 'live') {
+        const livestreamResponse = await this.mux_instance.get(
+          '/video/v1/live-streams/' + info.liveId,
+        );
+        const status = livestreamResponse.data.data.status;
 
-                if (status === 'active') {
-                    const replaceActions = StackActions.push(route, { video: info });
-                    return this.props.navigation.dispatch(replaceActions);
-                } else {
-                    this.onRefresh();
-                    return Alert.alert('Oops', 'This livestream is over.', [{ text: 'Okay' }]);
-                }
-            } else {
-                const replaceActions = StackActions.push(route, { video: info });
-                return this.props.navigation.dispatch(replaceActions);
-            }
-        } else if (route === 'WatchStory') {
-            const userStories = [];
+        if (status === 'active') {
+          const replaceActions = StackActions.push(route, {video: info});
+          return this.props.navigation.dispatch(replaceActions);
+        } else {
+          this.onRefresh();
+          return Alert.alert('Oops', 'This livestream is over.', [
+            {text: 'Okay'},
+          ]);
+        }
+      } else {
+        const replaceActions = StackActions.push(route, {video: info});
+        return this.props.navigation.dispatch(replaceActions);
+      }
+    } else if (route === 'WatchStory') {
+      const userStories = [];
 
       for (let i = 0; i < this.state.userStoriesArray.length; i++) {
         const element = this.state.userStoriesArray[i];
@@ -146,17 +156,13 @@ class Home extends Component {
     }
   };
 
-    expireAlert = () => {
-        Alert.alert(
-            'Oops',
-            'You must be a member to view the content.',
-            [
-                {
-                    text: 'Okay',
-                },
-            ]
-        );
-    }
+  expireAlert = () => {
+    Alert.alert('Oops', 'You must be a member to view the content.', [
+      {
+        text: 'Okay',
+      },
+    ]);
+  };
 
   captionBar = (text = 'Now', live = false, user = null) => {
     return (
