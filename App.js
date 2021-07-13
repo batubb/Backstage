@@ -152,7 +152,9 @@ class App extends Component {
           if (receipt) {
             const validateRes = await this.validate(
               receipt,
-              purchase.originalTransactionIdentifierIOS,
+              purchase.originalTransactionIdentifierIOS
+                ? purchase.originalTransactionIdentifierIOS
+                : purchase.transactionId,
             );
             const {receiptValidated, expiryDate} = validateRes;
             if (receiptValidated) {

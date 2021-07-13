@@ -229,6 +229,9 @@ class Chat extends Component {
         });
         return this.props.navigation.dispatch(replaceActions);
       });
+    } else if (route === 'UserProfile') {
+      const replaceActions = StackActions.push(route, {user: info});
+      return this.props.navigation.dispatch(replaceActions);
     }
   };
 
@@ -333,7 +336,7 @@ class Chat extends Component {
             marginTop: SIZES.padding * 3,
           }}
           textStyle={{color: COLORS.white, fontSize: 16}}
-          onPress={() => this.goTo('Subscribe')}
+          onPress={() => this.goTo('UserProfile', this.state.user)}
         />
       </View>
     );

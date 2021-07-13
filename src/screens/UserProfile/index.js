@@ -73,6 +73,7 @@ class UserProfile extends Component {
   }
 
   componentDidMount = async () => {
+    this.setState({loading: true});
     this.unsubscribe = this.props.navigation.addListener('focus', (e) => {
       this.checkInfluencerInfos();
     });
@@ -95,6 +96,7 @@ class UserProfile extends Component {
     if (!subscription.subscribtion) {
       this.bottomSheetRef?.show();
     }
+    this.setState({loading: false});
   };
 
   checkInfluencerInfos = async () => {
@@ -312,22 +314,12 @@ class UserProfile extends Component {
             </View>
             <View style={{marginTop: SIZES.padding * 4}}>
               <Text
-                text={`Subscribe to ${this.state.user.username} in order to access to the creator's exclusive content and chat room.`}
-                style={{
-                  fontWeight: 'bold',
-                  fontSize: 16,
-                  textAlign: 'center',
-                  color: COLORS.white,
-                }}
-              />
-              <Text
-                text={this.state.products[0].price}
+                text={`$${this.state.products[0].price}`}
                 style={{
                   fontWeight: 'bold',
                   fontSize: 32,
                   textAlign: 'center',
                   color: COLORS.white,
-                  marginTop: SIZES.padding * 2,
                 }}
               />
               <Text
@@ -341,7 +333,7 @@ class UserProfile extends Component {
                   borderRadius: SIZES.radius,
                   paddingVertical: SIZES.padding * 1.5,
                   paddingHorizontal: SIZES.padding * 4,
-                  marginTop: SIZES.padding * 4,
+                  marginTop: SIZES.padding * 2,
                   width: 250,
                   alignSelf: 'center',
                 }}
@@ -349,9 +341,10 @@ class UserProfile extends Component {
                 onPress={() => this.requestRNISubscription()}
               />
               <Text
-                text={`This subscription will not auto-renew. You cannot cancel when you subscribe. As a member, you'll remain anonymous. Become a member, the creator won't see your username.`}
+                text={`Subscribing to this channel will give you access to this creator's exclusive content and fanroom on Backstage for the subscription period. Content can be in the form of livestreams, videos, or stories. Subscriptions will auto renew, and can be cancelled anytime on via Apple App Store.`}
                 style={{
-                  marginTop: SIZES.padding * 4,
+                  marginTop: SIZES.padding * 2,
+                  marginBottom: SIZES.padding * 4,
                   fontWeight: 'bold',
                   fontSize: 12,
                   textAlign: 'center',
