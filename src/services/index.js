@@ -33,6 +33,7 @@ import likeVideo from './likeVideo';
 import getSubscriberCount from './getSubscriberCount';
 import getUserSubscribers from './getUserSubscribers';
 import setUserDeviceInfo from './setUserDeviceInfo';
+import sendNotificationToUserDevices from './sendNotificationToUserDevices';
 
 module.exports = {
     getDealsData,
@@ -69,4 +70,5 @@ module.exports = {
     getSubscriberCount,
     getUserSubscribers,
     setUserDeviceInfo,
+    sendNotificationToUserDevices,
 };

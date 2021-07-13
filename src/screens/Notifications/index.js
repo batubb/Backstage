@@ -80,6 +80,7 @@ class Notifications extends Component {
     if (type === 'pauseall') {
       if (this.state.pauseAll) {
         var updates = {
+          ...Store.user.notifications,
           likes: true,
           videos: true,
           roomActivities: true,
@@ -100,6 +101,7 @@ class Notifications extends Component {
         });
       } else {
         var updates = {
+          ...Store.user.notifications,
           likes: false,
           videos: false,
           roomActivities: false,
@@ -122,6 +124,7 @@ class Notifications extends Component {
     } else if (type === 'videos') {
       if (this.state.videos) {
         var updates = {
+          ...Store.user.notifications,
           likes: this.state.likes,
           videos: false,
           roomActivities: this.state.roomActivities,
@@ -137,6 +140,7 @@ class Notifications extends Component {
         this.setState({videos: false});
       } else {
         var updates = {
+          ...Store.user.notifications,
           likes: this.state.likes,
           videos: true,
           roomActivities: this.state.roomActivities,
@@ -154,6 +158,7 @@ class Notifications extends Component {
     } else if (type === 'roomActivities') {
       if (this.state.roomActivities) {
         var updates = {
+          ...Store.user.notifications,
           likes: this.state.likes,
           videos: this.state.videos,
           roomActivities: false,
@@ -169,6 +174,7 @@ class Notifications extends Component {
         this.setState({roomActivities: false});
       } else {
         var updates = {
+          ...Store.user.notifications,
           likes: this.state.likes,
           videos: this.state.videos,
           roomActivities: true,
@@ -186,6 +192,7 @@ class Notifications extends Component {
     } else if (type === 'likes') {
       if (this.state.likes) {
         var updates = {
+          ...Store.user.notifications,
           likes: false,
           videos: this.state.videos,
           roomActivities: this.state.roomActivities,
@@ -201,6 +208,7 @@ class Notifications extends Component {
         this.setState({likes: false});
       } else {
         var updates = {
+          ...Store.user.notifications,
           likes: true,
           videos: this.state.videos,
           roomActivities: this.state.roomActivities,

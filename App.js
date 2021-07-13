@@ -205,7 +205,10 @@ class App extends Component {
     console.log('Device info: ', deviceState.userId);
     try {
       await AsyncStorage.setItem('pushInfo', deviceState.userId);
-      await setUserDeviceInfo(deviceState);
+
+      if (MainStore.user) {
+        await setUserDeviceInfo(MainStore, deviceState);
+      }
     } catch (e) {
       // saving error
     }
