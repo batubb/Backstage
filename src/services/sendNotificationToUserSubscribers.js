@@ -25,7 +25,7 @@ export default async function sendNotificationToUserSubscribers(type, user = Sto
     }
 
     if (activeSubscriberUserUIDs.length > 0) {
-        await sendNotificationToUserDevices(type, [Store.user.uid], replaceContents);
+        await sendNotificationToUserDevices(type, activeSubscriberUserUIDs, replaceContents);
     }
 
     return true;
