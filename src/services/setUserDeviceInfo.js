@@ -12,13 +12,15 @@ export default async function setUserDeviceInfo(
     userId,
   },
 ) {
-  if (!Store.devices.some((deviceId) => deviceId === userId)) {
-    const userRef = await database()
-      .ref('users')
-      .child(Store.uid)
-      .child('devices');
+  const userRef = await database()
+    .ref('users')
+    .child(Store.uid)
+    .child('devices');
 
-    const userDevices = await (await userRef.once('value')).val() ?? [];
+  const userDevices = await (await userRef.once('value')).val() ?? [];
+  Store.setDevices(userDevices);
+
+  if (!userDevices.some((deviceId) => deviceId === userId)) {
     const devices = [...userDevices, userId];
 
     userRef.set(devices);
