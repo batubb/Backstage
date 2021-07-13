@@ -1,12 +1,18 @@
 import axios from 'axios';
-import database from '@react-native-firebase/database';
 
-/// TYPES
-/// "new-subscriber", "approved-creator", "withdraw-approved", "new-post"
+/// @required type from notificationTemplates data.
 ///
-/// userUIDs should contain just users' uids in a list.
-export default async function sendNotificationToUserDevices(type, userUIDs = []) {
-    var data = JSON.stringify({ type, userUIDs });
+/// @required userUIDs should contain just users' uids in a list.
+/// 
+/// @optional replaceContents
+/// Show messages dynamically by replacing messages. It can contain more than one.
+/// The content and messages both will be replaced.
+/// [{
+///     key: '{username}'
+///     value: 'johndoe',
+/// }]
+export default async function sendNotificationToUserDevices(type, userUIDs = [], replaceContents = undefined) {
+    var data = JSON.stringify({ type, userUIDs, replaceContents });
 
     var config = {
         method: 'post',

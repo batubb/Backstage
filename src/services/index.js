@@ -34,6 +34,7 @@ import getSubscriberCount from './getSubscriberCount';
 import getUserSubscribers from './getUserSubscribers';
 import setUserDeviceInfo from './setUserDeviceInfo';
 import sendNotificationToUserDevices from './sendNotificationToUserDevices';
+import sendNotificationToUserSubscribers from './sendNotificationToUserSubscribers';
 
 module.exports = {
     getDealsData,
@@ -71,4 +72,5 @@ module.exports = {
     getUserSubscribers,
     setUserDeviceInfo,
     sendNotificationToUserDevices,
+    sendNotificationToUserSubscribers,
 };
