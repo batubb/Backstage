@@ -509,7 +509,7 @@ class UserProfile extends Component {
                 }}
               />
               <Text
-                text={`$${this.state.user.price.toFixed(2)}`}
+                text={`$${parseFloat(this.state.user.price).toFixed(2)}`}
                 style={{
                   fontWeight: 'bold',
                   fontSize: 32,
