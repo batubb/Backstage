@@ -2,6 +2,8 @@
 import database from '@react-native-firebase/database';
 import {Alert} from 'react-native';
 import constants from '../resources/constants';
+import sendNotificationToUserSubscribers from './sendNotificationToUserSubscribers';
+
 // isLive:
 // 1: is currently live
 // 0: is not currently live but was a live video in the past
@@ -34,6 +36,7 @@ export default async function createVideoData(
 
   try {
     await database().ref().update(updates);
+    await sendNotificationToUserSubscribers('new-post', user, [{key: '{username}', value: user.username}]);
     return true;
   } catch (error) {
     Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
