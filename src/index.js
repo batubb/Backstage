@@ -42,7 +42,7 @@ import Welcome from './screens/Welcome';
 import Subscribers from './screens/Subscribers';
 import {COLORS} from './resources/theme';
 import {PlatformColor, Linking} from 'react-native';
-import {getBottomSpace} from './lib/iPhoneXHelper';
+import {getBottomSpace, isIphoneX} from './lib/iPhoneXHelper';
 import {handleURLSchemes} from './lib';
 
 LogBox.ignoreAllLogs();
@@ -210,6 +210,7 @@ class TabBarBottom extends React.Component {
             buttonStyle={{
               flex: 1,
               height: 60,
+              justifyContent: isIphoneX() ? 'flex-start' : 'center',
             }}
           />
         )}
