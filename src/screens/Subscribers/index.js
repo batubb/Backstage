@@ -81,8 +81,7 @@ class Subscribers extends Component {
             }}>
             <View style={{width: width - 150, flexDirection: 'row'}}>
               <Text text={`${item.user.username}`} style={{fontSize: 16}} />
-              <VerifiedIcon size={16} style={{paddingLeft: SIZES.spacing * 2}} />
-              {item.user.verified === true ? <VerifiedIcon /> : null}
+              {item.user.verified === true ? <VerifiedIcon size={16} style={{paddingLeft: SIZES.spacing * 2}} />: null}
             </View>
           </View>
         </View>
