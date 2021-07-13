@@ -66,10 +66,10 @@ export default function Story(props) {
             style={{
               position: 'absolute',
               alignSelf: 'center',
-              bottom: -5,
-              height: '20%',
+              bottom: -8,
+              height: 14,
               backgroundColor: COLORS.primary,
-              width: '50%',
+              width: 30,
               alignItems: 'center',
               justifyContent: 'center',
               borderRadius: 5,
@@ -79,7 +79,7 @@ export default function Story(props) {
             }}>
             <Text
               text={'LIVE'}
-              style={{fontSize: 8, color: COLORS.secondary}}
+              style={{fontSize: 9, color: COLORS.secondary}}
             />
           </View>
         ) : null}
