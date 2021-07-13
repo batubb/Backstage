@@ -7,6 +7,7 @@ import {
   Image,
   ScrollView,
   RefreshControl,
+  Alert,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import LinearGradient from 'react-native-linear-gradient';
@@ -15,8 +16,8 @@ import {Loading, Header, Text, Button, Label} from '../../components';
 import {constants} from '../../resources';
 import {getFollowingLiveData, getFollowingUserPosts} from '../../services';
 import Store from '../../store/Store';
-import {followerCount} from '../../lib';
-import {COLORS, FONTS, SIZES} from '../../resources/theme';
+import {checkAndShowInfluencerModal} from '../../lib';
+import {COLORS, SIZES} from '../../resources/theme';
 import {StackActions} from '@react-navigation/native';
 import {LineChart} from 'react-native-chart-kit';
 
@@ -37,6 +38,9 @@ class Earnings extends Component {
   }
 
   componentDidMount = async () => {
+    if (checkAndShowInfluencerModal(this.props.navigation)) {
+      return;
+    }
     this.setState({loading: false});
   };
 

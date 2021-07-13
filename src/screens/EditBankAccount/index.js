@@ -22,6 +22,7 @@ import {StackActions} from '@react-navigation/native';
 import PhoneInput from 'react-native-phone-number-input';
 import database from '@react-native-firebase/database';
 import {getBottomSpace} from '../../lib/iPhoneXHelper';
+import {checkAndShowInfluencerModal} from '../../lib';
 
 const {width, height} = Dimensions.get('window');
 
@@ -43,6 +44,9 @@ class EditBankAccount extends Component {
   }
 
   componentDidMount = async () => {
+    if(checkAndShowInfluencerModal(this.props.navigation)) {
+      return;
+    }
     if (typeof Store.user.bank === 'undefined') {
       this.setState({
         isAdding: true,
@@ -167,20 +171,20 @@ class EditBankAccount extends Component {
           }
           leftButtonIcon="chevron-left"
         />
-          {loading ? (
-            <Loading
-              loadingStyle={{
-                flex: 1,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              textStyle={{marginTop: 10, fontWeight: 'normal'}}
-              text="Loading"
-            />
-          ) : (
-            <KeyboardAvoidingView
-              behavior="padding"
-              keyboardVerticalOffset={getBottomSpace()}>
+        {loading ? (
+          <Loading
+            loadingStyle={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            textStyle={{marginTop: 10, fontWeight: 'normal'}}
+            text="Loading"
+          />
+        ) : (
+          <KeyboardAvoidingView
+            behavior="padding"
+            keyboardVerticalOffset={getBottomSpace()}>
             <ScrollView
               refreshControl={
                 <RefreshControl refreshing={refreshing} tintColor="white" />
@@ -297,8 +301,8 @@ class EditBankAccount extends Component {
                 />
               </View>
             </ScrollView>
-        </KeyboardAvoidingView>
-          )}
+          </KeyboardAvoidingView>
+        )}
       </View>
     );
   }

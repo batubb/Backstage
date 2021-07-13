@@ -9,6 +9,8 @@ import regexCheck from './regexCheck';
 import runTiming from './runTiming';
 import iPhoneXHelper from './iPhoneXHelper';
 import handleURLSchemes from './handleURLSchemes';
+import isInfluencer from './isInfluencer';
+import checkAndShowInfluencerModal from './checkAndShowInfluencerModal';
 
 module.exports = {
     makeid,
@@ -21,4 +23,6 @@ module.exports = {
     runTiming,
     iPhoneXHelper,
     handleURLSchemes,
+    isInfluencer,
+    checkAndShowInfluencerModal,
 };

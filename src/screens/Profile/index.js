@@ -23,24 +23,16 @@ import {
 import {constants} from '../../resources';
 import {
   getUserPosts,
-  getFollowingUserPosts,
   setHighlights,
-  checkUserInfo,
   getSubscriberCount,
 } from '../../services';
-import {Icon} from 'react-native-elements';
-import {followerCount, setPosts, makeid, timeDifference} from '../../lib';
+import {followerCount, setPosts, isInfluencer, timeDifference} from '../../lib';
 import LinearGradient from 'react-native-linear-gradient';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import database from '@react-native-firebase/database';
-import storage from '@react-native-firebase/storage';
-import moment from 'moment';
 
 import Store from '../../store/Store';
-import {COLORS, SIZES} from '../../resources/theme';
+import {SIZES} from '../../resources/theme';
 import ProfileTop from '../../components/ScreenComponents/ProfileComponents/ProfileTop/ProfileTop';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
-import PostCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostCard';
 
 const {width} = Dimensions.get('window');
 
@@ -102,7 +94,7 @@ class Profile extends Component {
               : Store.user.cumulativeViewsUser,
         });
       });
-    } else if (Store.user.type === 'influencer') {
+    } else if (isInfluencer()) {
       const posts = await getUserPosts(Store.user.uid, true);
       const subscriberNumber = await getSubscriberCount(Store.user.uid);
       const {postsArray, daily} = setPosts(posts);
@@ -401,6 +393,17 @@ class Profile extends Component {
       cumulativeViews,
     } = this.state;
 
+    var influencerProfileProps = {};
+
+    if (isInfluencer()) {
+      influencerProfileProps = {
+        views: cumulativeViews,
+        subscriberNumber: this.state.subscriberNumber,
+        showSubscriberNumber: Store.user.type === 'influencer',
+        subscriberOnPress: () => this.goTo('Subscribers'),
+      };
+    }
+
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
         <Header
@@ -446,10 +449,7 @@ class Profile extends Component {
                 biography={biography}
                 editProfileVisible
                 navigation={this.props.navigation}
-                views={cumulativeViews}
-                subscriberNumber={this.state.subscriberNumber}
-                showSubscriberNumber={Store.user.type === 'influencer'}
-                subscriberOnPress={() => this.goTo('Subscribers')}
+                {...influencerProfileProps}
               />
             </View>
 

@@ -617,7 +617,7 @@ class UserProfile extends Component {
               }
               followerNumber={this.state.followerNumber}
               subscriberNumber={this.state.subscriberNumber}
-              showSubscriberNumber={true}
+              showSubscriberNumber={Store.user.uid === this.state.user.uid}
               onChatPress={() => this.goTo('Chat', this.state.user)}
               editProfileVisible={user.uid === Store.user.uid}
               navigation={this.props.navigation}

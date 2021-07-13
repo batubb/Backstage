@@ -60,10 +60,12 @@ export default function ProfileTop(props) {
               flexDirection: 'row',
               justifyContent: 'flex-start',
             }}>
-            <Text
-              text={`${props.views ? props.views : 0} views`}
-              style={{fontWeight: 'bold', fontSize: 11}}
-            />
+            {typeof props.views !== 'undefined' ? (
+              <Text
+                text={`${props.views} views`}
+                style={{fontWeight: 'bold', fontSize: 11}}
+              />
+            ) : null}
             {props.showSubscriberNumber && (
               <TouchableOpacity
                 activeOpacity={props.subscriberOnPress ? 0.5 : 1}
