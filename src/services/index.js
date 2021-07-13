@@ -32,6 +32,7 @@ import connectSendbird from './connectSendbird';
 import likeVideo from './likeVideo';
 import getSubscriberCount from './getSubscriberCount';
 import getUserSubscribers from './getUserSubscribers';
+import setUserDeviceInfo from './setUserDeviceInfo';
 
 module.exports = {
     getDealsData,
@@ -67,4 +68,5 @@ module.exports = {
     likeVideo,
     getSubscriberCount,
     getUserSubscribers,
+    setUserDeviceInfo,
 };

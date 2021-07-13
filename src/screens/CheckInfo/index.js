@@ -110,12 +110,12 @@ class CheckInfo extends Component {
 
   onPressNextUsername = async () => {
     if (this.state.username === '' || this.state.username === '@') {
-      Alert.alert('Oops', 'Username can not be empty', [{text: 'Okay'}]);
+      Alert.alert('Oops', 'Username can not be empty.', [{text: 'Okay'}]);
     } else {
       if (regexCheck(this.state.username.substring(1))) {
         Alert.alert(
           'Oops',
-          'You can not user any symbol. Please use only letters and numbers',
+          'Please only use letters and numbers.',
           [{text: 'Okay'}],
         );
       } else {
@@ -126,7 +126,7 @@ class CheckInfo extends Component {
         if (checkUsername) {
           Alert.alert(
             'Oops',
-            'This username is taken. Please try a different username.',
+            'This username is already taken. Please try a different one.',
             [{text: 'Okay'}],
           );
           this.setState({loading: false});

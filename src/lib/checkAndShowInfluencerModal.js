@@ -5,7 +5,7 @@ import Store from '../store/Store';
 
 export default function checkAndShowInfluencerModal(navigation, user = Store.user) {
   if (!isInfluencer(user)) {
-    Alert.alert('Oops', 'You are not an influencer yet.', [
+    Alert.alert('Oops', 'You are not enrolled as a creator yet.', [
       {
         text: 'Start Creating',
         onPress: () => navigation.dispatch(StackActions.push('AddContent')),

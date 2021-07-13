@@ -138,7 +138,7 @@ class UserProfile extends Component {
     if (result) {
       Alert.alert(
         'Thank You',
-        'You have reported this user. We will investigate this user.',
+        'You have reported this user. We will investigate your request.',
         [{text: 'Okay'}],
       );
     } else {

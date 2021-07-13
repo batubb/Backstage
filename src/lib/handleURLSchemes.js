@@ -28,7 +28,7 @@ export default function handleURLSchemes(event, navigation) {
               } else {
                 Alert.alert(
                   'Oops',
-                  'We could not find a user named ' + matches?.[2] + '.',
+                  'The user ' + matches?.[2] + ' does not exist.',
                 );
                 reject();
               }

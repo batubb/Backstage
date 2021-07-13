@@ -149,7 +149,7 @@ class Home extends Component {
     expireAlert = () => {
         Alert.alert(
             'Oops',
-            'You must be a member to view the content.',
+            'You must become a member to view the content.',
             [
                 {
                     text: 'Okay',

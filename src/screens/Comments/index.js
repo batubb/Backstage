@@ -62,13 +62,13 @@ class Comments extends Component {
 
   sendComment = async () => {
     if (typeof this.state.subscribtion.subscribtion === 'undefined') {
-      return Alert.alert('Oops', 'You must be a member to view the content.', [
+      return Alert.alert('Oops', 'You must become a member to view the content.', [
         {text: 'Okay'},
       ]);
     }
 
     if (this.state.subscribtion.subscribtion !== true) {
-      return Alert.alert('Oops', 'You must be a member to view the content.', [
+      return Alert.alert('Oops', 'You must become a member to view the content.', [
         {text: 'Okay'},
       ]);
     }

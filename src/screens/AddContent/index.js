@@ -364,7 +364,7 @@ export default class App extends Component {
             const activeLive = await this.checkActiveLive();
 
             if (activeLive) {
-                return Alert.alert('Oops', 'The previous live broadcast is still in progress. Please try again in 1-2 minutes.', [{ text: 'Okay' }]);
+                return Alert.alert('Oops', 'The previous livestream is still in progress. Please try again in a minute.', [{ text: 'Okay' }]);
             } else {
                 this.vb.start();
                 this.getAssetInfo(this.state.liveStreamId);
@@ -447,7 +447,7 @@ export default class App extends Component {
         // }
 
         // database().ref().update(updates);
-        return Alert.alert('Yeyy', 'Your live stream is over. Your live broadcast will appear in your videos section in 1-2 minutes.', [{ text: 'Okay' }]);
+        return Alert.alert('🥳🥳', 'Your livestream is over. It will be saved in your videos section.', [{ text: 'Okay' }]);
     }
 
   selectVideoFromRoll = async () => {
