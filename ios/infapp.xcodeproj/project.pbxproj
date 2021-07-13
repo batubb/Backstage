@@ -1041,7 +1041,7 @@
 				CODE_SIGN_ENTITLEMENTS = infapp/infapp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = V7293GG6Z6;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 armv7s armv7";
@@ -1073,7 +1073,7 @@
 				CODE_SIGN_ENTITLEMENTS = infapp/infapp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = V7293GG6Z6;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 armv7 armv7s";
 				INFOPLIST_FILE = infapp/Info.plist;
