@@ -191,7 +191,7 @@ class TabBarBottom extends React.Component {
           <CustomTabBarNavigator
             {...props}
             style={{
-              height: 60 + getBottomSpace(),
+              height: constants.TAB_BAR_HEIGHT + getBottomSpace(),
               width: '100%',
               justifyContent: 'space-around',
               alignItems: 'center',
@@ -200,7 +200,7 @@ class TabBarBottom extends React.Component {
             }}
             buttonStyle={{
               flex: 1,
-              height: 60,
+              height: constants.TAB_BAR_HEIGHT,
               justifyContent: isIphoneX() ? 'flex-start' : 'center',
             }}
           />

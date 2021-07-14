@@ -21,6 +21,7 @@ const constants = {
   TRANSPARENT_BLACK_COLOR: '#00000041',
   PAGE_LEFT_PADDING: SIZES.spacing * 2,
   PROFILE_PIC_SIZE: 100,
+  TAB_BAR_HEIGHT: 60,
   DEFAULT_PAGE_WIDTH: '95%',
   ERROR_ALERT_MSG: 'Something unexpected happened. Please try again later.',
 

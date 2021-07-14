@@ -39,7 +39,6 @@ const {width} = Dimensions.get('window');
 class Profile extends Component {
   constructor(props) {
     super(props);
-    console.log(Store.user);
     this.state = {
       loading: true,
       photo:
