@@ -1,6 +1,4 @@
-import Store from '../store/Store';
-
-export default function isInfluencer(user = Store.user) {
+export default function isInfluencer(user) {
   return !!(
     user.type === 'influencer' && typeof user.appStoreProductId !== 'undefined'
   );

@@ -94,7 +94,7 @@ class Profile extends Component {
               : Store.user.cumulativeViewsUser,
         });
       });
-    } else if (isInfluencer()) {
+    } else if (isInfluencer(Store.user)) {
       const posts = await getUserPosts(Store.user.uid, true);
       const subscriberNumber = await getSubscriberCount(Store.user.uid);
       const {postsArray, daily} = setPosts(posts);
@@ -143,12 +143,14 @@ class Profile extends Component {
       this.setState({refreshing: false});
     } else if (Store.user.type === 'influencer') {
       const posts = await getUserPosts(Store.user.uid, true);
+      const subscriberNumber = await getSubscriberCount(Store.user.uid);
       const {postsArray, daily} = setPosts(posts);
       this.setState({
         posts: posts,
         postsArray: postsArray,
         daily: daily,
         refreshing: false,
+        subscriberNumber,
       });
     }
   };
@@ -395,7 +397,7 @@ class Profile extends Component {
 
     var influencerProfileProps = {};
 
-    if (isInfluencer()) {
+    if (isInfluencer(Store.user)) {
       influencerProfileProps = {
         views: cumulativeViews,
         subscriberNumber: this.state.subscriberNumber,
