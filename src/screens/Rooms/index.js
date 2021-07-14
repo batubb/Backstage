@@ -91,23 +91,31 @@ class Rooms extends Component {
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-              marginTop: 10,
+              marginTop: SIZES.padding,
               marginBottom: SIZES.spacing * 3,
               paddingHorizontal: SIZES.padding * 2,
             }}>
             <MyImage
-              style={{width: 60, height: 60, borderRadius: 30}}
+              style={{
+                width: constants.PROFILE_PIC_SIZE * 0.6,
+                height: constants.PROFILE_PIC_SIZE * 0.6,
+                borderRadius: 30,
+              }}
               photo={item.photo}
             />
             <View
               style={{
                 width: width,
-                paddingLeft: SIZES.padding2,
+                paddingLeft: SIZES.padding,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',
               }}>
-              <View style={{width: width - 150, flexDirection: 'row'}}>
+              <View
+                style={{
+                  width: width - constants.PROFILE_PIC_SIZE * 1.5,
+                  flexDirection: 'row',
+                }}>
                 <Text text={`${item.username}`} style={{fontSize: 16}} />
                 {item.verified === true ? <VerifiedIcon /> : null}
               </View>
@@ -116,7 +124,12 @@ class Rooms extends Component {
         </TouchableOpacity>
         <Divider
           width={width}
-          style={{marginLeft: SIZES.padding + 170, opacity: 0.2}}
+          style={{
+            marginLeft:
+              SIZES.padding2 +
+              constants.PROFILE_PIC_SIZE * 1.35 +
+              SIZES.padding * 3,
+          }}
         />
       </View>
     ));
@@ -269,7 +282,12 @@ class Rooms extends Component {
             refreshControl={
               <RefreshControl refreshing={refreshing} tintColor="white" />
             }>
-            <View style={{width: width, alignItems: 'center'}}>
+            <View
+              style={{
+                width: width,
+                alignItems: 'center',
+                marginTop: SIZES.padding,
+              }}>
               {/* <View
                 style={{
                   width: width,
