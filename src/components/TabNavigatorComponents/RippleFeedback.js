@@ -57,24 +57,38 @@ export default class RippleFeedback extends React.PureComponent {
   };
 
   renderBackgroundLayer = () => {
+    const RIPPLE_SIZE = 50;
     return (
-      <Animated.View
+      <View
         pointerEvents="none"
         style={[
           {
             ...StyleSheet.absoluteFillObject,
-            position: 'absolute',
-            top: -8,
-            left: 17,
-            width: 50,
+            flex: 1,
+            flexGrow: 1,
             height: 50,
-            borderRadius: 100,
-            transform: [{scale: this.scaleValue}],
-            opacity: this.opacityRippleValue,
-            backgroundColor: 'rgba(167, 104, 254, 0.26)',
+            top: -7.5,
           },
-        ]}
-      />
+        ]}>
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            {
+              flex: 1,
+              alignSelf: 'center',
+              alignContent: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 100,
+              width: 50,
+              height: 50,
+              transform: [{scale: this.scaleValue}],
+              opacity: this.opacityRippleValue,
+              backgroundColor: 'rgba(167, 104, 254, 0.26)',
+            },
+          ]}
+        />
+      </View>
     );
   };
 
