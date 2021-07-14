@@ -308,6 +308,7 @@ class Profile extends Component {
           numCols={constants.NUM_POSTS_PER_ROW_PROFILE}
           extraData={Store.posts}
           onPress={(item) => this.goTo('WatchVideo', item)}
+          showTitle={true}
         />
       );
     }
@@ -439,6 +440,7 @@ class Profile extends Component {
               width: constants.DEFAULT_PAGE_WIDTH,
               alignSelf: 'center',
               marginTop: SIZES.spacing * 5,
+              paddingBottom: SIZES.spacing * 5,
             }}>
             <View
               style={{

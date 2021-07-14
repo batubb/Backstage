@@ -82,14 +82,7 @@ export default function PostCard(props) {
             <View style={{flexDirection: 'row'}}>
               {props.isPersonCard ? (
                 <Text
-                  text={
-                    props.isPersonCard
-                      ? props.item.username
-                      : // : props.item.title && props.item.title.length >= 17
-                        // ? `${props.item.title.substring(0, 17)}...`
-                        // : props.item.title
-                        ''
-                  }
+                  text={props.item.username}
                   style={{
                     fontSize: 13,
                     paddingBottom: 2,
@@ -113,6 +106,7 @@ export default function PostCard(props) {
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                paddingBottom: props.item.title ? SIZES.spacing * 2 : 0,
               }}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Icon
@@ -143,6 +137,23 @@ export default function PostCard(props) {
                 />
               </View>
             </View>
+            {props.item.title ? (
+              <Text
+                text={
+                  props.item.title.length >= 17
+                    ? `${props.item.title.substring(0, 17)}...`
+                    : props.item.title
+                }
+                style={{
+                  left: 1.5,
+                  fontSize: 13,
+                  paddingBottom: 2,
+                  textShadowColor: 'rgba(0, 0, 0, 0.2)',
+                  textShadowOffset: {width: 2, height: 2},
+                  textShadowRadius: 10,
+                }}
+              />
+            ) : null}
           </View>
         )}
       </View>
