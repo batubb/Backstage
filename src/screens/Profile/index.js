@@ -43,10 +43,10 @@ class Profile extends Component {
       loading: true,
       photo:
         typeof Store.user.photo === 'undefined'
-          ? 'https://www.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg'
+          ? constants.DEFAULT_PHOTO
           : Store.user.photo,
       name:
-        typeof Store.user.name === 'undefined' ? 'No Name' : Store.user.name,
+        typeof Store.user.name === 'undefined' ? '' : Store.user.name,
       biography:
         typeof Store.user.biography === 'undefined' ? '' : Store.user.biography,
       cumulativeViews:
@@ -77,7 +77,7 @@ class Profile extends Component {
         this.setState({
           name:
             typeof Store.user.name === 'undefined'
-              ? 'No Name'
+              ? ''
               : Store.user.name,
           biography:
             typeof Store.user.biography === 'undefined'
@@ -112,15 +112,15 @@ class Profile extends Component {
           daily: Store.posts.daily,
           name:
             typeof Store.user.name === 'undefined'
-              ? 'No Name'
+              ? ''
               : Store.user.name,
           biography:
             typeof Store.user.biography === 'undefined'
-              ? 'No Biography'
+              ? ''
               : Store.user.biography,
           photo:
             typeof Store.user.photo === 'undefined'
-              ? 'https://www.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg'
+              ? constants.DEFAULT_PHOTO
               : Store.user.photo,
           cumulativeViews:
             typeof Store.user.cumulativeViewsUser === 'undefined'
