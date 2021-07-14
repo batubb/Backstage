@@ -45,6 +45,11 @@ import {getBottomSpace, isIphoneX} from './lib/iPhoneXHelper';
 
 LogBox.ignoreAllLogs();
 
+LogBox.ignoreLogs([
+  'VirtualizedLists should never be nested',
+  'Warning: Each child in a list should',
+]);
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 

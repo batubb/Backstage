@@ -383,16 +383,14 @@ export default class App extends Component {
     } else {
       const activeLive = await this.checkActiveLive();
 
-            if (activeLive) {
-                return Alert.alert('Oops', 'The previous livestream is still in progress. Please try again in a minute.', [{ text: 'Okay' }]);
-            } else {
-                this.vb.start();
-                this.getAssetInfo(this.state.liveStreamId);
-                this.setState({ timer: true }, () => {
-                    this.startTimer();
-                });
-            }
-        }
+      if (activeLive) {
+        return Alert.alert('Oops', 'The previous livestream is still in progress. Please try again in a minute.', [{ text: 'Okay' }]);
+      } else {
+        this.vb.start();
+        this.getAssetInfo(this.state.liveStreamId);
+        this.setState({ timer: true }, () => {
+            this.startTimer();
+        });
       }
     }
     this.setState({isPublishing: !publishingState});
