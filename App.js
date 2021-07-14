@@ -204,7 +204,7 @@ class App extends Component {
     try {
       await AsyncStorage.setItem('pushInfo', deviceState.userId);
 
-      if (MainStore.user) {
+      if (typeof MainStore.user !== 'undefined') {
         await setUserDeviceInfo(MainStore, deviceState);
       }
     } catch (e) {
