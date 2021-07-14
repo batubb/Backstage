@@ -9,7 +9,6 @@ export default function CustomTabBarNavigator({
   navigation,
   style,
   buttonStyle,
-  rippleProps,
   ...props
 }) {
   const focusedOptions = descriptors[state.routes[state.index].key].options;

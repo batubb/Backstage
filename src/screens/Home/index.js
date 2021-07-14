@@ -201,7 +201,7 @@ class Home extends Component {
         )}
         <View style={{flexDirection: 'row'}}>
           <Text text={text} style={{fontSize: live ? 14 : 14}} />
-          {user.verified === true ? <VerifiedIcon size={15} /> : null}
+          {user?.verified === true ? <VerifiedIcon size={15} /> : null}
         </View>
       </View>
     );

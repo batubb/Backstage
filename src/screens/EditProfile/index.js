@@ -34,17 +34,17 @@ class EditProfile extends Component {
       loading: true,
       photo:
         typeof Store.user.photo === 'undefined'
-          ? 'https://www.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg'
+          ? constants.DEFAULT_PHOTO
           : Store.user.photo,
       name:
-        typeof Store.user.name === 'undefined' ? 'No Name' : Store.user.name,
+        typeof Store.user.name === 'undefined' ? '' : Store.user.name,
       biography:
         typeof Store.user.biography === 'undefined'
-          ? 'No Biography'
+          ? ''
           : Store.user.biography,
       username:
         typeof Store.user.username === 'undefined'
-          ? 'No Username'
+          ? ''
           : Store.user.username,
       refreshing: false,
       input: '',
@@ -56,18 +56,18 @@ class EditProfile extends Component {
     this.unsubscribe = this.props.navigation.addListener('focus', (e) => {
       this.setState({
         name:
-          typeof Store.user.name === 'undefined' ? 'No Name' : Store.user.name,
+          typeof Store.user.name === 'undefined' ? '' : Store.user.name,
         biography:
           typeof Store.user.biography === 'undefined'
-            ? 'No Biography'
+            ? ''
             : Store.user.biography,
         username:
           typeof Store.user.username === 'undefined'
-            ? 'No Username'
+            ? ''
             : Store.user.username,
         photo:
           typeof Store.user.photo === 'undefined'
-            ? 'https://www.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg'
+            ? constants.DEFAULT_PHOTO
             : Store.user.photo,
       });
     });

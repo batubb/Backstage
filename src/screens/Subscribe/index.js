@@ -204,7 +204,7 @@ class Subscribe extends Component {
           <Text
             text={
               typeof user.biography === 'undefined'
-                ? 'No Biography'
+                ? ''
                 : user.biography
             }
             style={{fontSize: 12, color: 'gray'}}

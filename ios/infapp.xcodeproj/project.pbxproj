@@ -14,7 +14,6 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		17D596CED92E45519B210EC1 /* Oswald-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 94CB33515342404590F8E78A /* Oswald-Regular.ttf */; };
 		202C97FE267D4869006DBD2D /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 202C97FD267D4869006DBD2D /* StoreKit.framework */; };
-		203A4ED2269C42A2000EC917 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 203A4ED1269C42A2000EC917 /* main.jsbundle */; };
 		212562DF26963C6F00CD0ABA /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 212562DE26963C6F00CD0ABA /* CloudKit.framework */; };
 		26EBE7426EA043929435542F /* Oswald-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4546ED7C35C41429F0860CF /* Oswald-SemiBold.ttf */; };
 		2932FA08364B4B978294CF32 /* SF-Pro-Display-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 09B4E2FF7E9E4D26819E29AF /* SF-Pro-Display-Medium.otf */; };
@@ -111,7 +110,6 @@
 		1C414DD1FD1C403F8AE3BA16 /* SF-Pro-Display-RegularItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-RegularItalic.otf"; path = "../src/fonts/SF-Pro-Display-RegularItalic.otf"; sourceTree = "<group>"; };
 		1CCCCC6AD1FA4D42AA1A82DB /* SF-Pro-Display-BlackItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-BlackItalic.otf"; path = "../src/fonts/SF-Pro-Display-BlackItalic.otf"; sourceTree = "<group>"; };
 		202C97FD267D4869006DBD2D /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
-		203A4ED1269C42A2000EC917 /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		20CDB36D267BE9BB00C85307 /* infapp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = infapp.entitlements; path = infapp/infapp.entitlements; sourceTree = "<group>"; };
 		212562DE26963C6F00CD0ABA /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		27433C2A34F84226BABD8041 /* SF-Pro-Display-LightItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-LightItalic.otf"; path = "../src/fonts/SF-Pro-Display-LightItalic.otf"; sourceTree = "<group>"; };
@@ -244,7 +242,6 @@
 			isa = PBXGroup;
 			children = (
 				D4BA35E7266957D400150590 /* infapp.entitlements */,
-				203A4ED1269C42A2000EC917 /* main.jsbundle */,
 				D4CEC8152662631800924F18 /* 1024.png */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -593,7 +590,6 @@
 				CD327BE3332B429FAB04857C /* SF-Pro-Display-ThinItalic.otf in Resources */,
 				30367AE67A8C48EFA393E93D /* SF-Pro-Display-Ultralight.otf in Resources */,
 				3F8D0872DB3F4748928DE350 /* SF-Pro-Display-UltralightItalic.otf in Resources */,
-				203A4ED2269C42A2000EC917 /* main.jsbundle in Resources */,
 				D4CEC814266262D100924F18 /* Splash.storyboard in Resources */,
 				D4CEC8162662631800924F18 /* 1024.png in Resources */,
 			);

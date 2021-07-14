@@ -1,11 +1,10 @@
 /* eslint-disable react/no-did-mount-set-state */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import React, {Component} from 'react';
+import React, {Component, createRef} from 'react';
 import {
   View,
   Dimensions,
-  FlatList,
   TouchableOpacity,
   ScrollView,
   RefreshControl,
@@ -13,43 +12,32 @@ import {
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
-import {
-  Loading,
-  Header,
-  Text,
-  MyImage,
-  Button,
-  Options,
-  VerifiedIcon,
-} from '../../components';
+import {Loading, Header, Text, Button, Options} from '../../components';
 import {constants} from '../../resources';
-import {followerCount, setPosts} from '../../lib';
+import {setPosts} from '../../lib';
 import {
   getUserPosts,
   checkSubscribtion,
-  shareItem,
   report,
   getFollowerCount,
-  unsubscribe,
   getSubscriberCount,
 } from '../../services';
 import Store from '../../store/Store';
 import {Icon} from 'react-native-elements';
-import LinearGradient from 'react-native-linear-gradient';
-import database from '@react-native-firebase/database';
-import moment from 'moment';
 import ProfileTop from '../../components/ScreenComponents/ProfileComponents/ProfileTop/ProfileTop';
-import SubscribeButton from '../../components/ScreenComponents/ProfileComponents/ProfileTop/SubscribeButton';
 import {COLORS, SIZES} from '../../resources/theme';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
 import sleep from '../../lib/sleep';
 import RNIap from 'react-native-iap';
 import SlidingUpPanel from 'rn-sliding-up-panel';
+import {getBottomSpace} from '../../lib/iPhoneXHelper';
 
 const {width, height} = Dimensions.get('window');
 const SCREEN_DIMENSIONS = Dimensions.get('window');
 var BOTTOM_PADDING = height >= 812 ? 44 : 20;
 BOTTOM_PADDING = Platform.OS === 'android' ? 0 : BOTTOM_PADDING;
+
+const subscribeBottomSheetRef = createRef();
 
 class UserProfile extends Component {
   constructor(props) {
@@ -66,6 +54,7 @@ class UserProfile extends Component {
       followerNumber: 0,
       subscriberNumber: 0,
       products: [],
+      subscription: false,
     };
 
     this.list = [
@@ -79,6 +68,12 @@ class UserProfile extends Component {
     this.unsubscribe = this.props.navigation.addListener('focus', (e) => {
       this.checkInfluencerInfos();
     });
+    this.unsubscribeBottomSheet = this.props.navigation.addListener(
+      'blur',
+      (e) => {
+        subscribeBottomSheetRef.current?.hide();
+      },
+    );
     let productId = [];
     productId.push(this.state.user.appStoreProductId);
     const productsRes = await RNIap.getSubscriptions(productId);
@@ -95,10 +90,10 @@ class UserProfile extends Component {
     );
     console.log('subscription is ', subscription);
     console.log('subscription is2 ', subscription.subscribtion);
-    if (!subscription.subscribtion) {
-      this.bottomSheetRef?.show();
+    if (!subscription.subscription) {
+      subscribeBottomSheetRef.current?.show();
     }
-    this.setState({loading: false});
+    this.setState({loading: false, subscription: subscription.subscription});
   };
 
   checkInfluencerInfos = async () => {
@@ -124,7 +119,7 @@ class UserProfile extends Component {
 
   componentWillUnmount = () => {
     this.unsubscribe();
-    this.bottomSheetRef?.hide();
+    this.unsubscribeBottomSheet();
   };
 
   goTo = (route, info = null) => {
@@ -174,7 +169,7 @@ class UserProfile extends Component {
   requestRNISubscription = async () => {
     try {
       await RNIap.requestSubscription(this.state.products[0].productId);
-      this.bottomSheetRef?.hide();
+      subscribeBottomSheetRef.current?.hide();
       this.setState({loading: true});
       await sleep(5000);
       console.log('after sub');
@@ -246,89 +241,55 @@ class UserProfile extends Component {
   };
 
   renderSubscriptionPanel = () => {
-    if (this.state.products.length === 0) {
+    if (this.state.products.length === 0 || this.state.subscribtion === true) {
       return null;
     }
+    const panelHeight =
+      SCREEN_DIMENSIONS.height * 0.275 < 210
+        ? 225
+        : SCREEN_DIMENSIONS.height * 0.275;
     return (
       <SlidingUpPanel
-        ref={(ref) => (this.bottomSheetRef = ref)}
-        height={SCREEN_DIMENSIONS.height * 0.8}
-        snappingPoints={[SCREEN_DIMENSIONS.height * 0.8, 0]}
+        ref={subscribeBottomSheetRef}
+        height={panelHeight + constants.TAB_BAR_HEIGHT + BOTTOM_PADDING}
+        snappingPoints={[0]}
         avoidKeyboard={true}
         allowDragging={true}
         containerStyle={{
           flex: 1,
-          top: SCREEN_DIMENSIONS.height * 1.2,
+          top:
+            SCREEN_DIMENSIONS.height +
+            panelHeight * 1.5 +
+            constants.TAB_BAR_HEIGHT +
+            BOTTOM_PADDING,
           width,
           position: 'absolute',
           left: 0,
         }}
         friction={0.7}
-        backdropOpacity={0.95}
+        backdropOpacity={0.85}
         showBackdrop={true}
-        onBottomReached={() => this.bottomSheetRef.hide()}>
+        onBottomReached={() => subscribeBottomSheetRef.current?.hide()}>
         <View
           style={{
             flex: 1,
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
+            paddingHorizontal: SIZES.padding,
+            borderTopLeftRadius: SIZES.radius,
+            borderTopRightRadius: SIZES.radius,
             backgroundColor: COLORS.systemFill,
             flexDirection: 'column',
-            paddingHorizontal: 20,
-            paddingVertical: 10,
-            marginTop: BOTTOM_PADDING,
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingBotom: SIZES.spacing * 8,
           }}>
-          <MyImage
-            style={{
-              marginTop: SIZES.padding * 4,
-              width: constants.PROFILE_PIC_SIZE,
-              height: constants.PROFILE_PIC_SIZE,
-              borderRadius: constants.PROFILE_PIC_SIZE / 2,
-            }}
-            photo={this.state.user.photo}
-          />
-          <TouchableOpacity
-            style={{
-              position: 'absolute',
-              top: SIZES.padding * 2,
-              right: SIZES.padding * 2,
-            }}
-            onPress={() => this.bottomSheetRef.hide()}>
-            <Icon name="close" color="#FFF" type="material-community" />
-          </TouchableOpacity>
           <View
             style={{
               flex: 1,
-              marginTop: SIZES.padding * 2,
               justifyContent: 'flex-start',
               alignItems: 'center',
             }}>
-            <View style={{flexDirection: 'row'}}>
-              <Text
-                text={this.state.user.username}
-                numberOfLines={1}
-                style={{fontSize: 20}}
-              />
-              {this.state.user.verified === true && (
-                <VerifiedIcon size={18} style={{top: 4}} />
-              )}
-            </View>
             <View style={{marginTop: SIZES.padding * 4}}>
-              <Text
-                text={`$${this.state.products[0].price}`}
-                style={{
-                  fontWeight: 'bold',
-                  fontSize: 16,
-                  textAlign: 'center',
-                  color: COLORS.white,
-                }}
-              />
               <Text
                 text={`$${parseFloat(this.state.user.price).toFixed(2)}`}
                 style={{
+                  marginTop: SCREEN_DIMENSIONS.height * 0.02,
                   fontWeight: 'bold',
                   fontSize: 32,
                   textAlign: 'center',
@@ -343,21 +304,20 @@ class UserProfile extends Component {
                 text={'Subscribe'}
                 buttonStyle={{
                   backgroundColor: COLORS.primary,
-                  borderRadius: SIZES.radius,
-                  paddingVertical: SIZES.padding * 1.5,
-                  paddingHorizontal: SIZES.padding * 4,
                   marginTop: SIZES.padding * 2,
-                  width: 250,
+                  width:
+                    SCREEN_DIMENSIONS.height * 0.25 < 160
+                      ? 120
+                      : SCREEN_DIMENSIONS.height * 0.25,
                   alignSelf: 'center',
                 }}
                 textStyle={{color: COLORS.secondary, fontSize: 16}}
                 onPress={() => this.requestRNISubscription()}
               />
               <Text
-                text={`Subscribing to this channel will give you access to this creator's exclusive content and fanroom on Backstage for the subscription period. Content can be in the form of livestreams, videos, or stories. Subscriptions will auto renew, and can be cancelled anytime on via Apple App Store.`}
+                text={`Subscribing to ${this.state.user.username} will give you access to this creator's exclusive content and fanroom on Backstage for the subscription period. Content can be in the form of livestreams, videos, or stories. Subscriptions will auto renew, and can be cancelled anytime via Apple App Store.`}
                 style={{
-                  marginTop: SIZES.padding * 2,
-                  marginBottom: SIZES.padding * 4,
+                  marginTop: SIZES.padding + SCREEN_DIMENSIONS.height * 0.03,
                   fontWeight: 'bold',
                   fontSize: 12,
                   textAlign: 'center',
@@ -366,6 +326,15 @@ class UserProfile extends Component {
               />
             </View>
           </View>
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              top: SIZES.padding * 2,
+              right: SIZES.padding * 2,
+            }}
+            onPress={() => subscribeBottomSheetRef.current?.hide()}>
+            <Icon name="close" color="#FFF" type="material-community" />
+          </TouchableOpacity>
         </View>
       </SlidingUpPanel>
     );
@@ -424,7 +393,9 @@ class UserProfile extends Component {
               subscribtion={subscribtion}
               user={user}
               onSubscribePress={() =>
-                subscribtion.subscribtion ? null : this.bottomSheetRef?.show()
+                subscribtion.subscribtion
+                  ? null
+                  : subscribeBottomSheetRef.current?.show()
               }
               views={
                 !this.state.user.cumulativeViewsUser
