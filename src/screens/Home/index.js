@@ -182,6 +182,7 @@ class Home extends Component {
           <View
             style={{
               paddingVertical: 5,
+              paddingHorizontal: SIZES.spacing,
               borderRadius: 4,
               marginRight: 10,
               backgroundColor: constants.RED,
