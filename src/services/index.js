@@ -30,6 +30,11 @@ import unsubscribe from './unsubscribe';
 import withdraw from './withdraw';
 import connectSendbird from './connectSendbird';
 import likeVideo from './likeVideo';
+import getSubscriberCount from './getSubscriberCount';
+import getUserSubscribers from './getUserSubscribers';
+import setUserDeviceInfo from './setUserDeviceInfo';
+import sendNotificationToUserDevices from './sendNotificationToUserDevices';
+import sendNotificationToUserSubscribers from './sendNotificationToUserSubscribers';
 
 module.exports = {
     getDealsData,
@@ -63,4 +68,9 @@ module.exports = {
     withdraw,
     connectSendbird,
     likeVideo,
+    getSubscriberCount,
+    getUserSubscribers,
+    setUserDeviceInfo,
+    sendNotificationToUserDevices,
+    sendNotificationToUserSubscribers,
 };

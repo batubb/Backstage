@@ -52,7 +52,7 @@ class Home extends Component {
   };
 
   signOutAndGoLogin = async () => {
-    Alert.alert('Are you sure?', 'Do you want to sign out?', [
+    Alert.alert('Do you want to sign out?', '', [
       {
         text: 'Yes',
         onPress: () => {
@@ -140,7 +140,7 @@ class Home extends Component {
               onPressFunction={() => {
                 Alert.alert(
                   'Help',
-                  'Please reach out to us at backstagetechdev@gmail.com with any questions',
+                  'Please reach out to us at emre@joinbackstage.co with any questions',
                 );
               }}
               border

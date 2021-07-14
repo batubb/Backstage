@@ -78,7 +78,7 @@ class WatchStory extends Component {
       this.setState({loading: false, paused: false, influencer});
       this.startProgressBar();
     } else {
-      Alert.alert('Oops', 'You must be a member to view the content.', [
+      Alert.alert('Oops', 'You must become a member to view the content.', [
         {
           text: 'Okay',
           onPress: () => this.props.navigation.dispatch(StackActions.pop()),
@@ -109,7 +109,7 @@ class WatchStory extends Component {
     if (result) {
       Alert.alert(
         'Thank You',
-        'You have reported this video. We will investigate this video.',
+        'You have reported this video. We will investigate your request.',
         [{text: 'Okay'}],
       );
     } else {

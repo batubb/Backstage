@@ -31,6 +31,7 @@ import {
   report,
   getFollowerCount,
   unsubscribe,
+  getSubscriberCount,
 } from '../../services';
 import Store from '../../store/Store';
 import {Icon} from 'react-native-elements';
@@ -63,6 +64,7 @@ class UserProfile extends Component {
       daily: [],
       optionsVisible: false,
       followerNumber: 0,
+      subscriberNumber: 0,
       products: [],
     };
 
@@ -101,6 +103,7 @@ class UserProfile extends Component {
 
   checkInfluencerInfos = async () => {
     const followerNumber = await getFollowerCount(this.state.user.uid);
+    const subscriberNumber = await getSubscriberCount(this.state.user.uid);
     const subscribtion = await checkSubscribtion(
       Store.uid,
       this.state.user.uid,
@@ -115,6 +118,7 @@ class UserProfile extends Component {
       subscribtion,
       loading: false,
       followerNumber,
+      subscriberNumber,
     });
   };
 
@@ -145,7 +149,7 @@ class UserProfile extends Component {
     if (result) {
       Alert.alert(
         'Thank You',
-        'You have reported this user. We will investigate this user.',
+        'You have reported this user. We will investigate your request.',
         [{text: 'Okay'}],
       );
     } else {
@@ -317,6 +321,15 @@ class UserProfile extends Component {
                 text={`$${this.state.products[0].price}`}
                 style={{
                   fontWeight: 'bold',
+                  fontSize: 16,
+                  textAlign: 'center',
+                  color: COLORS.white,
+                }}
+              />
+              <Text
+                text={`$${parseFloat(this.state.user.price).toFixed(2)}`}
+                style={{
+                  fontWeight: 'bold',
                   fontSize: 32,
                   textAlign: 'center',
                   color: COLORS.white,
@@ -419,6 +432,8 @@ class UserProfile extends Component {
                   : this.state.user.cumulativeViewsUser
               }
               followerNumber={this.state.followerNumber}
+              subscriberNumber={this.state.subscriberNumber}
+              showSubscriberNumber={Store.user.uid === this.state.user.uid}
               onChatPress={() => this.goTo('Chat', this.state.user)}
               editProfileVisible={user.uid === Store.user.uid}
               navigation={this.props.navigation}

@@ -39,10 +39,9 @@ import EditBankAccount from './screens/EditBankAccount';
 import WithdrawSummary from './screens/WithdrawSummary';
 import WithdrawalHistory from './screens/WithdrawalHistory';
 import Welcome from './screens/Welcome';
+import Subscribers from './screens/Subscribers';
 import {COLORS} from './resources/theme';
-import {PlatformColor, Linking} from 'react-native';
-import {getBottomSpace} from './lib/iPhoneXHelper';
-import {handleURLSchemes} from './lib';
+import {getBottomSpace, isIphoneX} from './lib/iPhoneXHelper';
 
 LogBox.ignoreAllLogs();
 
@@ -52,18 +51,6 @@ const Tab = createBottomTabNavigator();
 const navigationContainerRef = React.createRef();
 
 class MyStack extends React.Component {
-  componentDidMount() {
-    Linking.addEventListener('url', (event) =>
-      handleURLSchemes(event, {dispatch: navigationContainerRef.current?.dispatch}),
-    );
-  }
-
-  componentWillUnmount() {
-    Linking.removeEventListener('url', (event) =>
-      handleURLSchemes(event, {dispatch: navigationContainerRef.current?.dispatch}),
-    );
-  }
-
   render() {
     return (
       <NavigationContainer
@@ -161,6 +148,7 @@ class ProfileMenu extends React.Component {
         <Stack.Screen name="EditBankAccount" component={EditBankAccount} />
         <Stack.Screen name="WithdrawSummary" component={WithdrawSummary} />
         <Stack.Screen name="WithdrawalHistory" component={WithdrawalHistory} />
+        <Stack.Screen name="Subscribers" component={Subscribers} />
       </Stack.Navigator>
     );
   }
@@ -208,6 +196,7 @@ class TabBarBottom extends React.Component {
             buttonStyle={{
               flex: 1,
               height: 60,
+              justifyContent: isIphoneX() ? 'flex-start' : 'center',
             }}
           />
         )}

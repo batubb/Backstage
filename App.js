@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNIap from 'react-native-iap';
 import {Alert} from 'react-native';
 import database from '@react-native-firebase/database';
-import {subscribeInfluencer} from './src/services';
+import {subscribeInfluencer, setUserDeviceInfo} from './src/services';
 
 class App extends Component {
   constructor(props) {
@@ -134,10 +134,6 @@ class App extends Component {
       console.log('Prompt response:', response);
     });
 
-    OneSignal.setNotificationOpenedHandler((notification) => {
-      console.log('OneSignal: notification opened:', notification);
-    });
-
     this.onIds();
 
     await RNIap.initConnection();
@@ -207,6 +203,10 @@ class App extends Component {
     console.log('Device info: ', deviceState.userId);
     try {
       await AsyncStorage.setItem('pushInfo', deviceState.userId);
+
+      if (MainStore.user) {
+        await setUserDeviceInfo(MainStore, deviceState);
+      }
     } catch (e) {
       // saving error
     }

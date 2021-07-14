@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { observable, action } from 'mobx';
-import { setPosts as editPosts } from '../lib';
+import { default as editPosts } from '../lib/setPosts';
 
 class Store {
     @observable user = null;
@@ -8,6 +8,7 @@ class Store {
     @observable phone = null;
     @observable followList = [];
     @observable posts = [];
+    @observable devices = [];
 
     @action setUID = (uid) => {
         this.uid = uid;
@@ -28,6 +29,10 @@ class Store {
     @action setPosts = (data) => {
         const { postsArray, daily } = editPosts(data);
         this.posts = { posts: data, postsArray, daily };
+    };
+
+    @action setDevices = (data) => {
+        this.devices = data;
     };
 
     @action clearUserData = () => {

@@ -383,18 +383,16 @@ export default class App extends Component {
     } else {
       const activeLive = await this.checkActiveLive();
 
-      if (activeLive) {
-        return Alert.alert(
-          'Oops',
-          'The previous live broadcast is still in progress. Please try again in 1-2 minutes.',
-          [{text: 'Okay'}],
-        );
-      } else {
-        this.vb.start();
-        this.getAssetInfo(this.state.liveStreamId);
-        this.setState({timer: true}, () => {
-          this.startTimer();
-        });
+            if (activeLive) {
+                return Alert.alert('Oops', 'The previous livestream is still in progress. Please try again in a minute.', [{ text: 'Okay' }]);
+            } else {
+                this.vb.start();
+                this.getAssetInfo(this.state.liveStreamId);
+                this.setState({ timer: true }, () => {
+                    this.startTimer();
+                });
+            }
+        }
       }
     }
     this.setState({isPublishing: !publishingState});
@@ -470,13 +468,9 @@ export default class App extends Component {
     //     updates[`posts/${Store.user.uid}/${this.state.uid}/active`] = true;
     // }
 
-    // database().ref().update(updates);
-    return Alert.alert(
-      'Yeyy',
-      'Your live stream is over. Your live broadcast will appear in your videos section in 1-2 minutes.',
-      [{text: 'Okay'}],
-    );
-  };
+        // database().ref().update(updates);
+        return Alert.alert('🥳🥳', 'Your livestream is over. It will be saved in your videos section.', [{ text: 'Okay' }]);
+    }
 
   selectVideoFromRoll = async () => {
     ImagePicker.launchImageLibrary({mediaType: 'video'}, (result) => {

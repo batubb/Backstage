@@ -8,6 +8,7 @@ import SubscribeButton from './SubscribeButton';
 import Databar from './Databar';
 import {StackActions} from '@react-navigation/native';
 import {Icon} from 'react-native-elements';
+import {TouchableOpacity} from 'react-native';
 
 // photo, name, biograohy, subscribeButtonVisible, user, subscribtion
 
@@ -41,11 +42,7 @@ export default function ProfileTop(props) {
             marginLeft: SIZES.spacing * 8,
           }}>
           <View>
-            <Text
-              text={props.name}
-              numberOfLines={1}
-              style={{fontSize: 20}}
-            />
+            <Text text={props.name} numberOfLines={1} style={{fontSize: 20}} />
             <Text
               numberOfLines={2}
               text={props.biography}
@@ -57,11 +54,36 @@ export default function ProfileTop(props) {
               }}
             />
           </View>
-          <View style={{marginTop: 'auto'}}>
-            <Text
-              text={`${props.views ? props.views : 0} views`}
-              style={{fontWeight: 'bold', fontSize: 10}}
-            />
+          <View
+            style={{
+              marginTop: 'auto',
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+            }}>
+            {typeof props.views !== 'undefined' ? (
+              <Text
+                text={`${props.views} views`}
+                style={{fontWeight: 'bold', fontSize: 11}}
+              />
+            ) : null}
+            {props.showSubscriberNumber && (
+              <TouchableOpacity
+                activeOpacity={props.subscriberOnPress ? 0.5 : 1}
+                onPress={() =>
+                  props.subscriberOnPress && props.subscriberOnPress()
+                }>
+                <Text
+                  text={`${
+                    props.subscriberNumber ? props.subscriberNumber : 0
+                  } subscribers`}
+                  style={{
+                    fontWeight: 'bold',
+                    fontSize: 11,
+                    paddingLeft: SIZES.padding * 2,
+                  }}
+                />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </View>
