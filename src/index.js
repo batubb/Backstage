@@ -55,13 +55,13 @@ const navigationContainerRef = React.createRef();
 class MyStack extends React.Component {
   componentDidMount() {
     Linking.addEventListener('url', (event) =>
-      handleURLSchemes(event, {dispatch: navigationContainerRef.current?.dispatch}),
+      handleURLSchemes(event, {navigation: navigationContainerRef.current}),
     );
   }
 
   componentWillUnmount() {
     Linking.removeEventListener('url', (event) =>
-      handleURLSchemes(event, {dispatch: navigationContainerRef.current?.dispatch}),
+      handleURLSchemes(event, {navigation: navigationContainerRef.current}),
     );
   }
 
