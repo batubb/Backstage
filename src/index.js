@@ -41,9 +41,7 @@ import WithdrawalHistory from './screens/WithdrawalHistory';
 import Welcome from './screens/Welcome';
 import Subscribers from './screens/Subscribers';
 import {COLORS} from './resources/theme';
-import {PlatformColor, Linking} from 'react-native';
 import {getBottomSpace, isIphoneX} from './lib/iPhoneXHelper';
-import {handleURLSchemes} from './lib';
 
 LogBox.ignoreAllLogs();
 
@@ -53,18 +51,6 @@ const Tab = createBottomTabNavigator();
 const navigationContainerRef = React.createRef();
 
 class MyStack extends React.Component {
-  componentDidMount() {
-    Linking.addEventListener('url', (event) =>
-      handleURLSchemes(event, {navigation: navigationContainerRef.current}),
-    );
-  }
-
-  componentWillUnmount() {
-    Linking.removeEventListener('url', (event) =>
-      handleURLSchemes(event, {navigation: navigationContainerRef.current}),
-    );
-  }
-
   render() {
     return (
       <NavigationContainer

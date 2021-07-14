@@ -41,6 +41,7 @@ import LoginFlowPage from '../../components/ScreenComponents/LoginComponents/Log
 import LoginFlowTextInput from '../../components/ScreenComponents/LoginComponents/LoginFlowTextInput';
 import LinearGradient from 'react-native-linear-gradient';
 import {handleURLSchemes} from '../../lib';
+import OneSignal from 'react-native-onesignal';
 
 const {width} = Dimensions.get('window');
 const BORDER_RADIUS = 6;
@@ -72,12 +73,15 @@ class CheckInfo extends Component {
         //this.setState({loading: false});
         const replaceActions = StackActions.replace('TabBarMenu');
         this.props.navigation.dispatch(replaceActions);
-        if (url !== null) {
-          setTimeout(
-            () => handleURLSchemes({url}, this.props.navigation),
-            1000,
-          );
-        }
+
+        OneSignal.setNotificationOpenedHandler((notification) => {
+          if (notification.notification.launchURL) {
+            handleURLSchemes(
+              {url: notification.notification.launchURL},
+              {navigation: this.props.navigation},
+            );
+          }
+        });
       }
     });
   };
@@ -113,11 +117,9 @@ class CheckInfo extends Component {
       Alert.alert('Oops', 'Username can not be empty.', [{text: 'Okay'}]);
     } else {
       if (regexCheck(this.state.username.substring(1))) {
-        Alert.alert(
-          'Oops',
-          'Please only use letters and numbers.',
-          [{text: 'Okay'}],
-        );
+        Alert.alert('Oops', 'Please only use letters and numbers.', [
+          {text: 'Okay'},
+        ]);
       } else {
         this.setState({loading: true});
         const checkUsername = await checkUsernameValid(
