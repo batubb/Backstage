@@ -11,8 +11,11 @@ import axios from 'axios';
 ///     key: '{username}'
 ///     value: 'johndoe',
 /// }]
-export default async function sendNotificationToUserDevices(type, userUIDs = [], replaceContents = undefined) {
-    var data = JSON.stringify({ type, userUIDs, replaceContents });
+///
+/// @optional url
+/// @default backstage://
+export default async function sendNotificationToUserDevices(type, userUIDs = [], replaceContents = undefined, url = undefined) {
+    var data = JSON.stringify({ type, userUIDs, replaceContents, url });
 
     var config = {
         method: 'post',
