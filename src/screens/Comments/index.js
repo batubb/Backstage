@@ -30,6 +30,7 @@ import Store from '../../store/Store';
 import followerCount from '../../lib/followerCount';
 import {getBottomSpace} from '../../lib/iPhoneXHelper';
 import {SIZES} from '../../resources/theme';
+import {ActivityIndicator} from 'react-native';
 
 const {width} = Dimensions.get('window');
 
@@ -41,6 +42,7 @@ class Comments extends Component {
     this.state = {
       loading: true,
       refreshing: false,
+      isCommentSending: false,
       video: this.props.route.params.video,
       comments: [],
       comment: '',
@@ -61,16 +63,22 @@ class Comments extends Component {
   };
 
   sendComment = async () => {
+    this.setState({isCommentSending: true});
+
     if (typeof this.state.subscribtion.subscribtion === 'undefined') {
-      return Alert.alert('Oops', 'You must become a member to view the content.', [
-        {text: 'Okay'},
-      ]);
+      return Alert.alert(
+        'Oops',
+        'You must become a member to view the content.',
+        [{text: 'Okay'}],
+      );
     }
 
     if (this.state.subscribtion.subscribtion !== true) {
-      return Alert.alert('Oops', 'You must become a member to view the content.', [
-        {text: 'Okay'},
-      ]);
+      return Alert.alert(
+        'Oops',
+        'You must become a member to view the content.',
+        [{text: 'Okay'}],
+      );
     }
 
     if (this.state.anonymus) {
@@ -95,7 +103,12 @@ class Comments extends Component {
     }
 
     const comments = await setVideoComment(Store.user.uid, this.state.video);
-    this.setState({comments, comment: '', reply: null});
+    this.setState({
+      comments,
+      comment: '',
+      reply: null,
+      isCommentSending: false,
+    });
   };
 
   onRefresh = async () => {
@@ -164,7 +177,7 @@ class Comments extends Component {
   };
 
   commentBar = () => {
-    const {comment, reply} = this.state;
+    const {comment, reply, isCommentSending} = this.state;
 
     return (
       <View
@@ -222,13 +235,19 @@ class Comments extends Component {
               }}
               underlineColorAndroid="transparent"
               onChangeText={(commentInput) =>
-                this.setState({comment: commentInput})
+                isCommentSending === true
+                  ? null
+                  : this.setState({comment: commentInput})
               }
               value={comment}
               placeholderTextColor="#FFF"
             />
           </View>
-          {comment !== '' ? (
+          {isCommentSending ? (
+            <View style={{padding: 10}}>
+              <ActivityIndicator color="#FFF" />
+            </View>
+          ) : comment !== '' ? (
             <TouchableOpacity onPress={() => this.sendComment()}>
               <View style={{padding: 10}}>
                 <Icon
