@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {constants} from '../../../../resources';
-import {SIZES} from '../../../../resources/theme';
+import {SIZES, COLORS} from '../../../../resources/theme';
 import {View, TouchableOpacity} from 'react-native';
 import {MyImage, Text} from '../../../../components';
 import LinearGradient from 'react-native-linear-gradient';
@@ -13,9 +13,46 @@ const DISTANCE_BETWEEN_CARDS = SIZES.spacing * 3;
 const HEIGHT_MULTIPLIER = 1.5;
 const BORDER_RADIUS = 6;
 
+function PostingCardCumulativeViews(props) {
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingBottom: SIZES.spacing,
+      }}>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <Icon
+          name="play"
+          type="ionicon"
+          color={COLORS.primaryLabelColor}
+          size={15}
+          style={{
+            shadowOffset: {width: 2, height: 2},
+            shadowColor: 'rgba(0, 0, 0, 0.2)',
+            shadowOpacity: 10,
+            shadowRadius: 1,
+          }}
+        />
+        <Text
+          text={`${followerCount(props.views)}`}
+          style={{
+            fontSize: 12,
+            marginLeft: SIZES.spacing,
+            textShadowColor: 'rgba(0, 0, 0, 0.2)',
+            textShadowOffset: {width: 2, height: 2},
+            textShadowRadius: 10,
+          }}
+        />
+      </View>
+    </View>
+  );
+}
+
 function PostingCardCaption(props) {
   const limit = props.longVersion ? 17 : 10;
-  return (
+  return props.caption ? (
     <Text
       text={
         props.caption.length >= limit
@@ -24,7 +61,7 @@ function PostingCardCaption(props) {
       }
       style={{fontSize: 14}}
     />
-  );
+  ) : null;
 }
 
 function PostingCardSmallCaption(props) {
@@ -67,6 +104,19 @@ export default function PostingCard(props) {
               borderRadius: BORDER_RADIUS,
             }}
             photo={props.item.photo}
+            gradientComponent={
+              <LinearGradient
+                colors={['rgba(0, 0, 0, 0.4)', 'rgba(0, 0, 0, 0.0)']}
+                start={{x: 0, y: 0.8}}
+                end={{x: 0, y: 0.35}}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  width: '100%',
+                  height: '100%',
+                }}
+              />
+            }
           />
           <View
             style={{
@@ -97,6 +147,9 @@ export default function PostingCard(props) {
             ) : (
               <>
                 <View style={{alignItems: 'flex-start'}}>
+                  <PostingCardCumulativeViews
+                    views={props.item.cumulativeViews ?? 0}
+                  />
                   <PostingCardCaption caption={props.item.title} longVersion />
                 </View>
               </>
