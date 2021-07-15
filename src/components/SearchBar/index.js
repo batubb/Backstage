@@ -50,7 +50,7 @@ export default class SearchBar extends Component {
   };
 
   render() {
-    const {searchUser} = this.props;
+    const {searchUser, text} = this.props;
     const {search, showCancelButton} = this.state;
 
     return (
@@ -74,7 +74,7 @@ export default class SearchBar extends Component {
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Icon name="magnify" color="gray" type="material-community" />
             <TextInput
-              placeholder="Search"
+              placeholder={text ?? "Search"}
               style={{
                 fontFamily:
                   Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',

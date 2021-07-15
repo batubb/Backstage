@@ -18,7 +18,7 @@ import axios from 'axios';
 import Carousel from 'react-native-snap-carousel';
 import Video from 'react-native-video';
 import * as ImagePicker from 'react-native-image-picker';
-import {makeid, sleep} from '../../lib';
+import {makeid, sleep, isInfluencer} from '../../lib';
 import storage from '@react-native-firebase/storage';
 import {StackActions} from '@react-navigation/native';
 import Store from '../../store/Store';
@@ -135,7 +135,7 @@ export default class App extends Component {
         },
         publicKey: this.state.publicKey,
         liveId: id,
-        title: this.state.title === '' ? 'Livestream' : this.state.title,
+        title: this.state.title === '' ? '' : this.state.title,
         photo: `https://image.mux.com/${this.state.publicKey}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
       };
 
@@ -162,7 +162,7 @@ export default class App extends Component {
           height: height,
         },
         assetPlaybackId: assetPlaybackId,
-        title: this.state.title === '' ? 'New Video' : this.state.title,
+        title: this.state.title === '' ? undefined : this.state.title,
         photo: `https://image.mux.com/${assetPlaybackId}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
         active: false,
       };
@@ -384,12 +384,16 @@ export default class App extends Component {
       const activeLive = await this.checkActiveLive();
 
       if (activeLive) {
-        return Alert.alert('Oops', 'The previous livestream is still in progress. Please try again in a minute.', [{ text: 'Okay' }]);
+        return Alert.alert(
+          'Oops',
+          'The previous livestream is still in progress. Please try again in a minute.',
+          [{text: 'Okay'}],
+        );
       } else {
         this.vb.start();
         this.getAssetInfo(this.state.liveStreamId);
-        this.setState({ timer: true }, () => {
-            this.startTimer();
+        this.setState({timer: true}, () => {
+          this.startTimer();
         });
       }
     }
@@ -466,9 +470,13 @@ export default class App extends Component {
     //     updates[`posts/${Store.user.uid}/${this.state.uid}/active`] = true;
     // }
 
-        // database().ref().update(updates);
-        return Alert.alert('🥳🥳', 'Your livestream is over. It will be saved in your videos section.', [{ text: 'Okay' }]);
-    }
+    // database().ref().update(updates);
+    return Alert.alert(
+      '🥳🥳',
+      'Your livestream is over. It will be saved in your videos section.',
+      [{text: 'Okay'}],
+    );
+  };
 
   selectVideoFromRoll = async () => {
     ImagePicker.launchImageLibrary({mediaType: 'video'}, (result) => {
@@ -541,6 +549,11 @@ export default class App extends Component {
     this.setState({loading: true});
     await database().ref().update(updates);
     await checkUserInfo(Store.uid, true);
+    Alert.alert(
+      'Thanks',
+      "We're thrilled to receive your application! You will be notified within 24 hours.",
+      [{text: 'Okay'}],
+    );
     this.setState({loading: false});
   };
 
@@ -937,11 +950,12 @@ export default class App extends Component {
       return (
         <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
           <Header
-            title="Become a Creator"
-            leftButtonPress={() =>
+            title="Creator Application"
+            rightButtonPress={() =>
               this.props.navigation.dispatch(StackActions.pop())
             }
-            leftButtonIcon="close"
+            rightButtonIcon="close"
+            rightButtonIconSize={28}
           />
           {loading ? (
             <Loading
@@ -961,7 +975,7 @@ export default class App extends Component {
                 backgroundColor: constants.BACKGROUND_COLOR,
                 justifyContent: 'center',
                 alignItems: 'center',
-                bottom: SIZES.padding * 2,
+                marginBottom: SIZES.padding * 2,
               }}>
               <Text
                 text="Set your subscription price"
@@ -1008,7 +1022,7 @@ export default class App extends Component {
                 </TouchableOpacity>
               </View>
               <Button
-                text="Become a Creator"
+                text="Submit"
                 buttonStyle={{
                   backgroundColor: COLORS.primary,
                   borderRadius: SIZES.radius,
@@ -1208,40 +1222,69 @@ export default class App extends Component {
           />
         ) : null}
         {!isPublishing && !isRecording ? (
-          <TouchableOpacity
-            style={{position: 'absolute', right: 0, top: TOP_PADDING}}
-            onPress={() => {
-              if (this.state.url) {
-                this.setState({
-                  isPublishing: false,
-                  hasPermission: false,
-                  paused: true,
-                  streamId: '',
-                  isRecording: false,
-                  url: '',
-                  title: '',
-                  assetId: '',
-                  uid: '',
-                  seconds: 0,
-                  timer: false,
-                  type: '',
-                  storyVideo: false,
-                  isStoryVideoRecording: false,
-                });
-                /*if we have a url reset all state var's except for the ones initialized in component did mount*/
-              } else {
-                this.props.navigation.dispatch(StackActions.pop());
-              }
+          <View
+            style={{
+              width: width - 10,
+              flexDirection: 'row-reverse',
+              position: 'absolute',
+              left: 0,
+              top: TOP_PADDING,
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}>
-            <View style={{paddingHorizontal: 10}}>
+            <TouchableOpacity
+              style={{paddingHorizontal: 10}}
+              onPress={() => {
+                if (this.state.url) {
+                  this.setState({
+                    isPublishing: false,
+                    hasPermission: false,
+                    paused: true,
+                    streamId: '',
+                    isRecording: false,
+                    url: '',
+                    title: '',
+                    assetId: '',
+                    uid: '',
+                    seconds: 0,
+                    timer: false,
+                    type: '',
+                    storyVideo: false,
+                    isStoryVideoRecording: false,
+                  });
+                  /*if we have a url reset all state var's except for the ones initialized in component did mount*/
+                } else {
+                  this.props.navigation.dispatch(StackActions.pop());
+                }
+              }}>
               <Icon
                 name="close"
                 color="#FFF"
                 type="material-community"
                 size={36}
               />
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+            {!isInfluencer(Store.user) && (
+              <View
+                style={{
+                  maxWidth: width - 100,
+                  backgroundColor: COLORS.white,
+                  paddingLeft: 10,
+                  padding: 7,
+                  borderTopRightRadius: 10,
+                  borderBottomRightRadius: 10,
+                }}>
+                <Text
+                  text="You can start creating but you will not be discoverable until we approve."
+                  onPress={() => {}}
+                  style={{
+                    color: COLORS.black,
+                    fontSize: 12,
+                  }}
+                />
+              </View>
+            )}
+          </View>
         ) : null}
       </View>
     );

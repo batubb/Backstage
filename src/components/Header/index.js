@@ -19,9 +19,12 @@ export default class HeaderComponent extends React.Component {
       borderColor,
       backgroundColor,
       rightButtonIcon,
+      rightButtonIconSize,
       rightSecondButtonIcon,
+      rightSecondButtonIconSize,
       placement,
       leftButtonIcon,
+      leftButtonIconSize,
       title,
       centerComponent,
       rightButtonPress,
@@ -47,7 +50,7 @@ export default class HeaderComponent extends React.Component {
                 name={leftButtonIcon}
                 color="#FFF"
                 type="material-community"
-                size={40}
+                size={leftButtonIconSize ?? 40}
               />
             </TouchableOpacity>
           ) : null
@@ -74,24 +77,26 @@ export default class HeaderComponent extends React.Component {
           <View style={{flexDirection: 'row'}}>
             {rightSecondButtonPress ? (
               <TouchableOpacity
-                style={styles.rightIcon}
+                style={styles.secondRightIcon}
                 onPress={() => rightSecondButtonPress()}>
                 <Icon
                   name={rightSecondButtonIcon}
                   color={
                     rightSecondButtonColor ? rightSecondButtonColor : '#FFF'
                   }
+                  size={rightSecondButtonIconSize ?? 24}
                   type="material-community"
                 />
               </TouchableOpacity>
             ) : null}
             {rightButtonPress ? (
               <TouchableOpacity
-                style={styles.secondRightIcon}
+                style={styles.rightIcon}
                 onPress={() => rightButtonPress()}>
                 <Icon
                   name={rightButtonIcon}
                   color={rightButtonColor ? rightButtonColor : '#FFF'}
+                  size={rightButtonIconSize ?? 24}
                   type="material-community"
                 />
               </TouchableOpacity>
@@ -154,10 +159,10 @@ const styles = StyleSheet.create({
     //paddingHorizontal: 15,
   },
   rightIcon: {
-    paddingHorizontal: 15,
+    paddingRight: 15,
   },
   secondRightIcon: {
-    paddingRight: 7,
+    paddingRight: 15,
   },
   title: {
     fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
