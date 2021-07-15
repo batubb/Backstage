@@ -313,14 +313,14 @@ class WatchVideo extends Component {
                     }}
                   />
                   <Text
-                    text={`${month} ${day}, ${year}`}
+                    text={`${month} ${day}${
+                      new Date().getFullYear() === year ? '' : ',' + year
+                    }`}
                     numberOfLines={1}
-                    onPress={() =>
-                      this.setState({showMore: !this.state.showMore})
-                    }
                     style={{
-                      fontSize: SIZES.body4,
+                      fontSize: SIZES.body5,
                       color: COLORS.white,
+                      opacity: 0.5,
                       paddingTop: 3,
                     }}
                   />

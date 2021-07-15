@@ -113,8 +113,8 @@ class Home extends Component {
               border
             />
             <Label
-              text="Withdrawals"
-              icon="clock-time-ten-outline"
+              text="Withdrawal History"
+              icon="history"
               onPressFunction={() => this.goTo('WithdrawalHistory')}
               border
             />
