@@ -190,7 +190,7 @@ class UserProfile extends Component {
     } catch (error) {
       console.log('Error requesting subscription ', error);
     }
-    this.setState({loading: false});
+    this.setState({loading: false, purchaseProcessing: false});
   };
 
   renderEmptyPost = () => {
@@ -414,7 +414,7 @@ class UserProfile extends Component {
         {this.renderSubscriptionPanel()}
         {purchaseProcessing ? (
           <MyModal
-            text="Payment proccessing.."
+            text="Payment processing.."
             textStyle={{
               textAlign: 'center',
             }}
