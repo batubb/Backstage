@@ -5,10 +5,6 @@ import React, {Component} from 'react';
 import {
   View,
   Dimensions,
-  Platform,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
   Alert,
   Linking,
 } from 'react-native';
@@ -17,10 +13,6 @@ import {StackActions} from '@react-navigation/native';
 import {
   Loading,
   Header,
-  Text,
-  Button,
-  MyImage,
-  SearchBar,
 } from '../../components';
 import {constants} from '../../resources';
 import {
@@ -28,23 +20,16 @@ import {
   createUser,
   getFollowList,
   getDealsData,
-  searchUser,
   checkUsernameValid,
+  setUserDeviceInfo,
 } from '../../services';
-import {Icon} from 'react-native-elements';
-import {followerCount, controlArray, regexCheck} from '../../lib';
 
 import Store from '../../store/Store';
-import {SafeAreaView} from 'react-native';
-import {COLORS, SIZES} from '../../resources/theme';
 import LoginFlowPage from '../../components/ScreenComponents/LoginComponents/LoginFlowPage';
 import LoginFlowTextInput from '../../components/ScreenComponents/LoginComponents/LoginFlowTextInput';
 import LinearGradient from 'react-native-linear-gradient';
-import {handleURLSchemes} from '../../lib';
+import {handleURLSchemes, sleep, regexCheck} from '../../lib';
 import OneSignal from 'react-native-onesignal';
-
-const {width} = Dimensions.get('window');
-const BORDER_RADIUS = 6;
 
 class CheckInfo extends Component {
   constructor(props) {
@@ -70,9 +55,17 @@ class CheckInfo extends Component {
         const userArray = await getDealsData();
         this.setState({loading: false, userArray});
       } else {
+        const deviceState = await OneSignal.getDeviceState();
+        await setUserDeviceInfo(Store, deviceState);
+
         //this.setState({loading: false});
         const replaceActions = StackActions.replace('TabBarMenu');
         this.props.navigation.dispatch(replaceActions);
+
+        if (this.props.route.params?.goToDiscover === true) {
+          await sleep(500);
+          this.props.navigation.navigate('SearchMenu', { screen: 'Search' });
+        }
 
         OneSignal.setNotificationOpenedHandler((notification) => {
           if (notification.notification.launchURL) {
