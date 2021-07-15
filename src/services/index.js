@@ -35,6 +35,7 @@ import getUserSubscribers from './getUserSubscribers';
 import setUserDeviceInfo from './setUserDeviceInfo';
 import sendNotificationToUserDevices from './sendNotificationToUserDevices';
 import sendNotificationToUserSubscribers from './sendNotificationToUserSubscribers';
+import getUserWithdrawals from './getUserWithdrawals';
 
 module.exports = {
     getDealsData,
@@ -73,4 +74,5 @@ module.exports = {
     setUserDeviceInfo,
     sendNotificationToUserDevices,
     sendNotificationToUserSubscribers,
+    getUserWithdrawals,
 };

@@ -1,18 +1,12 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Dimensions,
-  ScrollView,
-  RefreshControl,
-} from 'react-native';
+import {View, ScrollView, RefreshControl, FlatList} from 'react-native';
 import {observer} from 'mobx-react';
 import {Loading, Header, Text, Button, Label} from '../../components';
 import {constants} from '../../resources';
 import {checkAndShowInfluencerModal} from '../../lib';
+import {getUserWithdrawals} from '../../services';
 import {COLORS, SIZES} from '../../resources/theme';
 import {StackActions} from '@react-navigation/native';
-
-const {width, height} = Dimensions.get('window');
 
 class WithdrawalHistory extends Component {
   constructor(props) {
@@ -21,6 +15,8 @@ class WithdrawalHistory extends Component {
       loading: true,
       refreshing: false,
       selectedTab: 0,
+      pendingWithdrawList: [],
+      completedWithdrawList: [],
     };
   }
 
@@ -28,11 +24,70 @@ class WithdrawalHistory extends Component {
     if (checkAndShowInfluencerModal(this.props.navigation)) {
       return;
     }
-    this.setState({loading: false});
+    const {
+      pendingWithdrawList,
+      completedWithdrawList,
+    } = await getUserWithdrawals();
+
+    this.setState({loading: false, pendingWithdrawList, completedWithdrawList});
   };
 
+  onRefresh = async () => {
+    this.setState({refreshing: true});
+
+    const {
+      pendingWithdrawList,
+      completedWithdrawList,
+    } = await getUserWithdrawals();
+
+    this.setState({
+      refreshing: false,
+      pendingWithdrawList,
+      completedWithdrawList,
+    });
+  };
+
+  renderLine = (item) => (
+    <Label
+      text="Withdraw"
+      onPressFunction={() => {}}
+      showRightIcon={false}
+      secondaryText={new Date(item.createTimestamp).toLocaleString()}
+      secondaryTextStyle={{
+        paddingLeft: SIZES.padding,
+        color: COLORS.secondaryLabelColor,
+      }}
+      showLeftIcon={false}
+      customRightComponent={
+        <Text
+          text={`$${item.amount.toFixed(2)}`}
+          style={{
+            right: SIZES.padding,
+            textAlign: 'left',
+            color: COLORS.secondaryLabelColor,
+            fontSize: SIZES.h3,
+          }}
+        />
+      }
+      border
+      style={{
+        left: SIZES.padding * 0.4,
+        marginTop: SIZES.padding,
+      }}
+      touchableOpacityProps={{
+        activeOpacity: 1,
+      }}
+    />
+  );
+
   render() {
-    const {loading, refreshing, selectedTab} = this.state;
+    const {
+      loading,
+      refreshing,
+      selectedTab,
+      pendingWithdrawList,
+      completedWithdrawList,
+    } = this.state;
 
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
@@ -56,7 +111,11 @@ class WithdrawalHistory extends Component {
         ) : (
           <ScrollView
             refreshControl={
-              <RefreshControl refreshing={refreshing} tintColor="white" />
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={() => this.onRefresh()}
+                tintColor="white"
+              />
             }>
             <View
               style={{
@@ -80,8 +139,7 @@ class WithdrawalHistory extends Component {
                 }}
                 textStyle={{
                   fontSize: SIZES.body3,
-                  color:
-                    selectedTab !== 0 ? COLORS.white : COLORS.black,
+                  color: selectedTab !== 0 ? COLORS.white : COLORS.black,
                 }}
               />
               <Button
@@ -98,166 +156,29 @@ class WithdrawalHistory extends Component {
                 }}
                 textStyle={{
                   fontSize: SIZES.body3,
-                  color:
-                    selectedTab !== 1 ? COLORS.white : COLORS.black,
+                  color: selectedTab !== 1 ? COLORS.white : COLORS.black,
                 }}
               />
             </View>
-            <Label
-              text="Withdraw"
-              onPressFunction={() => {}}
-              showRightIcon={false}
-              secondaryText="20/05/2021 15:05"
-              secondaryTextStyle={{
-                paddingLeft: SIZES.padding,
-                color: COLORS.secondaryLabelColor,
-              }}
-              showLeftIcon={false}
-              customRightComponent={
+            <FlatList
+              data={
+                selectedTab === 0 ? pendingWithdrawList : completedWithdrawList
+              }
+              keyExtractor={(item) => item.uid}
+              renderItem={({item}) => this.renderLine(item)}
+              ListEmptyComponent={
                 <Text
-                  text={`$2`}
+                  text={
+                    selectedTab === 0
+                      ? 'There is no pending withdrawal request'
+                      : 'There is no completed withdrawal yet'
+                  }
                   style={{
-                    right: SIZES.padding,
-                    textAlign: 'left',
-                    color: COLORS.secondaryLabelColor,
-                    fontSize: SIZES.h3,
+                    color: COLORS.gray,
+                    textAlign: 'center',
                   }}
                 />
               }
-              border
-              style={{
-                left: SIZES.padding * 0.4,
-                marginTop: SIZES.padding,
-              }}
-              touchableOpacityProps={{
-                activeOpacity: 1,
-              }}
-            />
-            <Label
-              text="Withdraw"
-              onPressFunction={() => {}}
-              showRightIcon={false}
-              showLeftIcon={false}
-              secondaryText="20/05/2021 15:05"
-              secondaryTextStyle={{
-                paddingLeft: SIZES.padding,
-                color: COLORS.secondaryLabelColor,
-              }}
-              customRightComponent={
-                <Text
-                  text={`$5`}
-                  style={{
-                    textAlign: 'left',
-                    color: COLORS.secondaryLabelColor,
-                    fontSize: SIZES.h3,
-                  }}
-                />
-              }
-              border
-              style={{
-                marginTop: SIZES.padding,
-                paddingHorizontal: SIZES.padding * 1.2,
-                paddingVertical: SIZES.padding * 2,
-                borderRadius: SIZES.radius * 0.4,
-                marginLeft: '2%',
-                width: '95%',
-              }}
-              touchableOpacityProps={{
-                activeOpacity: 1,
-              }}
-            />
-            <Label
-              text="Withdraw"
-              onPressFunction={() => {}}
-              showRightIcon={false}
-              showLeftIcon={false}
-              secondaryText="20/05/2021 15:05"
-              secondaryTextStyle={{
-                paddingLeft: SIZES.padding,
-                color: COLORS.secondaryLabelColor,
-              }}
-              customRightComponent={
-                <Text
-                  text={`$2`}
-                  style={{
-                    right: SIZES.padding,
-                    textAlign: 'left',
-                    color: COLORS.secondaryLabelColor,
-                    fontSize: SIZES.h3,
-                  }}
-                />
-              }
-              border
-              style={{
-                left: SIZES.padding * 0.4,
-                marginTop: SIZES.padding,
-              }}
-              touchableOpacityProps={{
-                activeOpacity: 1,
-              }}
-            />
-            <Label
-              text="Withdraw"
-              onPressFunction={() => {}}
-              showRightIcon={false}
-              showLeftIcon={false}
-              secondaryText="20/05/2021 15:05"
-              secondaryTextStyle={{
-                paddingLeft: SIZES.padding,
-                color: COLORS.secondaryLabelColor,
-              }}
-              customRightComponent={
-                <Text
-                  text={`$5`}
-                  style={{
-                    textAlign: 'left',
-                    color: COLORS.secondaryLabelColor,
-                    fontSize: SIZES.h3,
-                  }}
-                />
-              }
-              border
-              style={{
-                marginTop: SIZES.padding,
-                paddingHorizontal: SIZES.padding * 1.2,
-                paddingVertical: SIZES.padding * 2,
-                borderRadius: SIZES.radius * 0.4,
-                marginLeft: '2%',
-                width: '95%',
-              }}
-              touchableOpacityProps={{
-                activeOpacity: 1,
-              }}
-            />
-            <Label
-              text="Withdraw"
-              onPressFunction={() => {}}
-              showRightIcon={false}
-              showLeftIcon={false}
-              secondaryText="20/05/2021 15:05"
-              secondaryTextStyle={{
-                paddingLeft: SIZES.padding,
-                color: COLORS.secondaryLabelColor,
-              }}
-              customRightComponent={
-                <Text
-                  text={`$2`}
-                  style={{
-                    right: SIZES.padding,
-                    textAlign: 'left',
-                    color: COLORS.secondaryLabelColor,
-                    fontSize: SIZES.h3,
-                  }}
-                />
-              }
-              border
-              style={{
-                left: SIZES.padding * 0.4,
-                marginTop: SIZES.padding,
-              }}
-              touchableOpacityProps={{
-                activeOpacity: 1,
-              }}
             />
           </ScrollView>
         )}
