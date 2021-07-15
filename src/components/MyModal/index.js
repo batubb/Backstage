@@ -22,7 +22,7 @@ export default function MyModal(props) {
         style={{
           backgroundColor: COLORS.tertiaryBackgroundColor,
           borderRadius: SIZES.radius,
-          marginHorizontal: SIZES.spacing * 4,
+          marginHorizontal: SIZES.spacing * (props.photo ? 4 : 10),
         }}
         behavior="padding">
         <View
@@ -32,12 +32,11 @@ export default function MyModal(props) {
             alignSelf: 'center',
             paddingVertical: SIZES.spacing * 5,
           }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              marginVertical: SIZES.spacing * 7,
-            }}>
-            {props.photo && (
+          {props.photo && (
+            <View
+              style={{
+                marginVertical: SIZES.spacing * 7,
+              }}>
               <MyImage
                 style={{
                   width: 80,
@@ -46,17 +45,18 @@ export default function MyModal(props) {
                 }}
                 photo={props.photo}
               />
-            )}
-          </View>
+            </View>
+          )}
           {props.text ? (
             <Text
               text={props.text}
               style={{
                 textAlign: 'left',
                 marginTop: SIZES.spacing * 3.5,
-                marginBottom: SIZES.spacing * 7,
+                marginBottom: SIZES.spacing * (props.photo ? 7 : 3.5),
                 paddingHorizontal: SIZES.spacing * 2,
                 fontSize: SIZES.h4,
+                ...props.textStyle,
               }}
             />
           ) : null}
