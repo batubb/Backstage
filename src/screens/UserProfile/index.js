@@ -246,7 +246,10 @@ class UserProfile extends Component {
   };
 
   renderSubscriptionPanel = () => {
-    if (this.state.products.length === 0 || this.state.subscribtion.subscribtion === true) {
+    if (
+      this.state.products.length === 0 ||
+      this.state.subscribtion.subscribtion === true
+    ) {
       return null;
     }
     return (
@@ -412,14 +415,7 @@ class UserProfile extends Component {
           cancelPress={() => this.setState({optionsVisible: false})}
         />
         {this.renderSubscriptionPanel()}
-        {purchaseProcessing ? (
-          <MyModal
-            text="Payment processing.."
-            textStyle={{
-              textAlign: 'center',
-            }}
-          />
-        ) : null}
+        {purchaseProcessing ? <MyModal loading /> : null}
       </View>
     );
   }

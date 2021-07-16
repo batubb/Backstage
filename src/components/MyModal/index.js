@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {View, Dimensions} from 'react-native';
+import {View, Dimensions, ActivityIndicator} from 'react-native';
 import Text from '../../components/Text';
 import constants from '../../resources/constants';
 import {COLORS, SIZES} from '../../resources/theme';
@@ -21,8 +21,9 @@ export default function MyModal(props) {
       <View
         style={{
           backgroundColor: COLORS.tertiaryBackgroundColor,
-          borderRadius: SIZES.radius,
-          marginHorizontal: SIZES.spacing * (props.photo ? 4 : 10),
+          borderRadius: !props.loading ? SIZES.radius : SIZES.radius / 2,
+          // 36 equals to large size of activity indicator.
+          marginHorizontal: !props.loading ? SIZES.spacing * 4 : width / 2 - 36,
         }}
         behavior="padding">
         <View
@@ -47,6 +48,7 @@ export default function MyModal(props) {
               />
             </View>
           )}
+          {props.loading ? <ActivityIndicator size={'large'} style={{paddingLeft: 2}} /> : null}
           {props.text ? (
             <Text
               text={props.text}
