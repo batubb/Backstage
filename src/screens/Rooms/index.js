@@ -27,10 +27,11 @@ import {
 } from '../../components';
 import {constants} from '../../resources';
 import {searchUser, getTrendingsData} from '../../services';
-import {followerCount} from '../../lib';
+import {isInfluencer} from '../../lib';
 import {StackActions} from '@react-navigation/native';
-import {COLORS, SIZES} from '../../resources/theme';
+import {SIZES} from '../../resources/theme';
 import EditTitleModal from '../../components/ScreenComponents/AddContentComponents/EditTitleModal/EditTitleModal';
+import Store from '../../store/Store';
 
 const {width, height} = Dimensions.get('window');
 
@@ -76,8 +77,8 @@ class Rooms extends Component {
 
   changeSwitch = () => {};
 
-  renderSearchTerms = (data) => {
-    return data.map((item, index) => (
+  renderSearchTerm = (item) => {
+    return (
       <View
         key={item.uid}
         style={{
@@ -116,8 +117,15 @@ class Rooms extends Component {
                   width: width - constants.PROFILE_PIC_SIZE * 1.5,
                   flexDirection: 'row',
                 }}>
-                <Text text={`${item.username}`} style={{fontSize: 16}} />
-                {item.verified === true ? <VerifiedIcon /> : null}
+                <Text
+                  text={`${
+                    Store.user.uid === item.uid ? 'My Room' : item.username
+                  }`}
+                  style={{fontSize: 16}}
+                />
+                {Store.user.uid !== item.uid && item.verified === true ? (
+                  <VerifiedIcon />
+                ) : null}
               </View>
             </View>
           </View>
@@ -132,7 +140,7 @@ class Rooms extends Component {
           }}
         />
       </View>
-    ));
+    );
   };
 
   renderNameModal2 = () => {
@@ -263,6 +271,9 @@ class Rooms extends Component {
       nameModalVisible,
     } = this.state;
 
+    const roomsList =
+      searchArray.length === 0 && search.length === 0 ? userArray : searchArray;
+
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
         <Header title="Rooms" />
@@ -319,11 +330,10 @@ class Rooms extends Component {
                   value={anon}
                 />
               </View> */}
-              {this.renderSearchTerms(
-                searchArray.length === 0 && search.length === 0
-                  ? userArray
-                  : searchArray,
-              )}
+              {isInfluencer(Store.user)
+                ? this.renderSearchTerm(Store.user)
+                : null}
+              {roomsList.map((item) => this.renderSearchTerm(item))}
             </View>
           </ScrollView>
         )}
