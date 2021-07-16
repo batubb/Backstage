@@ -65,7 +65,7 @@ class UserProfile extends Component {
 
     this.list = [
       {title: 'Report', onPress: this.reportVideo},
-      {title: 'Block', onPress: this.blockUser},
+      {title: 'Block', onPress: this.blockUser, danger: true},
     ];
   }
 
