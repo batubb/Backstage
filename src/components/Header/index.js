@@ -27,6 +27,7 @@ export default class HeaderComponent extends React.Component {
       leftButtonIconSize,
       title,
       centerComponent,
+      rightButtonText,
       rightButtonPress,
       rightSecondButtonPress,
       leftButtonPress,
@@ -93,12 +94,17 @@ export default class HeaderComponent extends React.Component {
               <TouchableOpacity
                 style={styles.rightIcon}
                 onPress={() => rightButtonPress()}>
-                <Icon
-                  name={rightButtonIcon}
-                  color={rightButtonColor ? rightButtonColor : '#FFF'}
-                  size={rightButtonIconSize ?? 24}
-                  type="material-community"
-                />
+                {rightButtonIcon && (
+                  <Icon
+                    name={rightButtonIcon}
+                    color={rightButtonColor ? rightButtonColor : '#FFF'}
+                    size={rightButtonIconSize ?? 24}
+                    type="material-community"
+                  />
+                )}
+                {rightButtonText && (
+                  <Text text={rightButtonText} style={{fontSize: 16}} />
+                )}
               </TouchableOpacity>
             ) : null}
           </View>

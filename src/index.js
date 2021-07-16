@@ -40,6 +40,7 @@ import WithdrawSummary from './screens/WithdrawSummary';
 import WithdrawalHistory from './screens/WithdrawalHistory';
 import Welcome from './screens/Welcome';
 import Subscribers from './screens/Subscribers';
+import Help from './screens/Help';
 import {COLORS} from './resources/theme';
 import {getBottomSpace, isIphoneX} from './lib/iPhoneXHelper';
 
@@ -154,6 +155,7 @@ class ProfileMenu extends React.Component {
         <Stack.Screen name="WithdrawSummary" component={WithdrawSummary} />
         <Stack.Screen name="WithdrawalHistory" component={WithdrawalHistory} />
         <Stack.Screen name="Subscribers" component={Subscribers} />
+        <Stack.Screen name="Help" component={Help} />
       </Stack.Navigator>
     );
   }

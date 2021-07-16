@@ -45,7 +45,7 @@ class Home extends Component {
     ) {
       const replaceActions = StackActions.push(route);
       return this.props.navigation.dispatch(replaceActions);
-    } else if (route === 'MyInfo') {
+    } else if (route === 'MyInfo' || route === 'Help') {
       const replaceActions = StackActions.push(route, {type: info});
       return this.props.navigation.dispatch(replaceActions);
     }
@@ -79,12 +79,7 @@ class Home extends Component {
           message: constants.APP_WEBSITE + '/' + Store.user.username,
         },
         (error) =>
-          sendDataAnalytics(
-            'share-profile-link',
-            'error',
-            error,
-            error.name,
-          ),
+          sendDataAnalytics('share-profile-link', 'error', error, error.name),
         (success, method) =>
           method
             ? sendDataAnalytics(
@@ -96,6 +91,23 @@ class Home extends Component {
             : null,
       );
     }
+  };
+
+  showHelpOptions = () => {
+    Alert.alert('Report a Problem', undefined, [
+      {
+        text: 'General Feedback',
+        onPress: () => this.goTo('Help', 'General Feedback'),
+      },
+      {
+        text: 'Ask a Question',
+        onPress: () => this.goTo('Help', 'Ask a Question'),
+      },
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+    ]);
   };
 
   render() {
@@ -168,12 +180,7 @@ class Home extends Component {
             <Label
               text="Help"
               icon="help-circle-outline"
-              onPressFunction={() => {
-                Alert.alert(
-                  'Help',
-                  'Please reach out to us at emre@joinbackstage.co with any questions',
-                );
-              }}
+              onPressFunction={() => this.showHelpOptions()}
               border
             />
 
