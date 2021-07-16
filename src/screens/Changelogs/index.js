@@ -86,7 +86,7 @@ class Changelogs extends Component {
             <Text
               text={
                 `We are working hard to ship updates and make the app worldwide suitable. ` +
-                `The list below is what we sent in every release of our portfolio.`
+                `The list below is what we sent in every release of Backstage.`
               }
               style={{
                 fontSize: SIZES.body3,
