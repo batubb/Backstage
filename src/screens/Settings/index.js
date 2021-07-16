@@ -4,21 +4,16 @@
 import React, {Component} from 'react';
 import {
   View,
-  Dimensions,
   ScrollView,
   Alert,
   RefreshControl,
   Linking,
-  ActionSheetIOS,
-  Platform,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
 import {Loading, Header, Label} from '../../components';
 import {constants} from '../../resources';
 import auth from '@react-native-firebase/auth';
-import Store from '../../store/Store';
-import {sendDataAnalytics} from '../../services';
 
 class Home extends Component {
   constructor(props) {
@@ -41,7 +36,9 @@ class Home extends Component {
       route === 'EditBankAccount' ||
       route === 'Withdraw' ||
       route === 'Earnings' ||
-      route === 'WithdrawalHistory'
+      route === 'WithdrawalHistory' ||
+      route === 'Changelogs' ||
+      route === 'MyProfileLink'
     ) {
       const replaceActions = StackActions.push(route);
       return this.props.navigation.dispatch(replaceActions);
@@ -72,29 +69,8 @@ class Home extends Component {
     ]);
   };
 
-  shareProfileLink = () => {
-    if (Platform.OS === 'ios') {
-      ActionSheetIOS.showShareActionSheetWithOptions(
-        {
-          message: constants.APP_WEBSITE + '/' + Store.user.username,
-        },
-        (error) =>
-          sendDataAnalytics('share-profile-link', 'error', error, error.name),
-        (success, method) =>
-          method
-            ? sendDataAnalytics(
-                'share-profile-link',
-                'success',
-                {method},
-                method,
-              )
-            : null,
-      );
-    }
-  };
-
   showHelpOptions = () => {
-    Alert.alert('Report a Problem', undefined, [
+    Alert.alert('Contact Us', undefined, [
       {
         text: 'General Feedback',
         onPress: () => this.goTo('Help', 'General Feedback'),
@@ -140,7 +116,7 @@ class Home extends Component {
             <Label
               text="My Profile Link"
               icon="share-variant"
-              onPressFunction={() => this.shareProfileLink()}
+              onPressFunction={() => this.goTo('MyProfileLink')}
               border
             />
             <Label
@@ -178,9 +154,15 @@ class Home extends Component {
               border
             />
             <Label
-              text="Help"
-              icon="help-circle-outline"
+              text="Contact Us"
+              icon="lifebuoy"
               onPressFunction={() => this.showHelpOptions()}
+              border
+            />
+            <Label
+              text="What's New"
+              icon="newspaper"
+              onPressFunction={() => this.goTo('Changelogs')}
               border
             />
 

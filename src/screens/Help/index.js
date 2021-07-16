@@ -46,8 +46,8 @@ class Help extends Component {
         e.preventDefault();
 
         Alert.alert(
-          'Are you sure you want to delete the message and leave the screen?',
           'You have an unsent message, would you like to send it before leaving?',
+          undefined,
           [
             {
               text: 'Send',
@@ -107,8 +107,8 @@ class Help extends Component {
       );
 
       Alert.alert(
-        'Your feedback is valuable for us!',
-        'Thank you for helping us to improve Backstage.',
+        'Thank you for your feedback!',
+        undefined,
         [{title: 'Okay', style: 'cancel'}],
       );
       this.setState({message: '', media: []});
@@ -304,7 +304,7 @@ class Help extends Component {
                 />
               ) : null}
               <Button
-                text="Upload"
+                text={'Upload\nScreenshot or Recording'}
                 onPress={() => this.selectMediaFromRoll()}
                 secondary
                 leftIconProps={{
@@ -315,9 +315,10 @@ class Help extends Component {
                 }}
                 textStyle={{
                   paddingTop: SIZES.spacing,
+                  textAlign: 'center',
                 }}
                 buttonStyle={{
-                  width: 100,
+                  width: 200,
                   flexDirection: 'column',
                   alignSelf: 'center',
                   marginBottom: SIZES.padding,
