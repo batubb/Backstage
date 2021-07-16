@@ -130,12 +130,7 @@ export default function ProfileTop(props) {
               <Button
                 text={'Room'}
                 onPress={() => goTo('Chat', Store.user)}
-                buttonStyle={{
-                  backgroundColor: COLORS.white,
-                }}
-                textStyle={{
-                  color: COLORS.black,
-                }}
+                secondary
               />
             </View>
           ) : null}
