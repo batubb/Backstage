@@ -111,6 +111,7 @@ class Changelogs extends Component {
                     style={{
                       fontSize: SIZES.h3,
                       color: COLORS.white,
+                      paddingLeft: SIZES.spacing,
                     }}
                   />
                   <Text
@@ -118,7 +119,7 @@ class Changelogs extends Component {
                     style={{
                       fontSize: SIZES.h5,
                       color: COLORS.gray,
-                      paddingLeft: SIZES.padding,
+                      paddingRight: SIZES.spacing,
                     }}
                   />
                 </View>
