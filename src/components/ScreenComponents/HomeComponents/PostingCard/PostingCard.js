@@ -21,6 +21,8 @@ function PostingCardCumulativeViews(props) {
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingBottom: SIZES.spacing,
+        position: 'absolute',
+        bottom: 18,
       }}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Icon
@@ -51,14 +53,10 @@ function PostingCardCumulativeViews(props) {
 }
 
 function PostingCardCaption(props) {
-  const limit = props.longVersion ? 17 : 10;
   return props.caption ? (
     <Text
-      text={
-        props.caption.length >= limit
-          ? `${props.caption.substring(0, limit)}...`
-          : props.caption
-      }
+      text={props.caption}
+      numberOfLines={1}
       style={{fontSize: 14, ...props.style}}
     />
   ) : null;
@@ -162,7 +160,7 @@ export default function PostingCard(props) {
                   <PostingCardCumulativeViews
                     views={props.item.cumulativeViews ?? 0}
                   />
-                  <PostingCardCaption caption={props.item.title} longVersion />
+                  <PostingCardCaption caption={props.item.title} />
                 </View>
               </>
             )}
