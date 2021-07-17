@@ -21,6 +21,8 @@ function PostingCardCumulativeViews(props) {
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingBottom: SIZES.spacing,
+        position: 'absolute',
+        bottom: 18,
       }}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Icon
@@ -51,15 +53,11 @@ function PostingCardCumulativeViews(props) {
 }
 
 function PostingCardCaption(props) {
-  const limit = props.longVersion ? 17 : 10;
   return props.caption ? (
     <Text
-      text={
-        props.caption.length >= limit
-          ? `${props.caption.substring(0, limit)}...`
-          : props.caption
-      }
-      style={{fontSize: 14}}
+      text={props.caption}
+      numberOfLines={1}
+      style={{fontSize: 14, ...props.style}}
     />
   ) : null;
 }
@@ -68,7 +66,7 @@ function PostingCardSmallCaption(props) {
   return (
     <Text
       text={`${followerCount(props.count)} ` + props.text}
-      style={{fontSize: 12, fontWeight: 'normal'}}
+      style={{fontSize: 12, fontWeight: 'normal', ...props.style}}
     />
   );
 }
@@ -133,14 +131,26 @@ export default function PostingCard(props) {
             {props.showProfilePicInCard ? (
               <>
                 <MyImage
-                  style={{width: 40, height: 40, borderRadius: 20}}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                  }}
                   photo={props.item.user.photo}
                 />
-                <View style={{width: props.width / 2.5 - 80}}>
-                  <PostingCardCaption caption={props.item.user.name} />
+                <View
+                  style={{
+                    width: props.width / 2.5 - 80,
+                    paddingVertical: SIZES.spacing,
+                  }}>
+                  <PostingCardCaption
+                    caption={props.item.user.username}
+                    style={{textAlign: 'center'}}
+                  />
                   <PostingCardSmallCaption
                     count={props.item.view}
                     text={'viewers'}
+                    style={{textAlign: 'center'}}
                   />
                 </View>
               </>
@@ -150,7 +160,7 @@ export default function PostingCard(props) {
                   <PostingCardCumulativeViews
                     views={props.item.cumulativeViews ?? 0}
                   />
-                  <PostingCardCaption caption={props.item.title} longVersion />
+                  <PostingCardCaption caption={props.item.title} />
                 </View>
               </>
             )}

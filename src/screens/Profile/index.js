@@ -65,7 +65,7 @@ class Profile extends Component {
 
     this.list = [
       {title: 'Edit', onPress: this.editHighlight},
-      {title: 'Delete', color: constants.RED, onPress: this.deleteHighlight},
+      {title: 'Delete', danger: true, onPress: this.deleteHighlight},
     ];
   }
 

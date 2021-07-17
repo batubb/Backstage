@@ -2,30 +2,28 @@ import React, {Component} from 'react';
 import {
   View,
   Dimensions,
-  FlatList,
-  TouchableOpacity,
-  Image,
   ScrollView,
   RefreshControl,
-  Alert,
+  LogBox,
 } from 'react-native';
 import {observer} from 'mobx-react';
-import LinearGradient from 'react-native-linear-gradient';
-import {Icon} from 'react-native-elements';
 import {Loading, Header, Text, Button, Label} from '../../components';
 import {constants} from '../../resources';
-import {getFollowingLiveData, getFollowingUserPosts} from '../../services';
 import Store from '../../store/Store';
 import {checkAndShowInfluencerModal} from '../../lib';
 import {COLORS, SIZES} from '../../resources/theme';
 import {StackActions} from '@react-navigation/native';
 import {LineChart} from 'react-native-chart-kit';
+import database from '@react-native-firebase/database';
 
-const {width, height} = Dimensions.get('window');
+LogBox.ignoreLogs(['"" is not', 'No stops in gradient']);
+
+const {width} = Dimensions.get('window');
 
 class Earnings extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       loading: true,
       refreshing: false,
@@ -33,15 +31,71 @@ class Earnings extends Component {
         name: null,
         value: null,
       },
-      months: constants.MONTHS,
+      numShowMonths: 5,
+      data: [],
+      totalEarnings: 0,
     };
+
+    this.months = constants.MONTHS;
+    this.renderMonths = [];
   }
 
   componentDidMount = async () => {
+    const {data, totalEarnings} = await this.getData();
+    this.setState({loading: false, data, totalEarnings});
+  };
+
+  onRefresh = async () => {
+    this.setState({refreshing: true});
+    const {data, totalEarnings} = await this.getData();
+    this.setState({refreshing: false, data, totalEarnings});
+  };
+
+  getData = async () => {
     if (checkAndShowInfluencerModal(this.props.navigation)) {
       return;
     }
-    this.setState({loading: false});
+    this.currentMonthIndex =
+      new Date().getMonth() + 1 === 12 ? 0 : new Date().getMonth() + 1;
+
+    this.calculateMonths();
+    const data = Array(this.state.numShowMonths).fill(0);
+
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    currentDate.setDate(1);
+    currentDate.setMonth(currentDate.getMonth() - 4);
+
+    const transactionsData = await database()
+      .ref('transactions')
+      .child(Store.user.uid)
+      .once('value');
+
+    let totalEarnings = 0;
+    if (transactionsData.exists()) {
+      const transactions = Object.values(
+        Object.assign({}, transactionsData.val()),
+      );
+
+      totalEarnings = parseFloat(
+        (Store.user.price * transactions.length).toFixed(2),
+      );
+      transactions.forEach((transaction) => {
+        const purchaseDate = new Date(parseInt(transaction.purchaseDate));
+        const purchaseMonthName = this.months[purchaseDate.getMonth()].substr(
+          0,
+          3,
+        );
+        const purchaseMonthIndex = this.renderMonths.findIndex(
+          (m) => m === purchaseMonthName,
+        );
+
+        if (purchaseMonthIndex) {
+          data[purchaseMonthIndex] += Store.user.price;
+        }
+      });
+    }
+    return {data, totalEarnings};
   };
 
   goTo = (route, info = null) => {
@@ -64,14 +118,35 @@ class Earnings extends Component {
     }
   };
 
+  calculateMonths = () => {
+    const {numShowMonths} = this.state;
+    const currentMonthIndex = this.currentMonthIndex;
+
+    if (currentMonthIndex - numShowMonths >= 0) {
+      this.renderMonths = this.months
+        .slice(currentMonthIndex - numShowMonths, currentMonthIndex)
+        .map((item) => item.substr(0, 3));
+    } else {
+      const nextYearMonths = this.months.slice(0, currentMonthIndex + 1);
+      const prevYearMonths = this.months.slice(
+        this.months.length - numShowMonths + currentMonthIndex + 1,
+        this.months.length,
+      );
+
+      this.renderMonths = [...prevYearMonths, ...nextYearMonths].map((item) =>
+        item.substr(0, 3),
+      );
+    }
+  };
+
   render() {
-    const {loading, refreshing, clickedPointData} = this.state;
-
-    const renderMonths = this.state.months
-      .slice(0, 5)
-      .map((item) => item.substr(0, 3));
-
-    const data = [50, 100, 150, 200, 250];
+    const {
+      loading,
+      refreshing,
+      clickedPointData,
+      data,
+      totalEarnings,
+    } = this.state;
 
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
@@ -94,7 +169,11 @@ class Earnings extends Component {
         ) : (
           <ScrollView
             refreshControl={
-              <RefreshControl refreshing={refreshing} tintColor="white" />
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={() => this.onRefresh()}
+                tintColor="white"
+              />
             }>
             <Text
               text="Total Earnings"
@@ -106,7 +185,7 @@ class Earnings extends Component {
               }}
             />
             <Text
-              text="$ 1,284.10"
+              text={`$${totalEarnings}`}
               style={{
                 textAlign: 'left',
                 paddingLeft: SIZES.padding * 2,
@@ -132,7 +211,9 @@ class Earnings extends Component {
                   left: 0,
                 }}>
                 <Text
-                  text={clickedPointData.name || 'August'}
+                  text={
+                    clickedPointData.name || this.months[this.currentMonthIndex-1]
+                  }
                   style={{
                     textAlign: 'left',
                     paddingLeft: SIZES.padding * 6,
@@ -142,7 +223,7 @@ class Earnings extends Component {
                 />
                 <Text
                   text={
-                    clickedPointData.value
+                    clickedPointData.value !== null
                       ? `$${clickedPointData.value}`
                       : new Date().getFullYear()
                   }
@@ -156,7 +237,7 @@ class Earnings extends Component {
               </View>
               <LineChart
                 data={{
-                  labels: renderMonths,
+                  labels: this.renderMonths,
                   datasets: [
                     {
                       data,
@@ -172,14 +253,14 @@ class Earnings extends Component {
                 formatYLabel={(yValue) => `$${parseInt(yValue)}`}
                 fromNumber={data[0]}
                 onDataPointClick={(data) => {
-                  if (data) {
+                  if (data.index) {
                     this.setState({
                       clickedPointData: {
-                        name: this.state.months.find(
+                        name: this.months.find(
                           (month) =>
-                            month.slice(0, 3) === renderMonths[data.index],
+                            month.slice(0, 3) === this.renderMonths[data.index],
                         ),
-                        value: data.value,
+                        value: data.value ?? '0',
                       },
                     });
                   }
@@ -211,7 +292,7 @@ class Earnings extends Component {
               showLeftIcon={false}
               customRightComponent={
                 <Text
-                  text="$ 52.99"
+                  text={`$${data[data.length - 1]}`}
                   style={{
                     textAlign: 'left',
                     paddingLeft: SIZES.padding * 6,

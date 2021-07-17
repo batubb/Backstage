@@ -1,4 +1,4 @@
-import Animated, {Easing} from 'react-native-reanimated';
+import Animated, {EasingNode} from 'react-native-reanimated';
 const {block, set, Value, clockRunning, cond, startClock, timing, stopClock} = Animated;
 
 export default function runTiming(clock, duration, value, destination) {
@@ -12,7 +12,7 @@ export default function runTiming(clock, duration, value, destination) {
   const config = {
     duration,
     toValue: destination,
-    easing: Easing.inOut(Easing.ease),
+    easing: EasingNode.inOut(EasingNode.ease),
   };
 
   return block([

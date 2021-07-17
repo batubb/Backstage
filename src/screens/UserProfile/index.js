@@ -12,7 +12,14 @@ import {
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
-import {Loading, Header, Text, Button, Options} from '../../components';
+import {
+  Loading,
+  Header,
+  Text,
+  Button,
+  Options,
+  MyModal,
+} from '../../components';
 import {constants} from '../../resources';
 import {setPosts} from '../../lib';
 import {
@@ -30,7 +37,6 @@ import PostsCard from '../../components/ScreenComponents/ProfileComponents/Posts
 import sleep from '../../lib/sleep';
 import RNIap from 'react-native-iap';
 import SlidingUpPanel from 'rn-sliding-up-panel';
-import {getBottomSpace} from '../../lib/iPhoneXHelper';
 
 const {width, height} = Dimensions.get('window');
 const SCREEN_DIMENSIONS = Dimensions.get('window');
@@ -54,17 +60,17 @@ class UserProfile extends Component {
       followerNumber: 0,
       subscriberNumber: 0,
       products: [],
-      subscription: false,
+      purchaseProcessing: false,
     };
 
     this.list = [
       {title: 'Report', onPress: this.reportVideo},
-      {title: 'Block', onPress: this.blockUser},
+      {title: 'Block', onPress: this.blockUser, danger: true},
     ];
   }
 
   componentDidMount = async () => {
-    this.setState({loading: true});
+    this.setState({loading: true, purchaseProcessing: false});
     this.unsubscribe = this.props.navigation.addListener('focus', (e) => {
       this.checkInfluencerInfos();
     });
@@ -84,16 +90,14 @@ class UserProfile extends Component {
     } else {
       this.setState({products: productsRes});
     }
-    const subscription = await checkSubscribtion(
+    const subscribtion = await checkSubscribtion(
       Store.uid,
       this.state.user.uid,
     );
-    console.log('subscription is ', subscription);
-    console.log('subscription is2 ', subscription.subscribtion);
-    if (!subscription.subscription) {
+    if (!subscribtion.subscribtion) {
       subscribeBottomSheetRef.current?.show();
     }
-    this.setState({loading: false, subscription: subscription.subscription});
+    this.setState({loading: false, subscribtion});
   };
 
   checkInfluencerInfos = async () => {
@@ -167,10 +171,11 @@ class UserProfile extends Component {
   };
 
   requestRNISubscription = async () => {
+    this.setState({purchaseProcessing: true});
     try {
       await RNIap.requestSubscription(this.state.products[0].productId);
       subscribeBottomSheetRef.current?.hide();
-      this.setState({loading: true});
+      this.setState({loading: true, purchaseProcessing: false});
       await sleep(5000);
       console.log('after sub');
       console.log('got subscription');
@@ -185,7 +190,7 @@ class UserProfile extends Component {
     } catch (error) {
       console.log('Error requesting subscription ', error);
     }
-    this.setState({loading: false});
+    this.setState({loading: false, purchaseProcessing: false});
   };
 
   renderEmptyPost = () => {
@@ -241,90 +246,81 @@ class UserProfile extends Component {
   };
 
   renderSubscriptionPanel = () => {
-    if (this.state.products.length === 0 || this.state.subscribtion === true) {
+    if (
+      this.state.products.length === 0 ||
+      this.state.subscribtion.subscribtion === true
+    ) {
       return null;
     }
-    const panelHeight =
-      SCREEN_DIMENSIONS.height * 0.275 < 210
-        ? 225
-        : SCREEN_DIMENSIONS.height * 0.275;
     return (
       <SlidingUpPanel
         ref={subscribeBottomSheetRef}
-        height={panelHeight + constants.TAB_BAR_HEIGHT + BOTTOM_PADDING}
+        height={SCREEN_DIMENSIONS.height}
         snappingPoints={[0]}
         avoidKeyboard={true}
         allowDragging={true}
-        containerStyle={{
-          flex: 1,
-          top:
-            SCREEN_DIMENSIONS.height +
-            panelHeight * 1.5 +
-            constants.TAB_BAR_HEIGHT +
-            BOTTOM_PADDING,
-          width,
-          position: 'absolute',
-          left: 0,
-        }}
         friction={0.7}
         backdropOpacity={0.85}
         showBackdrop={true}
         onBottomReached={() => subscribeBottomSheetRef.current?.hide()}>
         <View
           style={{
+            width,
             flex: 1,
-            paddingHorizontal: SIZES.padding,
-            borderTopLeftRadius: SIZES.radius,
-            borderTopRightRadius: SIZES.radius,
-            backgroundColor: COLORS.systemFill,
-            flexDirection: 'column',
+            position: 'absolute',
+            left: 0,
+            bottom: 0,
           }}>
           <View
             style={{
               flex: 1,
+              paddingHorizontal: SIZES.padding,
+              borderTopLeftRadius: SIZES.radius,
+              borderTopRightRadius: SIZES.radius,
+              backgroundColor: COLORS.systemFill,
+              flexDirection: 'column',
               justifyContent: 'flex-start',
               alignItems: 'center',
+              paddingVertical: SIZES.padding * 5,
             }}>
-            <View style={{marginTop: SIZES.padding * 4}}>
-              <Text
-                text={`$${parseFloat(this.state.user.price).toFixed(2)}`}
-                style={{
-                  marginTop: SCREEN_DIMENSIONS.height * 0.02,
-                  fontWeight: 'bold',
-                  fontSize: 32,
-                  textAlign: 'center',
-                  color: COLORS.white,
-                }}
-              />
-              <Text
-                text={'per month'}
-                style={{fontSize: 12, color: 'gray', textAlign: 'center'}}
-              />
-              <Button
-                text={'Subscribe'}
-                buttonStyle={{
-                  backgroundColor: COLORS.primary,
-                  marginTop: SIZES.padding * 2,
-                  width:
-                    SCREEN_DIMENSIONS.height * 0.25 < 160
-                      ? 120
-                      : SCREEN_DIMENSIONS.height * 0.25,
-                  alignSelf: 'center',
-                }}
-                textStyle={{color: COLORS.secondary, fontSize: 16}}
-                onPress={() => this.requestRNISubscription()}
-              />
-              <Text
-                text={`Subscribing to ${this.state.user.username} will give you access to this creator's exclusive content and fanroom on Backstage for the subscription period. Content can be in the form of livestreams, videos, or stories. Subscriptions will auto renew, and can be cancelled anytime via Apple App Store.`}
-                style={{
-                  marginTop: SIZES.padding + SCREEN_DIMENSIONS.height * 0.03,
-                  fontWeight: 'bold',
-                  fontSize: 12,
-                  textAlign: 'center',
-                  color: COLORS.darkgray,
-                }}
-              />
-            </View>
+            <Text
+              text={`$${parseFloat(this.state.user.price).toFixed(2)}`}
+              style={{
+                marginTop: SCREEN_DIMENSIONS.height * 0.02,
+                fontWeight: 'bold',
+                fontSize: 32,
+                textAlign: 'center',
+                color: COLORS.white,
+              }}
+            />
+            <Text
+              text={'per month'}
+              style={{fontSize: 12, color: 'gray', textAlign: 'center'}}
+            />
+            <Button
+              text={'Subscribe'}
+              buttonStyle={{
+                backgroundColor: COLORS.primary,
+                marginTop: SIZES.padding * 2,
+                width:
+                  SCREEN_DIMENSIONS.height * 0.25 < 160
+                    ? 120
+                    : SCREEN_DIMENSIONS.height * 0.25,
+                alignSelf: 'center',
+              }}
+              textStyle={{color: COLORS.secondary, fontSize: 16}}
+              onPress={() => this.requestRNISubscription()}
+            />
+            <Text
+              text={`Subscribing to ${this.state.user.username} will give you access to this creator's exclusive content and fanroom on Backstage for the subscription period. Content can be in the form of livestreams, videos, or stories. Subscriptions will auto renew, and can be cancelled anytime via Apple App Store.`}
+              style={{
+                marginTop: SIZES.padding + SCREEN_DIMENSIONS.height * 0.03,
+                fontWeight: 'bold',
+                fontSize: 12,
+                textAlign: 'center',
+                color: COLORS.darkgray,
+              }}
+            />
           </View>
           <TouchableOpacity
             style={{
@@ -350,6 +346,7 @@ class UserProfile extends Component {
       subscribtion,
       daily,
       optionsVisible,
+      purchaseProcessing,
     } = this.state;
 
     return (
@@ -418,6 +415,7 @@ class UserProfile extends Component {
           cancelPress={() => this.setState({optionsVisible: false})}
         />
         {this.renderSubscriptionPanel()}
+        {purchaseProcessing ? <MyModal loading /> : null}
       </View>
     );
   }

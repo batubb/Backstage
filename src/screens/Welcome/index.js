@@ -83,7 +83,9 @@ class Welcome extends Component {
                 marginHorizontal: width * 0.06,
               }}>
               <TouchableOpacity
-                onPress={() => {}}
+                onPress={() =>
+                  this.props.navigation.dispatch(StackActions.push('Login'))
+                }
                 style={{
                   flex: 1,
                   backgroundColor: '#ffffff',
@@ -100,7 +102,7 @@ class Welcome extends Component {
                   style={{
                     top: 2,
                     color: 'black',
-                    fontSize: 26,
+                    fontSize: 25,
                     fontWeight: 'bold',
                     fontFamily: 'SF Pro Display',
                   }}>
@@ -121,12 +123,12 @@ class Welcome extends Component {
                   marginLeft: width * 0.03,
                 }}>
                 <Text
-                  style={{color: '#ffffff', fontSize: 27, fontWeight: 'bold'}}>
+                  style={{color: '#ffffff', fontSize: 25, fontWeight: 'bold'}}>
                   Login
                   <Icon
                     name="arrow-right"
                     type="font-awesome-5"
-                    size={26}
+                    size={25}
                     color={'#ffffff'}
                     style={{paddingLeft: 5}}
                   />

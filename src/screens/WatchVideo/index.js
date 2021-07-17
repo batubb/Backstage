@@ -81,7 +81,7 @@ class WatchVideo extends Component {
     if (Store.user.uid === this.props.route.params.video.user.uid) {
       this.list = [
         ...this.list,
-        {title: 'Delete', color: constants.RED, onPress: this.deleteVideo},
+        {title: 'Delete', danger: true, onPress: this.deleteVideo},
       ];
     }
   }
@@ -313,14 +313,14 @@ class WatchVideo extends Component {
                     }}
                   />
                   <Text
-                    text={`${month} ${day}, ${year}`}
+                    text={`${month} ${day}${
+                      new Date().getFullYear() === year ? '' : ',' + year
+                    }`}
                     numberOfLines={1}
-                    onPress={() =>
-                      this.setState({showMore: !this.state.showMore})
-                    }
                     style={{
-                      fontSize: SIZES.body4,
+                      fontSize: SIZES.body5,
                       color: COLORS.white,
+                      opacity: 0.5,
                       paddingTop: 3,
                     }}
                   />
@@ -379,6 +379,10 @@ class WatchVideo extends Component {
                     name="dots-horizontal"
                     type="material-community"
                     onPress={() => this.setState({optionsVisible: true})}
+                    style={{
+                      paddingHorizontal: SIZES.spacing,
+                      paddingVertical: SIZES.padding,
+                    }}
                     size={20}
                   />
                 </View>

@@ -9,6 +9,8 @@ import Databar from './Databar';
 import {StackActions} from '@react-navigation/native';
 import {Icon} from 'react-native-elements';
 import {TouchableOpacity} from 'react-native';
+import Store from '../../../../store/Store';
+import {isInfluencer} from '../../../../lib';
 
 // photo, name, biograohy, subscribeButtonVisible, user, subscribtion
 
@@ -16,6 +18,9 @@ export default function ProfileTop(props) {
   const goTo = (route, info = null) => {
     if (route === 'EditProfile') {
       const replaceActions = StackActions.push(route, {type: info});
+      return props.navigation.dispatch(replaceActions);
+    } else if (route === 'Chat') {
+      const replaceActions = StackActions.push(route, {user: info});
       return props.navigation.dispatch(replaceActions);
     }
   };
@@ -108,11 +113,28 @@ export default function ProfileTop(props) {
         />
       )}
       {props.editProfileVisible ? (
-        <Button
-          onPress={() => goTo('EditProfile')}
-          text={'Edit Profile'}
-          secondary
-        />
+        <View style={{flexDirection: 'row', width: '100%'}}>
+          <View
+            style={{
+              flex: 1,
+              marginRight: isInfluencer(Store.user) ? SIZES.spacing * 3 : 0,
+            }}>
+            <Button
+              onPress={() => goTo('EditProfile')}
+              text={'Edit Profile'}
+              secondary
+            />
+          </View>
+          {isInfluencer(Store.user) ? (
+            <View style={{flex: 1}}>
+              <Button
+                text={'Room'}
+                onPress={() => goTo('Chat', Store.user)}
+                secondary
+              />
+            </View>
+          ) : null}
+        </View>
       ) : null}
     </View>
   );

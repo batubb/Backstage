@@ -182,11 +182,12 @@ class Home extends Component {
           <View
             style={{
               paddingVertical: 5,
+              paddingHorizontal: SIZES.spacing,
               borderRadius: 4,
-              marginRight: 10,
+              marginRight: SIZES.padding,
               backgroundColor: constants.RED,
             }}>
-            <Text text="LIVE" style={{fontSize: 16}} />
+            <Text text="LIVE" style={{fontSize: 15}} />
           </View>
         ) : (
           <MyImage

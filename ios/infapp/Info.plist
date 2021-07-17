@@ -36,7 +36,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.backstageinf.cooldigital</string>
+			<string>com.cooldigital.backstage</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>backstage</string>

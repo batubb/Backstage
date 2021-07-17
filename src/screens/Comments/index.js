@@ -29,7 +29,7 @@ import {timeDifference} from '../../lib';
 import Store from '../../store/Store';
 import followerCount from '../../lib/followerCount';
 import {getBottomSpace} from '../../lib/iPhoneXHelper';
-import {SIZES} from '../../resources/theme';
+import {SIZES, COLORS} from '../../resources/theme';
 import {ActivityIndicator} from 'react-native';
 
 const {width} = Dimensions.get('window');
@@ -252,7 +252,7 @@ class Comments extends Component {
               <View style={{padding: 10}}>
                 <Icon
                   name="send"
-                  color="#FFF"
+                  color={COLORS.primary}
                   type="material-community"
                   size={16}
                 />

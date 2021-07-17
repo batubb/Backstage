@@ -6,6 +6,7 @@ const {Streami18n} = require('stream-chat-react-native');
 const constants = {
   APP_NAME: 'Backstage',
   APP_VERSION: '1.0.0',
+  APP_WEBSITE: 'https://www.joinbackstage.co',
 
   MUX_USERNAME: '36bbe382-6820-4a76-b0be-f7e3a6e46564',
   MUX_PASSWORD:

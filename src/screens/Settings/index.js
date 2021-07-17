@@ -4,7 +4,6 @@
 import React, {Component} from 'react';
 import {
   View,
-  Dimensions,
   ScrollView,
   Alert,
   RefreshControl,
@@ -12,13 +11,9 @@ import {
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
-import {Loading, Header, Text, Label} from '../../components';
+import {Loading, Header, Label} from '../../components';
 import {constants} from '../../resources';
 import auth from '@react-native-firebase/auth';
-import Store from '../../store/Store';
-import { sendBirdDisconnect } from '../../services/connectSendbird';
-
-const {width} = Dimensions.get('window');
 
 class Home extends Component {
   constructor(props) {
@@ -41,11 +36,13 @@ class Home extends Component {
       route === 'EditBankAccount' ||
       route === 'Withdraw' ||
       route === 'Earnings' ||
-      route === 'WithdrawalHistory'
+      route === 'WithdrawalHistory' ||
+      route === 'Changelogs' ||
+      route === 'MyProfileLink'
     ) {
       const replaceActions = StackActions.push(route);
       return this.props.navigation.dispatch(replaceActions);
-    } else if (route === 'MyInfo') {
+    } else if (route === 'MyInfo' || route === 'Help') {
       const replaceActions = StackActions.push(route, {type: info});
       return this.props.navigation.dispatch(replaceActions);
     }
@@ -60,7 +57,6 @@ class Home extends Component {
           auth()
             .signOut()
             .then(async () => {
-              await sendBirdDisconnect();
               this.goTo('Welcome');
             })
             .catch(() => {
@@ -70,6 +66,23 @@ class Home extends Component {
         },
       },
       {text: 'No', style: 'cancel'},
+    ]);
+  };
+
+  showHelpOptions = () => {
+    Alert.alert('Contact Us', undefined, [
+      {
+        text: 'General Feedback',
+        onPress: () => this.goTo('Help', 'General Feedback'),
+      },
+      {
+        text: 'Ask a Question',
+        onPress: () => this.goTo('Help', 'Ask a Question'),
+      },
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
     ]);
   };
 
@@ -101,6 +114,12 @@ class Home extends Component {
               <RefreshControl refreshing={refreshing} tintColor="white" />
             }>
             <Label
+              text="My Profile Link"
+              icon="share-variant"
+              onPressFunction={() => this.goTo('MyProfileLink')}
+              border
+            />
+            <Label
               text="Earnings"
               icon="currency-usd"
               onPressFunction={() => this.goTo('Earnings')}
@@ -113,8 +132,8 @@ class Home extends Component {
               border
             />
             <Label
-              text="Withdrawals"
-              icon="clock-time-ten-outline"
+              text="Withdrawal History"
+              icon="history"
               onPressFunction={() => this.goTo('WithdrawalHistory')}
               border
             />
@@ -135,14 +154,15 @@ class Home extends Component {
               border
             />
             <Label
-              text="Help"
-              icon="help-circle-outline"
-              onPressFunction={() => {
-                Alert.alert(
-                  'Help',
-                  'Please reach out to us at emre@joinbackstage.co with any questions',
-                );
-              }}
+              text="Contact Us"
+              icon="lifebuoy"
+              onPressFunction={() => this.showHelpOptions()}
+              border
+            />
+            <Label
+              text="What's New"
+              icon="newspaper"
+              onPressFunction={() => this.goTo('Changelogs')}
               border
             />
 

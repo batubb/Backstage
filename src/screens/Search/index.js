@@ -211,6 +211,7 @@ class Search extends Component {
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
         <Header title="Discover" />
         <SearchBar
+          text="Search Creators"
           searchUser={(input) => this.searchUser(input)}
           style={{paddingBottom: SIZES.padding}}
         />

@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {View, Dimensions} from 'react-native';
+import {View, Dimensions, ActivityIndicator} from 'react-native';
 import Text from '../../components/Text';
 import constants from '../../resources/constants';
 import {COLORS, SIZES} from '../../resources/theme';
@@ -21,8 +21,9 @@ export default function MyModal(props) {
       <View
         style={{
           backgroundColor: COLORS.tertiaryBackgroundColor,
-          borderRadius: SIZES.radius,
-          marginHorizontal: SIZES.spacing * 4,
+          borderRadius: !props.loading ? SIZES.radius : SIZES.radius / 2,
+          // 36 equals to large size of activity indicator.
+          marginHorizontal: !props.loading ? SIZES.spacing * 4 : width / 2 - 36,
         }}
         behavior="padding">
         <View
@@ -32,12 +33,11 @@ export default function MyModal(props) {
             alignSelf: 'center',
             paddingVertical: SIZES.spacing * 5,
           }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              marginVertical: SIZES.spacing * 7,
-            }}>
-            {props.photo && (
+          {props.photo && (
+            <View
+              style={{
+                marginVertical: SIZES.spacing * 7,
+              }}>
               <MyImage
                 style={{
                   width: 80,
@@ -46,17 +46,19 @@ export default function MyModal(props) {
                 }}
                 photo={props.photo}
               />
-            )}
-          </View>
+            </View>
+          )}
+          {props.loading ? <ActivityIndicator size={'large'} style={{paddingLeft: 2}} /> : null}
           {props.text ? (
             <Text
               text={props.text}
               style={{
                 textAlign: 'left',
                 marginTop: SIZES.spacing * 3.5,
-                marginBottom: SIZES.spacing * 7,
+                marginBottom: SIZES.spacing * (props.photo ? 7 : 3.5),
                 paddingHorizontal: SIZES.spacing * 2,
                 fontSize: SIZES.h4,
+                ...props.textStyle,
               }}
             />
           ) : null}
