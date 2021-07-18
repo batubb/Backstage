@@ -442,7 +442,15 @@ class Comments extends Component {
                     justifyContent: 'space-between',
                   }}>
                   <View style={{width: width - 110}}>
-                    <Text text={item.user.username} />
+                    <View style={{flexDirection: 'row'}}>
+                      <Text text={`${item.user.username}`} />
+                      {item.user.verified === true ? (
+                        <VerifiedIcon
+                          size={14}
+                          style={{paddingLeft: SIZES.spacing}}
+                        />
+                      ) : null}
+                    </View>
                     <Text
                       text={item.comment}
                       style={{fontSize: 12, fontWeight: 'normal'}}

@@ -66,6 +66,11 @@ export default function handleURLSchemes(event, {navigation}) {
 
               if (video && video?.active === true) {
                 navigation.dispatch(StackActions.push('WatchVideo', {video}));
+
+                if (matches?.[3] === 'reply') {
+                  navigation.dispatch(StackActions.push('Comments', {video}));
+                }
+
                 resolve();
               } else {
                 Alert.alert('Oops', 'The video does not exist.');
