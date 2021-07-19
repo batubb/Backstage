@@ -2,18 +2,10 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, {Component} from 'react';
-import {
-  View,
-  Dimensions,
-  Alert,
-  Linking,
-} from 'react-native';
+import {View, Dimensions, Alert, Linking} from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
-import {
-  Loading,
-  Header,
-} from '../../components';
+import {Loading, Header} from '../../components';
 import {constants} from '../../resources';
 import {
   checkUserInfo,
@@ -50,33 +42,39 @@ class CheckInfo extends Component {
     const result = await checkUserInfo(Store.uid, true);
     await getFollowList(Store.uid);
 
-    Linking.getInitialURL().then(async (url) => {
-      if (!result) {
-        const userArray = await getDealsData();
-        this.setState({loading: false, userArray});
-      } else {
-        const deviceState = await OneSignal.getDeviceState();
-        await setUserDeviceInfo(Store, deviceState);
+    if (!result) {
+      const userArray = await getDealsData();
+      this.setState({loading: false, userArray});
+    } else {
+      const deviceState = await OneSignal.getDeviceState();
+      await setUserDeviceInfo(Store, deviceState);
 
-        //this.setState({loading: false});
-        const replaceActions = StackActions.replace('TabBarMenu');
-        this.props.navigation.dispatch(replaceActions);
+      //this.setState({loading: false});
+      const replaceActions = StackActions.replace('TabBarMenu');
+      this.props.navigation.dispatch(replaceActions);
 
-        if (this.props.route.params?.goToDiscover === true) {
-          await sleep(500);
-          this.props.navigation.navigate('SearchMenu', { screen: 'Search' });
-        }
-
-        OneSignal.setNotificationOpenedHandler((notification) => {
-          if (notification.notification.launchURL) {
-            handleURLSchemes(
-              {url: notification.notification.launchURL},
-              {navigation: this.props.navigation},
-            );
-          }
-        });
+      if (this.props.route.params?.goToDiscover === true) {
+        await sleep(500);
+        this.props.navigation.navigate('SearchMenu', {screen: 'Search'});
       }
-    });
+
+      Linking.getInitialURL().then(async (url) => {
+        if (url) {
+          handleURLSchemes(
+            {url},
+            {navigation: this.props.navigation},
+          );
+        }
+      });
+      // OneSignal.setNotificationOpenedHandler((notification) => {
+      //   if (notification.notification.launchURL) {
+      //     handleURLSchemes(
+      //       {url: notification.notification.launchURL},
+      //       {navigation: this.props.navigation},
+      //     );
+      //   }
+      // });
+    }
   };
 
   createAccount = async () => {

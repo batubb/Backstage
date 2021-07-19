@@ -134,6 +134,10 @@ class App extends Component {
       console.log('Prompt response:', response);
     });
 
+    OneSignal.setNotificationOpenedHandler((response) => {
+      console.log('Notification:', response);
+    });
+
     this.onIds();
 
     await RNIap.initConnection();

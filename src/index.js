@@ -4,7 +4,7 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
-import {View, LogBox} from 'react-native';
+import {View, LogBox, Linking} from 'react-native';
 import {Icon} from 'react-native-elements';
 import {constants} from './resources';
 import {STREAM_THEME} from './resources/theme';
@@ -45,6 +45,9 @@ import Changelogs from './screens/Changelogs';
 import MyProfileLink from './screens/MyProfileLink';
 import {COLORS} from './resources/theme';
 import {getBottomSpace, isIphoneX} from './lib/iPhoneXHelper';
+import {handleURLSchemes} from './lib';
+import OneSignal from 'react-native-onesignal';
+import Store from './store/Store';
 
 LogBox.ignoreAllLogs();
 
@@ -59,6 +62,22 @@ const Tab = createBottomTabNavigator();
 const navigationContainerRef = React.createRef();
 
 class MyStack extends React.Component {
+  componentDidMount() {
+    Linking.addEventListener('url', (event) =>
+      Store.user
+        ? handleURLSchemes(event, {navigation: navigationContainerRef.current})
+        : null,
+    );
+  }
+
+  componentWillUnmount() {
+    Linking.removeEventListener('url', (event) =>
+      Store.user
+        ? handleURLSchemes(event, {navigation: navigationContainerRef.current})
+        : null,
+    );
+  }
+
   render() {
     return (
       <NavigationContainer
