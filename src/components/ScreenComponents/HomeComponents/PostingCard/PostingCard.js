@@ -24,30 +24,28 @@ function PostingCardCumulativeViews(props) {
         position: 'absolute',
         bottom: 18,
       }}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <Icon
-          name="play"
-          type="ionicon"
-          color={COLORS.primaryLabelColor}
-          size={15}
-          style={{
-            shadowOffset: {width: 2, height: 2},
-            shadowColor: 'rgba(0, 0, 0, 0.2)',
-            shadowOpacity: 10,
-            shadowRadius: 1,
-          }}
-        />
-        <Text
-          text={`${followerCount(props.views)}`}
-          style={{
-            fontSize: 12,
-            marginLeft: SIZES.spacing,
-            textShadowColor: 'rgba(0, 0, 0, 0.2)',
-            textShadowOffset: {width: 2, height: 2},
-            textShadowRadius: 10,
-          }}
-        />
-      </View>
+      <Icon
+        name="play"
+        type="ionicon"
+        color={COLORS.primaryLabelColor}
+        size={15}
+        style={{
+          shadowOffset: {width: 2, height: 2},
+          shadowColor: 'rgba(0, 0, 0, 0.2)',
+          shadowOpacity: 10,
+          shadowRadius: 1,
+        }}
+      />
+      <Text
+        text={`${followerCount(props.views)}`}
+        style={{
+          fontSize: 12,
+          marginLeft: SIZES.spacing,
+          textShadowColor: 'rgba(0, 0, 0, 0.2)',
+          textShadowOffset: {width: 2, height: 2},
+          textShadowRadius: 10,
+        }}
+      />
     </View>
   );
 }

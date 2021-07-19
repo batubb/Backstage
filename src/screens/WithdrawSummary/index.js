@@ -15,6 +15,9 @@ class WithdrawSummary extends Component {
       loading: true,
       refreshing: false,
       showModal: false,
+      withdrawableBalance: this.parseFloatToFixed(
+        props.route.params.withdrawableBalance,
+      ),
     };
   }
 
@@ -22,18 +25,24 @@ class WithdrawSummary extends Component {
     this.setState({loading: false});
   };
 
-  onWithdrawApproved = async (amount = 0) => {
+  onWithdrawApproved = async (amount) => {
     this.setState({loading: true});
-    withdraw(amount, () => this.setState({showModal: true, loading: false}));
+
+    withdraw(amount, this.state.withdrawableBalance, () =>
+      this.setState({showModal: true, loading: false}),
+    );
   };
 
-  render() {
-    const {loading, refreshing, showModal} = this.state;
+  parseFloatToFixed = (value) => parseFloat(parseFloat(value).toFixed(2));
 
-    const availableBalance = 52.99;
-    const appleFees = availableBalance * 0.15;
-    const backstageFees = availableBalance * 0.1;
-    const userReceived = availableBalance - appleFees - backstageFees;
+  render() {
+    const {loading, refreshing, showModal, withdrawableBalance} = this.state;
+
+    const appleFees = this.parseFloatToFixed(withdrawableBalance * 0.15);
+    const backstageFees = this.parseFloatToFixed(withdrawableBalance * 0.1);
+    const userReceived = this.parseFloatToFixed(
+      withdrawableBalance - appleFees - backstageFees,
+    );
 
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
@@ -85,7 +94,7 @@ class WithdrawSummary extends Component {
               showLeftIcon={false}
               customRightComponent={
                 <Text
-                  text={`$${availableBalance}`}
+                  text={`$${withdrawableBalance}`}
                   style={{
                     right: SIZES.padding,
                     textAlign: 'left',
@@ -207,7 +216,7 @@ class WithdrawSummary extends Component {
                 activeOpacity: 0.8,
               }}
             />*/}
-            <Text
+            {/* <Text
               text="We will send your money to Bank of America account."
               style={{
                 textAlign: 'left',
@@ -216,16 +225,14 @@ class WithdrawSummary extends Component {
                 color: COLORS.secondaryLabelColor,
                 fontSize: SIZES.body5,
               }}
-            />
+            /> */}
             <View
               style={{
                 alignItems: 'center',
-                marginTop: SIZES.padding * 4,
+                marginTop: SIZES.padding * 6,
               }}>
               <Button
-                onPress={() =>
-                  this.onWithdrawApproved(parseFloat(userReceived).toFixed(2))
-                }
+                onPress={() => this.onWithdrawApproved(userReceived)}
                 text="Confirm"
                 primary
                 buttonStyle={{

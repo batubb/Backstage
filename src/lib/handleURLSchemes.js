@@ -17,7 +17,7 @@ export default function handleURLSchemes(event, {navigation}) {
 
     switch (matches?.[0]) {
       case 'profile':
-        navigation.navigate('SearchMenu', { screen: 'Search' });
+        navigation.navigate('SearchMenu', {screen: 'Search'});
         if (typeof matches?.[1] !== undefined) {
           await database()
             .ref('users')
@@ -48,11 +48,11 @@ export default function handleURLSchemes(event, {navigation}) {
         break;
 
       case 'my-profile':
-        navigation.navigate('ProfileMenu', { screen: 'Profile' });
+        navigation.navigate('ProfileMenu', {screen: 'Profile'});
         break;
 
       case 'video':
-        navigation.navigate('SearchMenu', { screen: 'Search' });
+        navigation.navigate('SearchMenu', {screen: 'Search'});
         if (
           typeof matches?.[1] !== 'undefined' &&
           typeof matches?.[2] !== 'undefined'
@@ -82,16 +82,22 @@ export default function handleURLSchemes(event, {navigation}) {
           reject();
         }
         break;
-  
+
       case 'withdraw':
-        navigation.navigate('ProfileMenu', { screen: 'Profile' });
-        setTimeout(() => navigation.dispatch(StackActions.push('WithdrawalHistory')), 1000);
+        navigation.navigate('ProfileMenu', {screen: 'Profile'});
+        setTimeout(
+          () => navigation.dispatch(StackActions.push('WithdrawalHistory')),
+          1000,
+        );
         resolve();
         break;
 
       case 'new-subscriber':
-        navigation.navigate('ProfileMenu', { screen: 'Profile' });
-        setTimeout(() => navigation.dispatch(StackActions.push('Subscribers')), 1000);
+        navigation.navigate('ProfileMenu', {screen: 'Profile'});
+        setTimeout(
+          () => navigation.dispatch(StackActions.push('Subscribers')),
+          1000,
+        );
         resolve();
         break;
 

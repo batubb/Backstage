@@ -5,6 +5,7 @@ import {
   ScrollView,
   RefreshControl,
   LogBox,
+  Alert,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {Loading, Header, Text, Button, Label} from '../../components';
@@ -15,6 +16,7 @@ import {COLORS, SIZES} from '../../resources/theme';
 import {StackActions} from '@react-navigation/native';
 import {LineChart} from 'react-native-chart-kit';
 import database from '@react-native-firebase/database';
+import {checkUserInfo} from '../../services';
 
 LogBox.ignoreLogs(['"" is not', 'No stops in gradient']);
 
@@ -23,7 +25,6 @@ const {width} = Dimensions.get('window');
 class Earnings extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       loading: true,
       refreshing: false,
@@ -34,6 +35,7 @@ class Earnings extends Component {
       numShowMonths: 5,
       data: [],
       totalEarnings: 0,
+      withdrawableBalance: 0,
     };
 
     this.months = constants.MONTHS;
@@ -41,20 +43,36 @@ class Earnings extends Component {
   }
 
   componentDidMount = async () => {
-    const {data, totalEarnings} = await this.getData();
-    this.setState({loading: false, data, totalEarnings});
+    const {data, totalEarnings, withdrawableBalance} = await this.getData();
+    this.setState({loading: false, data, totalEarnings, withdrawableBalance});
+
+    this.unsubscribe = this.props.navigation.addListener('focus', async (e) => {
+      this.setState({loading: true});
+      const {data, totalEarnings, withdrawableBalance} = await this.getData();
+      this.setState({loading: false, data, totalEarnings, withdrawableBalance});
+    });
+  };
+
+  componentWillUnmount = () => {
+    this.unsubscribe();
   };
 
   onRefresh = async () => {
     this.setState({refreshing: true});
-    const {data, totalEarnings} = await this.getData();
-    this.setState({refreshing: false, data, totalEarnings});
+    const {data, totalEarnings, withdrawableBalance} = await this.getData();
+    this.setState({
+      refreshing: false,
+      data,
+      totalEarnings,
+      withdrawableBalance,
+    });
   };
 
   getData = async () => {
     if (checkAndShowInfluencerModal(this.props.navigation)) {
       return;
     }
+    const updatedUser = await checkUserInfo(Store.user.uid, true);
     this.currentMonthIndex =
       new Date().getMonth() + 1 === 12 ? 0 : new Date().getMonth() + 1;
 
@@ -71,15 +89,21 @@ class Earnings extends Component {
       .child(Store.user.uid)
       .once('value');
 
-    let totalEarnings = 0;
+    const totalEarnings =
+      parseFloat(
+        updatedUser.price * (updatedUser.numLifetimeSubscribed ?? 0),
+      ).toFixed(2) ?? 0;
+
+    const withdrawableBalance =
+      parseFloat(
+        totalEarnings - (updatedUser.lifetimeWithdrawnAmount ?? 0),
+      ).toFixed(2) ?? 0;
+
     if (transactionsData.exists()) {
       const transactions = Object.values(
         Object.assign({}, transactionsData.val()),
       );
 
-      totalEarnings = parseFloat(
-        (Store.user.price * transactions.length).toFixed(2),
-      );
       transactions.forEach((transaction) => {
         const purchaseDate = new Date(parseInt(transaction.purchaseDate));
         const purchaseMonthName = this.months[purchaseDate.getMonth()].substr(
@@ -91,11 +115,15 @@ class Earnings extends Component {
         );
 
         if (purchaseMonthIndex) {
-          data[purchaseMonthIndex] += Store.user.price;
+          data[purchaseMonthIndex] += parseFloat(updatedUser.price);
         }
       });
     }
-    return {data, totalEarnings};
+    return {
+      data: data.map((d) => parseFloat(d.toFixed(2))),
+      totalEarnings,
+      withdrawableBalance,
+    };
   };
 
   goTo = (route, info = null) => {
@@ -103,7 +131,14 @@ class Earnings extends Component {
       const replaceActions = StackActions.push(route, info);
       return this.props.navigation.dispatch(replaceActions);
     } else if (route === 'WithdrawSummary') {
-      const replaceActions = StackActions.push(route);
+      if (this.state.withdrawableBalance < 5) {
+        Alert.alert('Oops', 'To withdraw your money, your withdrawal balance must be over $5.');
+        return;
+      }
+
+      const replaceActions = StackActions.push(route, {
+        withdrawableBalance: this.state.withdrawableBalance,
+      });
       return this.props.navigation.dispatch(replaceActions);
     }
   };
@@ -146,6 +181,7 @@ class Earnings extends Component {
       clickedPointData,
       data,
       totalEarnings,
+      withdrawableBalance,
     } = this.state;
 
     return (
@@ -212,7 +248,8 @@ class Earnings extends Component {
                 }}>
                 <Text
                   text={
-                    clickedPointData.name || this.months[this.currentMonthIndex-1]
+                    clickedPointData.name ||
+                    this.months[this.currentMonthIndex - 1]
                   }
                   style={{
                     textAlign: 'left',
@@ -292,7 +329,7 @@ class Earnings extends Component {
               showLeftIcon={false}
               customRightComponent={
                 <Text
-                  text={`$${data[data.length - 1]}`}
+                  text={`$${withdrawableBalance}`}
                   style={{
                     textAlign: 'left',
                     paddingLeft: SIZES.padding * 6,

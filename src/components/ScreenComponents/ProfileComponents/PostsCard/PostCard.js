@@ -106,44 +106,41 @@ export default function PostCard(props) {
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                paddingBottom: props.item.title ? SIZES.spacing * 2 : 0,
+                padding: SIZES.padding,
+                position: 'absolute',
+                bottom: 18,
               }}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Icon
-                  name="play"
-                  type="ionicon"
-                  color={COLORS.primaryLabelColor}
-                  size={15}
-                  style={{
-                    shadowOffset: {width: 2, height: 2},
-                    shadowColor: 'rgba(0, 0, 0, 0.2)',
-                    shadowOpacity: 10,
-                    shadowRadius: 1,
-                  }}
-                />
-                <Text
-                  text={`${followerCount(
-                    props.isPersonCard
-                      ? props.item.cumulativeViewsUser
-                      : props.item.cumulativeViews,
-                  )}`}
-                  style={{
-                    fontSize: 12,
-                    marginLeft: SIZES.spacing,
-                    textShadowColor: 'rgba(0, 0, 0, 0.2)',
-                    textShadowOffset: {width: 2, height: 2},
-                    textShadowRadius: 10,
-                  }}
-                />
-              </View>
+              <Icon
+                name="play"
+                type="ionicon"
+                color={COLORS.primaryLabelColor}
+                size={15}
+                style={{
+                  shadowOffset: {width: 2, height: 2},
+                  shadowColor: 'rgba(0, 0, 0, 0.2)',
+                  shadowOpacity: 10,
+                  shadowRadius: 1,
+                }}
+              />
+              <Text
+                text={`${followerCount(
+                  props.isPersonCard
+                    ? props.item.cumulativeViewsUser
+                    : props.item.cumulativeViews,
+                )}`}
+                style={{
+                  fontSize: 12,
+                  marginLeft: SIZES.spacing,
+                  textShadowColor: 'rgba(0, 0, 0, 0.2)',
+                  textShadowOffset: {width: 2, height: 2},
+                  textShadowRadius: 10,
+                }}
+              />
             </View>
             {props.item.title ? (
               <Text
-                text={
-                  props.item.title.length >= 17
-                    ? `${props.item.title.substring(0, 17)}...`
-                    : props.item.title
-                }
+                text={props.item.title}
+                numberOfLines={1}
                 style={{
                   left: 1.5,
                   fontSize: 13,

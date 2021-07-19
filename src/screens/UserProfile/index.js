@@ -28,6 +28,7 @@ import {
   report,
   getFollowerCount,
   getSubscriberCount,
+  sendNotificationToUserDevices,
 } from '../../services';
 import Store from '../../store/Store';
 import {Icon} from 'react-native-elements';
@@ -184,6 +185,14 @@ class UserProfile extends Component {
         this.state.user.uid,
       );
       console.log('got subscription', subscribtion);
+      if (subscribtion.subscribtion === true) {
+        await sendNotificationToUserDevices(
+          'new-subscriber',
+          [this.state.user.uid],
+          undefined,
+          'backstage://new-subscriber',
+        );
+      }
 
       this.setState({subscribtion});
       console.log('after sub2');
