@@ -156,17 +156,13 @@ class Home extends Component {
     }
   };
 
-    expireAlert = () => {
-        Alert.alert(
-            'Oops',
-            'You must become a member to view the content.',
-            [
-                {
-                    text: 'Okay',
-                },
-            ]
-        );
-    }
+  expireAlert = () => {
+    Alert.alert('Oops', 'You must become a member to view the content.', [
+      {
+        text: 'Okay',
+      },
+    ]);
+  };
 
   captionBar = (text = 'Now', live = false, user = null) => {
     return (
@@ -205,28 +201,6 @@ class Home extends Component {
           {user?.verified === true ? <VerifiedIcon size={15} /> : null}
         </View>
       </View>
-    );
-  };
-
-  liveArrayCard = (liveArray) => {
-    return (
-      <>
-        {this.captionBar('Now', true)}
-        <FlatList
-          data={liveArray}
-          keyExtractor={(item) => item.uid}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          renderItem={({item}) => (
-            <PostingCard
-              onPress={() => this.goTo('WatchVideo', item)}
-              width={width}
-              item={item}
-              showProfilePicInCard
-            />
-          )}
-        />
-      </>
     );
   };
 
@@ -365,6 +339,20 @@ class Home extends Component {
               text={'Add Story'}
             />
           )}
+          <FlatList
+            data={this.state.liveArray}
+            keyExtractor={(item) => item.uid}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={({item}) => (
+              <Story
+                onPress={() => this.goTo('WatchVideo', item)}
+                photo={item.user.photo}
+                text={item.user.username}
+                isLive
+              />
+            )}
+          />
 
           <FlatList
             data={this.state.userStoriesArray}
@@ -438,7 +426,6 @@ class Home extends Component {
               />
             }
             showsVerticalScrollIndicator={false}>
-            {liveArray.length !== 0 ? this.liveArrayCard(liveArray) : null}
             {userPostsArray.length !== 0 ? (
               <FlatList
                 data={userPostsArray}
