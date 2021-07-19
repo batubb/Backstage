@@ -224,7 +224,7 @@ exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
   if (
     req.body.notification_type === 'INITIAL_BUY' ||
     (req.body.notification_type === 'DID_CHANGE_RENEWAL_STATUS' &&
-      req.body.auto_renew_status) ||
+      req.body.auto_renew_status === 'true') ||
     req.body.notification_type === 'DID_RENEW'
   ) {
     const originalTransactionIdFromReceipt =
@@ -290,6 +290,18 @@ exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
         {structuredData: true},
       );
       return;
+    }
+
+    if (userUID === null) {
+      functions.logger.error(
+        'Could not find a matching user uid for product_id=',
+        req.body.auto_renew_product_id,
+        ' with request=',
+        req.body,
+        ' and latest receipt= ',
+        req.body.unified_receipt.latest_receipt_info[0],
+        {structuredData: true},
+      );
     }
 
     // 2. check if this is a new transaction
