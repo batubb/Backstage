@@ -9,7 +9,14 @@ import Store from '../store/Store';
 export default async function createFeedback(uid, type, message = '', media) {
   const feedbackRef = await database().ref('feedbacks').child(uid);
 
+  var mediaData = {};
+
+  for (const item of media) {
+    mediaData[item.uid] = item;
+  }
+
   await feedbackRef.set({
+    media: mediaData,
     uid,
     type,
     message,
@@ -17,8 +24,4 @@ export default async function createFeedback(uid, type, message = '', media) {
     status: 0, // 0 = sent, 1 = read receipt, 2 = approved & archieved
     user: Store.user,
   });
-
-  for (const item of media) {
-    await feedbackRef.child('media').child(item.uid).set(item);
-  }
 }
