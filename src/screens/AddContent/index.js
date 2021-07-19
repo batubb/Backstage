@@ -162,7 +162,7 @@ export default class App extends Component {
           height: height,
         },
         assetPlaybackId: assetPlaybackId,
-        title: this.state.title === '' ? undefined : this.state.title,
+        title: this.state.title === '' ? '' : this.state.title,
         photo: `https://image.mux.com/${assetPlaybackId}/thumbnail.png?width=${width}&height=${height}&fit_mode=pad`,
         active: false,
       };

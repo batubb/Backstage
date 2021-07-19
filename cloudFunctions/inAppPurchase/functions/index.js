@@ -107,10 +107,22 @@ exports.validateIOS = functions.https.onCall(async (d) => {
 });
 
 exports.getUserAndInfluencerFromOrigTransactionId = functions.https.onRequest(
-  async (req, res) => {},
+  async (req, res) => {
+    const snapshot = await admin
+      .database()
+      .ref('transactionsasd')
+      .child('OllmubrfMxcsClSbjp8iGb28hHg')
+      .child('1000000843790521')
+      .once('value');
+    console.log(snapshot.exists());
+    snapshot.forEach((user) => {
+      console.log(user.val());
+    });
+    return res.status(200).send('assdd');
+  },
 );
 
-exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
+exports.iapStatusUpdate2 = functions.https.onRequest(async (req, res) => {
   //all receipt info will be in req.body
   functions.logger.info('notificaiton type is');
   console.log(req.body.notification_type);
@@ -188,6 +200,148 @@ exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
         return res.status(200).end();
       }
     });
+  }
+  // refund case ini yapmadik
+  //else if (req.body.notification_type === 'DID_CHANGE_RENEWAL_STATUS' || req.body.notification_type === 'CANCEL') {
+  // latest receipt.cancellation_date_ms
+  //}
+
+  return res.status(200).end();
+});
+
+exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
+  //all receipt info will be in req.body
+  functions.logger.info('request body is: ', req.body, {structuredData: true});
+  functions.logger.info(
+    'notification type and latest receipt info is: ',
+    req.body.notification_type,
+    req.body.unified_receipt.latest_receipt_info[0],
+    {
+      structuredData: true,
+    },
+  );
+
+  if (
+    req.body.notification_type === 'INITIAL_BUY' ||
+    (req.body.notification_type === 'DID_CHANGE_RENEWAL_STATUS' &&
+      req.body.auto_renew_status === 'true') ||
+    req.body.notification_type === 'DID_RENEW'
+  ) {
+    const originalTransactionIdFromReceipt =
+      req.body.unified_receipt.latest_receipt_info[0].original_transaction_id;
+    const endTimestamp =
+      req.body.unified_receipt.latest_receipt_info[0].expires_date_ms;
+    const transactionIdFromReceipt =
+      req.body.unified_receipt.latest_receipt_info[0].transaction_id;
+    // 1. update time looking at original transaction id at our database
+    const snapshot = await admin.database().ref('followList').once('value');
+    let userUID = null;
+    let influencerUID = null;
+    snapshot.forEach((user) => {
+      // key is the influencer uid
+      // user.val()[key][followerUID] is the user id
+      for (key in user.val()) {
+        if (
+          user.val()[key]['appStoreOriginalTransactionId'] ===
+          originalTransactionIdFromReceipt
+        ) {
+          influencerUID = user.val()[key]['uid'];
+          userUID = user.val()[key]['followerUID'];
+          break;
+        }
+      }
+    });
+
+    if (userUID !== null && influencerUID !== null) {
+      var updates = {};
+      updates[
+        `followList/${userUID}/${influencerUID}/endTimestamp`
+      ] = endTimestamp;
+      updates[
+        `followList/${userUID}/${influencerUID}/timestamp`
+      ] = new Date().getTime();
+      await admin.database().ref().update(updates);
+    } else {
+      console.error(
+        'Could not find a matching transaction id for  ' +
+          originalTransactionIdFromReceipt,
+      );
+    }
+
+    if (influencerUID === null) {
+      const value = await admin.database().ref('users').once('value');
+      value.forEach((element) => {
+        if (
+          element.val().appStoreProductId === req.body.auto_renew_product_id
+        ) {
+          influencerUID = element.val().uid;
+        }
+      });
+    }
+
+    if (influencerUID === null) {
+      functions.logger.error(
+        'Could not find a matching influencer uid for product_id=',
+        req.body.auto_renew_product_id,
+        ' with request=',
+        req.body,
+        ' and latest receipt= ',
+        req.body.unified_receipt.latest_receipt_info[0],
+        {structuredData: true},
+      );
+      return;
+    }
+
+    if (userUID === null) {
+      functions.logger.error(
+        'Could not find a matching user uid for product_id=',
+        req.body.auto_renew_product_id,
+        ' with request=',
+        req.body,
+        ' and latest receipt= ',
+        req.body.unified_receipt.latest_receipt_info[0],
+        {structuredData: true},
+      );
+    }
+
+    // 2. check if this is a new transaction
+    const transactionSnapshot = await admin
+      .database()
+      .ref('transactions')
+      .child(influencerUID)
+      .child(transactionIdFromReceipt)
+      .once('value');
+
+    let isNewTransaction = true;
+    if (transactionSnapshot.exists()) {
+      isNewTransaction = false;
+    }
+
+    // 3. update transactions
+    const data = {
+      originalTransactionId: originalTransactionIdFromReceipt,
+      purchaseDate: parseInt(
+        req.body.unified_receipt.latest_receipt_info[0].purchase_date_ms,
+        10,
+      ),
+      followerUID: userUID,
+    };
+
+    var transactionUpdates = {};
+    transactionUpdates[
+      `transactions/${influencerUID}/${transactionIdFromReceipt}`
+    ] = data;
+    await admin.database().ref().update(transactionUpdates);
+
+    // 4. increment numLifetimeSubscribed if it is a new transaction
+    if (isNewTransaction) {
+      admin
+        .database()
+        .ref('users')
+        .child(influencerUID)
+        .child('numLifetimeSubscribed')
+        .set(admin.database.ServerValue.increment(1));
+    }
   }
   // refund case ini yapmadik
   //else if (req.body.notification_type === 'DID_CHANGE_RENEWAL_STATUS' || req.body.notification_type === 'CANCEL') {
