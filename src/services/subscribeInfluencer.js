@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import database from '@react-native-firebase/database';
 import getFollowList from './getFollowList';
+import sendNotificationToUserDevices from './sendNotificationToUserDevices';
 
 export default async function subscribeInfluencer(user, influencer, sub) {
   const data = {
@@ -20,6 +21,7 @@ export default async function subscribeInfluencer(user, influencer, sub) {
   if (sub.type === 'apple') {
     data.appStoreOriginalTransactionId = sub.originalTransactionId;
   }
+  const notification_url = 'backstage://new-subscriber';
 
   try {
     var updates = {};
@@ -29,6 +31,12 @@ export default async function subscribeInfluencer(user, influencer, sub) {
 
     await database().ref().update(updates);
     await getFollowList(user.uid);
+    await sendNotificationToUserDevices(
+      'new-subscriber',
+      [user.uid],
+      undefined,
+      notification_url,
+    );
     return true;
   } catch (error) {
     console.log('subscribing to inf failed with error: ', error);
