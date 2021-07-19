@@ -300,7 +300,7 @@ exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
       .child(transactionIdFromReceipt)
       .once('value');
 
-    const isNewTransaction = true;
+    let isNewTransaction = true;
     if (transactionSnapshot.exists()) {
       isNewTransaction = false;
     }
