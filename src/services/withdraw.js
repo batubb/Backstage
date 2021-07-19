@@ -5,7 +5,7 @@ import Store from '../store/Store';
 import {makeid} from '../lib';
 import constants from '../resources/constants';
 
-export default async function withdraw(amount, callback = undefined) {
+export default async function withdraw(amount, withdrawnAmountIncludedFees, callback = undefined) {
   const uid = makeid(40, 'uuid');
 
   try {
@@ -16,13 +16,18 @@ export default async function withdraw(amount, callback = undefined) {
       amount: parseFloat(amount),
       status: 0, // 0 = Pending, 1 = Completed, 2 = Error
     };
-    
+
+    await database()
+      .ref('users')
+      .child(Store.user.uid)
+      .child('lifetimeWithdrawnAmount')
+      .set(database.ServerValue.increment(withdrawnAmountIncludedFees));
     await database().ref('withdraws').child(uid).set(data);
     callback && callback();
     return true;
   } catch (error) {
     Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
-  } 
+  }
 
   return false;
 }
