@@ -345,7 +345,7 @@ class Earnings extends Component {
             <View
               style={{
                 alignItems: 'center',
-                marginTop: SIZES.padding * 3,
+                marginVertical: SIZES.padding * 3,
               }}>
               <Button
                 onPress={() => this.onWithdrawButtonPressed()}

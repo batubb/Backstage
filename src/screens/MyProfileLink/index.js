@@ -138,6 +138,7 @@ class MyProfileLink extends Component {
               style={{
                 alignItems: 'center',
                 marginTop: SIZES.padding,
+                marginBottom: SIZES.padding * 4,
               }}>
               <Button
                 onPress={() => this.shareProfileLink()}
@@ -151,15 +152,6 @@ class MyProfileLink extends Component {
                 }}
                 textStyle={{
                   fontSize: SIZES.body3,
-                }}
-                rightIconProps={{
-                  name: 'share-variant',
-                  color: '#FFF',
-                  type: 'material-community',
-                  size: 22,
-                  style: {
-                    paddingLeft: SIZES.spacing,
-                  },
                 }}
               />
             </View>

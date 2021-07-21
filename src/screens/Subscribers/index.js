@@ -130,7 +130,7 @@ class Subscribers extends Component {
             ListEmptyComponent={() => {
               return (
                 <View style={{width: width, alignItems: 'center', marginTop: SIZES.padding * 4}}>
-                  <Text text="There is no subscribers" style={{color: 'gray'}} />
+                  <Text text="There are no subscribers" style={{color: 'gray'}} />
                 </View>
               );
             }}

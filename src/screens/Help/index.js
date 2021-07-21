@@ -106,11 +106,9 @@ class Help extends Component {
         })),
       );
 
-      Alert.alert(
-        'Thank you for your feedback!',
-        undefined,
-        [{title: 'Okay', style: 'cancel'}],
-      );
+      Alert.alert('Thank you for your feedback!', undefined, [
+        {title: 'Okay', style: 'cancel'},
+      ]);
       this.setState({message: '', media: []});
       this.props.navigation.dispatch(StackActions.pop());
     } catch (error) {
@@ -266,7 +264,11 @@ class Help extends Component {
               }
               style={{flex: 1}}>
               <TextInput
-                placeholder="Briefly explain what could improve.."
+                placeholder={
+                  type === 'Ask a Question'
+                    ? 'Your question..'
+                    : 'Briefly explain what could improve..'
+                }
                 style={{
                   fontFamily:
                     Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',

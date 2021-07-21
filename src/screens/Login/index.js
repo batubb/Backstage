@@ -173,7 +173,7 @@ class Login extends Component {
                     }
                     style={{
                       fontWeight: 'bold',
-                      fontSize: 30,
+                      fontSize: 26,
                       fontFamily: 'SF Pro Display',
                     }}
                   />

@@ -284,7 +284,7 @@ class Comments extends Component {
             ListEmptyComponent={() => {
               return (
                 <View style={{width: width, alignItems: 'center'}}>
-                  <Text text="There is no comments" style={{color: 'gray'}} />
+                  <Text text="There are no comments" style={{color: 'gray'}} />
                 </View>
               );
             }}
