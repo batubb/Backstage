@@ -21,7 +21,6 @@ export default async function subscribeInfluencer(user, influencer, sub) {
   if (sub.type === 'apple') {
     data.appStoreOriginalTransactionId = sub.originalTransactionId;
   }
-  const notification_url = 'backstage://new-subscriber';
 
   try {
     var updates = {};
@@ -33,9 +32,9 @@ export default async function subscribeInfluencer(user, influencer, sub) {
     await getFollowList(user.uid);
     await sendNotificationToUserDevices(
       'new-subscriber',
-      [user.uid],
+      [influencer.uid],
       undefined,
-      notification_url,
+      'backstage://new-subscriber',
     );
     return true;
   } catch (error) {

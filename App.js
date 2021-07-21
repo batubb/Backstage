@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNIap from 'react-native-iap';
 import {Alert} from 'react-native';
 import database from '@react-native-firebase/database';
-import {subscribeInfluencer} from './src/services';
+import {subscribeInfluencer, sendNotificationToUserDevices} from './src/services';
 
 class App extends Component {
   constructor(props) {
@@ -94,6 +94,12 @@ class App extends Component {
         expiryDate,
       );
       await database().ref().update(updates);
+      await sendNotificationToUserDevices(
+        'new-subscriber',
+        [infUID],
+        undefined,
+        'backstage://new-subscriber',
+      );
       return true;
     }
     return false;
@@ -132,10 +138,6 @@ class App extends Component {
 
     OneSignal.promptForPushNotificationsWithUserResponse((response) => {
       console.log('Prompt response:', response);
-    });
-
-    OneSignal.setNotificationOpenedHandler((response) => {
-      console.log('Notification:', response);
     });
 
     this.onIds();
