@@ -267,7 +267,7 @@ class WatchVideo extends Component {
               this.player = ref;
             }}
             onLoadStart={() => this.setState({videoLoading: true})}
-            onLoad={() => this.setState({videoLoading: false})}
+            onLoad={() => this.setState({videoLoading: false, paused: false})}
             onProgress={(data) => this.setTime(data)}
             onEnd={() => this.setState({paused: true, controlsVisible: true})}
             fullScreen={this.state.fullScreen}
@@ -298,7 +298,6 @@ class WatchVideo extends Component {
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-between',
-                  height: '23%',
                   marginBottom: SIZES.spacing * 10,
                 }}>
                 <View style={{width: '70%', marginTop: 'auto'}}>
@@ -328,9 +327,7 @@ class WatchVideo extends Component {
                 <View
                   style={{
                     alignItems: 'center',
-                    display: 'flex',
                     justifyContent: 'space-between',
-                    bottom: SIZES.padding,
                   }}>
                   <View
                     style={{
@@ -381,7 +378,7 @@ class WatchVideo extends Component {
                     onPress={() => this.setState({optionsVisible: true})}
                     style={{
                       paddingHorizontal: SIZES.spacing,
-                      paddingVertical: SIZES.padding,
+                      paddingVertical: SIZES.spacing,
                     }}
                     size={20}
                   />
@@ -392,6 +389,7 @@ class WatchVideo extends Component {
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'space-between',
+                  marginBottom: getBottomSpace() / 2,
                 }}>
                 <TouchableOpacity
                   onPress={() => this.setState({paused: !paused})}>
@@ -403,7 +401,7 @@ class WatchVideo extends Component {
                   />
                 </TouchableOpacity>
                 <Slider
-                  style={{width: width - 150}}
+                  style={{width: width - 170}}
                   value={videoInfo.currentTime}
                   thumbTintColor="#fff"
                   minimumTrackTintColor="#fff"
@@ -446,14 +444,24 @@ class WatchVideo extends Component {
               }
               style={{
                 position: 'absolute',
-                right: SIZES.padding * 2,
-                bottom: getBottomSpace() + SIZES.padding * 0.5,
+                width: '90%',
+                height: 40,
+                display: 'flex',
+                justifyContent: 'flex-end',
+                alignSelf: 'center',
+                alignContent: 'flex-end',
+                alignItems: 'flex-end',
+                bottom: getBottomSpace() * 0.475 + SIZES.padding * 2,
               }}>
               <Icon
-                name="fullscreen-exit"
+                name={!this.state.fullScreen ? 'fullscreen' : 'fullscreen-exit'}
                 color="#FFF"
                 type="material-community"
                 size={28}
+                style={{
+                  justifyContent: 'center',
+                  flex: 1,
+                }}
               />
             </TouchableOpacity>
           )}

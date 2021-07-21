@@ -230,6 +230,7 @@ class WithdrawSummary extends Component {
               style={{
                 alignItems: 'center',
                 marginTop: SIZES.padding * 6,
+                marginBottom: SIZES.padding * 4,
               }}>
               <Button
                 onPress={() => this.onWithdrawApproved(userReceived)}
