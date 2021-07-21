@@ -184,8 +184,10 @@ class EditBankAccount extends Component {
         ) : (
           <KeyboardAvoidingView
             behavior="padding"
+            style={{flex: 1}}
             keyboardVerticalOffset={getBottomSpace()}>
             <ScrollView
+              style={{flex: 1}}
               refreshControl={
                 <RefreshControl refreshing={refreshing} tintColor="white" />
               }>
@@ -217,6 +219,9 @@ class EditBankAccount extends Component {
                   marginBottom: SIZES.spacing * 3,
                 }}
                 onPressFunction={() => {}}
+                touchableOpacityProps={{
+                  activeOpacity: 0.8
+                }}
               />
               {this.renderInput(
                 'Recipient Legal Full Name',
@@ -270,6 +275,9 @@ class EditBankAccount extends Component {
                   marginBottom: SIZES.spacing * 3,
                 }}
                 onPressFunction={() => {}}
+                touchableOpacityProps={{
+                  activeOpacity: 0.8
+                }}
               />
               {this.renderInput(
                 'IBAN',
@@ -286,6 +294,7 @@ class EditBankAccount extends Component {
                 style={{
                   alignItems: 'center',
                   marginTop: SIZES.padding * 4,
+                  marginBottom: SIZES.padding * 4,
                 }}>
                 <Button
                   onPress={() => this.saveBankAccount()}

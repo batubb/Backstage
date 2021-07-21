@@ -14,6 +14,7 @@ import {StackActions} from '@react-navigation/native';
 import {Loading, Header, Label} from '../../components';
 import {constants} from '../../resources';
 import auth from '@react-native-firebase/auth';
+import OneSignal from 'react-native-onesignal';
 
 class Home extends Component {
   constructor(props) {
@@ -57,6 +58,7 @@ class Home extends Component {
           auth()
             .signOut()
             .then(async () => {
+              OneSignal.disablePush(true);
               this.goTo('Welcome');
             })
             .catch(() => {
@@ -137,12 +139,12 @@ class Home extends Component {
               onPressFunction={() => this.goTo('WithdrawalHistory')}
               border
             />
-            <Label
+            {/* <Label
               text="Notifications"
               icon="bell"
               onPressFunction={() => this.goTo('Notifications')}
               border
-            />
+            /> */}
             <Label
               text="Privacy & Terms"
               icon="file-document-outline"

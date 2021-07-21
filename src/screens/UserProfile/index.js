@@ -185,15 +185,6 @@ class UserProfile extends Component {
         this.state.user.uid,
       );
       console.log('got subscription', subscribtion);
-      if (subscribtion.subscribtion === true) {
-        await sendNotificationToUserDevices(
-          'new-subscriber',
-          [this.state.user.uid],
-          undefined,
-          'backstage://new-subscriber',
-        );
-      }
-
       this.setState({subscribtion});
       console.log('after sub2');
     } catch (error) {
