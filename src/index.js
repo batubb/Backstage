@@ -63,11 +63,28 @@ const navigationContainerRef = React.createRef();
 
 class MyStack extends React.Component {
   componentDidMount() {
-    Linking.addEventListener('url', (event) =>
-      Store.user
-        ? handleURLSchemes(event, {navigation: navigationContainerRef.current})
-        : null,
-    );
+    let isNotificationOpened = false;
+    OneSignal.setNotificationOpenedHandler((response) => {
+      if (Store.user) {
+        isNotificationOpened = true;
+        handleURLSchemes(
+          {url: response.notification.launchURL},
+          {navigation: navigationContainerRef.current},
+        );
+      }
+    });
+    Linking.addEventListener('url', async (event) => {
+      if (await isNotificationOpened === true) {
+        isNotificationOpened = false;
+        return;
+      }
+      if (Store.user) {
+        handleURLSchemes(
+          event,
+          {navigation: navigationContainerRef.current},
+        );
+      }
+    });
   }
 
   componentWillUnmount() {
