@@ -46,7 +46,11 @@ class CheckInfo extends Component {
       const userArray = await getDealsData();
       this.setState({loading: false, userArray});
     } else {
-      const deviceState = await OneSignal.getDeviceState();
+      let deviceState = await OneSignal.getDeviceState();
+      if (!deviceState.isSubscribed) {
+        OneSignal.disablePush(false);
+        deviceState = await OneSignal.getDeviceState();
+      }
       await setUserDeviceInfo(Store, deviceState);
 
       //this.setState({loading: false});
