@@ -6,7 +6,8 @@ import {constants} from '../resources';
 /// Supported Links:
 /// backstage://profile/USERNAME
 /// backstage://my-profile
-/// backstage://videos/USER_ID/VIDEO_ID
+/// backstage://new-post/USER_ID/VIDEO_ID
+/// backstage://live/USER_ID/VIDEO_ID
 /// backstage://withdraw
 /// backstage://new-subscriber
 export default function handleURLSchemes(event, {navigation}) {
@@ -51,12 +52,19 @@ export default function handleURLSchemes(event, {navigation}) {
         navigation.navigate('ProfileMenu', {screen: 'Profile'});
         break;
 
-      case 'video':
+      case 'new-post':
         navigation.navigate('SearchMenu', {screen: 'Search'});
         if (
           typeof matches?.[1] !== 'undefined' &&
           typeof matches?.[2] !== 'undefined'
         ) {
+          const videoOwner = await (
+            await database().ref('users').child(matches?.[1]).once('value')
+          ).val();
+          if (videoOwner) {
+            navigation.dispatch(StackActions.push('UserProfile', {user: videoOwner}));
+          }
+
           await database()
             .ref('posts')
             .child(matches?.[1])
@@ -74,6 +82,41 @@ export default function handleURLSchemes(event, {navigation}) {
                 resolve();
               } else {
                 Alert.alert('Oops', 'The video does not exist.');
+                reject();
+              }
+            })
+            .catch(() => reject());
+        } else {
+          reject();
+        }
+        break;
+
+      case 'live':
+        navigation.navigate('SearchMenu', {screen: 'Search'});
+        if (
+          typeof matches?.[1] !== 'undefined' &&
+          typeof matches?.[2] !== 'undefined'
+        ) {
+          const videoOwner = await (
+            await database().ref('users').child(matches?.[1]).once('value')
+          ).val();
+          if (videoOwner) {
+            navigation.dispatch(StackActions.push('UserProfile', {user: videoOwner}));
+          }
+
+          await database()
+            .ref('posts')
+            .child(matches?.[1])
+            .child(matches?.[2])
+            .once('value', (snap) => {
+              const video = snap.val();
+
+              if (video) {
+                navigation.dispatch(StackActions.push('WatchVideo', {video}));
+
+                resolve();
+              } else {
+                Alert.alert('Oops', 'The live-stream does not exist.');
                 reject();
               }
             })
