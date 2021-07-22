@@ -146,6 +146,23 @@ class Home extends Component {
               border
             /> */}
             <Label
+              text="Frequently Asked Questions"
+              icon="pin"
+              iconProps={{
+                style: {
+                  transform: [
+                    {rotate: '45deg'}
+                  ],
+                },
+              }}
+              onPressFunction={() => {
+                Linking.openURL(
+                  'https://tangible-chameleon-1ef.notion.site/Frequently-Asked-Questions-9063ad0bf34b4e468f1771f8cd1a5e31',
+                ).catch((err) => console.error('An error occurred', err));
+              }}
+              border
+            />
+            <Label
               text="Privacy & Terms"
               icon="file-document-outline"
               onPressFunction={() => {

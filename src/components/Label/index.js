@@ -14,6 +14,7 @@ export default class ProfileLabels extends Component {
     const {
       onPressFunction,
       icon,
+      iconProps,
       text,
       border,
       style = {},
@@ -26,7 +27,9 @@ export default class ProfileLabels extends Component {
     } = this.props;
 
     return (
-      <TouchableOpacity onPress={() => onPressFunction()} {...touchableOpacityProps}>
+      <TouchableOpacity
+        onPress={() => onPressFunction()}
+        {...touchableOpacityProps}>
         <View
           style={[
             styles.labelCont,
@@ -36,7 +39,12 @@ export default class ProfileLabels extends Component {
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             {showLeftIcon ? (
               <View style={styles.icon}>
-                <Icon name={icon} color="#FFF" type="material-community" />
+                <Icon
+                  name={icon}
+                  color="#FFF"
+                  type="material-community"
+                  {...iconProps}
+                />
               </View>
             ) : null}
             <View style={{flexDirection: 'column'}}>
