@@ -370,14 +370,14 @@ app.post('/getFollowingUserStories', (request, response) => {
         }
       }
 
-      const postsValue = await admin
+      const postsValue2 = await admin
         .database()
         .ref('stories')
         .child(uid)
         .once('value');
       var myStoriesArray = [];
 
-      postsValue.forEach((post) => {
+      postsValue2.forEach((post) => {
         if (post.val()) {
           if (
             new Date().getTime() - post.val().timestamp <
