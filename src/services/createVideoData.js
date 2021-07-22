@@ -33,17 +33,21 @@ export default async function createVideoData(
   }
 
   updates[`users/${user.uid}/lastActivity`] = new Date().getTime();
-  const video_url = `backstage://video/${user.uid}/${video.uid}`;
+  const video_url = `backstage://${type === 'live' ? 'live' : 'new-post'}/${
+    user.uid
+  }/${video.uid}`;
   const notification_type = type === 'live' ? 'live' : 'new-post';
 
   try {
     await database().ref().update(updates);
-    await sendNotificationToUserSubscribers(
-      notification_type,
-      user,
-      [{key: '{username}', value: user.username}],
-      video_url,
-    );
+    if (video.active !== false) {
+      await sendNotificationToUserSubscribers(
+        notification_type,
+        user,
+        [{key: '{username}', value: user.username}],
+        video_url,
+      );
+    }
     return true;
   } catch (error) {
     Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);

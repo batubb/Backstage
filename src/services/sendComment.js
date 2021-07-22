@@ -31,7 +31,7 @@ export default async function sendComment(user, video, comment, reply = null) {
       if (typeof userData.token !== 'undefined') {
         if (typeof userData.notifications.roomActivities !== 'undefined') {
           if (userData.notifications.roomActivities) {
-            const video_url = `backstage://video/${video.user.uid}/${video.uid}/reply`;
+            const video_url = `backstage://new-post/${video.user.uid}/${video.uid}/reply`;
 
             await sendNotificationToUserDevices(
               'new-comment',
