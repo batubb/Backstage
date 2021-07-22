@@ -23,7 +23,7 @@ import {
 import {constants} from '../../resources';
 import {getUserPosts, checkSubscribtion} from '../../services';
 import Store from '../../store/Store';
-import {timeDifference, generateStreamToken, makeid} from '../../lib';
+import {isAdmin, makeid} from '../../lib';
 import {StackActions} from '@react-navigation/native';
 import database from '@react-native-firebase/database';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
@@ -64,7 +64,7 @@ class Chat extends Component {
 
   componentDidMount = async () => {
     const subscribtion =
-      Store.uid !== this.state.user.uid
+      Store.uid !== this.state.user.uid && !isAdmin(Store.user)
         ? await checkSubscribtion(Store.uid, this.state.user.uid)
         : {subscribtion: true};
 
@@ -211,7 +211,11 @@ class Chat extends Component {
       });
       return this.props.navigation.dispatch(replaceActions);
     } else if (route === 'UserProfile') {
-      const replaceActions = StackActions.push(route, {user: info});
+      const replaceActions = StackActions.push(route, {
+        user: info,
+        onGoToChatPressed: () =>
+          this.props.navigation.dispatch(StackActions.pop()),
+      });
       return this.props.navigation.dispatch(replaceActions);
     } else if (route === 'Subscribe') {
       const replaceActions = StackActions.push(route, {
@@ -229,9 +233,6 @@ class Chat extends Component {
         });
         return this.props.navigation.dispatch(replaceActions);
       });
-    } else if (route === 'UserProfile') {
-      const replaceActions = StackActions.push(route, {user: info});
-      return this.props.navigation.dispatch(replaceActions);
     }
   };
 

@@ -27,7 +27,7 @@ import {
 } from '../../components';
 import {constants} from '../../resources';
 import {searchUser, getTrendingsData} from '../../services';
-import {isInfluencer} from '../../lib';
+import {isInfluencer, isAdmin} from '../../lib';
 import {StackActions} from '@react-navigation/native';
 import {SIZES} from '../../resources/theme';
 import EditTitleModal from '../../components/ScreenComponents/AddContentComponents/EditTitleModal/EditTitleModal';
@@ -52,7 +52,10 @@ class Rooms extends Component {
   }
 
   componentDidMount = async () => {
-    const userArray = await getTrendingsData();
+    const userArray = await getTrendingsData(
+      Store.user.uid,
+      !isAdmin(Store.user),
+    );
     this.setState({loading: false, userArray});
   };
 
@@ -68,7 +71,12 @@ class Rooms extends Component {
 
   searchUser = async (search) => {
     if (search.length >= 3) {
-      const searchArray = await searchUser(search, 'influencer', null);
+      const searchArray = await searchUser(
+        search,
+        'influencer',
+        null,
+        !isAdmin(Store.user),
+      );
       this.setState({searchArray, search});
     } else {
       this.setState({searchArray: [], search});
@@ -330,7 +338,7 @@ class Rooms extends Component {
                   value={anon}
                 />
               </View> */}
-              {isInfluencer(Store.user)
+              {isInfluencer(Store.user) || isAdmin(Store.user)
                 ? this.renderSearchTerm(Store.user)
                 : null}
               {roomsList.map((item) => this.renderSearchTerm(item))}
