@@ -31,13 +31,13 @@ import {
   likeVideo,
 } from '../../services';
 import Store from '../../store/Store';
-import {followerCount, timeDifference} from '../../lib';
+import {followerCount, isAdmin} from '../../lib';
 import {SafeAreaView} from 'react-native';
 import {KeyboardAvoidingView} from 'react-native';
 import database from '@react-native-firebase/database';
 import WatchVideoIcon from '../../components/ScreenComponents/WatchVideoComponents/WatchVideoIcon/WatchVideoIcon';
 import {COLORS, SIZES} from '../../resources/theme';
-import {getBottomSpace, getStatusBarHeight} from '../../lib/iPhoneXHelper';
+import {getBottomSpace} from '../../lib/iPhoneXHelper';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-community/masked-view';
@@ -98,10 +98,9 @@ class WatchVideo extends Component {
       this.setState({keyboard: false});
     });
 
-    const subscribtion = await checkSubscribtion(
-      Store.uid,
-      this.state.video.user.uid,
-    );
+    const subscribtion = isAdmin(this.state.video.user) || isAdmin(Store.user)
+      ? {subscribtion: true}
+      : await checkSubscribtion(Store.uid, this.state.video.user.uid);
 
     if (subscribtion.subscribtion) {
       const influencer = await checkUserInfo(this.state.video.user.uid);

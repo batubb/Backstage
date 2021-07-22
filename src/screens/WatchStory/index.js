@@ -15,12 +15,13 @@ import {observer} from 'mobx-react';
 import {Icon} from 'react-native-elements';
 import Video from 'react-native-video';
 import {StackActions} from '@react-navigation/native';
-import Animated, {Easing} from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import {Loading, Text, MyImage, VerifiedIcon} from '../../components';
 import {constants} from '../../resources';
 import {checkSubscribtion, checkUserInfo, report} from '../../services';
 import Store from '../../store/Store';
 import runTiming from '../../lib/runTiming';
+import isAdmin from '../../lib/isAdmin';
 import {SIZES} from '../../resources/theme';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import database from '@react-native-firebase/database';
@@ -67,10 +68,9 @@ class WatchStory extends Component {
 
   componentDidMount = async () => {
     this.bottomSheetRef?.show();
-    const subscribtion = await checkSubscribtion(
-      Store.uid,
-      this.state.content.user.uid,
-    );
+    const subscribtion = isAdmin(this.state.content.user) || isAdmin(Store.user)
+      ? {subscribtion: true}
+      : await checkSubscribtion(Store.uid, this.state.content.user.uid);
     this.setState({subscribtion});
 
     if (subscribtion.subscribtion) {
