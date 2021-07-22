@@ -46,6 +46,7 @@ class Home extends Component {
       userPostsArray: [],
       userStoriesArray: [],
       myStoriesArray: [],
+      adminStoriesArray: [],
     };
 
     this.mux_instance = axios.create({
@@ -74,6 +75,7 @@ class Home extends Component {
         userPostsArray: values[1],
         userStoriesArray: values[2].userStoriesArray,
         myStoriesArray: values[2].myStoriesArray,
+        adminStoriesArray: values[2].adminStoriesArray,
       });
     });
 
@@ -102,6 +104,7 @@ class Home extends Component {
         userPostsArray: values[1],
         userStoriesArray: values[2].userStoriesArray,
         myStoriesArray: values[2].myStoriesArray,
+        adminStoriesArray: values[2].adminStoriesArray,
       });
     });
   };
@@ -358,6 +361,20 @@ class Home extends Component {
                 photo={item.user.photo}
                 text={item.user.username}
                 isLive
+              />
+            )}
+          />
+
+          <FlatList
+            data={this.state.adminStoriesArray}
+            keyExtractor={(item) => item.uid}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={({item}) => (
+              <Story
+                onPress={() => this.goTo('WatchVideo', item)}
+                photo={item.user.photo}
+                text={item.user.username}
               />
             )}
           />
