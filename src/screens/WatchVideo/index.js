@@ -18,7 +18,7 @@ import {observer} from 'mobx-react';
 import {Slider, Icon} from 'react-native-elements';
 import Video from 'react-native-video';
 import {StackActions} from '@react-navigation/native';
-import {Loading, Header, Options, Text} from '../../components';
+import {VerifiedIcon, Header, Options, Text} from '../../components';
 import {constants} from '../../resources';
 import {
   checkSubscribtion,
@@ -39,6 +39,8 @@ import WatchVideoIcon from '../../components/ScreenComponents/WatchVideoComponen
 import {COLORS, SIZES} from '../../resources/theme';
 import {getBottomSpace, getStatusBarHeight} from '../../lib/iPhoneXHelper';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-community/masked-view';
 
 const {width, height} = Dimensions.get('window');
 const BOTTOM_PADDING = height >= 812 ? 40 : 20;
@@ -74,6 +76,7 @@ class WatchVideo extends Component {
       months: constants.MONTHS,
       fullScreen: true,
       isLiked: false,
+      isBlurComments: true,
     };
 
     this.list = [{title: 'Report', onPress: this.reportVideo}];
@@ -135,8 +138,7 @@ class WatchVideo extends Component {
             });
 
             comments.reverse();
-            comments = comments.slice(0, 3);
-            comments.reverse();
+            comments = comments.slice(0, 25);
             this.setState({comments});
           });
       }
@@ -554,38 +556,89 @@ class WatchVideo extends Component {
   };
 
   commentBar = () => {
-    const {comment, comments} = this.state;
+    const {comment, comments, isBlurComments} = this.state;
 
     return (
       <KeyboardAvoidingView
         behavior="padding"
         style={{alignItems: 'center', width: width}}>
-        <FlatList
-          data={comments}
-          keyExtractor={(item) => item.uid}
-          renderItem={({item, index}) => (
-            <View
-              style={{
-                width: width - 20,
-                alignItems: 'flex-start',
-                marginVertical: 2.5,
-              }}>
+        <MaskedView
+          style={{
+            width: '100%',
+            height: 300,
+          }}
+          maskElement={
+            <View style={{flex: 1, backgroundColor: 'transparent'}}>
+              <LinearGradient
+                colors={[
+                  'rgba(0, 0, 0, 1)',
+                  isBlurComments === true
+                    ? 'rgba(0, 0, 0, 0.0)'
+                    : 'rgba(0, 0, 0, 1)',
+                ]}
+                start={{x: 0, y: 0.7}}
+                end={{x: 0, y: 0.35}}
+                style={{
+                  flex: 1,
+                  width: '100%',
+                }}
+              />
+            </View>
+          }>
+          <FlatList
+            data={comments}
+            keyExtractor={(item) => item.uid}
+            inverted={true}
+            showsVerticalScrollIndicator={false}
+            onScroll={(e) => {
+              if (
+                e.nativeEvent.contentOffset.y > 20 &&
+                isBlurComments !== false
+              ) {
+                this.setState({isBlurComments: false});
+              } else if (
+                e.nativeEvent.contentOffset.y <= 20 &&
+                isBlurComments !== true
+              ) {
+                this.setState({isBlurComments: true});
+              }
+            }}
+            renderItem={({item, index}) => (
               <View
                 style={{
-                  backgroundColor: constants.BAR_COLOR,
-                  opacity: this.state.keyboard ? 1 : 0.6,
-                  borderRadius: 24,
-                  padding: 10,
+                  width: width - 20,
+                  alignItems: 'flex-start',
+                  marginVertical: SIZES.spacing,
+                  marginHorizontal: SIZES.padding,
                 }}>
-                <Text text={item.user.name} style={{fontSize: 12}} />
-                <Text
-                  text={item.comment}
-                  style={{fontSize: 12, fontWeight: 'normal'}}
-                />
+                <View
+                  style={{
+                    backgroundColor: constants.BAR_COLOR,
+                    opacity: this.state.keyboard ? 1 : 0.6,
+                    borderRadius: 24,
+                    padding: 10,
+                  }}>
+                  <View style={{flexDirection: 'row'}}>
+                    <Text
+                      text={`${item.user.username}`}
+                      style={{fontSize: 12}}
+                    />
+                    {item.user.verified === true ? (
+                      <VerifiedIcon
+                        size={12}
+                        style={{paddingLeft: SIZES.spacing * 2}}
+                      />
+                    ) : null}
+                  </View>
+                  <Text
+                    text={item.comment}
+                    style={{fontSize: 12, fontWeight: 'normal'}}
+                  />
+                </View>
               </View>
-            </View>
-          )}
-        />
+            )}
+          />
+        </MaskedView>
         <View
           style={{
             width: width - 20,
