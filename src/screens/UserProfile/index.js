@@ -82,8 +82,9 @@ class UserProfile extends Component {
         subscribeBottomSheetRef.current?.hide();
       },
     );
-    if (isAdmin(this.state.user)) {
+    if (isAdmin(Store.user) || isAdmin(this.state.user)) {
       this.setState({loading: false, subscribtion: {subscribtion: true}});
+      return;
     }
     let productId = [];
     productId.push(this.state.user.appStoreProductId);
@@ -107,10 +108,14 @@ class UserProfile extends Component {
 
   checkInfluencerInfos = async () => {
     const followerNumber = await getFollowerCount(this.state.user.uid);
-    const subscriberNumber = await getSubscriberCount(this.state.user.uid);
-    const subscribtion = isAdmin(this.state.user)
-      ? {subscribtion: true}
-      : await checkSubscribtion(Store.uid, this.state.user.uid);
+    const subscriberNumber =
+      this.state.user.uid === Store.uid || isAdmin(Store.user)
+        ? await getSubscriberCount(this.state.user.uid)
+        : 0;
+    const subscribtion =
+      isAdmin(this.state.user) || isAdmin(Store.user)
+        ? {subscribtion: true}
+        : await checkSubscribtion(Store.uid, this.state.user.uid);
     const posts = await getUserPosts(this.state.user.uid);
     const {postsArray, daily} = setPosts(posts);
 
@@ -408,7 +413,7 @@ class UserProfile extends Component {
               }
               followerNumber={this.state.followerNumber}
               subscriberNumber={this.state.subscriberNumber}
-              showSubscriberNumber={Store.user.uid === this.state.user.uid}
+              showSubscriberNumber={Store.user.uid === this.state.user.uid || isAdmin(Store.user)}
               onChatPress={() => this.goTo('Chat', this.state.user)}
               editProfileVisible={user.uid === Store.user.uid}
               navigation={this.props.navigation}
