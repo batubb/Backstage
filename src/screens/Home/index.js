@@ -78,6 +78,14 @@ class Home extends Component {
     });
 
     this.setPushId();
+
+    this.unsubscibe = this.props.navigation.addListener('focus', () => {
+      this.onRefresh();
+    });
+  };
+
+  componentWillUnmount = () => {
+    this.unsubscibe();
   };
 
   onRefresh = async () => {

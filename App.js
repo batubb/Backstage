@@ -9,7 +9,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNIap from 'react-native-iap';
 import {Alert} from 'react-native';
 import database from '@react-native-firebase/database';
-import {subscribeInfluencer, sendNotificationToUserDevices} from './src/services';
+import {
+  subscribeInfluencer,
+  sendNotificationToUserDevices,
+} from './src/services';
 
 class App extends Component {
   constructor(props) {
@@ -20,8 +23,7 @@ class App extends Component {
   }
 
   validate = async (receipt, originalTransactionIdentifierIOS) => {
-    console.log('in validate');
-    console.log('receipt sending to server is ', receipt);
+    console.log('in validate', {originalTransactionIdentifierIOS});
     const receiptBody = {
       'receipt-data': receipt,
       password: '2fc108dab79448b4a61f238ba37e4742',
@@ -42,18 +44,26 @@ class App extends Component {
       return other.result;
     } catch (error) {
       console.log('caught error ', error);
+      return {receiptValidated: false, expiryDate: 0};
     }
   };
 
   getInfluencerUIDFromProductId = async (productId) => {
-    const snapshot = await database().ref('users').once('value');
-    let foundUser = null;
-    snapshot.forEach((user) => {
-      if (user.val().appStoreProductId === productId) {
-        foundUser = user.val().uid;
-      }
-    });
-    return foundUser;
+    const snapshot = await (
+      await database()
+        .ref('users')
+        .orderByChild('appStoreProductId')
+        .equalTo(productId)
+        .once('value')
+    ).val();
+    // let foundUser = null;
+    // snapshot.forEach((user) => {
+    //   if (user.val().appStoreProductId === productId) {
+    //     foundUser = user.val().uid;
+    //   }
+    // });
+    console.log({snapshot, productId});
+    return snapshot?.uid ?? null;
   };
 
   updateTimeOnDbIfTransactionExists = async (
@@ -77,6 +87,7 @@ class App extends Component {
         }
       }
     });
+    console.log({followerUID, infUID});
     if (followerUID && infUID) {
       const curEnd = await database()
         .ref('followList')
@@ -115,6 +126,7 @@ class App extends Component {
       originalTransactionId,
       expiryDate,
     );
+    console.log({transactionExistsInDb});
     if (transactionExistsInDb) return;
     // 2. if it does not, create a new subscription
     console.log('in create sub on db');
@@ -127,7 +139,7 @@ class App extends Component {
       uid: await this.getInfluencerUIDFromProductId(productId),
     };
     console.log('user id is ', MainStore.user);
-    console.log('influencer id is');
+    console.log('influencer id is', inf.uid);
     const subResult = await subscribeInfluencer(MainStore.user, inf, sub);
     console.log('subs result is ', subResult);
   };
@@ -149,8 +161,6 @@ class App extends Component {
       async (purchase) => {
         try {
           const receipt = purchase.transactionReceipt;
-          console.log('in receipt', receipt);
-          console.log('in purchase', purchase);
           if (receipt) {
             const validateRes = await this.validate(
               receipt,
@@ -173,6 +183,7 @@ class App extends Component {
           }
         } catch (error) {
           console.log('purchase update listener faced an error ', error);
+          await RNIap.finishTransaction(purchase, false, false);
         }
       },
     );
