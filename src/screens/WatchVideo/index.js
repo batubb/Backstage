@@ -614,7 +614,7 @@ class WatchVideo extends Component {
                 <View
                   style={{
                     backgroundColor: constants.BAR_COLOR,
-                    opacity: this.state.keyboard ? 1 : 0.6,
+                    opacity: this.state.keyboard ? 1 : 0.75,
                     borderRadius: 24,
                     padding: 10,
                   }}>

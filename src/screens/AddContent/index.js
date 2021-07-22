@@ -11,7 +11,7 @@ import {
   PermissionsAndroid,
   Platform,
   TextInput,
-  Modal,
+  FlatList,
 } from 'react-native';
 import {NodeCameraView} from 'react-native-nodemediaclient';
 import axios from 'axios';
@@ -22,7 +22,7 @@ import {makeid, sleep, isInfluencer} from '../../lib';
 import storage from '@react-native-firebase/storage';
 import {StackActions} from '@react-navigation/native';
 import Store from '../../store/Store';
-import {Loading, Text, Button, Header} from '../../components';
+import {VerifiedIcon, Loading, Text, Button, Header} from '../../components';
 import {constants} from '../../resources';
 import {
   createVideoData,
@@ -42,6 +42,8 @@ import PostButton from '../../components/ScreenComponents/AddContentComponents/P
 import EditTitleModal from '../../components/ScreenComponents/AddContentComponents/EditTitleModal/EditTitleModal';
 import EditTitlePrompt from '../../components/ScreenComponents/AddContentComponents/EditTitlePrompt/EditTitlePrompt';
 import {TIERS} from '../../resources/constants';
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-community/masked-view';
 
 const {width, height} = Dimensions.get('window');
 const TOP_PADDING = height >= 812 ? 60 : 40;
@@ -82,6 +84,8 @@ export default class App extends Component {
       storyVideo: false,
       onPage: true,
       isStoryVideoRecording: false,
+      comments: [],
+      isBlurComments: true,
     };
 
     this.settings = {
@@ -167,8 +171,8 @@ export default class App extends Component {
         active: false,
       };
 
-      await createVideoData(Store.user, livestream, 'live');
-      await createVideoData(Store.user, video);
+      await createVideoData(Store.user, livestream, 'live', 1);
+      await createVideoData(Store.user, video, 'video', 0);
 
       this.setState({
         assetId: livestreamResponse.data.data.active_asset_id,
@@ -392,6 +396,23 @@ export default class App extends Component {
       } else {
         this.vb.start();
         this.getAssetInfo(this.state.liveStreamId);
+
+        database()
+          .ref('comments')
+          .child(this.state.uid)
+          .orderByChild('timestamp')
+          .on('value', (snap) => {
+            var comments = [];
+
+            snap.forEach((element) => {
+              comments.push(element.val());
+            });
+
+            comments.reverse();
+            comments = comments.slice(0, 100);
+            this.setState({comments});
+          });
+
         this.setState({timer: true}, () => {
           this.startTimer();
         });
@@ -769,35 +790,132 @@ export default class App extends Component {
   };
 
   renderLiveCamera = () => {
-    const {hasPermission, streamKey} = this.state;
+    const {hasPermission, streamKey, uid} = this.state;
 
     if (Platform.OS === 'android' && !hasPermission) {
       return <View />;
     }
 
     return (
-      <NodeCameraView
+      <>
+        <NodeCameraView
+          style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            width,
+            height,
+          }}
+          ref={(vb) => {
+            this.vb = vb;
+          }}
+          outputUrl={`rtmp://live.mux.com/app/${streamKey}`}
+          camera={{
+            cameraId: this.state.camera,
+            cameraFrontMirror: true,
+          }}
+          audio={this.settings.audio}
+          video={this.settings.video}
+          autopreview={true}
+        />
+        {uid !== '' ? (
+          <SafeAreaView
+            style={{
+              width,
+              height,
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              position: 'absolute',
+              bottom: 175 + SIZES.padding,
+            }}>
+            {this.commentBar()}
+          </SafeAreaView>
+        ) : null}
+      </>
+    );
+  };
+
+  commentBar = () => {
+    const {comments, isBlurComments} = this.state;
+
+    return (
+      <MaskedView
         style={{
-          position: 'absolute',
-          top: 0,
-          bottom: 0,
-          left: 0,
-          right: 0,
-          width,
-          height,
+          width: '100%',
+          height: height * 0.5 > 200 ? height * 0.5 : 200,
         }}
-        ref={(vb) => {
-          this.vb = vb;
-        }}
-        outputUrl={`rtmp://live.mux.com/app/${streamKey}`}
-        camera={{
-          cameraId: this.state.camera,
-          cameraFrontMirror: true,
-        }}
-        audio={this.settings.audio}
-        video={this.settings.video}
-        autopreview={true}
-      />
+        maskElement={
+          <View style={{flex: 1, backgroundColor: 'transparent'}}>
+            <LinearGradient
+              colors={[
+                'rgba(0, 0, 0, 1)',
+                isBlurComments === true
+                  ? 'rgba(0, 0, 0, 0.0)'
+                  : 'rgba(0, 0, 0, 1)',
+              ]}
+              start={{x: 0, y: 0.75}}
+              end={{x: 0, y: 0.1}}
+              style={{
+                flex: 1,
+                width: '100%',
+              }}
+            />
+          </View>
+        }>
+        <FlatList
+          data={comments}
+          keyExtractor={(item) => item.uid}
+          inverted={true}
+          showsVerticalScrollIndicator={false}
+          onScroll={(e) => {
+            if (
+              e.nativeEvent.contentOffset.y > 20 &&
+              isBlurComments !== false
+            ) {
+              this.setState({isBlurComments: false});
+            } else if (
+              e.nativeEvent.contentOffset.y <= 20 &&
+              isBlurComments !== true
+            ) {
+              this.setState({isBlurComments: true});
+            }
+          }}
+          renderItem={({item, index}) => (
+            <View
+              style={{
+                width: width - 20,
+                maxWidth: width - 100,
+                alignItems: 'flex-start',
+                marginVertical: SIZES.spacing,
+                marginHorizontal: SIZES.padding,
+              }}>
+              <View
+                style={{
+                  backgroundColor: constants.BAR_COLOR,
+                  opacity: 0.6,
+                  borderRadius: 24,
+                  padding: 10,
+                }}>
+                <View style={{flexDirection: 'row'}}>
+                  <Text text={`${item.user.username}`} style={{fontSize: 12}} />
+                  {item.user.verified === true ? (
+                    <VerifiedIcon
+                      size={12}
+                      style={{paddingLeft: SIZES.spacing * 2}}
+                    />
+                  ) : null}
+                </View>
+                <Text
+                  text={item.comment}
+                  style={{fontSize: 12, fontWeight: 'normal'}}
+                />
+              </View>
+            </View>
+          )}
+        />
+      </MaskedView>
     );
   };
 
