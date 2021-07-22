@@ -38,6 +38,7 @@ import PostsCard from '../../components/ScreenComponents/ProfileComponents/Posts
 import sleep from '../../lib/sleep';
 import RNIap from 'react-native-iap';
 import SlidingUpPanel from 'rn-sliding-up-panel';
+import {isAdmin} from '../../lib';
 
 const {width, height} = Dimensions.get('window');
 const SCREEN_DIMENSIONS = Dimensions.get('window');
@@ -81,6 +82,9 @@ class UserProfile extends Component {
         subscribeBottomSheetRef.current?.hide();
       },
     );
+    if (isAdmin(this.state.user)) {
+      this.setState({loading: false, subscribtion: {subscribtion: true}});
+    }
     let productId = [];
     productId.push(this.state.user.appStoreProductId);
     const productsRes = await RNIap.getSubscriptions(productId);
@@ -104,10 +108,9 @@ class UserProfile extends Component {
   checkInfluencerInfos = async () => {
     const followerNumber = await getFollowerCount(this.state.user.uid);
     const subscriberNumber = await getSubscriberCount(this.state.user.uid);
-    const subscribtion = await checkSubscribtion(
-      Store.uid,
-      this.state.user.uid,
-    );
+    const subscribtion = isAdmin(this.state.user)
+      ? {subscribtion: true}
+      : await checkSubscribtion(Store.uid, this.state.user.uid);
     const posts = await getUserPosts(this.state.user.uid);
     const {postsArray, daily} = setPosts(posts);
 
@@ -138,6 +141,10 @@ class UserProfile extends Component {
       });
       return this.props.navigation.dispatch(replaceActions);
     } else if (route === 'Chat') {
+      if (typeof this.props.route.params?.onGoToChatPressed !== 'undefined') {
+        this.props.route.params?.onGoToChatPressed();
+        return;
+      }
       const replaceActions = StackActions.push(route, {user: info});
       return this.props.navigation.dispatch(replaceActions);
     }

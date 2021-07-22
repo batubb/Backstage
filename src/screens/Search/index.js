@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {Icon} from 'react-native-elements';
-import LinearGradient from 'react-native-linear-gradient';
 import {StackActions} from '@react-navigation/native';
 import {
   Loading,
@@ -27,9 +26,8 @@ import {constants} from '../../resources';
 import {searchUser, getTrendingsData} from '../../services';
 import {followerCount} from '../../lib';
 import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
-import {Button} from 'react-native-share';
-import {PlatformColor} from 'react-native';
 import {SIZES} from '../../resources/theme';
+import {isAdmin} from '../../lib';
 
 const {width} = Dimensions.get('window');
 
@@ -131,7 +129,7 @@ class Search extends Component {
                       }}
                     />
                   </View>
-                  {item.type === 'user' || item.type === 'influencer' ? (
+                  {item.type === 'user' || item.type === 'influencer' || isAdmin(item) ? (
                     <View style={{width: 60, alignItems: 'center'}}>
                       <Icon
                         name="chevron-right"

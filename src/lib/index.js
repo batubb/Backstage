@@ -10,6 +10,7 @@ import runTiming from './runTiming';
 import iPhoneXHelper from './iPhoneXHelper';
 import handleURLSchemes from './handleURLSchemes';
 import isInfluencer from './isInfluencer';
+import isAdmin from './isAdmin';
 import checkAndShowInfluencerModal from './checkAndShowInfluencerModal';
 
 module.exports = {
@@ -24,5 +25,6 @@ module.exports = {
     iPhoneXHelper,
     handleURLSchemes,
     isInfluencer,
+    isAdmin,
     checkAndShowInfluencerModal,
 };

@@ -10,7 +10,7 @@ import {StackActions} from '@react-navigation/native';
 import {Icon} from 'react-native-elements';
 import {TouchableOpacity} from 'react-native';
 import Store from '../../../../store/Store';
-import {isInfluencer} from '../../../../lib';
+import {isInfluencer, isAdmin} from '../../../../lib';
 
 // photo, name, biograohy, subscribeButtonVisible, user, subscribtion
 
@@ -18,9 +18,6 @@ export default function ProfileTop(props) {
   const goTo = (route, info = null) => {
     if (route === 'EditProfile') {
       const replaceActions = StackActions.push(route, {type: info});
-      return props.navigation.dispatch(replaceActions);
-    } else if (route === 'Chat') {
-      const replaceActions = StackActions.push(route, {user: info});
       return props.navigation.dispatch(replaceActions);
     }
   };
@@ -94,13 +91,15 @@ export default function ProfileTop(props) {
       </View>
       {!props.subscribeButtonVisible ? null : (
         <View style={{flexDirection: 'row', width: '100%'}}>
-          <View style={{flex: 1, marginRight: SIZES.spacing * 3}}>
-            <SubscribeButton
-              user={props.user}
-              subscribtion={props.subscribtion}
-              onSubscribePress={props.onSubscribePress}
-            />
-          </View>
+          {!isAdmin(props.user) ? (
+            <View style={{flex: 1, marginRight: SIZES.spacing * 3}}>
+              <SubscribeButton
+                user={props.user}
+                subscribtion={props.subscribtion}
+                onSubscribePress={props.onSubscribePress}
+              />
+            </View>
+          ) : null}
           <View style={{flex: 1}}>
             <Button secondary text={'Room'} onPress={props.onChatPress} />
           </View>
@@ -117,7 +116,7 @@ export default function ProfileTop(props) {
           <View
             style={{
               flex: 1,
-              marginRight: isInfluencer(Store.user) ? SIZES.spacing * 3 : 0,
+              marginRight: isInfluencer(Store.user) || isAdmin(Store.user) ? SIZES.spacing * 3 : 0,
             }}>
             <Button
               onPress={() => goTo('EditProfile')}
@@ -125,11 +124,11 @@ export default function ProfileTop(props) {
               secondary
             />
           </View>
-          {isInfluencer(Store.user) ? (
+          {isInfluencer(Store.user) || isAdmin(Store.user) ? (
             <View style={{flex: 1}}>
               <Button
                 text={'Room'}
-                onPress={() => goTo('Chat', Store.user)}
+                onPress={props.onChatPress}
                 secondary
               />
             </View>

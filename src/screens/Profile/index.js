@@ -26,7 +26,7 @@ import {
   setHighlights,
   getSubscriberCount,
 } from '../../services';
-import {followerCount, setPosts, isInfluencer, timeDifference} from '../../lib';
+import {followerCount, setPosts, isInfluencer, timeDifference, isAdmin} from '../../lib';
 import LinearGradient from 'react-native-linear-gradient';
 
 import Store from '../../store/Store';
@@ -93,7 +93,7 @@ class Profile extends Component {
               : Store.user.cumulativeViewsUser,
         });
       });
-    } else if (isInfluencer(Store.user)) {
+    } else if (isInfluencer(Store.user) || isAdmin(Store.user)) {
       const posts = await getUserPosts(Store.user.uid, true);
       const subscriberNumber = await getSubscriberCount(Store.user.uid);
       const {postsArray, daily} = setPosts(posts);
@@ -140,7 +140,7 @@ class Profile extends Component {
 
     if (Store.user.type === 'user') {
       this.setState({refreshing: false});
-    } else if (Store.user.type === 'influencer') {
+    } else if (Store.user.type === 'influencer' || Store.user.type === 'admin') {
       const posts = await getUserPosts(Store.user.uid, true);
       const subscriberNumber = await getSubscriberCount(Store.user.uid);
       const {postsArray, daily} = setPosts(posts);
@@ -397,7 +397,7 @@ class Profile extends Component {
 
     var influencerProfileProps = {};
 
-    if (isInfluencer(Store.user)) {
+    if (isInfluencer(Store.user) || isAdmin(Store.user)) {
       influencerProfileProps = {
         views: cumulativeViews,
         subscriberNumber: this.state.subscriberNumber,

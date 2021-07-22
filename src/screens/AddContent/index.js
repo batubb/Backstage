@@ -18,7 +18,7 @@ import axios from 'axios';
 import Carousel from 'react-native-snap-carousel';
 import Video from 'react-native-video';
 import * as ImagePicker from 'react-native-image-picker';
-import {makeid, sleep, isInfluencer} from '../../lib';
+import {makeid, sleep, isInfluencer, isAdmin} from '../../lib';
 import storage from '@react-native-firebase/storage';
 import {StackActions} from '@react-navigation/native';
 import Store from '../../store/Store';
@@ -1382,7 +1382,7 @@ export default class App extends Component {
                 size={36}
               />
             </TouchableOpacity>
-            {!isInfluencer(Store.user) && (
+            {!isInfluencer(Store.user) && !isAdmin(Store.user) ? (
               <View
                 style={{
                   maxWidth: width - 100,
@@ -1401,7 +1401,7 @@ export default class App extends Component {
                   }}
                 />
               </View>
-            )}
+            ): null}
           </View>
         ) : null}
       </View>
