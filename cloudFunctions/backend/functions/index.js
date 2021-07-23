@@ -301,7 +301,7 @@ app.post('/getFollowingUserPosts', (request, response) => {
           if (postsArray.length !== 0) {
             userPostsArray.push({
               posts: postsArray,
-              ...adminUser.val(),
+              ...adminUser,
               active: true,
               expired: false,
             });
