@@ -64,7 +64,7 @@ class Chat extends Component {
 
   componentDidMount = async () => {
     const subscribtion =
-      Store.uid !== this.state.user.uid && !isAdmin(Store.user)
+      Store.uid !== this.state.user.uid && !isAdmin(Store.user) && !isAdmin(this.state.user)
         ? await checkSubscribtion(Store.uid, this.state.user.uid)
         : {subscribtion: true};
 

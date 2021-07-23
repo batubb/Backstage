@@ -71,11 +71,10 @@ class Home extends Component {
     ]).then((values) => {
       this.setState({
         loading: false,
-        liveArray: values[0],
-        userPostsArray: values[1],
-        userStoriesArray: values[2].userStoriesArray,
-        myStoriesArray: values[2].myStoriesArray,
-        adminStoriesArray: values[2].adminStoriesArray,
+        liveArray: values[0] ?? [],
+        userPostsArray: values[1] ?? [],
+        userStoriesArray: values[2].userStoriesArray ?? [],
+        myStoriesArray: values[2].myStoriesArray ?? [],
       });
     });
 
@@ -100,11 +99,10 @@ class Home extends Component {
     ]).then((values) => {
       this.setState({
         refreshing: false,
-        liveArray: values[0],
-        userPostsArray: values[1],
-        userStoriesArray: values[2].userStoriesArray,
-        myStoriesArray: values[2].myStoriesArray,
-        adminStoriesArray: values[2].adminStoriesArray,
+        liveArray: values[0] ?? [],
+        userPostsArray: values[1] ?? [],
+        userStoriesArray: values[2].userStoriesArray ?? [],
+        myStoriesArray: values[2].myStoriesArray ?? [],
       });
     });
   };
@@ -361,20 +359,6 @@ class Home extends Component {
                 photo={item.user.photo}
                 text={item.user.username}
                 isLive
-              />
-            )}
-          />
-
-          <FlatList
-            data={this.state.adminStoriesArray}
-            keyExtractor={(item) => item.uid}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            renderItem={({item}) => (
-              <Story
-                onPress={() => this.goTo('WatchStory', this.state.adminStoriesArray)}
-                photo={item.user.photo}
-                text={item.user.username}
               />
             )}
           />
