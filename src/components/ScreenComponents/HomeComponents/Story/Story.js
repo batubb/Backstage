@@ -3,7 +3,7 @@ import React from 'react';
 import {View, TouchableOpacity} from 'react-native';
 import {constants} from '../../../../resources';
 import {COLORS, SIZES} from '../../../../resources/theme';
-import {MyImage, Text} from '../../../../components';
+import {MyImage, Text, VerifiedIcon} from '../../../../components';
 import {Icon} from 'react-native-elements';
 
 function StoryCircle(props) {
@@ -86,14 +86,26 @@ export default function Story(props) {
       </StoryCircle>
 
       {!props.loading ? (
-        <Text
-          text={props.text}
-          style={{
-            fontSize: 12,
-            marginTop: SIZES.spacing * 3,
-            fontWeight: '400',
-          }}
-        />
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Text
+            text={props.text}
+            style={{
+              fontSize: 12,
+              marginTop: SIZES.spacing * 3,
+              fontWeight: '400',
+            }}
+          />
+          {props.showVerificationIcon ? (
+            <VerifiedIcon
+              size={12}
+              style={{
+                paddingTop: SIZES.padding,
+                paddingLeft: SIZES.spacing * 0.5,
+                top: -1,
+              }}
+            />
+          ) : null}
+        </View>
       ) : null}
     </TouchableOpacity>
   );

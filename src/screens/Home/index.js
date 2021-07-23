@@ -358,6 +358,7 @@ class Home extends Component {
                 onPress={() => this.goTo('WatchVideo', item)}
                 photo={item.user.photo}
                 text={item.user.username}
+                showVerificationIcon={item.user.verified === true}
                 isLive
               />
             )}
@@ -373,6 +374,7 @@ class Home extends Component {
                 onPress={() => this.goTo('WatchStory', item.stories)}
                 photo={item.photo}
                 text={item.username}
+                showVerificationIcon={item.verified === true}
               />
             )}
           />
