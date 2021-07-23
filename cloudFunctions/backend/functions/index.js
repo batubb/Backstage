@@ -268,6 +268,47 @@ app.post('/getFollowingUserPosts', (request, response) => {
         }
       }
 
+      const admins = await admin
+        .database()
+        .ref('users')
+        .orderByChild('type')
+        .equalTo('admin')
+        .once('value');
+
+      for (const adminUser of Object.values(Object.assign({}, admins.val()))) {
+        if (adminUser) {
+          const adminPostsValue = await admin
+            .database()
+            .ref('posts')
+            .child(adminUser.uid)
+            .once('value');
+
+          var postsArray = [];
+
+          adminPostsValue.forEach((post) => {
+            if (post.val()) {
+              if (post.val().active) {
+                postsArray.push(post.val());
+              }
+            }
+          });
+  
+          postsArray.sort(function (a, b) {
+            return b.timestamp - a.timestamp;
+          });
+          postsArray = postsArray.slice(0, 5);
+  
+          if (postsArray.length !== 0) {
+            userPostsArray.push({
+              posts: postsArray,
+              ...adminUser.val(),
+              active: true,
+              expired: false,
+            });
+          }
+        }
+      }
+
       userPostsArray.sort(function (a, b) {
         return b.lastActivity - a.lastActivity;
       });
@@ -322,6 +363,7 @@ app.post('/getFollowingUserStories', (request, response) => {
 
   async function start() {
     try {
+      /// **** FOLLOWING USER STORIES - BEGIN
       const followListKeys = Object.keys(followList);
 
       var userStoriesArray = [];
@@ -329,10 +371,7 @@ app.post('/getFollowingUserStories', (request, response) => {
       for (let i = 0; i < followListKeys.length; i++) {
         const k = followListKeys[i];
         const element = followList[k];
-        if (element.endTimestamp < new Date().getTime()) {
-          continue;
-        }
-        const postsValue = await admin
+        const storiesValue = await admin
           .database()
           .ref('stories')
           .child(element.uid)
@@ -345,16 +384,26 @@ app.post('/getFollowingUserStories', (request, response) => {
         var storiesArray = [];
         var myStoriesArray = [];
 
-        postsValue.forEach((post) => {
-          if (post.val()) {
-            if (
-              new Date().getTime() - post.val().timestamp <
-              24 * 60 * 60 * 1000
-            ) {
-              storiesArray.push(post.val());
+        for (const post of Object.values(
+          Object.assign({}, storiesValue.val()),
+        )) {
+          if (post) {
+            if (new Date().getTime() - post.timestamp < 24 * 60 * 60 * 1000) {
+              const userValue = await admin
+                .database()
+                .ref('users')
+                .child(post.user.uid)
+                .once('value');
+
+              if (userValue.val()) {
+                storiesArray.push({
+                  ...post,
+                  user: userValue.val(),
+                });
+              }
             }
           }
-        });
+        }
 
         storiesArray.sort(function (a, b) {
           return a.timestamp - b.timestamp;
@@ -370,39 +419,186 @@ app.post('/getFollowingUserStories', (request, response) => {
         }
       }
 
-      const postsValue2 = await admin
+      userStoriesArray.sort(function (a, b) {
+        return b.lastActivity - a.lastActivity;
+      });
+      /// **** FOLLOWING USER STORIES - END
+      /// **** MY USER STORIES - BEGIN
+      const storiesValue = await admin
         .database()
         .ref('stories')
         .child(uid)
         .once('value');
       var myStoriesArray = [];
 
-      postsValue2.forEach((post) => {
-        if (post.val()) {
-          if (
-            new Date().getTime() - post.val().timestamp <
-            24 * 60 * 60 * 1000
-          ) {
-            myStoriesArray.push(post.val());
+      for (const post of Object.values(Object.assign({}, storiesValue.val()))) {
+        if (post) {
+          if (new Date().getTime() - post.timestamp < 24 * 60 * 60 * 1000) {
+            const userValue = await admin
+              .database()
+              .ref('users')
+              .child(post.user.uid)
+              .once('value');
+
+            if (userValue.val()) {
+              myStoriesArray.push({
+                ...post,
+                user: userValue.val(),
+              });
+            }
           }
         }
-      });
+      }
 
       myStoriesArray.sort(function (a, b) {
         return a.timestamp - b.timestamp;
       });
 
-      userStoriesArray.sort(function (a, b) {
-        return b.lastActivity - a.lastActivity;
-      });
-
       if (typeof myStoriesArray === 'undefined') {
         myStoriesArray = [];
       }
+      /// **** MY USER STORIES - END
+      /// **** ADMIN STORIES - BEGIN
+      var adminStoriesArray = [];
+      const admins = await admin
+        .database()
+        .ref('users')
+        .orderByChild('type')
+        .equalTo('admin')
+        .once('value');
+
+      for (const adminUser of Object.values(Object.assign({}, admins.val()))) {
+        if (adminUser) {
+          if (adminUser.uid !== uid) {
+            const adminStoriesValue = await admin
+              .database()
+              .ref('stories')
+              .child(adminUser.uid)
+              .once('value');
+
+            for (const adminStory of Object.values(
+              Object.assign({}, adminStoriesValue.val()),
+            )) {
+              if (adminStory) {
+                if (
+                  new Date().getTime() - adminStory.timestamp <
+                  24 * 60 * 60 * 1000
+                ) {
+                  adminStoriesArray.push({
+                    ...adminStory,
+                    user: adminUser,
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+
+      adminStoriesArray.sort(function (a, b) {
+        return b.lastActivity - a.lastActivity;
+      });
+
+      if (typeof adminStoriesArray === 'undefined') {
+        adminStoriesArray = [];
+      }
+      /// **** ADMIN STORIES - END
 
       return response
         .status(200)
-        .send(JSON.stringify({userStoriesArray, myStoriesArray}));
+        .send(
+          JSON.stringify({userStoriesArray, myStoriesArray, adminStoriesArray}),
+        );
+    } catch (error) {
+      console.log(error);
+      return response.status(400).send(
+        JSON.stringify({
+          code: config.CODE_702,
+          message: config.CODE_702_MESSAGE,
+        }),
+      );
+    }
+  }
+});
+
+app.post('/getUserSubscribers', (request, response) => {
+  const body = request.body;
+
+  if (request.method !== 'POST') {
+    return response.status(400).send(
+      JSON.stringify({
+        code: config.CODE_701,
+        message: config.CODE_701_MESSAGE,
+      }),
+    );
+  }
+
+  if (body.uid === 'undefined') {
+    return response.status(400).send(
+      JSON.stringify({
+        code: config.CODE_703,
+        message: config.CODE_703_MESSAGE,
+      }),
+    );
+  }
+
+  const uid = body.uid;
+
+  start();
+
+  async function start() {
+    try {
+      const subscribersData = await admin
+        .database()
+        .ref('follows')
+        .child(uid)
+        .once('value');
+      const subscribersList = Object.keys(
+        Object.assign({}, subscribersData.val()),
+      );
+      var subscribersArray = [];
+
+      if (subscribersList.length > 0) {
+        for (let i = 0; i < subscribersList.length; i++) {
+          const followerUID = subscribersList[i];
+
+          const element = await (
+            await admin
+              .database()
+              .ref('followList')
+              .child(followerUID)
+              .child(uid)
+              .once('value')
+          ).val();
+
+          if (element) {
+            if (
+              element.active === true &&
+              element.expired === false &&
+              element.endTimestamp > new Date().getTime()
+            ) {
+              const userValue = await admin
+                .database()
+                .ref('users')
+                .child(element.followerUID)
+                .once('value');
+
+              if (userValue.val()) {
+                subscribersArray.push({
+                  ...element,
+                  user: userValue.val(),
+                });
+              }
+            }
+          }
+        }
+
+        subscribersArray.sort(function (a, b) {
+          return b.lastActivity - a.lastActivity;
+        });
+      }
+
+      return response.status(200).send(JSON.stringify(subscribersArray));
     } catch (error) {
       console.log(error);
       return response.status(400).send(
@@ -451,7 +647,17 @@ app.post('/getFollowingLiveData', (request, response) => {
 
         for (let i = 0; i < keys.length; i++) {
           const k = keys[i];
-          liveValueArray.push(liveValue.val()[k]);
+          const currentLiveData = liveValue.val()[k];
+
+          if (currentLiveData.user.type === 'admin') {
+            liveArray.push({
+              ...currentLiveData,
+              active: true,
+              expired: false,
+            });
+          } else {
+            liveValueArray.push(currentLiveData);
+          }
         }
 
         for (let i = 0; i < followList.length; i++) {
@@ -574,6 +780,96 @@ app.get('/livestreamControl', (request, response) => {
     }
 
     return true;
+  }
+});
+
+app.post('/sendNotificationToUserDevices', (request, response) => {
+  const body = request.body
+
+  if (request.method !== "POST") {
+      return response.status(400).send(JSON.stringify({ code: config.CODE_701, message: config.CODE_701_MESSAGE }));
+  }
+
+  if (body.userUIDs === 'undefined') {
+      return response.status(400).send(JSON.stringify({ code: config.CODE_703, message: config.CODE_703_MESSAGE }));
+  }
+
+  if (body.type === 'undefined') {
+      return response.status(400).send(JSON.stringify({ code: config.CODE_703, message: config.CODE_703_MESSAGE }));
+  }
+
+  const userUIDList = body.userUIDs;
+  const notificationType = body.type === 'video' ? 'new-post' : body.type;
+  const replaceContents = body.replaceContents;
+  const url = typeof body.url !== 'undefined' ? body.url.replace('/video/', '/new-post/') : 'backstage://';
+
+  start();
+
+  async function start() {
+      try {
+          const notificationTemplate = await (await admin.database().ref('notificationTemplates').child(notificationType).once('value')).val();
+
+          if (!notificationTemplate) {
+              return response.status(400).send(JSON.stringify({ code: config.CODE_702, message: config.CODE_702_MESSAGE }));
+          }
+
+          var allDevices = [];
+
+          for (let i = 0; i < userUIDList.length; i++) {
+              const userUID = userUIDList[i];
+              const userData = await admin.database().ref('users').child(userUID).once('value');
+
+              if (userData.val()) {
+                  if (userData.val().devices) {
+                      userData.val().devices.map((device) => {
+                          if (device) {
+                              allDevices.push(device);
+                          }
+                      });
+                  }
+              }
+          }
+
+          const client = new OneSignal.Client('9a94991e-d65d-4782-b126-e6c7e3e500c2', 'OGEyMGZjOTEtYTZiZi00MDczLTlkMzktYjNmNmVkMjEzZWE3');
+
+          var notification = {
+              contents: notificationTemplate.contents,
+              headings: notificationTemplate.headings,
+              app_url: url,
+              include_player_ids: allDevices,
+          };
+          
+          if (replaceContents) {
+              for (let i = 0; i < replaceContents.length; i++) {
+                  const item = replaceContents[i];
+
+                  if (item) {
+                      Object.entries(notification.contents).map((value) => {
+                          if (value[1].includes(item.key)) {
+                              notification.contents[value[0]] = value[1].replace(item.key, item.value);
+                          }
+                      });
+                      Object.entries(notification.headings).map((value) => {
+                          if (value[1].includes(item.key)) {
+                              notification.headings[value[0]] = value[1].replace(item.key, item.value);
+                          }
+                      });
+                  }
+              };
+          }
+          
+          try {
+              const clientResponse = await client.createNotification(notification);
+
+              return response.status(200).send(JSON.stringify({ successful: true }));
+          } catch (e) {
+              console.log(e);
+              return response.status(400).send(JSON.stringify({ code: config.CODE_702, message: config.CODE_702_MESSAGE }));
+          }
+      } catch (error) {
+          console.log(error);
+          return response.status(400).send(JSON.stringify({ code: config.CODE_702, message: config.CODE_702_MESSAGE }));
+      }
   }
 });
 
