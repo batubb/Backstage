@@ -157,6 +157,8 @@ class SearchMenu extends React.Component {
       <Stack.Navigator headerMode="none" mode="card">
         <Stack.Screen name="Search" component={Search} />
         <Stack.Screen name="UserProfile" component={UserProfile} />
+        <Stack.Screen name="EditProfile" component={EditProfile} />
+        <Stack.Screen name="MyInfo" component={MyInfo} />
         <Stack.Screen name="Rooms" component={Rooms} />
       </Stack.Navigator>
     );

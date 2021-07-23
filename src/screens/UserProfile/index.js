@@ -353,13 +353,19 @@ class UserProfile extends Component {
       loading,
       refreshing,
       user,
-      posts,
-      postsArray,
       subscribtion,
       daily,
       optionsVisible,
       purchaseProcessing,
     } = this.state;
+
+    let headerExtraProps = {};
+    if (Store.uid !== user.uid && !isAdmin(user)) {
+      headerExtraProps = {
+        rightButtonPress: () => this.setState({optionsVisible: true}),
+        rightButtonIcon: 'dots-horizontal',
+      };
+    }
 
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
@@ -369,9 +375,8 @@ class UserProfile extends Component {
           }
           leftButtonIcon="chevron-left"
           title={user.username}
-          rightButtonPress={() => this.setState({optionsVisible: true})}
-          rightButtonIcon="dots-horizontal"
           showVerificationIcon={user.verified === true}
+          {...headerExtraProps}
         />
         {loading ? (
           <Loading
@@ -413,7 +418,11 @@ class UserProfile extends Component {
               }
               followerNumber={this.state.followerNumber}
               subscriberNumber={this.state.subscriberNumber}
-              showSubscriberNumber={Store.user.uid === this.state.user.uid || isAdmin(Store.user)}
+              showSubscriberNumber={
+                (Store.uid === user.uid &&
+                  !isAdmin(user)) ||
+                (isAdmin(Store.user) && Store.uid !== user.uid)
+              }
               onChatPress={() => this.goTo('Chat', this.state.user)}
               editProfileVisible={user.uid === Store.user.uid}
               navigation={this.props.navigation}
