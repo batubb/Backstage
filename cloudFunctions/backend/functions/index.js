@@ -518,25 +518,20 @@ app.post('/getFollowingUserStories', (request, response) => {
                 priority: 1, // 1 = admin, 2 = user
               });
             }
-            v;
           }
         }
-      }
-
-      if (typeof adminStoriesArray === 'undefined') {
-        adminStoriesArray = [];
       }
       /// **** ADMIN STORIES - END
 
       userStoriesArray.sortBy([
         {key: 'priority', order: 'asc'},
-        {key: 'timestamp', order: 'desc'},
+        {key: 'lastActivity', order: 'desc'},
       ]);
 
       return response
         .status(200)
         .send(
-          JSON.stringify({userStoriesArray, myStoriesArray, adminStoriesArray}),
+          JSON.stringify({userStoriesArray, myStoriesArray}),
         );
     } catch (error) {
       console.log(error);
