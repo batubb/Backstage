@@ -20,6 +20,20 @@ const runtimeOpts = {
   memory: '2GB',
 };
 
+Array.prototype.sortBy = function (keys) {
+  return this.sort(function sort(i1, i2, sKeys = keys) {
+    const compareKey = sKeys[0].key ? sKeys[0].key : sKeys[0];
+    const order = sKeys[0].order || 'ASC'; // ASC || DESC
+    let compareValue = i1[compareKey]
+      .toString()
+      .localeCompare(i2[compareKey].toString());
+    compareValue =
+      order.toUpperCase() === 'DESC' ? compareValue * -1 : compareValue;
+    const checkNextKey = compareValue === 0 && sKeys.length !== 1;
+    return checkNextKey ? sort(i1, i2, sKeys.slice(1)) : compareValue;
+  });
+};
+
 app.post('/createCustomerAndSubscription', (request, response) => {
   const body = request.body;
 
@@ -292,12 +306,12 @@ app.post('/getFollowingUserPosts', (request, response) => {
               }
             }
           });
-  
+
           postsArray.sort(function (a, b) {
             return b.timestamp - a.timestamp;
           });
           postsArray = postsArray.slice(0, 5);
-  
+
           if (postsArray.length !== 0) {
             userPostsArray.push({
               posts: postsArray,
@@ -415,15 +429,12 @@ app.post('/getFollowingUserStories', (request, response) => {
             ...userValue.val(),
             active: element.active,
             expired: element.expired,
+            priority: 2, // 1 = admin, 2 = user
           });
         }
       }
-
-      userStoriesArray.sort(function (a, b) {
-        return b.lastActivity - a.lastActivity;
-      });
       /// **** FOLLOWING USER STORIES - END
-      /// **** MY USER STORIES - BEGIN
+      /// **** MY STORIES - BEGIN
       const storiesValue = await admin
         .database()
         .ref('stories')
@@ -457,9 +468,8 @@ app.post('/getFollowingUserStories', (request, response) => {
       if (typeof myStoriesArray === 'undefined') {
         myStoriesArray = [];
       }
-      /// **** MY USER STORIES - END
+      /// **** MY STORIES - END
       /// **** ADMIN STORIES - BEGIN
-      var adminStoriesArray = [];
       const admins = await admin
         .database()
         .ref('users')
@@ -470,39 +480,57 @@ app.post('/getFollowingUserStories', (request, response) => {
       for (const adminUser of Object.values(Object.assign({}, admins.val()))) {
         if (adminUser) {
           if (adminUser.uid !== uid) {
-            const adminStoriesValue = await admin
+            const adminStoriesData = await admin
               .database()
               .ref('stories')
               .child(adminUser.uid)
               .once('value');
 
+            var adminStoriesValue = [];
+
             for (const adminStory of Object.values(
-              Object.assign({}, adminStoriesValue.val()),
+              Object.assign({}, adminStoriesData.val()),
             )) {
               if (adminStory) {
                 if (
                   new Date().getTime() - adminStory.timestamp <
                   24 * 60 * 60 * 1000
                 ) {
-                  adminStoriesArray.push({
+                  adminStoriesValue.push({
                     ...adminStory,
                     user: adminUser,
                   });
                 }
               }
             }
+
+            adminStoriesValue.sort(function (a, b) {
+              return a.timestamp - b.timestamp;
+            });
+
+            if (adminStoriesValue.length !== 0) {
+              userStoriesArray.push({
+                stories: adminStoriesValue,
+                ...adminUser,
+                active: true,
+                expired: false,
+                priority: 1, // 1 = admin, 2 = user
+              });
+            }
+            v;
           }
         }
       }
-
-      adminStoriesArray.sort(function (a, b) {
-        return b.lastActivity - a.lastActivity;
-      });
 
       if (typeof adminStoriesArray === 'undefined') {
         adminStoriesArray = [];
       }
       /// **** ADMIN STORIES - END
+
+      userStoriesArray.sortBy([
+        {key: 'priority', order: 'asc'},
+        {key: 'timestamp', order: 'desc'},
+      ]);
 
       return response
         .status(200)
@@ -784,92 +812,156 @@ app.get('/livestreamControl', (request, response) => {
 });
 
 app.post('/sendNotificationToUserDevices', (request, response) => {
-  const body = request.body
+  const body = request.body;
 
-  if (request.method !== "POST") {
-      return response.status(400).send(JSON.stringify({ code: config.CODE_701, message: config.CODE_701_MESSAGE }));
+  if (request.method !== 'POST') {
+    return response
+      .status(400)
+      .send(
+        JSON.stringify({
+          code: config.CODE_701,
+          message: config.CODE_701_MESSAGE,
+        }),
+      );
   }
 
   if (body.userUIDs === 'undefined') {
-      return response.status(400).send(JSON.stringify({ code: config.CODE_703, message: config.CODE_703_MESSAGE }));
+    return response
+      .status(400)
+      .send(
+        JSON.stringify({
+          code: config.CODE_703,
+          message: config.CODE_703_MESSAGE,
+        }),
+      );
   }
 
   if (body.type === 'undefined') {
-      return response.status(400).send(JSON.stringify({ code: config.CODE_703, message: config.CODE_703_MESSAGE }));
+    return response
+      .status(400)
+      .send(
+        JSON.stringify({
+          code: config.CODE_703,
+          message: config.CODE_703_MESSAGE,
+        }),
+      );
   }
 
   const userUIDList = body.userUIDs;
   const notificationType = body.type === 'video' ? 'new-post' : body.type;
   const replaceContents = body.replaceContents;
-  const url = typeof body.url !== 'undefined' ? body.url.replace('/video/', '/new-post/') : 'backstage://';
+  const url =
+    typeof body.url !== 'undefined'
+      ? body.url.replace('/video/', '/new-post/')
+      : 'backstage://';
 
   start();
 
   async function start() {
-      try {
-          const notificationTemplate = await (await admin.database().ref('notificationTemplates').child(notificationType).once('value')).val();
+    try {
+      const notificationTemplate = await (
+        await admin
+          .database()
+          .ref('notificationTemplates')
+          .child(notificationType)
+          .once('value')
+      ).val();
 
-          if (!notificationTemplate) {
-              return response.status(400).send(JSON.stringify({ code: config.CODE_702, message: config.CODE_702_MESSAGE }));
-          }
-
-          var allDevices = [];
-
-          for (let i = 0; i < userUIDList.length; i++) {
-              const userUID = userUIDList[i];
-              const userData = await admin.database().ref('users').child(userUID).once('value');
-
-              if (userData.val()) {
-                  if (userData.val().devices) {
-                      userData.val().devices.map((device) => {
-                          if (device) {
-                              allDevices.push(device);
-                          }
-                      });
-                  }
-              }
-          }
-
-          const client = new OneSignal.Client('9a94991e-d65d-4782-b126-e6c7e3e500c2', 'OGEyMGZjOTEtYTZiZi00MDczLTlkMzktYjNmNmVkMjEzZWE3');
-
-          var notification = {
-              contents: notificationTemplate.contents,
-              headings: notificationTemplate.headings,
-              app_url: url,
-              include_player_ids: allDevices,
-          };
-          
-          if (replaceContents) {
-              for (let i = 0; i < replaceContents.length; i++) {
-                  const item = replaceContents[i];
-
-                  if (item) {
-                      Object.entries(notification.contents).map((value) => {
-                          if (value[1].includes(item.key)) {
-                              notification.contents[value[0]] = value[1].replace(item.key, item.value);
-                          }
-                      });
-                      Object.entries(notification.headings).map((value) => {
-                          if (value[1].includes(item.key)) {
-                              notification.headings[value[0]] = value[1].replace(item.key, item.value);
-                          }
-                      });
-                  }
-              };
-          }
-          
-          try {
-              const clientResponse = await client.createNotification(notification);
-
-              return response.status(200).send(JSON.stringify({ successful: true }));
-          } catch (e) {
-              console.log(e);
-              return response.status(400).send(JSON.stringify({ code: config.CODE_702, message: config.CODE_702_MESSAGE }));
-          }
-      } catch (error) {
-          console.log(error);
-          return response.status(400).send(JSON.stringify({ code: config.CODE_702, message: config.CODE_702_MESSAGE }));
+      if (!notificationTemplate) {
+        return response
+          .status(400)
+          .send(
+            JSON.stringify({
+              code: config.CODE_702,
+              message: config.CODE_702_MESSAGE,
+            }),
+          );
       }
+
+      var allDevices = [];
+
+      for (let i = 0; i < userUIDList.length; i++) {
+        const userUID = userUIDList[i];
+        const userData = await admin
+          .database()
+          .ref('users')
+          .child(userUID)
+          .once('value');
+
+        if (userData.val()) {
+          if (userData.val().devices) {
+            userData.val().devices.map((device) => {
+              if (device) {
+                allDevices.push(device);
+              }
+            });
+          }
+        }
+      }
+
+      const client = new OneSignal.Client(
+        '9a94991e-d65d-4782-b126-e6c7e3e500c2',
+        'OGEyMGZjOTEtYTZiZi00MDczLTlkMzktYjNmNmVkMjEzZWE3',
+      );
+
+      var notification = {
+        contents: notificationTemplate.contents,
+        headings: notificationTemplate.headings,
+        app_url: url,
+        include_player_ids: allDevices,
+      };
+
+      if (replaceContents) {
+        for (let i = 0; i < replaceContents.length; i++) {
+          const item = replaceContents[i];
+
+          if (item) {
+            Object.entries(notification.contents).map((value) => {
+              if (value[1].includes(item.key)) {
+                notification.contents[value[0]] = value[1].replace(
+                  item.key,
+                  item.value,
+                );
+              }
+            });
+            Object.entries(notification.headings).map((value) => {
+              if (value[1].includes(item.key)) {
+                notification.headings[value[0]] = value[1].replace(
+                  item.key,
+                  item.value,
+                );
+              }
+            });
+          }
+        }
+      }
+
+      try {
+        const clientResponse = await client.createNotification(notification);
+
+        return response.status(200).send(JSON.stringify({successful: true}));
+      } catch (e) {
+        console.log(e);
+        return response
+          .status(400)
+          .send(
+            JSON.stringify({
+              code: config.CODE_702,
+              message: config.CODE_702_MESSAGE,
+            }),
+          );
+      }
+    } catch (error) {
+      console.log(error);
+      return response
+        .status(400)
+        .send(
+          JSON.stringify({
+            code: config.CODE_702,
+            message: config.CODE_702_MESSAGE,
+          }),
+        );
+    }
   }
 });
 
