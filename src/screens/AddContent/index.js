@@ -1164,8 +1164,8 @@ export default class App extends Component {
     if (indexButton === 0) {
       if (isPublishing || isRecording) {
         icon = 'camera-off';
-        iconColor = constants.RED;
-        buttonColor = constants.RED;
+        iconColor = COLORS.primary;
+        buttonColor = COLORS.primary;
       } else {
         icon = 'camera';
         iconColor = constants.BACKGROUND_COLOR;
@@ -1173,8 +1173,8 @@ export default class App extends Component {
       }
     } else if (indexButton === 1) {
       if (isPublishing || isRecording) {
-        iconColor = constants.RED;
-        buttonColor = constants.RED;
+        iconColor = COLORS.primary;
+        buttonColor = COLORS.primary;
       } else {
         iconColor = constants.BACKGROUND_COLOR;
         buttonColor = 'white';
@@ -1183,8 +1183,8 @@ export default class App extends Component {
       icon = 'access-point';
     } else {
       if (isPublishing || isRecording) {
-        iconColor = constants.RED;
-        buttonColor = constants.RED;
+        iconColor = COLORS.primary;
+        buttonColor = COLORS.primary;
       } else {
         iconColor = constants.BACKGROUND_COLOR;
         buttonColor = 'white';
@@ -1234,7 +1234,7 @@ export default class App extends Component {
                   width: 70,
                   height: 70,
                   borderRadius: 35,
-                  borderWidth: buttonColor === constants.RED ? 5 : 1,
+                  borderWidth: buttonColor === COLORS.primary ? 6 : 1,
                   borderColor: buttonColor,
                 }}>
                 {icon === 'camera' || icon === 'camera-off' ? null : (

@@ -232,12 +232,28 @@ app.post('/getFollowingUserPosts', (request, response) => {
     );
   }
 
-  const followList = body.followList;
+  const followListData = body.followList;
+  const userType = typeof body.userType === 'undefined' ? 'user' : body.userType;
 
   start();
 
   async function start() {
     try {
+      const followList =
+        userType !== 'admin'
+          ? followListData
+          : Object.assign(
+              {},
+              await (
+                await admin
+                  .database()
+                  .ref('users')
+                  .orderByChild('type')
+                  .equalTo('influencer')
+                  .once('value')
+              ).val(),
+            );
+
       const followListKeys = Object.keys(followList);
 
       var userPostsArray = [];
@@ -371,7 +387,8 @@ app.post('/getFollowingUserStories', (request, response) => {
     );
   }
 
-  const followList = body.followList;
+  const followListData = body.followList;
+  const userType = typeof body.userType === 'undefined' ? 'user' : body.userType;
   const uid = body.uid;
 
   start();
@@ -379,6 +396,21 @@ app.post('/getFollowingUserStories', (request, response) => {
   async function start() {
     try {
       /// **** FOLLOWING USER STORIES - BEGIN
+      const followList =
+        userType !== 'admin'
+          ? followListData
+          : Object.assign(
+              {},
+              await (
+                await admin
+                  .database()
+                  .ref('users')
+                  .orderByChild('type')
+                  .equalTo('influencer')
+                  .once('value')
+              ).val(),
+            );
+
       const followListKeys = Object.keys(followList);
 
       var userStoriesArray = [];
@@ -530,9 +562,7 @@ app.post('/getFollowingUserStories', (request, response) => {
 
       return response
         .status(200)
-        .send(
-          JSON.stringify({userStoriesArray, myStoriesArray}),
-        );
+        .send(JSON.stringify({userStoriesArray, myStoriesArray}));
     } catch (error) {
       console.log(error);
       return response.status(400).send(
@@ -656,12 +686,28 @@ app.post('/getFollowingLiveData', (request, response) => {
     );
   }
 
-  const followList = body.followList;
+  const followListData = body.followList;
+  const userType = typeof body.userType === 'undefined' ? 'user' : body.userType;
 
   start();
 
   async function start() {
     try {
+      const followList =
+        userType !== 'admin'
+          ? followListData
+          : Object.assign(
+              {},
+              await (
+                await admin
+                  .database()
+                  .ref('users')
+                  .orderByChild('type')
+                  .equalTo('influencer')
+                  .once('value')
+              ).val(),
+            );
+
       const liveValue = await admin.database().ref('live').once('value');
       var liveArray = [];
       var liveValueArray = [];
@@ -811,36 +857,30 @@ app.post('/sendNotificationToUserDevices', (request, response) => {
   const body = request.body;
 
   if (request.method !== 'POST') {
-    return response
-      .status(400)
-      .send(
-        JSON.stringify({
-          code: config.CODE_701,
-          message: config.CODE_701_MESSAGE,
-        }),
-      );
+    return response.status(400).send(
+      JSON.stringify({
+        code: config.CODE_701,
+        message: config.CODE_701_MESSAGE,
+      }),
+    );
   }
 
   if (body.userUIDs === 'undefined') {
-    return response
-      .status(400)
-      .send(
-        JSON.stringify({
-          code: config.CODE_703,
-          message: config.CODE_703_MESSAGE,
-        }),
-      );
+    return response.status(400).send(
+      JSON.stringify({
+        code: config.CODE_703,
+        message: config.CODE_703_MESSAGE,
+      }),
+    );
   }
 
   if (body.type === 'undefined') {
-    return response
-      .status(400)
-      .send(
-        JSON.stringify({
-          code: config.CODE_703,
-          message: config.CODE_703_MESSAGE,
-        }),
-      );
+    return response.status(400).send(
+      JSON.stringify({
+        code: config.CODE_703,
+        message: config.CODE_703_MESSAGE,
+      }),
+    );
   }
 
   const userUIDList = body.userUIDs;
@@ -864,14 +904,12 @@ app.post('/sendNotificationToUserDevices', (request, response) => {
       ).val();
 
       if (!notificationTemplate) {
-        return response
-          .status(400)
-          .send(
-            JSON.stringify({
-              code: config.CODE_702,
-              message: config.CODE_702_MESSAGE,
-            }),
-          );
+        return response.status(400).send(
+          JSON.stringify({
+            code: config.CODE_702,
+            message: config.CODE_702_MESSAGE,
+          }),
+        );
       }
 
       var allDevices = [];
@@ -938,25 +976,21 @@ app.post('/sendNotificationToUserDevices', (request, response) => {
         return response.status(200).send(JSON.stringify({successful: true}));
       } catch (e) {
         console.log(e);
-        return response
-          .status(400)
-          .send(
-            JSON.stringify({
-              code: config.CODE_702,
-              message: config.CODE_702_MESSAGE,
-            }),
-          );
-      }
-    } catch (error) {
-      console.log(error);
-      return response
-        .status(400)
-        .send(
+        return response.status(400).send(
           JSON.stringify({
             code: config.CODE_702,
             message: config.CODE_702_MESSAGE,
           }),
         );
+      }
+    } catch (error) {
+      console.log(error);
+      return response.status(400).send(
+        JSON.stringify({
+          code: config.CODE_702,
+          message: config.CODE_702_MESSAGE,
+        }),
+      );
     }
   }
 });

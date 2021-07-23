@@ -108,7 +108,7 @@ class WatchVideo extends Component {
       if (this.state.video.type === 'video') {
         const video = await getVideoInfo(this.state.video.uid, influencer);
 
-        if (typeof video.title !== 'undefined') {
+        if (typeof video.title !== 'undefined' && !isAdmin(Store.user)) {
           setVideoView(Store.user.uid, this.state.video);
         }
 

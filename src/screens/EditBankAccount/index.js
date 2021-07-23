@@ -38,6 +38,7 @@ class EditBankAccount extends Component {
       phoneCountryCode: 'US',
       recipientFullName: '',
       recipientAddress: '',
+      recipientEmail: '',
       swiftCode: '',
       ibanCode: '',
     };
@@ -55,6 +56,7 @@ class EditBankAccount extends Component {
       this.setState({
         recipientFullName: Store.user.bank.recipientFullName ?? '',
         recipientAddress: Store.user.bank.recipientAddress ?? '',
+        recipientEmail: Store.user.bank.recipientEmail ?? '',
         swiftCode: Store.user.bank.swift ?? '',
         ibanCode: Store.user.bank.iban ?? '',
         phoneFormatted: Store.user.bank.phoneNumber ?? '',
@@ -74,6 +76,7 @@ class EditBankAccount extends Component {
   saveBankAccount = async () => {
     const {
       recipientFullName,
+      recipientEmail,
       recipientAddress,
       phoneFormatted,
       swiftCode,
@@ -83,6 +86,7 @@ class EditBankAccount extends Component {
     if (
       recipientAddress === '' ||
       recipientAddress === '' ||
+      recipientEmail === '' ||
       phoneFormatted === '' ||
       swiftCode === '' ||
       ibanCode === ''
@@ -96,6 +100,7 @@ class EditBankAccount extends Component {
     const updates = {
       recipientFullName,
       recipientAddress,
+      recipientEmail,
       phoneNumber: phoneFormatted,
       phoneCallingCode: `+${this.phoneRef.getCallingCode()}`,
       phoneCountryCode: this.phoneRef.getCountryCode(),
@@ -224,13 +229,18 @@ class EditBankAccount extends Component {
                 }}
               />
               {this.renderInput(
-                'Recipient Legal Full Name',
+                'Legal Full Name',
                 this.state.recipientFullName,
                 (recipientFullName) => this.setState({recipientFullName}),
                 0,
               )}
               {this.renderInput(
-                'Recipient Address',
+                'Email Address',
+                this.state.recipientEmail,
+                (recipientEmail) => this.setState({recipientEmail}),
+              )}
+              {this.renderInput(
+                'Address',
                 this.state.recipientAddress,
                 (recipientAddress) => this.setState({recipientAddress}),
               )}
