@@ -17,7 +17,7 @@ import {
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
 import {Icon} from 'react-native-elements';
-import {Loading, Header, Text, MyImage, VerifiedIcon} from '../../components';
+import {Loading, Header, Text, VerifiedIcon} from '../../components';
 import {constants} from '../../resources';
 import {
   sendComment,
@@ -25,7 +25,7 @@ import {
   setLikeCommentStatus,
   checkSubscribtion,
 } from '../../services';
-import {timeDifference} from '../../lib';
+import {timeDifference, isAdmin} from '../../lib';
 import Store from '../../store/Store';
 import followerCount from '../../lib/followerCount';
 import {getBottomSpace} from '../../lib/iPhoneXHelper';
@@ -54,7 +54,9 @@ class Comments extends Component {
 
   componentDidMount = async () => {
     const subscribtion =
-      Store.user.uid !== this.state.video.user.uid
+      Store.user.uid !== this.state.video.user.uid &&
+      !isAdmin(Store.user) &&
+      !isAdmin(this.state.video.user)
         ? await checkSubscribtion(Store.uid, this.state.video.user.uid)
         : {subscribtion: true};
 
