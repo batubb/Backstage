@@ -372,7 +372,7 @@ class Home extends Component {
             showsHorizontalScrollIndicator={false}
             renderItem={({item}) => (
               <Story
-                onPress={() => this.goTo('WatchVideo', item)}
+                onPress={() => this.goTo('WatchStory', this.state.adminStoriesArray)}
                 photo={item.user.photo}
                 text={item.user.username}
               />

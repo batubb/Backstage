@@ -360,7 +360,7 @@ class UserProfile extends Component {
     } = this.state;
 
     let headerExtraProps = {};
-    if (Store.uid !== user.uid && !isAdmin(user)) {
+    if (Store.uid !== user.uid) {
       headerExtraProps = {
         rightButtonPress: () => this.setState({optionsVisible: true}),
         rightButtonIcon: 'dots-horizontal',
