@@ -131,8 +131,12 @@ class UserProfile extends Component {
   };
 
   componentWillUnmount = () => {
-    this.unsubscribe();
-    this.unsubscribeBottomSheet();
+    if (typeof this.unsubscribe !== 'undefined') {
+      this.unsubscribe();
+    }
+    if (typeof this.unsubscribeBottomSheet !== 'undefined') {
+      this.unsubscribeBottomSheet();
+    }
   };
 
   goTo = (route, info = null) => {
@@ -398,6 +402,7 @@ class UserProfile extends Component {
               width: constants.DEFAULT_PAGE_WIDTH,
               alignSelf: 'center',
               marginTop: SIZES.spacing * 5,
+              paddingBottom: SIZES.spacing * 5,
             }}>
             <ProfileTop
               name={user.name}

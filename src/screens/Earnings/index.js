@@ -54,7 +54,9 @@ class Earnings extends Component {
   };
 
   componentWillUnmount = () => {
-    this.unsubscribe();
+    if (typeof this.unsubscribe !== 'undefined') {
+      this.unsubscribe();
+    }
   };
 
   onRefresh = async () => {
