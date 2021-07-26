@@ -91,6 +91,8 @@ class Earnings extends Component {
       .child(Store.user.uid)
       .once('value');
 
+    console.log(Store.user.isInDevelopmentMode);
+
     const totalEarnings =
       parseFloat(
         updatedUser.price * (updatedUser.numLifetimeSubscribed ?? 0),
@@ -107,17 +109,19 @@ class Earnings extends Component {
       );
 
       transactions.forEach((transaction) => {
-        const purchaseDate = new Date(parseInt(transaction.purchaseDate));
-        const purchaseMonthName = this.months[purchaseDate.getMonth()].substr(
-          0,
-          3,
-        );
-        const purchaseMonthIndex = this.renderMonths.findIndex(
-          (m) => m === purchaseMonthName,
-        );
+        if (transaction.test !== true && transaction.environment !== 'Sandbox') {
+          const purchaseDate = new Date(parseInt(transaction.purchaseDate));
+          const purchaseMonthName = this.months[purchaseDate.getMonth()].substr(
+            0,
+            3,
+          );
+          const purchaseMonthIndex = this.renderMonths.findIndex(
+            (m) => m === purchaseMonthName,
+          );
 
-        if (purchaseMonthIndex) {
-          data[purchaseMonthIndex] += parseFloat(updatedUser.price);
+          if (purchaseMonthIndex) {
+            data[purchaseMonthIndex] += parseFloat(updatedUser.price);
+          }
         }
       });
     }
@@ -134,7 +138,10 @@ class Earnings extends Component {
       return this.props.navigation.dispatch(replaceActions);
     } else if (route === 'WithdrawSummary') {
       if (this.state.withdrawableBalance < 5) {
-        Alert.alert('Oops', 'To withdraw your money, your withdrawal balance must be over $5.');
+        Alert.alert(
+          'Oops',
+          'To withdraw your money, your withdrawal balance must be over $5.',
+        );
         return;
       }
 

@@ -215,12 +215,12 @@ exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
   functions.logger.info(
     'notification type and latest receipt info is: ',
     req.body.notification_type,
+    req.body.environment,
     req.body.unified_receipt.latest_receipt_info[0],
     {
       structuredData: true,
     },
   );
-
   if (
     req.body.notification_type === 'INITIAL_BUY' ||
     (req.body.notification_type === 'DID_CHANGE_RENEWAL_STATUS' &&
@@ -233,9 +233,11 @@ exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
       req.body.unified_receipt.latest_receipt_info[0].expires_date_ms;
     const transactionIdFromReceipt =
       req.body.unified_receipt.latest_receipt_info[0].transaction_id;
+    const environment = req.body.environment;
     // 1. update time looking at original transaction id at our database
     const snapshot = await admin.database().ref('followList').once('value');
     let userUID = null;
+    let isUserInDevelopmentMode = null;
     let influencerUID = null;
     snapshot.forEach((user) => {
       // key is the influencer uid
@@ -247,13 +249,31 @@ exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
         ) {
           influencerUID = user.val()[key]['uid'];
           userUID = user.val()[key]['followerUID'];
+          isUserInDevelopmentMode =
+            user.val()[key]['test'] === true ? true : null;
           break;
         }
       }
     });
 
     if (userUID !== null && influencerUID !== null) {
+      if (isUserInDevelopmentMode === null) {
+        isUserInDevelopmentMode =
+          (await (
+            await admin
+              .database()
+              .ref('users')
+              .child(userUID)
+              .child('isInDevelopmentMode')
+              .once('value')
+          ).val()) === true
+            ? true
+            : false;
+      }
+
       var updates = {};
+      updates[`followList/${userUID}/${influencerUID}/test`] =
+        isUserInDevelopmentMode === true ? true : false;
       updates[
         `followList/${userUID}/${influencerUID}/endTimestamp`
       ] = endTimestamp;
@@ -287,6 +307,8 @@ exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
         req.body,
         ' and latest receipt= ',
         req.body.unified_receipt.latest_receipt_info[0],
+        ' in environment ',
+        environment,
         {structuredData: true},
       );
       return;
@@ -300,6 +322,8 @@ exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
         req.body,
         ' and latest receipt= ',
         req.body.unified_receipt.latest_receipt_info[0],
+        ' in environment ',
+        environment,
         {structuredData: true},
       );
     }
@@ -325,6 +349,8 @@ exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
         10,
       ),
       followerUID: userUID,
+      environment: req.body.environment,
+      test: isUserInDevelopmentMode === true ? true : false,
     };
 
     var transactionUpdates = {};
@@ -334,7 +360,7 @@ exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
     await admin.database().ref().update(transactionUpdates);
 
     // 4. increment numLifetimeSubscribed if it is a new transaction
-    if (isNewTransaction) {
+    if (isNewTransaction && isUserInDevelopmentMode !== true) {
       admin
         .database()
         .ref('users')

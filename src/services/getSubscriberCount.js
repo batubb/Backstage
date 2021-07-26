@@ -7,5 +7,7 @@ export default async function getSubscriberCount(uid = Store.user.uid) {
 
     database().ref('users').child(uid).child('numSubscribers').set(value.length);
 
+    Store.setUser({...Store.user, numSubscribers: value.length});
+
     return value.length;
 }
