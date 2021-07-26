@@ -16,6 +16,7 @@ export default async function subscribeInfluencer(user, influencer, sub) {
     expired: false,
     stripeId: sub.id,
     cancel: false,
+    test: user.isInDevelopmentMode === true,
   };
 
   if (sub.type === 'apple') {
@@ -30,12 +31,14 @@ export default async function subscribeInfluencer(user, influencer, sub) {
 
     await database().ref().update(updates);
     await getFollowList(user.uid);
-    await sendNotificationToUserDevices(
-      'new-subscriber',
-      [influencer.uid],
-      undefined,
-      'backstage://new-subscriber',
-    );
+    if (user.isInDevelopmentMode !== true) {
+      await sendNotificationToUserDevices(
+        'new-subscriber',
+        [influencer.uid],
+        undefined,
+        'backstage://new-subscriber',
+      );
+    }
     return true;
   } catch (error) {
     console.log('subscribing to inf failed with error: ', error);

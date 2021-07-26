@@ -77,6 +77,7 @@ class App extends Component {
   ) => {
     const snapshot = await database().ref('followList').once('value');
     let followerUID = null;
+    let isFollowerInDevelopmentMode = null;
     let infUID = null;
     snapshot.forEach((user) => {
       // key is the influencer uid
@@ -89,11 +90,27 @@ class App extends Component {
           console.log('found transaction ', originalTransactionId);
           followerUID = user.val()[key].followerUID;
           infUID = user.val()[key].uid;
+          isFollowerInDevelopmentMode = user.val()[key].test ?? null;
         }
       }
     });
     console.log({followerUID, infUID, originalTransactionId});
     if (followerUID && infUID) {
+      if (isFollowerInDevelopmentMode === null) {
+        isFollowerInDevelopmentMode =
+          (await (
+            await database()
+              .ref('users')
+              .child(followerUID)
+              .child('isInDevelopmentMode')
+              .once('value')
+          ).val()) === true
+            ? true
+            : false;
+      }
+
+      console.log('isFollowerInDevelopmentMode', isFollowerInDevelopmentMode);
+
       const curEnd = await database()
         .ref('followList')
         .child(followerUID)
@@ -102,17 +119,21 @@ class App extends Component {
         .once('value');
       const curEndV = Number(curEnd.val());
       var updates = {};
+      updates[`followList/${followerUID}/${infUID}/test`] =
+        isFollowerInDevelopmentMode || false;
       updates[`followList/${followerUID}/${infUID}/endTimestamp`] = Math.max(
         curEndV,
         expiryDate,
       );
       await database().ref().update(updates);
-      await sendNotificationToUserDevices(
-        'new-subscriber',
-        [infUID],
-        undefined,
-        'backstage://new-subscriber',
-      );
+      if (isFollowerInDevelopmentMode !== true) {
+        await sendNotificationToUserDevices(
+          'new-subscriber',
+          [infUID],
+          undefined,
+          'backstage://new-subscriber',
+        );
+      }
       return true;
     }
     return false;

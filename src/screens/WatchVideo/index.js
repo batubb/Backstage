@@ -98,9 +98,10 @@ class WatchVideo extends Component {
       this.setState({keyboard: false});
     });
 
-    const subscribtion = isAdmin(this.state.video.user) || isAdmin(Store.user)
-      ? {subscribtion: true}
-      : await checkSubscribtion(Store.uid, this.state.video.user.uid);
+    const subscribtion =
+      isAdmin(this.state.video.user) || isAdmin(Store.user)
+        ? {subscribtion: true}
+        : await checkSubscribtion(Store.uid, this.state.video.user.uid);
 
     if (subscribtion.subscribtion) {
       const influencer = await checkUserInfo(this.state.video.user.uid);
@@ -108,7 +109,11 @@ class WatchVideo extends Component {
       if (this.state.video.type === 'video') {
         const video = await getVideoInfo(this.state.video.uid, influencer);
 
-        if (typeof video.title !== 'undefined' && !isAdmin(Store.user)) {
+        if (
+          typeof video.title !== 'undefined' &&
+          !isAdmin(Store.user) &&
+          subscribtion.test !== true
+        ) {
           setVideoView(Store.user.uid, this.state.video);
         }
 
