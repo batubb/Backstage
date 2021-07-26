@@ -693,8 +693,8 @@ export default class App extends Component {
               <Text
                 text={
                   this.state.thumbnailUrl !== ''
-                    ? 'Change\nThumbnail'
-                    : 'Thumbnail'
+                    ? 'Change\nCover'
+                    : 'Cover'
                 }
                 style={{
                   paddingLeft: SIZES.spacing * 5,
@@ -717,7 +717,7 @@ export default class App extends Component {
                   style={{left: 2}}
                 />
                 <Text
-                  text={'Remove\nThumbnail'}
+                  text={'Remove\nCover'}
                   style={{
                     paddingLeft: SIZES.spacing * 5,
                   }}
@@ -1393,7 +1393,7 @@ export default class App extends Component {
                   borderBottomRightRadius: 10,
                 }}>
                 <Text
-                  text="You can start creating but you will not be discoverable until we approve."
+                  text="You can start creating, but you won't be discoverable until we notify you."
                   onPress={() => {}}
                   style={{
                     color: COLORS.black,
