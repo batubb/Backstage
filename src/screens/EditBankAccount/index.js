@@ -119,10 +119,10 @@ class EditBankAccount extends Component {
     } catch (error) {
       return Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
     } finally {
+      this.props.navigation.dispatch(StackActions.pop());
+
       if (typeof this.props.route.params?.afterSuccessfulSave === 'function') {
         this.props.route.params?.afterSuccessfulSave();
-      } else {
-        this.props.navigation.dispatch(StackActions.pop());
       }
       this.setState({loading: false});
     }
