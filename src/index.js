@@ -48,6 +48,7 @@ import {getBottomSpace, isIphoneX} from './lib/iPhoneXHelper';
 import {handleURLSchemes} from './lib';
 import OneSignal from 'react-native-onesignal';
 import Store from './store/Store';
+import DeepLinking from 'react-native-deep-linking';
 
 LogBox.ignoreAllLogs();
 
@@ -62,37 +63,40 @@ const Tab = createBottomTabNavigator();
 const navigationContainerRef = React.createRef();
 
 class MyStack extends React.Component {
-  componentDidMount() {
-    let isNotificationOpened = false;
-    OneSignal.setNotificationOpenedHandler((response) => {
-      if (Store.user) {
-        isNotificationOpened = true;
-        handleURLSchemes(
-          {url: response.notification.launchURL},
-          {navigation: navigationContainerRef.current},
-        );
-      }
-    });
-    Linking.addEventListener('url', async (event) => {
-      if (await isNotificationOpened === true) {
-        isNotificationOpened = false;
-        return;
-      }
-      if (Store.user) {
-        handleURLSchemes(
-          event,
-          {navigation: navigationContainerRef.current},
-        );
-      }
-    });
+  constructor() {
+    super();
+    this.isNotificationOpened = false;
   }
 
-  componentWillUnmount() {
-    Linking.removeEventListener('url', (event) =>
-      Store.user
-        ? handleURLSchemes(event, {navigation: navigationContainerRef.current})
-        : null,
+  componentDidMount() {
+    this.isNotificationOpened = false;
+    OneSignal.setNotificationOpenedHandler(
+      (response) => {
+        const url = response.notification.launchURL;
+
+        if (url) {
+          this.isNotificationOpened = true;
+          this.onReceivedURL({url});
+        }
+      },
     );
+    Linking.addEventListener('url', (event) => this.onReceivedURL(event));
+  }
+
+  onReceivedURL = async ({url}) => {
+    console.log('url received', url);
+    
+    if (this.isNotificationOpened === true) {
+      this.isNotificationOpened = false;
+      return;
+    }
+    if (Store.user) {
+      handleURLSchemes({url}, {navigation: navigationContainerRef.current});
+    }
+  };
+
+  componentWillUnmount() {
+    Linking.removeEventListener('url', (event) => this.onReceivedURL(event));
   }
 
   render() {
