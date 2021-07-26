@@ -237,7 +237,7 @@ exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
     // 1. update time looking at original transaction id at our database
     const snapshot = await admin.database().ref('followList').once('value');
     let userUID = null;
-    let isUserInDevelopmentMode = null;
+    let isUserInDevelopmentMode = false;
     let influencerUID = null;
     snapshot.forEach((user) => {
       // key is the influencer uid
@@ -249,31 +249,27 @@ exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
         ) {
           influencerUID = user.val()[key]['uid'];
           userUID = user.val()[key]['followerUID'];
-          isUserInDevelopmentMode =
-            user.val()[key]['test'] === true ? true : null;
           break;
         }
       }
     });
 
     if (userUID !== null && influencerUID !== null) {
-      if (isUserInDevelopmentMode === null) {
-        isUserInDevelopmentMode =
-          (await (
-            await admin
-              .database()
-              .ref('users')
-              .child(userUID)
-              .child('isInDevelopmentMode')
-              .once('value')
-          ).val()) === true
-            ? true
-            : false;
-      }
+      isUserInDevelopmentMode =
+        (await (
+          await admin
+            .database()
+            .ref('users')
+            .child(userUID)
+            .child('isInDevelopmentMode')
+            .once('value')
+        ).val()) === true
+          ? true
+          : false;
 
       var updates = {};
       updates[`followList/${userUID}/${influencerUID}/test`] =
-        isUserInDevelopmentMode === true ? true : false;
+        isUserInDevelopmentMode;
       updates[
         `followList/${userUID}/${influencerUID}/endTimestamp`
       ] = endTimestamp;
@@ -350,7 +346,7 @@ exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
       ),
       followerUID: userUID,
       environment: req.body.environment,
-      test: isUserInDevelopmentMode === true ? true : false,
+      test: isUserInDevelopmentMode,
     };
 
     var transactionUpdates = {};
