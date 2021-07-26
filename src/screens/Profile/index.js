@@ -21,12 +21,14 @@ import {
   Options,
 } from '../../components';
 import {constants} from '../../resources';
+import {getUserPosts, setHighlights, getSubscriberCount} from '../../services';
 import {
-  getUserPosts,
-  setHighlights,
-  getSubscriberCount,
-} from '../../services';
-import {followerCount, setPosts, isInfluencer, timeDifference, isAdmin} from '../../lib';
+  followerCount,
+  setPosts,
+  isInfluencer,
+  timeDifference,
+  isAdmin,
+} from '../../lib';
 import LinearGradient from 'react-native-linear-gradient';
 
 import Store from '../../store/Store';
@@ -45,8 +47,7 @@ class Profile extends Component {
         typeof Store.user.photo === 'undefined'
           ? constants.DEFAULT_PHOTO
           : Store.user.photo,
-      name:
-        typeof Store.user.name === 'undefined' ? '' : Store.user.name,
+      name: typeof Store.user.name === 'undefined' ? '' : Store.user.name,
       biography:
         typeof Store.user.biography === 'undefined' ? '' : Store.user.biography,
       cumulativeViews:
@@ -75,10 +76,7 @@ class Profile extends Component {
 
       this.unsubscribe = this.props.navigation.addListener('focus', (e) => {
         this.setState({
-          name:
-            typeof Store.user.name === 'undefined'
-              ? ''
-              : Store.user.name,
+          name: typeof Store.user.name === 'undefined' ? '' : Store.user.name,
           biography:
             typeof Store.user.biography === 'undefined'
               ? ''
@@ -110,10 +108,7 @@ class Profile extends Component {
           posts: Store.posts.posts,
           postsArray: Store.posts.postsArray,
           daily: Store.posts.daily,
-          name:
-            typeof Store.user.name === 'undefined'
-              ? ''
-              : Store.user.name,
+          name: typeof Store.user.name === 'undefined' ? '' : Store.user.name,
           biography:
             typeof Store.user.biography === 'undefined'
               ? ''
@@ -140,7 +135,10 @@ class Profile extends Component {
 
     if (Store.user.type === 'user') {
       this.setState({refreshing: false});
-    } else if (Store.user.type === 'influencer' || Store.user.type === 'admin') {
+    } else if (
+      Store.user.type === 'influencer' ||
+      Store.user.type === 'admin'
+    ) {
       const posts = await getUserPosts(Store.user.uid, true);
       const subscriberNumber = await getSubscriberCount(Store.user.uid);
       const {postsArray, daily} = setPosts(posts);
@@ -155,13 +153,18 @@ class Profile extends Component {
   };
 
   goTo = (route, info = null) => {
-    if (route === 'UserProfile') {
+    if (route === 'UserProfile' || route === 'Chat') {
       const replaceActions = StackActions.push(route, {user: info});
       return this.props.navigation.dispatch(replaceActions);
     } else if (route === 'WatchVideo') {
       const replaceActions = StackActions.push(route, {video: info});
       return this.props.navigation.dispatch(replaceActions);
-    } else if (route === 'Settings') {
+    } else if (
+      route === 'Settings' ||
+      route === 'AddContent' ||
+      route === 'Earnings' ||
+      route === 'Subscribers'
+    ) {
       const replaceActions = StackActions.push(route);
       return this.props.navigation.dispatch(replaceActions);
     } else if (route === 'Highlights') {
@@ -169,20 +172,8 @@ class Profile extends Component {
         group: info ? info : undefined,
       });
       return this.props.navigation.dispatch(replaceActions);
-    } else if (route === 'MyInfo') {
+    } else if (route === 'MyInfo' || route === 'EditProfile') {
       const replaceActions = StackActions.push(route, {type: info});
-      return this.props.navigation.dispatch(replaceActions);
-    } else if (route === 'EditProfile') {
-      const replaceActions = StackActions.push(route, {type: info});
-      return this.props.navigation.dispatch(replaceActions);
-    } else if (route === 'AddContent') {
-      const replaceActions = StackActions.push(route);
-      return this.props.navigation.dispatch(replaceActions);
-    } else if (route === 'Earnings') {
-      const replaceActions = StackActions.push(route);
-      return this.props.navigation.dispatch(replaceActions);
-    } else if (route === 'Subscribers') {
-      const replaceActions = StackActions.push(route);
       return this.props.navigation.dispatch(replaceActions);
     }
   };
@@ -452,6 +443,7 @@ class Profile extends Component {
                 biography={biography}
                 editProfileVisible
                 navigation={this.props.navigation}
+                onChatPress={() => this.goTo('Chat', Store.user)}
                 {...influencerProfileProps}
               />
             </View>

@@ -693,8 +693,8 @@ export default class App extends Component {
               <Text
                 text={
                   this.state.thumbnailUrl !== ''
-                    ? 'Change\nThumbnail'
-                    : 'Thumbnail'
+                    ? 'Change\nCover'
+                    : 'Cover'
                 }
                 style={{
                   paddingLeft: SIZES.spacing * 5,
@@ -717,7 +717,7 @@ export default class App extends Component {
                   style={{left: 2}}
                 />
                 <Text
-                  text={'Remove\nThumbnail'}
+                  text={'Remove\nCover'}
                   style={{
                     paddingLeft: SIZES.spacing * 5,
                   }}
@@ -1164,8 +1164,8 @@ export default class App extends Component {
     if (indexButton === 0) {
       if (isPublishing || isRecording) {
         icon = 'camera-off';
-        iconColor = constants.RED;
-        buttonColor = constants.RED;
+        iconColor = COLORS.primary;
+        buttonColor = COLORS.primary;
       } else {
         icon = 'camera';
         iconColor = constants.BACKGROUND_COLOR;
@@ -1173,8 +1173,8 @@ export default class App extends Component {
       }
     } else if (indexButton === 1) {
       if (isPublishing || isRecording) {
-        iconColor = constants.RED;
-        buttonColor = constants.RED;
+        iconColor = COLORS.primary;
+        buttonColor = COLORS.primary;
       } else {
         iconColor = constants.BACKGROUND_COLOR;
         buttonColor = 'white';
@@ -1183,8 +1183,8 @@ export default class App extends Component {
       icon = 'access-point';
     } else {
       if (isPublishing || isRecording) {
-        iconColor = constants.RED;
-        buttonColor = constants.RED;
+        iconColor = COLORS.primary;
+        buttonColor = COLORS.primary;
       } else {
         iconColor = constants.BACKGROUND_COLOR;
         buttonColor = 'white';
@@ -1234,7 +1234,7 @@ export default class App extends Component {
                   width: 70,
                   height: 70,
                   borderRadius: 35,
-                  borderWidth: buttonColor === constants.RED ? 5 : 1,
+                  borderWidth: buttonColor === COLORS.primary ? 6 : 1,
                   borderColor: buttonColor,
                 }}>
                 {icon === 'camera' || icon === 'camera-off' ? null : (
@@ -1393,7 +1393,7 @@ export default class App extends Component {
                   borderBottomRightRadius: 10,
                 }}>
                 <Text
-                  text="You can start creating but you will not be discoverable until we approve."
+                  text="You can start creating, but you won't be discoverable until we notify you."
                   onPress={() => {}}
                   style={{
                     color: COLORS.black,

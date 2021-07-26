@@ -170,8 +170,8 @@ class WithdrawalHistory extends Component {
                 <Text
                   text={
                     selectedTab === 0
-                      ? 'There is no pending withdrawal request'
-                      : 'There is no completed withdrawal yet'
+                      ? 'There are no pending withdrawal requests yet'
+                      : 'There are no completed withdrawal requests yet'
                   }
                   style={{
                     color: COLORS.gray,

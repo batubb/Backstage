@@ -83,16 +83,6 @@ class Changelogs extends Component {
                 fontSize: SIZES.body3,
               }}
             />
-            <Text
-              text={
-                `We are working hard to ship updates and make the app worldwide suitable. ` +
-                `The list below is what we sent in every release of Backstage.`
-              }
-              style={{
-                fontSize: SIZES.body3,
-                fontWeight: '500',
-              }}
-            />
             {changelogs.map((changelog) => (
               <View
                 style={{paddingVertical: SIZES.padding * 2}}

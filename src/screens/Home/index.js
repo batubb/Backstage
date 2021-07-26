@@ -64,25 +64,13 @@ class Home extends Component {
   }
 
   componentDidMount = async () => {
-    Promise.all([
-      getFollowingLiveData(Store.uid, Store.followList),
-      getFollowingUserPosts(Store.uid, Store.followList),
-      getFollowingUserStories(Store.uid, Store.followList),
-    ]).then((values) => {
-      this.setState({
-        loading: false,
-        liveArray: values[0],
-        userPostsArray: values[1],
-        userStoriesArray: values[2].userStoriesArray,
-        myStoriesArray: values[2].myStoriesArray,
-        adminStoriesArray: values[2].adminStoriesArray,
-      });
+    await this.getData({
+      loading: false,
     });
-
     this.setPushId();
 
     this.unsubscibe = this.props.navigation.addListener('focus', () => {
-      this.onRefresh();
+      this.getData();
     });
   };
 
@@ -90,22 +78,27 @@ class Home extends Component {
     this.unsubscibe();
   };
 
-  onRefresh = async () => {
-    this.setState({refreshing: true});
-
-    Promise.all([
+  getData = (extra = {}) => {
+    return Promise.all([
       getFollowingLiveData(Store.uid, Store.followList),
       getFollowingUserPosts(Store.uid, Store.followList),
       getFollowingUserStories(Store.uid, Store.followList),
     ]).then((values) => {
       this.setState({
-        refreshing: false,
-        liveArray: values[0],
-        userPostsArray: values[1],
-        userStoriesArray: values[2].userStoriesArray,
-        myStoriesArray: values[2].myStoriesArray,
-        adminStoriesArray: values[2].adminStoriesArray,
+        ...extra,
+        liveArray: values[0] ?? [],
+        userPostsArray: values[1] ?? [],
+        userStoriesArray: values[2].userStoriesArray ?? [],
+        myStoriesArray: values[2].myStoriesArray ?? [],
       });
+    });
+  };
+
+  onRefresh = async () => {
+    this.setState({refreshing: true});
+
+    await this.getData({
+      refreshing: false,
     });
   };
 
@@ -334,7 +327,11 @@ class Home extends Component {
           width: width,
           marginBottom: SIZES.spacing * 3,
         }}>
-        <ScrollView horizontal>
+        <ScrollView
+          horizontal
+          style={{
+            paddingHorizontal: SIZES.spacing,
+          }}>
           {this.state.loading ? (
             Array.from({length: 3}).map((x) => <Story loading />)
           ) : this.state.myStoriesArray.length !== 0 ? (
@@ -360,21 +357,8 @@ class Home extends Component {
                 onPress={() => this.goTo('WatchVideo', item)}
                 photo={item.user.photo}
                 text={item.user.username}
+                showVerificationIcon={item.user.verified === true}
                 isLive
-              />
-            )}
-          />
-
-          <FlatList
-            data={this.state.adminStoriesArray}
-            keyExtractor={(item) => item.uid}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            renderItem={({item}) => (
-              <Story
-                onPress={() => this.goTo('WatchVideo', item)}
-                photo={item.user.photo}
-                text={item.user.username}
               />
             )}
           />
@@ -389,6 +373,7 @@ class Home extends Component {
                 onPress={() => this.goTo('WatchStory', item.stories)}
                 photo={item.photo}
                 text={item.username}
+                showVerificationIcon={item.verified === true}
               />
             )}
           />

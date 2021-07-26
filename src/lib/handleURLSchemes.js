@@ -14,9 +14,15 @@ export default function handleURLSchemes(event, {navigation}) {
   return new Promise(async (resolve, reject) => {
     const URL = event.url;
     const route = URL.replace(/.*?:\/\//g, '');
-    const matches = route.split('/');
+    let matches = route.split('/');
 
-    switch (matches?.[0]) {
+    if (matches.length === 0) return;
+
+    if (matches[0].replace('www.', '') === 'joinbackstage.co') {
+      matches = `profile/${matches.slice(1, matches.length).join('/')}`.split('/');
+    }
+
+    switch (matches[0]) {
       case 'profile':
         navigation.navigate('SearchMenu', {screen: 'Search'});
         if (typeof matches?.[1] !== undefined) {
@@ -62,7 +68,9 @@ export default function handleURLSchemes(event, {navigation}) {
             await database().ref('users').child(matches?.[1]).once('value')
           ).val();
           if (videoOwner) {
-            navigation.dispatch(StackActions.push('UserProfile', {user: videoOwner}));
+            navigation.dispatch(
+              StackActions.push('UserProfile', {user: videoOwner}),
+            );
           }
 
           await database()
@@ -101,7 +109,9 @@ export default function handleURLSchemes(event, {navigation}) {
             await database().ref('users').child(matches?.[1]).once('value')
           ).val();
           if (videoOwner) {
-            navigation.dispatch(StackActions.push('UserProfile', {user: videoOwner}));
+            navigation.dispatch(
+              StackActions.push('UserProfile', {user: videoOwner}),
+            );
           }
 
           await database()

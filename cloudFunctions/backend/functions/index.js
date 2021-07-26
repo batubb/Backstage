@@ -9,6 +9,7 @@ const admin = require('firebase-admin');
 const app = express();
 const stripe = require('stripe')(config.STRIPE_PUBLIC_KEY);
 const axios = require('axios');
+const OneSignal = require('onesignal-node');
 
 app.use(cors({origin: true}));
 app.use(bodyParser.urlencoded({extended: false}));
@@ -18,6 +19,20 @@ admin.initializeApp();
 const runtimeOpts = {
   timeoutSeconds: 120,
   memory: '2GB',
+};
+
+Array.prototype.sortBy = function (keys) {
+  return this.sort(function sort(i1, i2, sKeys = keys) {
+    const compareKey = sKeys[0].key ? sKeys[0].key : sKeys[0];
+    const order = sKeys[0].order || 'ASC'; // ASC || DESC
+    let compareValue = i1[compareKey]
+      .toString()
+      .localeCompare(i2[compareKey].toString());
+    compareValue =
+      order.toUpperCase() === 'DESC' ? compareValue * -1 : compareValue;
+    const checkNextKey = compareValue === 0 && sKeys.length !== 1;
+    return checkNextKey ? sort(i1, i2, sKeys.slice(1)) : compareValue;
+  });
 };
 
 app.post('/createCustomerAndSubscription', (request, response) => {
@@ -217,12 +232,28 @@ app.post('/getFollowingUserPosts', (request, response) => {
     );
   }
 
-  const followList = body.followList;
+  const followListData = body.followList;
+  const userType = typeof body.userType === 'undefined' ? 'user' : body.userType;
 
   start();
 
   async function start() {
     try {
+      const followList =
+        userType !== 'admin'
+          ? followListData
+          : Object.assign(
+              {},
+              await (
+                await admin
+                  .database()
+                  .ref('users')
+                  .orderByChild('type')
+                  .equalTo('influencer')
+                  .once('value')
+              ).val(),
+            );
+
       const followListKeys = Object.keys(followList);
 
       var userPostsArray = [];
@@ -265,6 +296,47 @@ app.post('/getFollowingUserPosts', (request, response) => {
             active: element.active,
             expired: element.expired,
           });
+        }
+      }
+
+      const admins = await admin
+        .database()
+        .ref('users')
+        .orderByChild('type')
+        .equalTo('admin')
+        .once('value');
+
+      for (const adminUser of Object.values(Object.assign({}, admins.val()))) {
+        if (adminUser) {
+          const adminPostsValue = await admin
+            .database()
+            .ref('posts')
+            .child(adminUser.uid)
+            .once('value');
+
+          var postsArray = [];
+
+          adminPostsValue.forEach((post) => {
+            if (post.val()) {
+              if (post.val().active) {
+                postsArray.push(post.val());
+              }
+            }
+          });
+
+          postsArray.sort(function (a, b) {
+            return b.timestamp - a.timestamp;
+          });
+          postsArray = postsArray.slice(0, 5);
+
+          if (postsArray.length !== 0) {
+            userPostsArray.push({
+              posts: postsArray,
+              ...adminUser,
+              active: true,
+              expired: false,
+            });
+          }
         }
       }
 
@@ -315,13 +387,30 @@ app.post('/getFollowingUserStories', (request, response) => {
     );
   }
 
-  const followList = body.followList;
+  const followListData = body.followList;
+  const userType = typeof body.userType === 'undefined' ? 'user' : body.userType;
   const uid = body.uid;
 
   start();
 
   async function start() {
     try {
+      /// **** FOLLOWING USER STORIES - BEGIN
+      const followList =
+        userType !== 'admin'
+          ? followListData
+          : Object.assign(
+              {},
+              await (
+                await admin
+                  .database()
+                  .ref('users')
+                  .orderByChild('type')
+                  .equalTo('influencer')
+                  .once('value')
+              ).val(),
+            );
+
       const followListKeys = Object.keys(followList);
 
       var userStoriesArray = [];
@@ -329,10 +418,7 @@ app.post('/getFollowingUserStories', (request, response) => {
       for (let i = 0; i < followListKeys.length; i++) {
         const k = followListKeys[i];
         const element = followList[k];
-        if (element.endTimestamp < new Date().getTime()) {
-          continue;
-        }
-        const postsValue = await admin
+        const storiesValue = await admin
           .database()
           .ref('stories')
           .child(element.uid)
@@ -345,16 +431,26 @@ app.post('/getFollowingUserStories', (request, response) => {
         var storiesArray = [];
         var myStoriesArray = [];
 
-        postsValue.forEach((post) => {
-          if (post.val()) {
-            if (
-              new Date().getTime() - post.val().timestamp <
-              24 * 60 * 60 * 1000
-            ) {
-              storiesArray.push(post.val());
+        for (const post of Object.values(
+          Object.assign({}, storiesValue.val()),
+        )) {
+          if (post) {
+            if (new Date().getTime() - post.timestamp < 24 * 60 * 60 * 1000) {
+              const userValue = await admin
+                .database()
+                .ref('users')
+                .child(post.user.uid)
+                .once('value');
+
+              if (userValue.val()) {
+                storiesArray.push({
+                  ...post,
+                  user: userValue.val(),
+                });
+              }
             }
           }
-        });
+        }
 
         storiesArray.sort(function (a, b) {
           return a.timestamp - b.timestamp;
@@ -366,43 +462,197 @@ app.post('/getFollowingUserStories', (request, response) => {
             ...userValue.val(),
             active: element.active,
             expired: element.expired,
+            priority: 2, // 1 = admin, 2 = user
           });
         }
       }
-
-      const postsValue2 = await admin
+      /// **** FOLLOWING USER STORIES - END
+      /// **** MY STORIES - BEGIN
+      const storiesValue = await admin
         .database()
         .ref('stories')
         .child(uid)
         .once('value');
       var myStoriesArray = [];
 
-      postsValue2.forEach((post) => {
-        if (post.val()) {
-          if (
-            new Date().getTime() - post.val().timestamp <
-            24 * 60 * 60 * 1000
-          ) {
-            myStoriesArray.push(post.val());
+      for (const post of Object.values(Object.assign({}, storiesValue.val()))) {
+        if (post) {
+          if (new Date().getTime() - post.timestamp < 24 * 60 * 60 * 1000) {
+            const userValue = await admin
+              .database()
+              .ref('users')
+              .child(post.user.uid)
+              .once('value');
+
+            if (userValue.val()) {
+              myStoriesArray.push({
+                ...post,
+                user: userValue.val(),
+              });
+            }
           }
         }
-      });
+      }
 
       myStoriesArray.sort(function (a, b) {
         return a.timestamp - b.timestamp;
       });
 
-      userStoriesArray.sort(function (a, b) {
-        return b.lastActivity - a.lastActivity;
-      });
-
       if (typeof myStoriesArray === 'undefined') {
         myStoriesArray = [];
       }
+      /// **** MY STORIES - END
+      /// **** ADMIN STORIES - BEGIN
+      const admins = await admin
+        .database()
+        .ref('users')
+        .orderByChild('type')
+        .equalTo('admin')
+        .once('value');
+
+      for (const adminUser of Object.values(Object.assign({}, admins.val()))) {
+        if (adminUser) {
+          if (adminUser.uid !== uid) {
+            const adminStoriesData = await admin
+              .database()
+              .ref('stories')
+              .child(adminUser.uid)
+              .once('value');
+
+            var adminStoriesValue = [];
+
+            for (const adminStory of Object.values(
+              Object.assign({}, adminStoriesData.val()),
+            )) {
+              if (adminStory) {
+                if (
+                  new Date().getTime() - adminStory.timestamp <
+                  24 * 60 * 60 * 1000
+                ) {
+                  adminStoriesValue.push({
+                    ...adminStory,
+                    user: adminUser,
+                  });
+                }
+              }
+            }
+
+            adminStoriesValue.sort(function (a, b) {
+              return a.timestamp - b.timestamp;
+            });
+
+            if (adminStoriesValue.length !== 0) {
+              userStoriesArray.push({
+                stories: adminStoriesValue,
+                ...adminUser,
+                active: true,
+                expired: false,
+                priority: 1, // 1 = admin, 2 = user
+              });
+            }
+          }
+        }
+      }
+      /// **** ADMIN STORIES - END
+
+      userStoriesArray.sortBy([
+        {key: 'priority', order: 'asc'},
+        {key: 'lastActivity', order: 'desc'},
+      ]);
 
       return response
         .status(200)
         .send(JSON.stringify({userStoriesArray, myStoriesArray}));
+    } catch (error) {
+      console.log(error);
+      return response.status(400).send(
+        JSON.stringify({
+          code: config.CODE_702,
+          message: config.CODE_702_MESSAGE,
+        }),
+      );
+    }
+  }
+});
+
+app.post('/getUserSubscribers', (request, response) => {
+  const body = request.body;
+
+  if (request.method !== 'POST') {
+    return response.status(400).send(
+      JSON.stringify({
+        code: config.CODE_701,
+        message: config.CODE_701_MESSAGE,
+      }),
+    );
+  }
+
+  if (body.uid === 'undefined') {
+    return response.status(400).send(
+      JSON.stringify({
+        code: config.CODE_703,
+        message: config.CODE_703_MESSAGE,
+      }),
+    );
+  }
+
+  const uid = body.uid;
+
+  start();
+
+  async function start() {
+    try {
+      const subscribersData = await admin
+        .database()
+        .ref('follows')
+        .child(uid)
+        .once('value');
+      const subscribersList = Object.keys(
+        Object.assign({}, subscribersData.val()),
+      );
+      var subscribersArray = [];
+
+      if (subscribersList.length > 0) {
+        for (let i = 0; i < subscribersList.length; i++) {
+          const followerUID = subscribersList[i];
+
+          const element = await (
+            await admin
+              .database()
+              .ref('followList')
+              .child(followerUID)
+              .child(uid)
+              .once('value')
+          ).val();
+
+          if (element) {
+            if (
+              element.active === true &&
+              element.expired === false &&
+              element.endTimestamp > new Date().getTime()
+            ) {
+              const userValue = await admin
+                .database()
+                .ref('users')
+                .child(element.followerUID)
+                .once('value');
+
+              if (userValue.val()) {
+                subscribersArray.push({
+                  ...element,
+                  user: userValue.val(),
+                });
+              }
+            }
+          }
+        }
+
+        subscribersArray.sort(function (a, b) {
+          return b.lastActivity - a.lastActivity;
+        });
+      }
+
+      return response.status(200).send(JSON.stringify(subscribersArray));
     } catch (error) {
       console.log(error);
       return response.status(400).send(
@@ -436,12 +686,28 @@ app.post('/getFollowingLiveData', (request, response) => {
     );
   }
 
-  const followList = body.followList;
+  const followListData = body.followList;
+  const userType = typeof body.userType === 'undefined' ? 'user' : body.userType;
 
   start();
 
   async function start() {
     try {
+      const followList =
+        userType !== 'admin'
+          ? followListData
+          : Object.assign(
+              {},
+              await (
+                await admin
+                  .database()
+                  .ref('users')
+                  .orderByChild('type')
+                  .equalTo('influencer')
+                  .once('value')
+              ).val(),
+            );
+
       const liveValue = await admin.database().ref('live').once('value');
       var liveArray = [];
       var liveValueArray = [];
@@ -451,7 +717,17 @@ app.post('/getFollowingLiveData', (request, response) => {
 
         for (let i = 0; i < keys.length; i++) {
           const k = keys[i];
-          liveValueArray.push(liveValue.val()[k]);
+          const currentLiveData = liveValue.val()[k];
+
+          if (currentLiveData.user.type === 'admin') {
+            liveArray.push({
+              ...currentLiveData,
+              active: true,
+              expired: false,
+            });
+          } else {
+            liveValueArray.push(currentLiveData);
+          }
         }
 
         for (let i = 0; i < followList.length; i++) {
@@ -574,6 +850,148 @@ app.get('/livestreamControl', (request, response) => {
     }
 
     return true;
+  }
+});
+
+app.post('/sendNotificationToUserDevices', (request, response) => {
+  const body = request.body;
+
+  if (request.method !== 'POST') {
+    return response.status(400).send(
+      JSON.stringify({
+        code: config.CODE_701,
+        message: config.CODE_701_MESSAGE,
+      }),
+    );
+  }
+
+  if (body.userUIDs === 'undefined') {
+    return response.status(400).send(
+      JSON.stringify({
+        code: config.CODE_703,
+        message: config.CODE_703_MESSAGE,
+      }),
+    );
+  }
+
+  if (body.type === 'undefined') {
+    return response.status(400).send(
+      JSON.stringify({
+        code: config.CODE_703,
+        message: config.CODE_703_MESSAGE,
+      }),
+    );
+  }
+
+  const userUIDList = body.userUIDs;
+  const notificationType = body.type === 'video' ? 'new-post' : body.type;
+  const replaceContents = body.replaceContents;
+  const url =
+    typeof body.url !== 'undefined'
+      ? body.url.replace('/video/', '/new-post/')
+      : 'backstage://';
+
+  start();
+
+  async function start() {
+    try {
+      const notificationTemplate = await (
+        await admin
+          .database()
+          .ref('notificationTemplates')
+          .child(notificationType)
+          .once('value')
+      ).val();
+
+      if (!notificationTemplate) {
+        return response.status(400).send(
+          JSON.stringify({
+            code: config.CODE_702,
+            message: config.CODE_702_MESSAGE,
+          }),
+        );
+      }
+
+      var allDevices = [];
+
+      for (let i = 0; i < userUIDList.length; i++) {
+        const userUID = userUIDList[i];
+        const userData = await admin
+          .database()
+          .ref('users')
+          .child(userUID)
+          .once('value');
+
+        if (userData.val()) {
+          if (userData.val().devices) {
+            userData.val().devices.map((device) => {
+              if (device) {
+                allDevices.push(device);
+              }
+            });
+          }
+        }
+      }
+
+      const client = new OneSignal.Client(
+        '9a94991e-d65d-4782-b126-e6c7e3e500c2',
+        'OGEyMGZjOTEtYTZiZi00MDczLTlkMzktYjNmNmVkMjEzZWE3',
+      );
+
+      var notification = {
+        contents: notificationTemplate.contents,
+        headings: notificationTemplate.headings,
+        app_url: url,
+        include_player_ids: allDevices,
+      };
+
+      if (replaceContents) {
+        for (let i = 0; i < replaceContents.length; i++) {
+          const item = replaceContents[i];
+
+          if (item) {
+            Object.entries(notification.contents).map((value) => {
+              if (value[1].includes(item.key)) {
+                notification.contents[value[0]] = value[1].replace(
+                  item.key,
+                  item.value,
+                );
+              }
+            });
+            Object.entries(notification.headings).map((value) => {
+              if (value[1].includes(item.key)) {
+                notification.headings[value[0]] = value[1].replace(
+                  item.key,
+                  item.value,
+                );
+              }
+            });
+          }
+        }
+      }
+
+      try {
+        const clientResponse = await client.createNotification(notification);
+
+        return response.status(200).send(JSON.stringify({successful: true}));
+      } catch (e) {
+        console.log(e);
+        return response.status(400).send(
+          JSON.stringify({
+            code: config.CODE_702,
+            message: config.CODE_702_MESSAGE,
+          }),
+        );
+      }
+    } catch (error) {
+      console.log(error);
+      return response.status(400).send(
+        JSON.stringify({
+          code: config.CODE_702,
+          message: config.CODE_702_MESSAGE,
+        }),
+      );
+    }
   }
 });
 

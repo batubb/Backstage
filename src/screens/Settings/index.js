@@ -163,16 +163,6 @@ class Home extends Component {
               border
             />
             <Label
-              text="Privacy & Terms"
-              icon="file-document-outline"
-              onPressFunction={() => {
-                Linking.openURL(
-                  'https://www.notion.so/Legal-974079130f2d44b38a45c41fc5207800',
-                ).catch((err) => console.error('An error occurred', err));
-              }}
-              border
-            />
-            <Label
               text="Contact Us"
               icon="lifebuoy"
               onPressFunction={() => this.showHelpOptions()}
@@ -184,7 +174,16 @@ class Home extends Component {
               onPressFunction={() => this.goTo('Changelogs')}
               border
             />
-
+            <Label
+              text="Privacy & Terms"
+              icon="file-document-outline"
+              onPressFunction={() => {
+                Linking.openURL(
+                  'https://www.notion.so/Legal-974079130f2d44b38a45c41fc5207800',
+                ).catch((err) => console.error('An error occurred', err));
+              }}
+              border
+            />
             <Label
               text="Sign Out"
               icon="logout-variant"

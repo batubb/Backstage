@@ -7,11 +7,11 @@ export default function checkAndShowInfluencerModal(navigation, user = Store.use
   if (!isInfluencer(user)) {
     Alert.alert('Oops', 'You are not enrolled as a creator yet.', [
       {
-        text: 'Start Creating',
+        text: 'Enroll as a creator',
         onPress: () => navigation.dispatch(StackActions.push('AddContent')),
       },
       {
-        text: 'Back',
+        text: 'Cancel',
         style: 'cancel',
         onPress: () => navigation.dispatch(StackActions.pop()),
       },

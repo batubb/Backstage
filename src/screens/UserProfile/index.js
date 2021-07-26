@@ -131,8 +131,12 @@ class UserProfile extends Component {
   };
 
   componentWillUnmount = () => {
-    this.unsubscribe();
-    this.unsubscribeBottomSheet();
+    if (typeof this.unsubscribe !== 'undefined') {
+      this.unsubscribe();
+    }
+    if (typeof this.unsubscribeBottomSheet !== 'undefined') {
+      this.unsubscribeBottomSheet();
+    }
   };
 
   goTo = (route, info = null) => {
@@ -353,13 +357,19 @@ class UserProfile extends Component {
       loading,
       refreshing,
       user,
-      posts,
-      postsArray,
       subscribtion,
       daily,
       optionsVisible,
       purchaseProcessing,
     } = this.state;
+
+    let headerExtraProps = {};
+    if (Store.uid !== user.uid) {
+      headerExtraProps = {
+        rightButtonPress: () => this.setState({optionsVisible: true}),
+        rightButtonIcon: 'dots-horizontal',
+      };
+    }
 
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
@@ -369,9 +379,8 @@ class UserProfile extends Component {
           }
           leftButtonIcon="chevron-left"
           title={user.username}
-          rightButtonPress={() => this.setState({optionsVisible: true})}
-          rightButtonIcon="dots-horizontal"
           showVerificationIcon={user.verified === true}
+          {...headerExtraProps}
         />
         {loading ? (
           <Loading
@@ -393,6 +402,7 @@ class UserProfile extends Component {
               width: constants.DEFAULT_PAGE_WIDTH,
               alignSelf: 'center',
               marginTop: SIZES.spacing * 5,
+              paddingBottom: SIZES.spacing * 5,
             }}>
             <ProfileTop
               name={user.name}
@@ -413,7 +423,11 @@ class UserProfile extends Component {
               }
               followerNumber={this.state.followerNumber}
               subscriberNumber={this.state.subscriberNumber}
-              showSubscriberNumber={Store.user.uid === this.state.user.uid || isAdmin(Store.user)}
+              showSubscriberNumber={
+                (Store.uid === user.uid &&
+                  !isAdmin(user)) ||
+                (isAdmin(Store.user) && Store.uid !== user.uid)
+              }
               onChatPress={() => this.goTo('Chat', this.state.user)}
               editProfileVisible={user.uid === Store.user.uid}
               navigation={this.props.navigation}
