@@ -13,6 +13,7 @@ import {
   subscribeInfluencer,
   sendNotificationToUserDevices,
 } from './src/services';
+import {constants} from './src/resources';
 
 class App extends Component {
   constructor(props) {
@@ -127,11 +128,18 @@ class App extends Component {
       );
       await database().ref().update(updates);
       if (isFollowerInDevelopmentMode !== true) {
+        const influencerUsername = await (
+          await database()
+            .ref('users')
+            .child(infUID)
+            .child('username')
+            .once('value')
+        ).val();
         await sendNotificationToUserDevices(
           'new-subscriber',
           [infUID],
           undefined,
-          'backstage://new-subscriber',
+          `${constants.APP_WEBSITE}/${influencerUsername}/subscribers/new`,
         );
       }
       return true;

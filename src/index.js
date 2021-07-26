@@ -48,7 +48,6 @@ import {getBottomSpace, isIphoneX} from './lib/iPhoneXHelper';
 import {handleURLSchemes} from './lib';
 import OneSignal from 'react-native-onesignal';
 import Store from './store/Store';
-import DeepLinking from 'react-native-deep-linking';
 
 LogBox.ignoreAllLogs();
 
@@ -63,19 +62,12 @@ const Tab = createBottomTabNavigator();
 const navigationContainerRef = React.createRef();
 
 class MyStack extends React.Component {
-  constructor() {
-    super();
-    this.isNotificationOpened = false;
-  }
-
   componentDidMount() {
-    this.isNotificationOpened = false;
     OneSignal.setNotificationOpenedHandler(
       (response) => {
         const url = response.notification.launchURL;
 
         if (url) {
-          this.isNotificationOpened = true;
           this.onReceivedURL({url});
         }
       },
@@ -83,13 +75,7 @@ class MyStack extends React.Component {
     Linking.addEventListener('url', (event) => this.onReceivedURL(event));
   }
 
-  onReceivedURL = async ({url}) => {
-    console.log('url received', url);
-    
-    if (this.isNotificationOpened === true) {
-      this.isNotificationOpened = false;
-      return;
-    }
+  onReceivedURL = ({url}) => {
     if (Store.user) {
       handleURLSchemes({url}, {navigation: navigationContainerRef.current});
     }

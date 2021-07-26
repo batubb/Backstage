@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import database from '@react-native-firebase/database';
+import constants from '../resources/constants';
 import getFollowList from './getFollowList';
 import sendNotificationToUserDevices from './sendNotificationToUserDevices';
 
@@ -32,11 +33,18 @@ export default async function subscribeInfluencer(user, influencer, sub) {
     await database().ref().update(updates);
     await getFollowList(user.uid);
     if (user.isInDevelopmentMode !== true) {
+      const influencerUsername = await (
+        await database()
+          .ref('users')
+          .child(influencer.uid)
+          .child('username')
+          .once('value')
+      ).val();
       await sendNotificationToUserDevices(
         'new-subscriber',
         [influencer.uid],
         undefined,
-        'backstage://new-subscriber',
+        `${constants.APP_WEBSITE}/${influencerUsername}/subscribers/new`,
       );
     }
     return true;

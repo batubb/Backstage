@@ -33,8 +33,8 @@ export default async function createVideoData(
   }
 
   updates[`users/${user.uid}/lastActivity`] = new Date().getTime();
-  const video_url = `backstage://${type === 'live' ? 'live' : 'new-post'}/${
-    user.uid
+  const video_url = `${constants.APP_WEBSITE}/${user.username}/${
+    type === 'live' ? 'live' : 'posts'
   }/${video.uid}`;
   const notification_type = type === 'live' ? 'live' : 'new-post';
 
