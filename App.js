@@ -49,21 +49,26 @@ class App extends Component {
   };
 
   getInfluencerUIDFromProductId = async (productId, originalTransactionId) => {
-    const snapshot = await (
-      await database()
-        .ref('users')
-        .orderByChild('appStoreProductId')
-        .equalTo(productId)
-        .once('value')
-    ).val();
+    const snapshot = Object.values(
+      Object.assign(
+        {},
+        await (
+          await database()
+            .ref('users')
+            .orderByChild('appStoreProductId')
+            .equalTo(productId)
+            .once('value')
+        ).val(),
+      ),
+    );
     // let foundUser = null;
     // snapshot.forEach((user) => {
     //   if (user.val().appStoreProductId === productId) {
     //     foundUser = user.val().uid;
     //   }
     // });
-    console.log({snapshot, productId, originalTransactionId});
-    return snapshot?.uid ?? null;
+    console.log({snapshot0: snapshot?.[0], productId, originalTransactionId});
+    return snapshot?.[0].uid ?? null;
   };
 
   updateTimeOnDbIfTransactionExists = async (
