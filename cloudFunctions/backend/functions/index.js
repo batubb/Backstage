@@ -233,7 +233,8 @@ app.post('/getFollowingUserPosts', (request, response) => {
   }
 
   const followListData = body.followList;
-  const userType = typeof body.userType === 'undefined' ? 'user' : body.userType;
+  const userType =
+    typeof body.userType === 'undefined' ? 'user' : body.userType;
 
   start();
 
@@ -388,7 +389,8 @@ app.post('/getFollowingUserStories', (request, response) => {
   }
 
   const followListData = body.followList;
-  const userType = typeof body.userType === 'undefined' ? 'user' : body.userType;
+  const userType =
+    typeof body.userType === 'undefined' ? 'user' : body.userType;
   const uid = body.uid;
 
   start();
@@ -687,7 +689,8 @@ app.post('/getFollowingLiveData', (request, response) => {
   }
 
   const followListData = body.followList;
-  const userType = typeof body.userType === 'undefined' ? 'user' : body.userType;
+  const userType =
+    typeof body.userType === 'undefined' ? 'user' : body.userType;
 
   start();
 
@@ -884,12 +887,10 @@ app.post('/sendNotificationToUserDevices', (request, response) => {
   }
 
   const userUIDList = body.userUIDs;
-  const notificationType = body.type === 'video' ? 'new-post' : body.type;
+  const notificationType = body.type;
   const replaceContents = body.replaceContents;
   const url =
-    typeof body.url !== 'undefined'
-      ? body.url.replace('/video/', '/new-post/')
-      : 'backstage://';
+    typeof body.url !== 'undefined' ? body.url : 'https://www.joinbackstage.co';
 
   start();
 
