@@ -9,7 +9,9 @@ export default function handleURLSchemes(event, {navigation}) {
     const route = URL.replace(/.*?:\/\//g, '');
     let matches = route.split('/');
 
-    if (matches.length < 2) return;
+    if (matches.length === 0 || matches?.[1] === '') {
+      return;
+    }
 
     navigation.navigate('SearchMenu', {screen: 'Search'});
     if (typeof matches?.[1] !== undefined) {
