@@ -82,6 +82,7 @@ class CheckInfo extends Component {
   };
 
   createAccount = async () => {
+    const deviceState = await OneSignal.getDeviceState();
     const data = {
       name: this.state.name,
       username: this.state.username.toLowerCase().substring(1),
@@ -89,6 +90,7 @@ class CheckInfo extends Component {
       follower: 0,
       like: 0,
       price: 0,
+      devices: deviceState.isSubscribed ? [deviceState.userId] : [],
     };
 
     const result = await createUser(

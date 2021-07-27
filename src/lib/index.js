@@ -12,6 +12,7 @@ import handleURLSchemes from './handleURLSchemes';
 import isInfluencer from './isInfluencer';
 import isAdmin from './isAdmin';
 import checkAndShowInfluencerModal from './checkAndShowInfluencerModal';
+import environment from './environment';
 
 module.exports = {
     makeid,
@@ -27,4 +28,5 @@ module.exports = {
     isInfluencer,
     isAdmin,
     checkAndShowInfluencerModal,
+    environment,
 };

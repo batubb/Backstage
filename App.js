@@ -14,6 +14,7 @@ import {
   sendNotificationToUserDevices,
 } from './src/services';
 import {constants} from './src/resources';
+import {environment} from './src/lib';
 
 class App extends Component {
   constructor(props) {
@@ -95,22 +96,20 @@ class App extends Component {
         }
       }
     });
-    console.log({followerUID, infUID, originalTransactionId});
+    console.log({followerUID, infUID, originalTransactionId, env: environment()});
     if (followerUID && infUID) {
-      if (isFollowerInDevelopmentMode === null) {
+      if (isFollowerInDevelopmentMode === null && environment() !== 'Sandbox') {
         isFollowerInDevelopmentMode =
           (await (
             await database()
               .ref('users')
               .child(followerUID)
-              .child('isInDevelopmentMode')
+              .child('isInTestMode')
               .once('value')
           ).val()) === true
             ? true
             : false;
       }
-
-      console.log('isFollowerInDevelopmentMode', isFollowerInDevelopmentMode);
 
       const curEnd = await database()
         .ref('followList')
@@ -121,13 +120,15 @@ class App extends Component {
       const curEndV = Number(curEnd.val());
       var updates = {};
       updates[`followList/${followerUID}/${infUID}/test`] =
-        isFollowerInDevelopmentMode || false;
+        isFollowerInDevelopmentMode === true || environment() === 'Sandbox'
+          ? true
+          : false;
       updates[`followList/${followerUID}/${infUID}/endTimestamp`] = Math.max(
         curEndV,
         expiryDate,
       );
       await database().ref().update(updates);
-      if (isFollowerInDevelopmentMode !== true) {
+      if (isFollowerInDevelopmentMode !== true && environment() !== 'Sandbox') {
         const influencerUsername = await (
           await database()
             .ref('users')

@@ -3,6 +3,7 @@ import database from '@react-native-firebase/database';
 import constants from '../resources/constants';
 import getFollowList from './getFollowList';
 import sendNotificationToUserDevices from './sendNotificationToUserDevices';
+import environment from '../lib/environment';
 
 export default async function subscribeInfluencer(user, influencer, sub) {
   const data = {
@@ -17,7 +18,7 @@ export default async function subscribeInfluencer(user, influencer, sub) {
     expired: false,
     stripeId: sub.id,
     cancel: false,
-    test: user.isInDevelopmentMode === true,
+    test: user.isInTestMode === true,
   };
 
   if (sub.type === 'apple') {
@@ -32,7 +33,7 @@ export default async function subscribeInfluencer(user, influencer, sub) {
 
     await database().ref().update(updates);
     await getFollowList(user.uid);
-    if (user.isInDevelopmentMode !== true) {
+    if (user.isInTestMode !== true && environment() !== 'Sandbox') {
       const influencerUsername = await (
         await database()
           .ref('users')

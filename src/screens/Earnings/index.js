@@ -91,8 +91,6 @@ class Earnings extends Component {
       .child(Store.user.uid)
       .once('value');
 
-    console.log(Store.user.isInDevelopmentMode);
-
     const totalEarnings =
       parseFloat(
         updatedUser.price * (updatedUser.numLifetimeSubscribed ?? 0),

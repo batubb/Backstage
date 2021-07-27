@@ -74,7 +74,7 @@ class WatchVideo extends Component {
       showMore: false,
       controlsVisible: true,
       months: constants.MONTHS,
-      fullScreen: true,
+      fullScreen: false,
       isLiked: false,
       isBlurComments: true,
     };

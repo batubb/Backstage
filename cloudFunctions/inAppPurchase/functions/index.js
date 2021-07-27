@@ -261,7 +261,7 @@ exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
             .database()
             .ref('users')
             .child(userUID)
-            .child('isInDevelopmentMode')
+            .child('isInTestMode')
             .once('value')
         ).val()) === true
           ? true
@@ -269,7 +269,9 @@ exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
 
       var updates = {};
       updates[`followList/${userUID}/${influencerUID}/test`] =
-        isUserInDevelopmentMode;
+        isUserInDevelopmentMode === true && environment === 'Sandbox'
+          ? true
+          : false;
       updates[
         `followList/${userUID}/${influencerUID}/endTimestamp`
       ] = endTimestamp;

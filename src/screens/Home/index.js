@@ -75,7 +75,9 @@ class Home extends Component {
   };
 
   componentWillUnmount = () => {
-    this.unsubscibe();
+    if (typeof this.unsubscibe !== 'undefined') {
+      this.unsubscibe();
+    }
   };
 
   getData = (extra = {}) => {
