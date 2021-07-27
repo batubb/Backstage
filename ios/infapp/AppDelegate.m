@@ -38,17 +38,20 @@ static void InitializeFlipper(UIApplication *application) {
 #endif
 
   NSMutableDictionary *newLaunchOptions = [NSMutableDictionary dictionaryWithDictionary:launchOptions];
-      if (launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey]) {
-          NSDictionary *remoteNotif = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
-          if (remoteNotif[@"custom"] && remoteNotif[@"custom"][@"u"]) {
-              NSString *initialURL = remoteNotif[@"custom"][@"u"];
-              if (!launchOptions[UIApplicationLaunchOptionsURLKey]) {
-                  newLaunchOptions[UIApplicationLaunchOptionsURLKey] = [NSURL URLWithString:initialURL];
-              }
-          }
-      }
+    if (launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey]) {
+        NSDictionary *remoteNotif = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
+      
+        if (remoteNotif[@"custom"] && remoteNotif[@"custom"][@"u"]) {
+            NSString *initialURL = remoteNotif[@"custom"][@"u"];
+          
+            if (!launchOptions[UIApplicationLaunchOptionsURLKey]) {
+                newLaunchOptions[UIApplicationLaunchOptionsURLKey] = [NSURL URLWithString:initialURL];
+            }
+        }
+    }
 
-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:newLaunchOptions];
+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self
+                                            launchOptions:newLaunchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"infapp"
                                             initialProperties:nil];

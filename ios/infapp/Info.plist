@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>OneSignal_suppress_launch_urls</key>
-	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -72,6 +70,8 @@
 	<string>We need your microfon for uploading content.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need your photo library for uploading content and changing profile information.</string>
+	<key>OneSignal_suppress_launch_urls</key>
+	<true/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>FontAwesome.ttf</string>
