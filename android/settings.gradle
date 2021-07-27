@@ -1,4 +1,6 @@
 rootProject.name = 'infapp'
+include ':react-native-test-flight'
+project(':react-native-test-flight').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-test-flight/android')
 include ':react-native-fs'
 project(':react-native-fs').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fs/android')
 include ':react-native-image-resizer'
