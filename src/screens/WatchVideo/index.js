@@ -79,7 +79,10 @@ class WatchVideo extends Component {
       isBlurComments: true,
     };
 
-    this.list = [{title: 'Report', onPress: this.reportVideo}];
+    this.list = [
+      {title: 'Share', onPress: this.shareVideo},
+      {title: 'Report', onPress: this.reportVideo},
+    ];
 
     if (Store.user.uid === this.props.route.params.video.user.uid) {
       this.list = [
@@ -117,7 +120,7 @@ class WatchVideo extends Component {
           setVideoView(Store.user.uid, this.state.video);
         }
 
-        const isLiked = Object.values(video.likes).some(
+        const isLiked = Object.values(Object.assign({}, video.likes)).some(
           (like) => like.uid === Store.user.uid,
         );
 
@@ -197,11 +200,16 @@ class WatchVideo extends Component {
     this.props.navigation.dispatch(StackActions.pop());
   };
 
-  shareVideo = async (
-    text = `Hey did you watch this video on BackStage. ${this.state.video.title} is live!`,
-  ) => {
-    const result = await shareItem(text);
+  shareVideo = async () => {
     this.setState({optionsVisible: false});
+    await shareItem(
+      constants.APP_WEBSITE +
+        '/' +
+        this.state.influencer.username +
+        '/posts/' +
+        this.state.video.uid,
+      'share-video-link',
+    );
   };
 
   goTo = (route, info = null) => {

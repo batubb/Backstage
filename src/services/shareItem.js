@@ -1,15 +1,34 @@
 /* eslint-disable prettier/prettier */
 import Share from 'react-native-share';
+import sendDataAnalytics from './sendDataAnalytics';
 
-export default async function shareItem(text = null) {
-    const shareOptions = {
-        message: text,
-    };
+export default async function shareItem(
+  text = null,
+  analyticsType = 'unnamed',
+) {
+  const shareOptions = {
+    message: text,
+  };
 
-    try {
-        await Share.open(shareOptions);
-        return true;
-    } catch (error) {
-        return false;
-    }
+  await Share.open(shareOptions)
+    .then((value) => {
+      if (!value.dismissedAction) {
+        sendDataAnalytics(
+          analyticsType,
+          'success',
+          {app: value.app},
+          value.app,
+        );
+      }
+    })
+    .catch((reason) => {
+      if (reason.message !== 'User did not share') {
+        sendDataAnalytics(
+          analyticsType,
+          'success',
+          {name: reason.name, message: reason.message},
+          value.message,
+        );
+      }
+    });
 }

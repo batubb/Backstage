@@ -1,15 +1,9 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Dimensions,
-  ActionSheetIOS,
-  ScrollView,
-  RefreshControl,
-} from 'react-native';
+import {View, ScrollView, RefreshControl} from 'react-native';
 import {observer} from 'mobx-react';
 import {Loading, Header, Text, Button, MyImage} from '../../components';
 import {constants} from '../../resources';
-import {sendDataAnalytics} from '../../services';
+import {sendDataAnalytics, shareItem} from '../../services';
 import {checkAndShowInfluencerModal} from '../../lib';
 import Store from '../../store/Store';
 import {COLORS, SIZES} from '../../resources/theme';
@@ -31,25 +25,11 @@ class MyProfileLink extends Component {
     this.setState({loading: false});
   };
 
-  shareProfileLink = () => {
-    if (Platform.OS === 'ios') {
-      ActionSheetIOS.showShareActionSheetWithOptions(
-        {
-          message: constants.APP_WEBSITE + '/' + Store.user.username,
-        },
-        (error) =>
-          sendDataAnalytics('share-profile-link', 'error', error, error.name),
-        (success, method) =>
-          method
-            ? sendDataAnalytics(
-                'share-profile-link',
-                'success',
-                {method},
-                method,
-              )
-            : null,
-      );
-    }
+  shareProfileLink = async () => {
+    await shareItem(
+      constants.APP_WEBSITE + '/' + Store.user.username,
+      'share-my-profile-link',
+    );
   };
 
   render() {
