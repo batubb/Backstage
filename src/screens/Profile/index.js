@@ -91,7 +91,7 @@ class Profile extends Component {
               : Store.user.cumulativeViewsUser,
         });
       });
-    } else if (isInfluencer(Store.user) || isAdmin(Store.user)) {
+    } else {
       const posts = await getUserPosts(Store.user.uid, true);
       const subscriberNumber = await getSubscriberCount(Store.user.uid);
       const {postsArray, daily} = setPosts(posts);

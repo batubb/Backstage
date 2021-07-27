@@ -6861,11 +6861,6 @@
   "resolved" "https://registry.npmjs.org/react-native-create-thumbnail/-/react-native-create-thumbnail-1.2.2.tgz"
   "version" "1.2.2"
 
-"react-native-deep-linking@^2.2.0":
-  "integrity" "sha512-PKShbOsa/oxjSzZ/Bag98O/J+jaZOI6ic5YdanPirTpRAraAvKUzJWQUhE5Yy0Isl9yfIkSogOClE9BRfSyUbA=="
-  "resolved" "https://registry.npmjs.org/react-native-deep-linking/-/react-native-deep-linking-2.2.0.tgz"
-  "version" "2.2.0"
-
 "react-native-document-picker@^5.2.0":
   "integrity" "sha512-zXK34hW6fM0gXoo6v7edZZxKvLT7DyjOdBXi7WrxbKqZchDokTEQ/tNTeZxky+7oI8sVz8T3uXBBEW0sp+VfXQ=="
   "resolved" "https://registry.npmjs.org/react-native-document-picker/-/react-native-document-picker-5.2.0.tgz"
@@ -7107,6 +7102,11 @@
   "version" "1.6.0"
   dependencies:
     "prop-types" "^15.5.10"
+
+"react-native-test-flight@^1.0.4":
+  "integrity" "sha512-QUcX5vDoKNcZT9bGoxZzrJJrWEW3KGU32hs/nwPoVTBHjAjJbgKuwR6XSqhH0F5Lr5QufLkWgGgRLfi+LkMYKw=="
+  "resolved" "https://registry.npmjs.org/react-native-test-flight/-/react-native-test-flight-1.0.4.tgz"
+  "version" "1.0.4"
 
 "react-native-text-gradient@^0.1.7":
   "integrity" "sha512-QuEwW8TMKBNI5ejmDFu3/SDJh5CIzOi5eL1xNzq8yBEwU5wHaloBxhQ9K0zc16GPkr3KgSUDyU4olQtiYje4mw=="
