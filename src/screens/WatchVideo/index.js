@@ -158,7 +158,7 @@ class WatchVideo extends Component {
       } else {
         Alert.alert(
           'Oops',
-          'You must become a member to watch the live stream.',
+          'You must become a member to watch the livestream.',
           [
             {
               text: 'Okay',
