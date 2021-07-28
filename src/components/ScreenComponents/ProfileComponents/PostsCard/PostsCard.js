@@ -41,9 +41,7 @@ export default function PostsCard(props) {
                 top: SIZES.padding,
                 right: SIZES.padding,
                 opacity: 0.95,
-                // backgroundColor: constants.RED,
-                // backgroundColor: constants.TRANSPARENT_BLACK_COLOR,
-                backgroundColor: COLORS.lightGray5,
+                backgroundColor: COLORS.systemFill,
                 borderRadius: SIZES.radius * 0.15,
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -52,7 +50,7 @@ export default function PostsCard(props) {
                 text="LIVE"
                 style={{
                   paddingVertical: SIZES.spacing * 1.5,
-                  paddingHorizontal: SIZES.spacing * 2,
+                  paddingHorizontal: SIZES.spacing * 3,
                   textAlign: 'center',
                   color: COLORS.secondary,
                   fontSize: SIZES.body5,
