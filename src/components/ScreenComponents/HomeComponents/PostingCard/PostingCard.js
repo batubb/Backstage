@@ -155,9 +155,11 @@ export default function PostingCard(props) {
             ) : (
               <>
                 <View style={{alignItems: 'flex-start'}}>
-                  <PostingCardCumulativeViews
-                    views={props.item.cumulativeViews ?? 0}
-                  />
+                  {false && (
+                    <PostingCardCumulativeViews
+                      views={props.item.cumulativeViews ?? 0}
+                    />
+                  )}
                   <PostingCardCaption caption={props.item.title} />
                 </View>
               </>

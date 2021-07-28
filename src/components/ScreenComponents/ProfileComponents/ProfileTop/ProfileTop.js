@@ -62,10 +62,14 @@ export default function ProfileTop(props) {
               flexDirection: 'row',
               justifyContent: 'flex-start',
             }}>
-            {typeof props.views !== 'undefined' ? (
+            {false && typeof props.views !== 'undefined' ? (
               <Text
                 text={`${props.views} views`}
-                style={{fontWeight: 'bold', fontSize: 11}}
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: 11,
+                  paddingRight: SIZES.padding * 2,
+                }}
               />
             ) : null}
             {props.showSubscriberNumber && (
@@ -81,7 +85,6 @@ export default function ProfileTop(props) {
                   style={{
                     fontWeight: 'bold',
                     fontSize: 11,
-                    paddingLeft: SIZES.padding * 2,
                   }}
                 />
               </TouchableOpacity>
@@ -116,7 +119,10 @@ export default function ProfileTop(props) {
           <View
             style={{
               flex: 1,
-              marginRight: isInfluencer(Store.user) || isAdmin(Store.user) ? SIZES.spacing * 3 : 0,
+              marginRight:
+                isInfluencer(Store.user) || isAdmin(Store.user)
+                  ? SIZES.spacing * 3
+                  : 0,
             }}>
             <Button
               onPress={() => goTo('EditProfile')}
@@ -124,13 +130,9 @@ export default function ProfileTop(props) {
               secondary
             />
           </View>
-          {isInfluencer(Store.user) || isAdmin(Store.user) ? (
+          {isInfluencer(Store.user) || isAdmin(Store.user) ? (
             <View style={{flex: 1}}>
-              <Button
-                text={'Room'}
-                onPress={props.onChatPress}
-                secondary
-              />
+              <Button text={'Room'} onPress={props.onChatPress} secondary />
             </View>
           ) : null}
         </View>
