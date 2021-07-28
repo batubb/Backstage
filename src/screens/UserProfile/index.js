@@ -68,7 +68,7 @@ class UserProfile extends Component {
     };
 
     this.list = [
-      {title: 'Share', onPress: this.shareUser},
+      {title: 'Share this Profile', onPress: this.shareUser},
       {title: 'Report', onPress: this.reportVideo},
       {title: 'Block', onPress: this.blockUser, danger: true},
     ];
@@ -448,8 +448,7 @@ class UserProfile extends Component {
               followerNumber={this.state.followerNumber}
               subscriberNumber={this.state.subscriberNumber}
               showSubscriberNumber={
-                (Store.uid === user.uid &&
-                  !isAdmin(user)) ||
+                (Store.uid === user.uid && !isAdmin(user)) ||
                 (isAdmin(Store.user) && Store.uid !== user.uid)
               }
               onChatPress={() => this.goTo('Chat', this.state.user)}
