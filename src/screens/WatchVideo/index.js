@@ -13,6 +13,7 @@ import {
   Keyboard,
   FlatList,
   TouchableWithoutFeedback,
+  Image,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {Slider, Icon} from 'react-native-elements';
@@ -257,7 +258,7 @@ class WatchVideo extends Component {
     const second = parseInt(data.currentTime % 60);
 
     const dk = minute < 10 ? `0${minute}` : minute.toString();
-    const sn = minute < 10 ? `0${second}` : second.toString();
+    const sn = second < 10 ? `0${second}` : second.toString();
 
     this.setState({videoInfo: data, dk, sn});
   };
@@ -357,7 +358,7 @@ class WatchVideo extends Component {
                   }
                 : {flex: 1, width: width, height: height},
             ]}
-            paused={paused}
+            paused={paused || this.state.subscribeAlert}
             repeat
           />
           {this.state.controlsVisible ? (
@@ -370,6 +371,20 @@ class WatchVideo extends Component {
                 justifyContent: 'flex-end',
                 alignSelf: 'center',
               }}>
+              {this.state.video.isLive === 0 ? (
+                <SafeAreaView
+                  style={{
+                    position: 'absolute',
+                    top: - SIZES.spacing,
+                    right: - SIZES.padding * 2,
+                    height: '100%',
+                  }}>
+                  <Image
+                    source={require('../../images/live_animation_gray.gif')}
+                    style={{resizeMode: 'contain', width: 70, height: 100}}
+                  />
+                </SafeAreaView>
+              ) : null}
               <View
                 style={{
                   flexDirection: 'row',

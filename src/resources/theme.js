@@ -31,6 +31,7 @@ const ADAPTIVE_COLORS = {
   lightGray2: '#F6F6F7',
   lightGray3: '#EFEFF1',
   lightGray4: '#F8F8F9',
+  lightGray5: 'rgba(142, 142, 142, 0.5)',
   transparent: 'transparent',
   darkgray: '#898C95',
 };
@@ -65,6 +66,7 @@ const DARK_COLORS = {
   lightGray2: '#F6F6F7',
   lightGray3: '#EFEFF1',
   lightGray4: '#F8F8F9',
+  lightGray5: 'rgba(142, 142, 142, 0.5)',
   transparent: 'transparent',
   darkgray: '#898C95',
 };
