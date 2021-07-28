@@ -38,6 +38,7 @@ import sendNotificationToUserSubscribers from './sendNotificationToUserSubscribe
 import getUserWithdrawals from './getUserWithdrawals';
 import sendDataAnalytics from './sendDataAnalytics';
 import createFeedback from './createFeedback';
+import checkReferenceCode from './checkReferenceCode';
 
 module.exports = {
     getDealsData,
@@ -79,4 +80,5 @@ module.exports = {
     getUserWithdrawals,
     sendDataAnalytics,
     createFeedback,
+    checkReferenceCode,
 };

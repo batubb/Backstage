@@ -53,6 +53,14 @@ export default async function checkUserInfo(
       .ref('users')
       .child(uid)
       .set({...data, ...otherInfos});
+
+    if (otherInfos.referedBy) {
+      await database()
+        .ref('users')
+        .child(otherInfos.referedBy)
+        .child('numLifetimeRefered')
+        .set(database.ServerValue.increment(1));
+    }
     return true;
   } catch (error) {
     Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
