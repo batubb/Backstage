@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {SIZES} from '../../../../resources/theme';
-import {View, FlatList} from 'react-native';
+import {View, FlatList, TouchableOpacity} from 'react-native';
 import {Icon} from 'react-native-elements';
 import PostCard from './PostCard';
 
@@ -34,7 +34,9 @@ export default function PostsCard(props) {
             showTitle={props.showTitle === true}
           />
           {props.expired ? (
-            <View
+            <TouchableOpacity
+              onPress={() => props.onPress(item)}
+              activeOpacity={0.75}
               style={{
                 position: 'absolute',
                 width: '100%',
@@ -42,15 +44,15 @@ export default function PostsCard(props) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: 'black',
-                opacity: 0.8,
+                opacity: 0.6,
               }}>
               <Icon
-                name="lock-outline"
+                name="eye-outline"
                 color="#FFF"
                 type="material-community"
                 size={48}
               />
-            </View>
+            </TouchableOpacity>
           ) : null}
         </View>
       )}
