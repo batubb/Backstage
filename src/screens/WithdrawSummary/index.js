@@ -15,9 +15,8 @@ class WithdrawSummary extends Component {
       loading: true,
       refreshing: false,
       showModal: false,
-      withdrawableBalance: this.parseFloatToFixed(
-        props.route.params.withdrawableBalance,
-      ),
+      withdrawableBalance: props.route.params.withdrawableBalance,
+      referralEarnings: props.route.params.referralEarnings,
     };
   }
 
@@ -36,12 +35,18 @@ class WithdrawSummary extends Component {
   parseFloatToFixed = (value) => parseFloat(parseFloat(value).toFixed(2));
 
   render() {
-    const {loading, refreshing, showModal, withdrawableBalance} = this.state;
+    const {
+      loading,
+      refreshing,
+      showModal,
+      withdrawableBalance,
+      referralEarnings,
+    } = this.state;
 
     const appleFees = this.parseFloatToFixed(withdrawableBalance * 0.15);
     const backstageFees = this.parseFloatToFixed(withdrawableBalance * 0.1);
     const userReceived = this.parseFloatToFixed(
-      withdrawableBalance - appleFees - backstageFees,
+      withdrawableBalance - appleFees - backstageFees + referralEarnings,
     );
 
     return (

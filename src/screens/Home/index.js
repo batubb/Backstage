@@ -22,6 +22,7 @@ import {
   getFollowingLiveData,
   getFollowingUserPosts,
   getFollowingUserStories,
+  getFollowList,
 } from '../../services';
 import Store from '../../store/Store';
 import {COLORS, SIZES} from '../../resources/theme';
@@ -80,7 +81,9 @@ class Home extends Component {
     }
   };
 
-  getData = (extra = {}) => {
+  getData = async (extra = {}) => {
+    await getFollowList(Store.uid);
+
     return Promise.all([
       getFollowingLiveData(Store.uid, Store.followList),
       getFollowingUserPosts(Store.uid, Store.followList),

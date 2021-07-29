@@ -43,6 +43,7 @@ import Subscribers from './screens/Subscribers';
 import Help from './screens/Help';
 import Changelogs from './screens/Changelogs';
 import MyProfileLink from './screens/MyProfileLink';
+import MyReferralLink from './screens/MyReferralLink';
 import {COLORS} from './resources/theme';
 import {getBottomSpace, isIphoneX} from './lib/iPhoneXHelper';
 import {handleURLSchemes} from './lib';
@@ -188,6 +189,7 @@ class ProfileMenu extends React.Component {
         <Stack.Screen name="Help" component={Help} />
         <Stack.Screen name="Changelogs" component={Changelogs} />
         <Stack.Screen name="MyProfileLink" component={MyProfileLink} />
+        <Stack.Screen name="MyReferralLink" component={MyReferralLink} />
       </Stack.Navigator>
     );
   }

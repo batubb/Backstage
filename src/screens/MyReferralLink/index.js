@@ -3,33 +3,49 @@ import {View, ScrollView, RefreshControl} from 'react-native';
 import {observer} from 'mobx-react';
 import {Loading, Header, Text, Button, MyImage} from '../../components';
 import {constants} from '../../resources';
-import {sendDataAnalytics, shareItem} from '../../services';
-import {checkAndShowInfluencerModal} from '../../lib';
+import {shareItem} from '../../services';
 import Store from '../../store/Store';
 import {COLORS, SIZES} from '../../resources/theme';
 import {StackActions} from '@react-navigation/native';
+import database from '@react-native-firebase/database';
+import Clipboard from '@react-native-clipboard/clipboard';
 
-class MyProfileLink extends Component {
+class MyReferralLink extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: true,
       refreshing: false,
+      referralCode: Store.user.referralCode,
     };
   }
 
-  componentDidMount = () => {
-    if (checkAndShowInfluencerModal(this.props.navigation)) {
-      return;
+  componentDidMount = async () => {
+    if (typeof this.state.referralCode === 'undefined') {
+      const referralCode =
+        Store.user.username +
+        Math.random().toString(32).slice(8) +
+        Date.now().toString(32).slice(8);
+      await database()
+        .ref('users')
+        .child(Store.user.uid)
+        .child('referralCode')
+        .set(referralCode);
+      Store.setUser({...Store.user, referralCode});
+      this.setState({referralCode});
     }
     this.setState({loading: false});
   };
 
-  shareProfileLink = async () => {
+  shareReferralLink = async () => {
     await shareItem(
-      constants.APP_WEBSITE + '/' + Store.user.username,
-      'share-my-profile-link',
+      constants.APP_WEBSITE + '/invite/' + this.state.referralCode,
+      'share-my-referral-link',
     );
+  };
+
+  copyReferralCode = () => {
+    Clipboard.setString(this.state.referralCode);
   };
 
   render() {
@@ -38,7 +54,7 @@ class MyProfileLink extends Component {
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
         <Header
-          title="My Profile Link"
+          title="My Referral Link"
           leftButtonPress={() =>
             this.props.navigation.dispatch(StackActions.pop())
           }
@@ -58,33 +74,18 @@ class MyProfileLink extends Component {
           <ScrollView
             refreshControl={
               <RefreshControl refreshing={refreshing} tintColor="white" />
-            }>
-            <Text
-              text={Store.user.name}
-              style={{
-                textAlign: 'left',
-                marginTop: SIZES.padding * 6,
-                paddingLeft: SIZES.padding * 2,
-                fontSize: SIZES.h1,
-              }}
-            />
-            <Text
-              text={`@${Store.user.username}`}
-              style={{
-                textAlign: 'left',
-                paddingLeft: SIZES.padding * 2,
-                paddingTop: SIZES.padding,
-                fontSize: SIZES.h2,
-                color: COLORS.secondaryLabelColor,
-              }}
-            />
+            }
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: 'center',
+            }}>
             <View
               style={{
                 position: 'relative',
                 backgroundColor: COLORS.systemFill,
                 borderRadius: SIZES.radius,
                 marginHorizontal: SIZES.padding,
-                marginVertical: SIZES.padding * 4,
+                marginVertical: SIZES.padding * 2,
                 padding: SIZES.padding * 4,
                 overflow: 'hidden',
                 alignItems: 'center',
@@ -98,7 +99,7 @@ class MyProfileLink extends Component {
                 }}
               />
               <Text
-                text="My Profile Link"
+                text="My Referral Code"
                 style={{
                   paddingTop: SIZES.padding * 2,
                   textAlign: 'center',
@@ -106,7 +107,7 @@ class MyProfileLink extends Component {
                 }}
               />
               <Text
-                text={`${constants.APP_WEBSITE}/${Store.user.username}`}
+                text={`${this.state.referralCode}`}
                 style={{
                   textAlign: 'center',
                   marginTop: SIZES.padding,
@@ -114,21 +115,51 @@ class MyProfileLink extends Component {
                 }}
               />
             </View>
+            <Text
+              text="You will be receiving half of our rate for the first year that your contact joins Backstage."
+              style={{
+                textAlign: 'center',
+                marginTop: SIZES.padding,
+                marginBottom: SIZES.padding * 4,
+                fontSize: SIZES.body4,
+                paddingHorizontal: SIZES.padding * 2,
+                color: COLORS.secondaryLabelColor,
+              }}
+            />
             <View
               style={{
+                flexDirection: 'row',
                 alignItems: 'center',
+                justifyContent: 'center',
                 marginTop: SIZES.padding,
                 marginBottom: SIZES.padding * 4,
               }}>
               <Button
-                onPress={() => this.shareProfileLink()}
-                text="Share"
-                primary
+                onPress={() => this.copyReferralCode()}
+                text="Copy Code"
+                secondary
                 buttonStyle={{
-                  padding: SIZES.padding * 1.5,
-                  width: 150,
+                  paddingVertical: SIZES.padding2,
+                  paddingHorizontal: SIZES.padding2 * 1.5,
                   justifyContent: 'center',
                   alignItems: 'center',
+                  marginRight: SIZES.padding * 0.5,
+                }}
+                textStyle={{
+                  fontSize: SIZES.body3,
+                }}
+              />
+              <Button
+                onPress={() => this.shareReferralLink()}
+                text="Share Link"
+                primary
+                buttonStyle={{
+                  paddingVertical: SIZES.padding2,
+                  paddingHorizontal: SIZES.padding2 * 1.5,
+                  width: 125,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginLeft: SIZES.padding * 0.5,
                 }}
                 textStyle={{
                   fontSize: SIZES.body3,
@@ -142,4 +173,4 @@ class MyProfileLink extends Component {
   }
 }
 
-export default observer(MyProfileLink);
+export default observer(MyReferralLink);

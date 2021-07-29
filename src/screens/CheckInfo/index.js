@@ -14,6 +14,7 @@ import {
   getDealsData,
   checkUsernameValid,
   setUserDeviceInfo,
+  checkReferenceCode,
 } from '../../services';
 
 import Store from '../../store/Store';
@@ -30,6 +31,7 @@ class CheckInfo extends Component {
       loading: true,
       name: '',
       username: '@',
+      referenceCode: '',
       step: 1,
       followingArray: [],
       userArray: [],
@@ -64,24 +66,13 @@ class CheckInfo extends Component {
 
       Linking.getInitialURL().then(async (url) => {
         if (url) {
-          handleURLSchemes(
-            {url},
-            {navigation: this.props.navigation},
-          );
+          handleURLSchemes({url}, {navigation: this.props.navigation});
         }
       });
-      // OneSignal.setNotificationOpenedHandler((notification) => {
-      //   if (notification.notification.launchURL) {
-      //     handleURLSchemes(
-      //       {url: notification.notification.launchURL},
-      //       {navigation: this.props.navigation},
-      //     );
-      //   }
-      // });
     }
   };
 
-  createAccount = async () => {
+  createAccount = async (referedByUser = {}) => {
     const deviceState = await OneSignal.getDeviceState();
     const data = {
       name: this.state.name,
@@ -91,6 +82,7 @@ class CheckInfo extends Component {
       like: 0,
       price: 0,
       devices: deviceState.isSubscribed ? [deviceState.userId] : [],
+      referedBy: referedByUser.uid ?? undefined,
     };
 
     const result = await createUser(
@@ -101,6 +93,13 @@ class CheckInfo extends Component {
     );
 
     if (result) {
+      if (referedByUser.uid) {
+        Alert.alert(
+          '🥳🥳',
+          'Your referral code has been applied. Welcome to Backstage!',
+          [{text: 'Okay'}],
+        );
+      }
       const replaceActions = StackActions.replace('TabBarMenu', {
         screen: 'TabBarBottom',
         params: {screen: 'SearchMenu'},
@@ -112,28 +111,55 @@ class CheckInfo extends Component {
   onPressNextUsername = async () => {
     if (this.state.username === '' || this.state.username === '@') {
       Alert.alert('Oops', 'Username can not be empty.', [{text: 'Okay'}]);
+    } else if (regexCheck(this.state.username.substring(1))) {
+      Alert.alert('Oops', 'Please only use letters and numbers.', [
+        {text: 'Okay'},
+      ]);
     } else {
-      if (regexCheck(this.state.username.substring(1))) {
-        Alert.alert('Oops', 'Please only use letters and numbers.', [
-          {text: 'Okay'},
-        ]);
-      } else {
-        this.setState({loading: true});
-        const checkUsername = await checkUsernameValid(
-          this.state.username.substring(1),
+      this.setState({loading: true});
+      const checkUsername = await checkUsernameValid(
+        this.state.username.substring(1),
+      );
+      if (checkUsername) {
+        Alert.alert(
+          'Oops',
+          'This username is already taken. Please try a different one.',
+          [{text: 'Okay'}],
         );
-        if (checkUsername) {
-          Alert.alert(
-            'Oops',
-            'This username is already taken. Please try a different one.',
-            [{text: 'Okay'}],
-          );
-          this.setState({loading: false});
-        } else {
-          this.createAccount();
-        }
+        this.setState({loading: false});
+      } else {
+        this.setState({step: 3, loading: false});
       }
     }
+  };
+
+  applyReferenceCode = async () => {
+    if (this.state.referenceCode === '') {
+      Alert.alert(
+        'Are you sure you want to join without a referral code?',
+        '',
+        [
+          {text: 'Join', onPress: () => this.createAccount()},
+          {text: 'No', style: 'cancel'},
+        ],
+      );
+      return;
+    }
+
+    this.setState({loading: true});
+    const referedByUser = await checkReferenceCode(this.state.referenceCode);
+
+    if (!referedByUser) {
+      this.setState({loading: false});
+      Alert.alert(
+        'Oops',
+        'The referral code could not be found. Please try again.',
+        [{text: 'Okay'}],
+      );
+      return;
+    }
+
+    this.createAccount(referedByUser);
   };
 
   render() {
@@ -163,9 +189,11 @@ class CheckInfo extends Component {
           style={{flex: 1}}>
           <Header
             leftButtonPress={
-              step === 2 ? () => this.setState({step: step - 1}) : null
+              step === 2 || step === 3
+                ? () => this.setState({step: step - 1})
+                : null
             }
-            leftButtonIcon={step === 2 ? 'chevron-left' : null}
+            leftButtonIcon={step === 2 || step === 3 ? 'chevron-left' : null}
             backgroundColor={'transparent'}
           />
           {step === 1 ? (
@@ -207,6 +235,22 @@ class CheckInfo extends Component {
                 />
               }
               onPressNext={() => this.onPressNextUsername()}
+            />
+          ) : step === 3 ? (
+            <LoginFlowPage
+              title={'Referral Code (Optional)'}
+              component={
+                <LoginFlowTextInput
+                  text={this.state.referenceCode}
+                  onChangeText={(code) =>
+                    this.setState({
+                      referenceCode: code,
+                    })
+                  }
+                  maxLength={30}
+                />
+              }
+              onPressNext={() => this.applyReferenceCode()}
             />
           ) : null}
         </LinearGradient>

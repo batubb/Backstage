@@ -420,52 +420,55 @@ app.post('/getFollowingUserStories', (request, response) => {
       for (let i = 0; i < followListKeys.length; i++) {
         const k = followListKeys[i];
         const element = followList[k];
-        const storiesValue = await admin
-          .database()
-          .ref('stories')
-          .child(element.uid)
-          .once('value');
-        const userValue = await admin
-          .database()
-          .ref('users')
-          .child(element.uid)
-          .once('value');
-        var storiesArray = [];
-        var myStoriesArray = [];
 
-        for (const post of Object.values(
-          Object.assign({}, storiesValue.val()),
-        )) {
-          if (post) {
-            if (new Date().getTime() - post.timestamp < 24 * 60 * 60 * 1000) {
-              const userValue = await admin
-                .database()
-                .ref('users')
-                .child(post.user.uid)
-                .once('value');
-
-              if (userValue.val()) {
-                storiesArray.push({
-                  ...post,
-                  user: userValue.val(),
-                });
+        if (element.endTimestamp > new Date().getTime() || userType === 'admin') {
+          const storiesValue = await admin
+            .database()
+            .ref('stories')
+            .child(element.uid)
+            .once('value');
+          const userValue = await admin
+            .database()
+            .ref('users')
+            .child(element.uid)
+            .once('value');
+          var storiesArray = [];
+          var myStoriesArray = [];
+  
+          for (const post of Object.values(
+            Object.assign({}, storiesValue.val()),
+          )) {
+            if (post) {
+              if (new Date().getTime() - post.timestamp < 24 * 60 * 60 * 1000) {
+                const userValue = await admin
+                  .database()
+                  .ref('users')
+                  .child(post.user.uid)
+                  .once('value');
+  
+                if (userValue.val()) {
+                  storiesArray.push({
+                    ...post,
+                    user: userValue.val(),
+                  });
+                }
               }
             }
           }
-        }
 
-        storiesArray.sort(function (a, b) {
-          return a.timestamp - b.timestamp;
-        });
-
-        if (storiesArray.length !== 0 && userValue.val()) {
-          userStoriesArray.push({
-            stories: storiesArray,
-            ...userValue.val(),
-            active: element.active,
-            expired: element.expired,
-            priority: 2, // 1 = admin, 2 = user
+          storiesArray.sort(function (a, b) {
+            return a.timestamp - b.timestamp;
           });
+  
+          if (storiesArray.length !== 0 && userValue.val()) {
+            userStoriesArray.push({
+              stories: storiesArray,
+              ...userValue.val(),
+              active: element.active,
+              expired: element.expired,
+              priority: 2, // 1 = admin, 2 = user
+            });
+          }
         }
       }
       /// **** FOLLOWING USER STORIES - END

@@ -1,9 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {SIZES} from '../../../../resources/theme';
-import {View, FlatList} from 'react-native';
+import {COLORS, SIZES} from '../../../../resources/theme';
+import {View, FlatList, TouchableOpacity} from 'react-native';
 import {Icon} from 'react-native-elements';
 import PostCard from './PostCard';
+import Text from '../../../Text';
 
 // onPress, posts, expired, isPersonCard, numCols, extraData
 
@@ -33,8 +34,34 @@ export default function PostsCard(props) {
             showVerificationIcon={item.verified === true}
             showTitle={props.showTitle === true}
           />
-          {props.expired ? (
+          {item.isLive === 0 ? (
             <View
+              style={{
+                position: 'absolute',
+                top: SIZES.padding,
+                right: SIZES.padding,
+                opacity: 0.95,
+                backgroundColor: COLORS.systemFill,
+                borderRadius: SIZES.radius * 0.15,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                text="LIVE"
+                style={{
+                  paddingVertical: SIZES.spacing * 1.5,
+                  paddingHorizontal: SIZES.spacing * 3,
+                  textAlign: 'center',
+                  color: COLORS.secondary,
+                  fontSize: SIZES.body5,
+                }}
+              />
+            </View>
+          ) : null}
+          {props.expired ? (
+            <TouchableOpacity
+              onPress={() => props.onPress(item)}
+              activeOpacity={0.75}
               style={{
                 position: 'absolute',
                 width: '100%',
@@ -42,15 +69,15 @@ export default function PostsCard(props) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: 'black',
-                opacity: 0.8,
+                opacity: 0.6,
               }}>
               <Icon
-                name="lock-outline"
+                name="eye-outline"
                 color="#FFF"
                 type="material-community"
                 size={48}
               />
-            </View>
+            </TouchableOpacity>
           ) : null}
         </View>
       )}

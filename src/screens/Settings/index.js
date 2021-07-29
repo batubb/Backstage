@@ -39,7 +39,8 @@ class Home extends Component {
       route === 'Earnings' ||
       route === 'WithdrawalHistory' ||
       route === 'Changelogs' ||
-      route === 'MyProfileLink'
+      route === 'MyProfileLink' ||
+      route === 'MyReferralLink'
     ) {
       const replaceActions = StackActions.push(route);
       return this.props.navigation.dispatch(replaceActions);
@@ -119,6 +120,15 @@ class Home extends Component {
               text="My Profile Link"
               icon="share-variant"
               onPressFunction={() => this.goTo('MyProfileLink')}
+              border
+            />
+            <Label
+              text="My Referral Link"
+              icon="people"
+              iconProps={{
+                type: 'material-icons'
+              }}
+              onPressFunction={() => this.goTo('MyReferralLink')}
               border
             />
             <Label

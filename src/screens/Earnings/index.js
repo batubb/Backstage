@@ -34,8 +34,10 @@ class Earnings extends Component {
       },
       numShowMonths: 5,
       data: [],
+      referalEarningsData: [],
       totalEarnings: 0,
       withdrawableBalance: 0,
+      referralEarnings: 0,
     };
 
     this.months = constants.MONTHS;
@@ -43,13 +45,13 @@ class Earnings extends Component {
   }
 
   componentDidMount = async () => {
-    const {data, totalEarnings, withdrawableBalance} = await this.getData();
-    this.setState({loading: false, data, totalEarnings, withdrawableBalance});
+    const data = await this.getData();
+    this.setState({loading: false, ...data});
 
     this.unsubscribe = this.props.navigation.addListener('focus', async (e) => {
       this.setState({loading: true});
-      const {data, totalEarnings, withdrawableBalance} = await this.getData();
-      this.setState({loading: false, data, totalEarnings, withdrawableBalance});
+      const data = await this.getData();
+      this.setState({loading: false, ...data});
     });
   };
 
@@ -61,12 +63,10 @@ class Earnings extends Component {
 
   onRefresh = async () => {
     this.setState({refreshing: true});
-    const {data, totalEarnings, withdrawableBalance} = await this.getData();
+    const data = await this.getData();
     this.setState({
       refreshing: false,
-      data,
-      totalEarnings,
-      withdrawableBalance,
+      ...data,
     });
   };
 
@@ -91,15 +91,14 @@ class Earnings extends Component {
       .child(Store.user.uid)
       .once('value');
 
-    const totalEarnings =
+    let totalEarnings =
       parseFloat(
         updatedUser.price * (updatedUser.numLifetimeSubscribed ?? 0),
-      ).toFixed(2) ?? 0;
+      ) ?? 0;
 
-    const withdrawableBalance =
-      parseFloat(
-        totalEarnings - (updatedUser.lifetimeWithdrawnAmount ?? 0),
-      ).toFixed(2) ?? 0;
+    let withdrawableBalance =
+      parseFloat(totalEarnings - (updatedUser.lifetimeWithdrawnAmount ?? 0)) ??
+      0;
 
     if (transactionsData.exists()) {
       const transactions = Object.values(
@@ -107,7 +106,10 @@ class Earnings extends Component {
       );
 
       transactions.forEach((transaction) => {
-        if (transaction.test !== true && transaction.environment !== 'Sandbox') {
+        if (
+          transaction.test !== true &&
+          transaction.environment !== 'Sandbox'
+        ) {
           const purchaseDate = new Date(parseInt(transaction.purchaseDate));
           const purchaseMonthName = this.months[purchaseDate.getMonth()].substr(
             0,
@@ -123,12 +125,79 @@ class Earnings extends Component {
         }
       });
     }
+
+    const referedUsers =
+      typeof updatedUser.referralCode !== 'undefined'
+        ? await (
+            await database()
+              .ref('users')
+              .orderByChild('referedBy')
+              .equalTo(Store.uid)
+              .once('value')
+          ).val()
+        : [];
+
+    let referralEarnings = 0;
+    const referalEarningsData = Array(this.state.numShowMonths).fill(0);
+
+    for (const referedUser of Object.values(Object.assign({}, referedUsers))) {
+      const referedUserTransactionsData = await database()
+        .ref('transactions')
+        .child(referedUser.uid)
+        .once('value');
+
+      let referedUserTotalEarnings = 0;
+
+      const referedUserTransactions = Object.values(
+        Object.assign({}, referedUserTransactionsData.val()),
+      );
+
+      referedUserTransactions.forEach((referedUserTransaction) => {
+        if (
+          referedUserTransaction.test !== true &&
+          referedUserTransaction.environment !== 'Sandbox'
+        ) {
+          const purchaseDate = new Date(
+            parseInt(referedUserTransaction.purchaseDate),
+          );
+          const purchaseMonthName = this.months[purchaseDate.getMonth()].substr(
+            0,
+            3,
+          );
+          const purchaseMonthIndex = this.renderMonths.findIndex(
+            (m) => m === purchaseMonthName,
+          );
+
+          if (purchaseMonthIndex) {
+            referalEarningsData[purchaseMonthIndex] += this.parseFloatToFixed(
+              referedUser.price * 0.05,
+            );
+            referedUserTotalEarnings += this.parseFloatToFixed(
+              referedUser.price * 0.05,
+            );
+          }
+        }
+      });
+
+      totalEarnings += referedUserTotalEarnings;
+      withdrawableBalance += referedUserTotalEarnings;
+      referralEarnings += referedUserTotalEarnings;
+    }
+
     return {
       data: data.map((d) => parseFloat(d.toFixed(2))),
-      totalEarnings,
-      withdrawableBalance,
+      totalEarnings: this.parseFloatToFixed(totalEarnings),
+      withdrawableBalance: this.parseFloatToFixed(
+        withdrawableBalance - (updatedUser.lifetimeWithdrawnAmount ?? 0),
+      ),
+      referalEarningsData: referalEarningsData.map((d) =>
+        parseFloat(d.toFixed(2)),
+      ),
+      referralEarnings: this.parseFloatToFixed(referralEarnings),
     };
   };
+
+  parseFloatToFixed = (value) => parseFloat(parseFloat(value).toFixed(2));
 
   goTo = (route, info = null) => {
     if (route === 'EditBankAccount') {
@@ -145,6 +214,7 @@ class Earnings extends Component {
 
       const replaceActions = StackActions.push(route, {
         withdrawableBalance: this.state.withdrawableBalance,
+        referralEarnings: this.state.referralEarnings,
       });
       return this.props.navigation.dispatch(replaceActions);
     }
@@ -189,6 +259,8 @@ class Earnings extends Component {
       data,
       totalEarnings,
       withdrawableBalance,
+      referalEarningsData,
+      referralEarnings,
     } = this.state;
 
     return (
@@ -284,6 +356,11 @@ class Earnings extends Component {
                   labels: this.renderMonths,
                   datasets: [
                     {
+                      data: referalEarningsData,
+                      color: (opacity = 1) => COLORS.secondary,
+                      strokeWidth: 2,
+                    },
+                    {
                       data,
                       color: (opacity = 1) => COLORS.primary,
                       strokeWidth: 2,
@@ -329,6 +406,26 @@ class Earnings extends Component {
                 bezier
               />
             </View>
+            <Label
+              text="Total Referral Earnings"
+              onPressFunction={() => {}}
+              showRightIcon={false}
+              showLeftIcon={false}
+              customRightComponent={
+                <Text
+                  text={`$${referralEarnings}`}
+                  style={{
+                    textAlign: 'left',
+                    paddingLeft: SIZES.padding * 6,
+                    color: COLORS.secondaryLabelColor,
+                    fontSize: SIZES.h3,
+                  }}
+                />
+              }
+              style={{
+                marginTop: SIZES.padding,
+              }}
+            />
             <Label
               text="Withdrawable Balance"
               onPressFunction={() => {}}

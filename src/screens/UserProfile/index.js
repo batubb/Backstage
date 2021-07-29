@@ -10,7 +10,6 @@ import {
   RefreshControl,
   Alert,
   Platform,
-  ActionSheetIOS,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
@@ -31,6 +30,7 @@ import {
   getFollowerCount,
   getSubscriberCount,
   sendDataAnalytics,
+  shareItem,
 } from '../../services';
 import Store from '../../store/Store';
 import {Icon} from 'react-native-elements';
@@ -190,25 +190,12 @@ class UserProfile extends Component {
     this.setState({optionsVisible: false});
   };
 
-  shareUser = () => {
-    if (Platform.OS === 'ios') {
-      ActionSheetIOS.showShareActionSheetWithOptions(
-        {
-          message: constants.APP_WEBSITE + '/' + this.state.user.username,
-        },
-        (error) =>
-          sendDataAnalytics('share-profile-link', 'error', error, error.name),
-        (success, method) =>
-          method
-            ? sendDataAnalytics(
-                'share-profile-link',
-                'success',
-                {method},
-                method,
-              )
-            : null,
-      );
-    }
+  shareUser = async () => {
+    this.setState({optionsVisible: false});
+    await shareItem(
+      constants.APP_WEBSITE + '/' + this.state.user.username,
+      'share-profile-link',
+    );
   };
 
   requestRNISubscription = async () => {
@@ -286,9 +273,10 @@ class UserProfile extends Component {
   };
 
   renderSubscriptionPanel = () => {
+    const {products, subscribtion, user} = this.state;
     if (
-      this.state.products.length === 0 ||
-      this.state.subscribtion.subscribtion === true
+      products.length === 0 ||
+      subscribtion.subscribtion === true
     ) {
       return null;
     }
@@ -324,7 +312,7 @@ class UserProfile extends Component {
               paddingVertical: SIZES.padding * 5,
             }}>
             <Text
-              text={`$${parseFloat(this.state.user.price).toFixed(2)}`}
+              text={`${products[0].currency} ${products[0].price}`}
               style={{
                 marginTop: SCREEN_DIMENSIONS.height * 0.02,
                 fontWeight: 'bold',
@@ -352,7 +340,7 @@ class UserProfile extends Component {
               onPress={() => this.requestRNISubscription()}
             />
             <Text
-              text={`Subscribing to ${this.state.user.username} will give you access to this creator's exclusive content and fanroom on Backstage for the subscription period. Content can be in the form of livestreams, videos, or stories. Subscriptions will auto renew, and can be cancelled anytime via Apple App Store.`}
+              text={`Subscribing to ${user.username} will give you access to this creator's exclusive content and fanroom on Backstage for the subscription period. Content can be in the form of livestreams, videos, or stories. Subscriptions will auto renew, and can be cancelled anytime via Apple App Store.`}
               style={{
                 marginTop: SIZES.padding + SCREEN_DIMENSIONS.height * 0.03,
                 fontWeight: 'bold',

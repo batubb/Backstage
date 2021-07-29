@@ -1,6 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {constants} from '../../../../resources';
 import {SIZES, COLORS} from '../../../../resources/theme';
 import {View, TouchableOpacity} from 'react-native';
 import {MyImage, Text} from '../../../../components';
@@ -114,6 +113,30 @@ export default function PostingCard(props) {
               />
             }
           />
+          {props.item.isLive === 0 ? (
+            <View
+              style={{
+                position: 'absolute',
+                top: SIZES.padding,
+                right: SIZES.padding,
+                opacity: 0.95,
+                backgroundColor: COLORS.systemFill,
+                borderRadius: SIZES.radius * 0.15,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                text="LIVE"
+                style={{
+                  paddingVertical: SIZES.spacing * 1.5,
+                  paddingHorizontal: SIZES.spacing * 3,
+                  textAlign: 'center',
+                  color: COLORS.secondary,
+                  fontSize: SIZES.body5,
+                }}
+              />
+            </View>
+          ) : null}
           <View
             style={{
               position: 'absolute',

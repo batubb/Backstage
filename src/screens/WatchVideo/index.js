@@ -13,6 +13,7 @@ import {
   Keyboard,
   FlatList,
   TouchableWithoutFeedback,
+  Image,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {Slider, Icon} from 'react-native-elements';
@@ -77,9 +78,14 @@ class WatchVideo extends Component {
       fullScreen: false,
       isLiked: false,
       isBlurComments: true,
+      subscribtion: {subscribtion: false},
+      subscribeAlert: false,
     };
 
-    this.list = [{title: 'Report', onPress: this.reportVideo}];
+    this.list = [
+      {title: 'Share', onPress: this.shareVideo},
+      {title: 'Report', onPress: this.reportVideo},
+    ];
 
     if (Store.user.uid === this.props.route.params.video.user.uid) {
       this.list = [
@@ -103,26 +109,31 @@ class WatchVideo extends Component {
         ? {subscribtion: true}
         : await checkSubscribtion(Store.uid, this.state.video.user.uid);
 
-    if (subscribtion.subscribtion) {
-      const influencer = await checkUserInfo(this.state.video.user.uid);
+    const influencer = await checkUserInfo(this.state.video.user.uid);
 
-      if (this.state.video.type === 'video') {
-        const video = await getVideoInfo(this.state.video.uid, influencer);
+    if (this.state.video.type === 'video') {
+      const video = await getVideoInfo(this.state.video.uid, influencer);
 
-        if (
-          typeof video.title !== 'undefined' &&
-          !isAdmin(Store.user) &&
-          subscribtion.test !== true
-        ) {
-          setVideoView(Store.user.uid, this.state.video);
-        }
+      if (
+        !isAdmin(Store.user) &&
+        (subscribtion.subscribtion === false ||
+          (subscribtion.subscribtion === true && subscribtion.test !== true))
+      ) {
+        setVideoView(Store.user.uid, this.state.video);
+      }
 
-        const isLiked = Object.values(video.likes).some(
-          (like) => like.uid === Store.user.uid,
-        );
+      const isLiked = subscribtion.subscribtion
+        ? Object.values(Object.assign({}, video.likes)).some(
+            (like) => like.uid === Store.user.uid,
+          )
+        : false;
 
-        this.setState({video, isLiked});
-      } else if (this.state.video.type === 'live') {
+      this.setState({
+        video,
+        isLiked,
+      });
+    } else if (this.state.video.type === 'live') {
+      if (subscribtion.subscribtion) {
         const video = await getVideoInfo(
           this.state.video.uid,
           influencer,
@@ -145,17 +156,25 @@ class WatchVideo extends Component {
             comments = comments.slice(0, 25);
             this.setState({comments});
           });
+      } else {
+        Alert.alert(
+          'Oops',
+          'You must become a member to watch the livestream.',
+          [
+            {
+              text: 'Okay',
+              onPress: () => this.props.navigation.dispatch(StackActions.pop()),
+            },
+          ],
+        );
       }
-
-      this.setState({loading: false, paused: false, influencer});
-    } else {
-      Alert.alert('Oops', 'You must become a member to view the content.', [
-        {
-          text: 'Okay',
-          onPress: () => this.props.navigation.dispatch(StackActions.pop()),
-        },
-      ]);
     }
+    this.setState({
+      loading: false,
+      paused: false,
+      influencer,
+      subscribtion,
+    });
   };
 
   componentWillUnmount = () => {
@@ -197,17 +216,32 @@ class WatchVideo extends Component {
     this.props.navigation.dispatch(StackActions.pop());
   };
 
-  shareVideo = async (
-    text = `Hey did you watch this video on BackStage. ${this.state.video.title} is live!`,
-  ) => {
-    const result = await shareItem(text);
+  shareVideo = async () => {
     this.setState({optionsVisible: false});
+    await shareItem(
+      constants.APP_WEBSITE +
+        '/' +
+        this.state.influencer.username +
+        '/posts/' +
+        this.state.video.uid,
+      'share-video-link',
+    );
   };
 
   goTo = (route, info = null) => {
     this.setState({paused: true});
 
     if (route === 'Comments') {
+      if (!this.state.subscribtion.subscribtion) {
+        Alert.alert('Oops', 'You must become a member to view the content.', [
+          {
+            text: 'Okay',
+            style: 'cancel',
+          },
+        ]);
+        return;
+      }
+
       const replaceActions = StackActions.push(route, {
         video: info,
         comments: this.state.comments,
@@ -217,17 +251,44 @@ class WatchVideo extends Component {
   };
 
   setTime = (data) => {
-    var dk = parseInt(data.currentTime / 60);
-    var sn = parseInt(data.currentTime % 60);
+    if (!this.checkSubscribeAlert(data.currentTime)) {
+      return;
+    }
+    const minute = parseInt(data.currentTime / 60);
+    const second = parseInt(data.currentTime % 60);
 
-    dk = dk < 10 ? `0${dk}` : dk.toString();
-    sn = sn < 10 ? `0${sn}` : sn.toString();
+    const dk = minute < 10 ? `0${minute}` : minute.toString();
+    const sn = second < 10 ? `0${second}` : second.toString();
 
-    this.setState({videoInfo: data, dk: dk, sn: sn});
+    this.setState({videoInfo: data, dk, sn});
+  };
+
+  checkSubscribeAlert = (seconds) => {
+    if (
+      !this.state.subscribtion.subscribtion &&
+      !this.state.subscribeAlert &&
+      seconds >= 5
+    ) {
+      this.setState({paused: true, subscribeAlert: true});
+      Alert.alert(
+        'Members-only',
+        'To watch the rest of the video, you must become a member.',
+        [
+          {
+            text: 'Okay',
+            onPress: () => this.props.navigation.dispatch(StackActions.pop()),
+          },
+        ],
+      );
+      return false;
+    }
+    return !this.state.subscribeAlert;
   };
 
   seek = (time) => {
-    this.player.seek(time, 1000);
+    if (this.checkSubscribeAlert(time)) {
+      this.player.seek(time, 1000);
+    }
   };
 
   sendComment = async () => {
@@ -242,6 +303,16 @@ class WatchVideo extends Component {
 
   likeVideoPressed = () => {
     ReactNativeHapticFeedback.trigger('impactLight', RNHapticFeedbackOptions);
+
+    if (!this.state.subscribtion.subscribtion) {
+      Alert.alert('Oops', 'You must become a member to like the content.', [
+        {
+          text: 'Okay',
+          style: 'cancel',
+        },
+      ]);
+      return;
+    }
     this.setState({isLiked: !this.state.isLiked});
 
     return likeVideo(
@@ -287,7 +358,7 @@ class WatchVideo extends Component {
                   }
                 : {flex: 1, width: width, height: height},
             ]}
-            paused={paused}
+            paused={paused || this.state.subscribeAlert}
             repeat
           />
           {this.state.controlsVisible ? (
@@ -300,6 +371,20 @@ class WatchVideo extends Component {
                 justifyContent: 'flex-end',
                 alignSelf: 'center',
               }}>
+              {this.state.video.isLive === 0 ? (
+                <SafeAreaView
+                  style={{
+                    position: 'absolute',
+                    top: - SIZES.spacing,
+                    right: - SIZES.padding * 2,
+                    height: '100%',
+                  }}>
+                  <Image
+                    source={require('../../images/live_animation_gray.gif')}
+                    style={{resizeMode: 'contain', width: 70, height: 100}}
+                  />
+                </SafeAreaView>
+              ) : null}
               <View
                 style={{
                   flexDirection: 'row',
