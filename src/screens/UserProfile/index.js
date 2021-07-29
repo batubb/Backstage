@@ -273,9 +273,10 @@ class UserProfile extends Component {
   };
 
   renderSubscriptionPanel = () => {
+    const {products, subscribtion, user} = this.state;
     if (
-      this.state.products.length === 0 ||
-      this.state.subscribtion.subscribtion === true
+      products.length === 0 ||
+      subscribtion.subscribtion === true
     ) {
       return null;
     }
@@ -311,7 +312,7 @@ class UserProfile extends Component {
               paddingVertical: SIZES.padding * 5,
             }}>
             <Text
-              text={`$${parseFloat(this.state.user.price).toFixed(2)}`}
+              text={`${products[0].currency} ${products[0].price}`}
               style={{
                 marginTop: SCREEN_DIMENSIONS.height * 0.02,
                 fontWeight: 'bold',
@@ -339,7 +340,7 @@ class UserProfile extends Component {
               onPress={() => this.requestRNISubscription()}
             />
             <Text
-              text={`Subscribing to ${this.state.user.username} will give you access to this creator's exclusive content and fanroom on Backstage for the subscription period. Content can be in the form of livestreams, videos, or stories. Subscriptions will auto renew, and can be cancelled anytime via Apple App Store.`}
+              text={`Subscribing to ${user.username} will give you access to this creator's exclusive content and fanroom on Backstage for the subscription period. Content can be in the form of livestreams, videos, or stories. Subscriptions will auto renew, and can be cancelled anytime via Apple App Store.`}
               style={{
                 marginTop: SIZES.padding + SCREEN_DIMENSIONS.height * 0.03,
                 fontWeight: 'bold',
