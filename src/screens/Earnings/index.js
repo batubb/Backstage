@@ -169,21 +169,19 @@ class Earnings extends Component {
           );
 
           if (purchaseMonthIndex) {
-            referalEarningsData[purchaseMonthIndex] += parseFloat(
-              referedUser.price,
+            referalEarningsData[purchaseMonthIndex] += this.parseFloatToFixed(
+              referedUser.price * 0.05,
             );
-            referedUserTotalEarnings += parseFloat(referedUser.price);
+            referedUserTotalEarnings += this.parseFloatToFixed(
+              referedUser.price * 0.05,
+            );
           }
         }
       });
 
-      const totalEarnedFromReferralUser = this.parseFloatToFixed(
-        referedUserTotalEarnings * 0.05,
-      );
-
-      totalEarnings += totalEarnedFromReferralUser;
-      withdrawableBalance += totalEarnedFromReferralUser;
-      referralEarnings += totalEarnedFromReferralUser;
+      totalEarnings += referedUserTotalEarnings;
+      withdrawableBalance += referedUserTotalEarnings;
+      referralEarnings += referedUserTotalEarnings;
     }
 
     return {
@@ -408,7 +406,7 @@ class Earnings extends Component {
               />
             </View>
             <Label
-              text="Total Earnings From Referrals"
+              text="Total Referral Earnings"
               onPressFunction={() => {}}
               showRightIcon={false}
               showLeftIcon={false}
