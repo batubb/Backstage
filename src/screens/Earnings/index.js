@@ -214,6 +214,7 @@ class Earnings extends Component {
 
       const replaceActions = StackActions.push(route, {
         withdrawableBalance: this.state.withdrawableBalance,
+        referralEarnings: this.state.referralEarnings,
       });
       return this.props.navigation.dispatch(replaceActions);
     }
