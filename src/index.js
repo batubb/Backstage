@@ -48,7 +48,6 @@ import {COLORS} from './resources/theme';
 import {getBottomSpace, isIphoneX} from './lib/iPhoneXHelper';
 import {handleURLSchemes} from './lib';
 import OneSignal from 'react-native-onesignal';
-import Store from './store/Store';
 
 LogBox.ignoreAllLogs();
 
@@ -63,22 +62,33 @@ const Tab = createBottomTabNavigator();
 const navigationContainerRef = React.createRef();
 
 class MyStack extends React.Component {
+  constructor(props) {
+    super(props);
+    this.isNoticationOpened = false;
+  }
   componentDidMount() {
-    OneSignal.setNotificationOpenedHandler(
-      (response) => {
-        const url = response.notification.launchURL;
+    Linking.getInitialURL().then(async (url) => {
+      if (url) {
+        this.onReceivedURL({url, initial: true});
+      }
+    });
+    OneSignal.setNotificationOpenedHandler((response) => {
+      const url = response.notification.launchURL;
 
-        if (url) {
-          this.onReceivedURL({url});
-        }
-      },
-    );
+      if (url) {
+        this.onReceivedURL({url});
+      }
+    });
     Linking.addEventListener('url', (event) => this.onReceivedURL(event));
   }
 
-  onReceivedURL = ({url}) => {
-    if (Store.user) {
-      handleURLSchemes({url}, {navigation: navigationContainerRef.current});
+  onReceivedURL = ({url, initial = false}) => {
+    if (!this.isNoticationOpened) {
+      this.isNoticationOpened = true;
+      handleURLSchemes(
+        {url, initial},
+        {navigation: navigationContainerRef.current},
+      ).finally(() => (this.isNoticationOpened = false));
     }
   };
 

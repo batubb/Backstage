@@ -22,6 +22,7 @@ target 'infapp' do
 
   pod 'RNTestFlight', :path => '../node_modules/react-native-test-flight'
 
+
   target 'infappTests' do
     inherit! :complete
     # Pods for testing

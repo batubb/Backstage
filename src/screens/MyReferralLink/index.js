@@ -17,6 +17,7 @@ class MyReferralLink extends Component {
       loading: true,
       refreshing: false,
       referralCode: Store.user.referralCode,
+      isCopied: false,
     };
   }
 
@@ -46,10 +47,12 @@ class MyReferralLink extends Component {
 
   copyReferralCode = () => {
     Clipboard.setString(this.state.referralCode);
+    this.setState({isCopied: true});
+    setTimeout(() => this.setState({isCopied: false}), 1750);
   };
 
   render() {
-    const {loading, refreshing} = this.state;
+    const {loading, refreshing, isCopied} = this.state;
 
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
@@ -136,7 +139,7 @@ class MyReferralLink extends Component {
               }}>
               <Button
                 onPress={() => this.copyReferralCode()}
-                text="Copy Code"
+                text={isCopied ? "Copied" : "Copy Code"}
                 secondary
                 buttonStyle={{
                   paddingVertical: SIZES.padding2,

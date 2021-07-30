@@ -2,10 +2,12 @@ import {Alert} from 'react-native';
 import database from '@react-native-firebase/database';
 import {StackActions} from '@react-navigation/routers';
 import {constants} from '../resources';
+import Store from '../store/Store';
 
 export default function handleURLSchemes(event, {navigation}) {
   return new Promise(async (resolve, reject) => {
     const URL = event.url;
+    const initial = event.initial;
     const route = URL.replace(/.*?:\/\//g, '');
     let matches = route.split('/');
 
@@ -13,8 +15,48 @@ export default function handleURLSchemes(event, {navigation}) {
       return;
     }
 
-    navigation.navigate('SearchMenu', {screen: 'Search'});
+    if (Store.user) {
+      navigation.navigate('SearchMenu', {screen: 'Search'});
+    }
+
     if (typeof matches?.[1] !== undefined) {
+      if (
+        matches[1] === 'invite' &&
+        typeof matches?.[2] !== 'undefined' &&
+        matches.length === 3
+      ) {
+        if (Store.user) {
+          Alert.alert('Oops', 'You are already signed up.');
+          reject();
+          return;
+        }
+
+        await database()
+          .ref('users')
+          .orderByChild('referralCode')
+          .equalTo(matches[2])
+          .once('value', async (snap) => {
+            if (snap.exists()) {
+              const userReferedBy = Object.values(snap.val())[0];
+
+              navigation.dispatch(
+                StackActions.push('Login', {
+                  userUidReferedBy: userReferedBy.uid,
+                }),
+              );
+            } else {
+              Alert.alert('Oops', 'The referral code does not exist.');
+              reject();
+            }
+          });
+        return;
+      }
+
+      if (!Store.user || initial) {
+        reject();
+        return;
+      }
+
       await database()
         .ref('users')
         .orderByChild('username')
@@ -45,9 +87,7 @@ export default function handleURLSchemes(event, {navigation}) {
               case 'posts':
                 navigation.navigate('SearchMenu', {screen: 'Search'});
                 if (typeof matches?.[3] !== 'undefined') {
-                  navigation.dispatch(
-                    StackActions.push('UserProfile', {user}),
-                  );
+                  navigation.dispatch(StackActions.push('UserProfile', {user}));
 
                   await database()
                     .ref('posts')
@@ -82,9 +122,7 @@ export default function handleURLSchemes(event, {navigation}) {
               case 'live':
                 navigation.navigate('SearchMenu', {screen: 'Search'});
                 if (typeof matches?.[3] !== 'undefined') {
-                  navigation.dispatch(
-                    StackActions.push('UserProfile', {user}),
-                  );
+                  navigation.dispatch(StackActions.push('UserProfile', {user}));
 
                   await database()
                     .ref('posts')
