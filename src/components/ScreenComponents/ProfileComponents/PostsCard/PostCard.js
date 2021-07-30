@@ -53,9 +53,12 @@ export default function PostCard(props) {
               photo={props.item.photo}
               gradientComponent={
                 <LinearGradient
-                  colors={['rgba(0, 0, 0, 0.4)', 'rgba(0, 0, 0, 0.0)']}
-                  start={{x: 0, y: 0.8}}
-                  end={{x: 0, y: props.isPersonCard ? 0.65 : 0.35}}
+                  colors={[
+                    `rgba(0, 0, 0, ${props.isPersonCard ? '0.35' : '0.4'})`,
+                    'rgba(0, 0, 0, 0.0)',
+                  ]}
+                  start={{x: 0, y: props.isPersonCard ? 0.94 : 0.8}}
+                  end={{x: 0, y: props.isPersonCard ? 0.78 : 0.35}}
                   style={{
                     position: 'absolute',
                     top: 0,
