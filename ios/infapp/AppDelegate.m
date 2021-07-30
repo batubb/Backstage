@@ -83,4 +83,8 @@ static void InitializeFlipper(UIApplication *application) {
                     restorationHandler:restorationHandler];
 }
 
+-(BOOL) application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+  return YES;
+}
+
 @end
