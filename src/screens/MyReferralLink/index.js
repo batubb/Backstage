@@ -25,8 +25,8 @@ class MyReferralLink extends Component {
     if (typeof this.state.referralCode === 'undefined') {
       const referralCode =
         Store.user.username +
-        Math.random().toString(32).slice(8) +
-        Date.now().toString(32).slice(8);
+        Math.random().toString(32).slice(10) +
+        Date.now().toString(32).slice(10);
       await database()
         .ref('users')
         .child(Store.user.uid)
