@@ -44,6 +44,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-community/masked-view';
 
 const {width, height} = Dimensions.get('window');
+const SCREEN_DIMENSIONS = Dimensions.get('screen');
 const BOTTOM_PADDING = height >= 812 ? 40 : 20;
 
 const RNHapticFeedbackOptions = {
@@ -353,14 +354,31 @@ class WatchVideo extends Component {
               this.state.fullScreen
                 ? {
                     flex: 1,
-                    width: Dimensions.get('screen').width,
-                    height: Dimensions.get('screen').height,
+                    width: SCREEN_DIMENSIONS.width,
+                    height: SCREEN_DIMENSIONS.height,
                   }
                 : {flex: 1, width: width, height: height},
             ]}
             paused={paused || this.state.subscribeAlert}
             repeat
           />
+          {this.state.video.isLive === 0 ? (
+            <SafeAreaView
+              style={{
+                position: 'absolute',
+                top: - SIZES.spacing - (getBottomSpace() * 0.15),
+                right: SIZES.spacing,
+                display: 'flex',
+                justifyContent: 'flex-start',
+                alignItems: 'flex-end',
+                alignSelf: 'center',
+              }}>
+              <Image
+                source={require('../../images/live_animation_gray.gif')}
+                style={{resizeMode: 'contain', width: 70, height: 100}}
+              />
+            </SafeAreaView>
+          ) : null}
           {this.state.controlsVisible ? (
             <View
               style={{
@@ -371,20 +389,6 @@ class WatchVideo extends Component {
                 justifyContent: 'flex-end',
                 alignSelf: 'center',
               }}>
-              {this.state.video.isLive === 0 ? (
-                <SafeAreaView
-                  style={{
-                    position: 'absolute',
-                    top: - SIZES.spacing,
-                    right: - SIZES.padding * 2,
-                    height: '100%',
-                  }}>
-                  <Image
-                    source={require('../../images/live_animation_gray.gif')}
-                    style={{resizeMode: 'contain', width: 70, height: 100}}
-                  />
-                </SafeAreaView>
-              ) : null}
               <View
                 style={{
                   flexDirection: 'row',
