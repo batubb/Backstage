@@ -51,11 +51,24 @@ export default function LoginFlowPage(props) {
                   text={props.title}
                   style={{
                     fontWeight: 'normal',
-                    fontSize: 30,
+                    fontSize: SIZES.h1,
                     fontWeight: 'bold',
                     fontFamily: 'SF Pro Display',
                   }}
                 />
+                {props.subtitle ? (
+                  <Text
+                    text={props.subtitle}
+                    style={{
+                      paddingTop: SIZES.spacing,
+                      fontWeight: 'normal',
+                      fontSize: SIZES.h4,
+                      color: COLORS.secondaryLabelColor,
+                      fontWeight: 'bold',
+                      fontFamily: 'SF Pro Display',
+                    }}
+                  />
+                ) : null}
               </View>
               <View
                 style={{
