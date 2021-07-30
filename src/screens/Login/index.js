@@ -47,6 +47,7 @@ class Login extends Component {
         Store.setUID(auth.uid);
         const replaceActions = StackActions.replace('CheckInfo', {
           goToDiscover: true,
+          userUidReferedBy: this.props.route.params?.userUidReferedBy,
         });
         return this.props.navigation.dispatch(replaceActions);
       } else {

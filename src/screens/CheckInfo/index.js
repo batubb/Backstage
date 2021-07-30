@@ -2,7 +2,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, {Component} from 'react';
-import {View, Dimensions, Alert, Linking} from 'react-native';
+import {View, Alert, Linking} from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
 import {Loading, Header} from '../../components';
@@ -21,7 +21,7 @@ import Store from '../../store/Store';
 import LoginFlowPage from '../../components/ScreenComponents/LoginComponents/LoginFlowPage';
 import LoginFlowTextInput from '../../components/ScreenComponents/LoginComponents/LoginFlowTextInput';
 import LinearGradient from 'react-native-linear-gradient';
-import {handleURLSchemes, sleep, regexCheck} from '../../lib';
+import {sleep, regexCheck, handleURLSchemes} from '../../lib';
 import OneSignal from 'react-native-onesignal';
 
 class CheckInfo extends Component {
@@ -37,6 +37,7 @@ class CheckInfo extends Component {
       userArray: [],
       search: '',
       searchArray: [],
+      userUidReferedBy: props.route.params?.userUidReferedBy,
     };
   }
 
@@ -64,15 +65,17 @@ class CheckInfo extends Component {
         this.props.navigation.navigate('SearchMenu', {screen: 'Search'});
       }
 
-      Linking.getInitialURL().then(async (url) => {
-        if (url) {
-          handleURLSchemes({url}, {navigation: this.props.navigation});
-        }
-      });
+      if (!this.props.route.params?.userUidReferedBy) {
+        Linking.getInitialURL().then(async (url) => {
+          if (url) {
+            handleURLSchemes({url}, {navigation: this.props.navigation});
+          }
+        });
+      }
     }
   };
 
-  createAccount = async (referedByUser = {}) => {
+  createAccount = async () => {
     const deviceState = await OneSignal.getDeviceState();
     const data = {
       name: this.state.name,
@@ -82,7 +85,7 @@ class CheckInfo extends Component {
       like: 0,
       price: 0,
       devices: deviceState.isSubscribed ? [deviceState.userId] : [],
-      referedBy: referedByUser.uid ?? undefined,
+      referedBy: this.state.userUidReferedBy ?? undefined,
     };
 
     const result = await createUser(
@@ -93,7 +96,7 @@ class CheckInfo extends Component {
     );
 
     if (result) {
-      if (referedByUser.uid) {
+      if (this.state.userUidReferedBy) {
         Alert.alert(
           '🥳🥳',
           'Your referral code has been applied. Welcome to Backstage!',
@@ -127,6 +130,8 @@ class CheckInfo extends Component {
           [{text: 'Okay'}],
         );
         this.setState({loading: false});
+      } else if (this.state.userUidReferedBy) {
+        this.createAccount();
       } else {
         this.setState({step: 3, loading: false});
       }
@@ -159,11 +164,13 @@ class CheckInfo extends Component {
       return;
     }
 
-    this.createAccount(referedByUser);
+    this.setState({userUidReferedBy: referedByUser.uid});
+    this.createAccount();
   };
 
   render() {
     const {loading, step} = this.state;
+
     if (loading) {
       return (
         <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
