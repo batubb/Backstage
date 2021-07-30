@@ -101,42 +101,44 @@ export default function PostCard(props) {
                 />
               ) : null}
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: SIZES.padding,
-                position: 'absolute',
-                bottom: 18,
-              }}>
-              <Icon
-                name="play"
-                type="ionicon"
-                color={COLORS.primaryLabelColor}
-                size={15}
+            {false && (
+              <View
                 style={{
-                  shadowOffset: {width: 2, height: 2},
-                  shadowColor: 'rgba(0, 0, 0, 0.2)',
-                  shadowOpacity: 10,
-                  shadowRadius: 1,
-                }}
-              />
-              <Text
-                text={`${followerCount(
-                  props.isPersonCard
-                    ? props.item.cumulativeViewsUser
-                    : props.item.cumulativeViews,
-                )}`}
-                style={{
-                  fontSize: 12,
-                  marginLeft: SIZES.spacing,
-                  textShadowColor: 'rgba(0, 0, 0, 0.2)',
-                  textShadowOffset: {width: 2, height: 2},
-                  textShadowRadius: 10,
-                }}
-              />
-            </View>
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: SIZES.padding,
+                  position: 'absolute',
+                  bottom: 18,
+                }}>
+                <Icon
+                  name="play"
+                  type="ionicon"
+                  color={COLORS.primaryLabelColor}
+                  size={15}
+                  style={{
+                    shadowOffset: {width: 2, height: 2},
+                    shadowColor: 'rgba(0, 0, 0, 0.2)',
+                    shadowOpacity: 10,
+                    shadowRadius: 1,
+                  }}
+                />
+                <Text
+                  text={`${followerCount(
+                    props.isPersonCard
+                      ? props.item.cumulativeViewsUser
+                      : props.item.cumulativeViews,
+                  )}`}
+                  style={{
+                    fontSize: 12,
+                    marginLeft: SIZES.spacing,
+                    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+                    textShadowOffset: {width: 2, height: 2},
+                    textShadowRadius: 10,
+                  }}
+                />
+              </View>
+            )}
             {props.item.title ? (
               <Text
                 text={props.item.title}

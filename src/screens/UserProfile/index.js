@@ -68,7 +68,7 @@ class UserProfile extends Component {
     };
 
     this.list = [
-      {title: 'Share', onPress: this.shareUser},
+      {title: 'Share this Profile', onPress: this.shareUser},
       {title: 'Report', onPress: this.reportVideo},
       {title: 'Block', onPress: this.blockUser, danger: true},
     ];
