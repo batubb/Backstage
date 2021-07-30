@@ -46,10 +46,16 @@ class Earnings extends Component {
   }
 
   componentDidMount = async () => {
+    if (checkAndShowInfluencerModal(this.props.navigation)) {
+      return;
+    }
     const data = await this.getData();
     this.setState({loading: false, ...data});
 
     this.unsubscribe = this.props.navigation.addListener('focus', async (e) => {
+      if (checkAndShowInfluencerModal(this.props.navigation)) {
+        return;
+      }
       this.setState({loading: true});
       const data = await this.getData();
       this.setState({loading: false, ...data});
@@ -63,6 +69,9 @@ class Earnings extends Component {
   };
 
   onRefresh = async () => {
+    if (checkAndShowInfluencerModal(this.props.navigation)) {
+      return;
+    }
     this.setState({refreshing: true});
     const data = await this.getData();
     this.setState({
@@ -72,9 +81,6 @@ class Earnings extends Component {
   };
 
   getData = async () => {
-    if (checkAndShowInfluencerModal(this.props.navigation)) {
-      return;
-    }
     const updatedUser = await checkUserInfo(Store.user.uid, true);
     this.currentMonthIndex =
       new Date().getMonth() + 1 === 12 ? 0 : new Date().getMonth() + 1;
