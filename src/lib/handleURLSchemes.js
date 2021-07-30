@@ -7,6 +7,7 @@ import Store from '../store/Store';
 export default function handleURLSchemes(event, {navigation}) {
   return new Promise(async (resolve, reject) => {
     const URL = event.url;
+    const initial = event.initial;
     const route = URL.replace(/.*?:\/\//g, '');
     let matches = route.split('/');
 
@@ -51,7 +52,7 @@ export default function handleURLSchemes(event, {navigation}) {
         return;
       }
 
-      if (!Store.user) {
+      if (!Store.user || initial) {
         reject();
         return;
       }
