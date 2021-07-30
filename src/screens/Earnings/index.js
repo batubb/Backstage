@@ -31,14 +31,13 @@ class Earnings extends Component {
       clickedPointData: {
         name: null,
         value: null,
-        color: null,
       },
       numShowMonths: 5,
       data: [],
-      referalEarningsData: [],
       totalEarnings: 0,
       withdrawableBalance: 0,
       referralEarnings: 0,
+      subscriptionEarnings: 0,
     };
 
     this.months = constants.MONTHS;
@@ -102,6 +101,7 @@ class Earnings extends Component {
       parseFloat(
         updatedUser.price * (updatedUser.numLifetimeSubscribed ?? 0),
       ) ?? 0;
+    const subscriptionEarnings = totalEarnings;
 
     let withdrawableBalance =
       parseFloat(totalEarnings - (updatedUser.lifetimeWithdrawnAmount ?? 0)) ??
@@ -145,7 +145,6 @@ class Earnings extends Component {
         : [];
 
     let referralEarnings = 0;
-    const referalEarningsData = Array(this.state.numShowMonths).fill(0);
 
     for (const referedUser of Object.values(Object.assign({}, referedUsers))) {
       const referedUserTransactionsData = await database()
@@ -176,7 +175,7 @@ class Earnings extends Component {
           );
 
           if (purchaseMonthIndex) {
-            referalEarningsData[purchaseMonthIndex] += this.parseFloatToFixed(
+            data[purchaseMonthIndex] += this.parseFloatToFixed(
               referedUser.price * 0.05,
             );
             referedUserTotalEarnings += this.parseFloatToFixed(
@@ -195,10 +194,8 @@ class Earnings extends Component {
       data: data.map((d) => parseFloat(d.toFixed(2))),
       totalEarnings: this.parseFloatToFixed(totalEarnings),
       withdrawableBalance: this.parseFloatToFixed(withdrawableBalance),
-      referalEarningsData: referalEarningsData.map((d) =>
-        parseFloat(d.toFixed(2)),
-      ),
       referralEarnings: this.parseFloatToFixed(referralEarnings),
+      subscriptionEarnings: this.parseFloatToFixed(subscriptionEarnings),
     };
   };
 
@@ -264,8 +261,8 @@ class Earnings extends Component {
       data,
       totalEarnings,
       withdrawableBalance,
-      referalEarningsData,
       referralEarnings,
+      subscriptionEarnings,
     } = this.state;
 
     return (
@@ -329,103 +326,40 @@ class Earnings extends Component {
                   position: 'absolute',
                   top: SIZES.padding,
                   left: 0,
-                  width: width - SIZES.padding * 1.6,
-                  justifyContent: 'space-between',
-                  flexDirection: 'row',
+                  flexDirection: 'column',
                   alignItems: 'center',
                   paddingTop: SIZES.padding,
+                  paddingLeft: SIZES.padding * 6,
                 }}>
-                <View
+                <Text
+                  text={
+                    clickedPointData.name ||
+                    this.months[this.currentMonthIndex - 1]
+                  }
                   style={{
-                    flexDirection: 'column',
-                    paddingLeft: SIZES.padding * 6,
-                  }}>
-                  <Text
-                    text={
-                      clickedPointData.name ||
-                      this.months[this.currentMonthIndex - 1]
-                    }
-                    style={{
-                      textAlign: 'left',
-                      fontSize: SIZES.h3,
-                    }}
-                  />
-                  <Text
-                    text={
-                      clickedPointData.value !== null
-                        ? `$${clickedPointData.value}`
-                        : new Date().getFullYear()
-                    }
-                    style={{
-                      textAlign: 'left',
-                      color: COLORS.secondaryLabelColor,
-                      fontSize: SIZES.h3,
-                    }}
-                  />
-                </View>
-                <View
+                    textAlign: 'left',
+                    alignSelf: 'flex-start',
+                    fontSize: SIZES.h3,
+                  }}
+                />
+                <Text
+                  text={
+                    clickedPointData.value !== null
+                      ? `$${clickedPointData.value}`
+                      : new Date().getFullYear()
+                  }
                   style={{
-                    flexDirection: 'column',
-                    paddingHorizontal: SIZES.padding,
-                    paddingRight: SIZES.padding * 2,
-                  }}>
-                  <View
-                    style={{
-                      flexDirection: 'row-reverse',
-                      alignItems: 'center',
-                    }}>
-                    <View
-                      style={{
-                        width: SIZES.padding,
-                        height: SIZES.padding,
-                        backgroundColor: COLORS.primary,
-                        borderRadius: SIZES.radius,
-                      }}
-                    />
-                    <Text
-                      text="Subscribers"
-                      style={{
-                        textAlign: 'left',
-                        paddingRight: SIZES.spacing,
-                        color: COLORS.primary,
-                        fontSize: SIZES.body4,
-                      }}
-                    />
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row-reverse',
-                      alignItems: 'center',
-                    }}>
-                    <View
-                      style={{
-                        width: SIZES.padding,
-                        height: SIZES.padding,
-                        backgroundColor: COLORS.secondary,
-                        borderRadius: SIZES.radius,
-                      }}
-                    />
-                    <Text
-                      text="Referrals"
-                      style={{
-                        textAlign: 'left',
-                        paddingRight: SIZES.spacing,
-                        color: COLORS.secondary,
-                        fontSize: SIZES.body4,
-                      }}
-                    />
-                  </View>
-                </View>
+                    textAlign: 'left',
+                    color: COLORS.secondaryLabelColor,
+                    alignSelf: 'flex-start',
+                    fontSize: SIZES.h3,
+                  }}
+                />
               </View>
               <LineChart
                 data={{
                   labels: this.renderMonths,
                   datasets: [
-                    {
-                      data: referalEarningsData,
-                      color: (opacity = 1) => COLORS.secondary,
-                      strokeWidth: 2,
-                    },
                     {
                       data,
                       color: (opacity = 1) => COLORS.primary,
@@ -448,7 +382,6 @@ class Earnings extends Component {
                             month.slice(0, 3) === this.renderMonths[data.index],
                         ),
                         value: data.value ?? '0',
-                        color: data.getColor(1),
                       },
                     });
                   }
@@ -492,6 +425,32 @@ class Earnings extends Component {
               style={{
                 marginTop: SIZES.padding,
               }}
+              touchableOpacityProps={{
+                activeOpacity: 0.75,
+              }}
+            />
+            <Label
+              text="Total Subscription Earnings"
+              onPressFunction={() => {}}
+              showRightIcon={false}
+              showLeftIcon={false}
+              customRightComponent={
+                <Text
+                  text={`$${subscriptionEarnings}`}
+                  style={{
+                    textAlign: 'left',
+                    paddingLeft: SIZES.padding * 6,
+                    color: COLORS.secondaryLabelColor,
+                    fontSize: SIZES.h3,
+                  }}
+                />
+              }
+              style={{
+                marginTop: SIZES.padding,
+              }}
+              touchableOpacityProps={{
+                activeOpacity: 0.75,
+              }}
             />
             <Label
               text="Withdrawable Balance"
@@ -511,6 +470,9 @@ class Earnings extends Component {
               }
               style={{
                 marginTop: SIZES.padding,
+              }}
+              touchableOpacityProps={{
+                activeOpacity: 0.75,
               }}
             />
             <View
