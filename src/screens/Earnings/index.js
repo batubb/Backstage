@@ -31,6 +31,7 @@ class Earnings extends Component {
       clickedPointData: {
         name: null,
         value: null,
+        color: null,
       },
       numShowMonths: 5,
       data: [],
@@ -187,9 +188,7 @@ class Earnings extends Component {
     return {
       data: data.map((d) => parseFloat(d.toFixed(2))),
       totalEarnings: this.parseFloatToFixed(totalEarnings),
-      withdrawableBalance: this.parseFloatToFixed(
-        withdrawableBalance - (updatedUser.lifetimeWithdrawnAmount ?? 0),
-      ),
+      withdrawableBalance: this.parseFloatToFixed(withdrawableBalance),
       referalEarningsData: referalEarningsData.map((d) =>
         parseFloat(d.toFixed(2)),
       ),
@@ -324,32 +323,93 @@ class Earnings extends Component {
                   position: 'absolute',
                   top: SIZES.padding,
                   left: 0,
+                  width: width - SIZES.padding * 1.6,
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingTop: SIZES.padding,
                 }}>
-                <Text
-                  text={
-                    clickedPointData.name ||
-                    this.months[this.currentMonthIndex - 1]
-                  }
+                <View
                   style={{
-                    textAlign: 'left',
+                    flexDirection: 'column',
                     paddingLeft: SIZES.padding * 6,
-                    paddingTop: SIZES.padding,
-                    fontSize: SIZES.h3,
-                  }}
-                />
-                <Text
-                  text={
-                    clickedPointData.value !== null
-                      ? `$${clickedPointData.value}`
-                      : new Date().getFullYear()
-                  }
+                  }}>
+                  <Text
+                    text={
+                      clickedPointData.name ||
+                      this.months[this.currentMonthIndex - 1]
+                    }
+                    style={{
+                      textAlign: 'left',
+                      fontSize: SIZES.h3,
+                    }}
+                  />
+                  <Text
+                    text={
+                      clickedPointData.value !== null
+                        ? `$${clickedPointData.value}`
+                        : new Date().getFullYear()
+                    }
+                    style={{
+                      textAlign: 'left',
+                      color: COLORS.secondaryLabelColor,
+                      fontSize: SIZES.h3,
+                    }}
+                  />
+                </View>
+                <View
                   style={{
-                    textAlign: 'left',
-                    paddingLeft: SIZES.padding * 6,
-                    color: COLORS.secondaryLabelColor,
-                    fontSize: SIZES.h3,
-                  }}
-                />
+                    flexDirection: 'column',
+                    paddingHorizontal: SIZES.padding,
+                    paddingRight: SIZES.padding * 2,
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: 'row-reverse',
+                      alignItems: 'center',
+                    }}>
+                    <View
+                      style={{
+                        width: SIZES.padding,
+                        height: SIZES.padding,
+                        backgroundColor: COLORS.primary,
+                        borderRadius: SIZES.radius,
+                      }}
+                    />
+                    <Text
+                      text="Subscribers"
+                      style={{
+                        textAlign: 'left',
+                        paddingRight: SIZES.spacing,
+                        color: COLORS.primary,
+                        fontSize: SIZES.body4,
+                      }}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row-reverse',
+                      alignItems: 'center',
+                    }}>
+                    <View
+                      style={{
+                        width: SIZES.padding,
+                        height: SIZES.padding,
+                        backgroundColor: COLORS.secondary,
+                        borderRadius: SIZES.radius,
+                      }}
+                    />
+                    <Text
+                      text="Referrals"
+                      style={{
+                        textAlign: 'left',
+                        paddingRight: SIZES.spacing,
+                        color: COLORS.secondary,
+                        fontSize: SIZES.body4,
+                      }}
+                    />
+                  </View>
+                </View>
               </View>
               <LineChart
                 data={{
@@ -382,6 +442,7 @@ class Earnings extends Component {
                             month.slice(0, 3) === this.renderMonths[data.index],
                         ),
                         value: data.value ?? '0',
+                        color: data.getColor(1),
                       },
                     });
                   }
