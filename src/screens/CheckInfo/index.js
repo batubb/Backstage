@@ -98,8 +98,8 @@ class CheckInfo extends Component {
     if (result) {
       if (this.state.userUidReferedBy) {
         Alert.alert(
-          '🥳🥳',
-          'Your referral code has been applied. Welcome to Backstage!',
+          'Your referral code has been applied',
+          'Welcome to Backstage!',
           [{text: 'Okay'}],
         );
       }
@@ -140,14 +140,7 @@ class CheckInfo extends Component {
 
   applyReferenceCode = async () => {
     if (this.state.referenceCode === '') {
-      Alert.alert(
-        'Are you sure you want to join without a referral code?',
-        '',
-        [
-          {text: 'Join', onPress: () => this.createAccount()},
-          {text: 'No', style: 'cancel'},
-        ],
-      );
+      this.createAccount();
       return;
     }
 
@@ -245,7 +238,8 @@ class CheckInfo extends Component {
             />
           ) : step === 3 ? (
             <LoginFlowPage
-              title={'Referral Code (Optional)'}
+              title={'Referral Code'}
+              subtitle={'Optional'}
               component={
                 <LoginFlowTextInput
                   text={this.state.referenceCode}
