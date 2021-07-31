@@ -10,9 +10,16 @@ function StoryCircle(props) {
   return (
     <View
       style={{
-        width: SIZES.storyCircleWidth,
-        height: SIZES.storyCircleWidth,
-        borderRadius: SIZES.storyCircleWidth / 2,
+        width: props.profile
+          ? constants.PROFILE_PIC_SIZE
+          : SIZES.storyCircleWidth,
+        height: props.profile
+          ? constants.PROFILE_PIC_SIZE
+          : SIZES.storyCircleWidth,
+        borderRadius:
+          (props.profile
+            ? constants.PROFILE_PIC_SIZE
+            : SIZES.storyCircleWidth) / 2,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: props.loading ? constants.BAR_COLOR : null,
@@ -34,7 +41,9 @@ function StoryImage(props) {
       style={{
         width: '100%',
         height: '100%',
-        borderRadius: SIZES.storyCircleWidth / 2,
+        borderRadius: (props.profile
+          ? constants.PROFILE_PIC_SIZE
+          : SIZES.storyCircleWidth) / 2,
         borderWidth: 1.5,
         borderColor: COLORS.backgroundColor,
       }}
@@ -55,9 +64,12 @@ export default function Story(props) {
     <TouchableOpacity
       onPress={props.onPress}
       style={{alignItems: 'center', marginRight: SIZES.spacing * 7}}>
-      <StoryCircle loading={props.loading} text={props.text}>
+      <StoryCircle
+        loading={props.loading}
+        text={props.text}
+        profile={props.profile ?? false}>
         {!props.loading && !props.addStory ? (
-          <StoryImage photo={props.photo} />
+          <StoryImage photo={props.photo} profile={props.profile ?? false} />
         ) : props.addStory ? (
           <Icon name="plus" color="#FFF" type="material-community" size={32} />
         ) : null}

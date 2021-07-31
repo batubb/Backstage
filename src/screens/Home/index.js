@@ -28,8 +28,6 @@ import Store from '../../store/Store';
 import {COLORS, SIZES} from '../../resources/theme';
 import Story from '../../components/ScreenComponents/HomeComponents/Story/Story';
 import PostingCard from '../../components/ScreenComponents/HomeComponents/PostingCard/PostingCard';
-import {handleURLSchemes} from '../../lib';
-import {followerCount} from '../../lib';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import database from '@react-native-firebase/database';
 import axios from 'axios';

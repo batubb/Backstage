@@ -120,10 +120,10 @@ class WatchStory extends Component {
   };
 
   nextStory = (stories, content) => {
-    const lastStories = this.state.allStories[this.state.allStories.length - 1];
+    const lastStory = this.state.allStories[this.state.allStories.length - 1];
 
     if (
-      stories[0].user.uid === lastStories[0].user.uid &&
+      stories[0].user.uid === lastStory.user.uid &&
       stories.length - 1 === content.id
     ) {
       return this.props.navigation.dispatch(StackActions.pop());
