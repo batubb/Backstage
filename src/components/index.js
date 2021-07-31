@@ -11,6 +11,7 @@ import SearchBar from './SearchBar';
 import Divider from './Divider';
 import GradientText from './GradientText';
 import VerifiedIcon from './VerifiedIcon';
+import AnimatedBounceable from './AnimatedBounceable';
 
 module.exports = {
   Button,
@@ -25,4 +26,5 @@ module.exports = {
   Divider,
   GradientText,
   VerifiedIcon,
+  AnimatedBounceable,
 };
