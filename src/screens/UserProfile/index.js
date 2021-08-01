@@ -29,8 +29,8 @@ import {
   report,
   getFollowerCount,
   getSubscriberCount,
-  sendDataAnalytics,
   shareItem,
+  getUserStories,
 } from '../../services';
 import Store from '../../store/Store';
 import {Icon} from 'react-native-elements';
@@ -65,6 +65,7 @@ class UserProfile extends Component {
       subscriberNumber: 0,
       products: [],
       purchaseProcessing: false,
+      userStories: [],
     };
 
     this.list = [
@@ -120,6 +121,9 @@ class UserProfile extends Component {
         ? {subscribtion: true}
         : await checkSubscribtion(Store.uid, this.state.user.uid);
     const posts = await getUserPosts(this.state.user.uid);
+    const userStories = subscribtion.subscribtion
+      ? await getUserStories(this.state.user.uid)
+      : [];
     const {postsArray, daily} = setPosts(posts);
 
     this.setState({
@@ -130,6 +134,7 @@ class UserProfile extends Component {
       loading: false,
       followerNumber,
       subscriberNumber,
+      userStories,
     });
   };
 
@@ -274,10 +279,7 @@ class UserProfile extends Component {
 
   renderSubscriptionPanel = () => {
     const {products, subscribtion, user} = this.state;
-    if (
-      products.length === 0 ||
-      subscribtion.subscribtion === true
-    ) {
+    if (products.length === 0 || subscribtion.subscribtion === true) {
       return null;
     }
     return (
@@ -373,6 +375,7 @@ class UserProfile extends Component {
       daily,
       optionsVisible,
       purchaseProcessing,
+      userStories,
     } = this.state;
 
     let headerExtraProps = {};
@@ -442,6 +445,7 @@ class UserProfile extends Component {
               onChatPress={() => this.goTo('Chat', this.state.user)}
               editProfileVisible={user.uid === Store.user.uid}
               navigation={this.props.navigation}
+              stories={userStories}
             />
             <View>{daily.length !== 0 ? this.renderPosts(daily) : null}</View>
           </ScrollView>

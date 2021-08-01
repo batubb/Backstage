@@ -3,14 +3,14 @@ import React from 'react';
 import {constants} from '../../../../resources';
 import {MyImage, Text, Button} from '../../../../components';
 import {View} from 'react-native';
-import {COLORS, SIZES} from '../../../../resources/theme';
+import {SIZES} from '../../../../resources/theme';
 import SubscribeButton from './SubscribeButton';
 import Databar from './Databar';
 import {StackActions} from '@react-navigation/native';
-import {Icon} from 'react-native-elements';
 import {TouchableOpacity} from 'react-native';
 import Store from '../../../../store/Store';
 import {isInfluencer, isAdmin} from '../../../../lib';
+import Story from '../../HomeComponents/Story/Story';
 
 // photo, name, biograohy, subscribeButtonVisible, user, subscribtion
 
@@ -18,6 +18,12 @@ export default function ProfileTop(props) {
   const goTo = (route, info = null) => {
     if (route === 'EditProfile') {
       const replaceActions = StackActions.push(route, {type: info});
+      return props.navigation.dispatch(replaceActions);
+    } else if (route === 'WatchStory') {
+      const replaceActions = StackActions.push(route, {
+        stories: info,
+        allStories: info,
+      });
       return props.navigation.dispatch(replaceActions);
     }
   };
@@ -30,14 +36,22 @@ export default function ProfileTop(props) {
           height: constants.PROFILE_PIC_SIZE,
           marginBottom: SIZES.spacing * 8,
         }}>
-        <MyImage
-          style={{
-            width: constants.PROFILE_PIC_SIZE,
-            height: constants.PROFILE_PIC_SIZE,
-            borderRadius: constants.PROFILE_PIC_SIZE / 2,
-          }}
-          photo={props.photo}
-        />
+        {props.stories?.length > 0 ? (
+          <Story
+            onPress={() => goTo('WatchStory', props.stories)}
+            photo={props.photo}
+            profile
+          />
+        ) : (
+          <MyImage
+            style={{
+              width: constants.PROFILE_PIC_SIZE,
+              height: constants.PROFILE_PIC_SIZE,
+              borderRadius: constants.PROFILE_PIC_SIZE / 2,
+            }}
+            photo={props.photo}
+          />
+        )}
         <View
           style={{
             flex: 1,

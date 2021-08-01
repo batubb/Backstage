@@ -12,16 +12,14 @@ import {
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
-import {
-  Loading,
-  Header,
-  Text,
-  MyImage,
-  Button,
-  Options,
-} from '../../components';
+import {Loading, Header, Text, MyImage, Options} from '../../components';
 import {constants} from '../../resources';
-import {getUserPosts, setHighlights, getSubscriberCount} from '../../services';
+import {
+  getUserPosts,
+  setHighlights,
+  getSubscriberCount,
+  getUserStories,
+} from '../../services';
 import {
   followerCount,
   setPosts,
@@ -62,6 +60,7 @@ class Profile extends Component {
       optionsVisible: false,
       optionsData: null,
       subscriberNumber: 0,
+      myStoriesArray: [],
     };
 
     this.list = [
@@ -89,11 +88,13 @@ class Profile extends Component {
             typeof Store.user.cumulativeViewsUser === 'undefined'
               ? 0
               : Store.user.cumulativeViewsUser,
+          myStoriesArray: [],
         });
       });
     } else {
       const posts = await getUserPosts(Store.user.uid, true);
       const subscriberNumber = await getSubscriberCount(Store.user.uid);
+      const myStoriesArray = await getUserStories();
       const {postsArray, daily} = setPosts(posts);
       this.setState({
         posts: posts,
@@ -101,9 +102,11 @@ class Profile extends Component {
         daily: daily,
         loading: false,
         subscriberNumber,
+        myStoriesArray,
       });
 
-      this.unsubscribe = this.props.navigation.addListener('focus', (e) => {
+      this.unsubscribe = this.props.navigation.addListener('focus', async (e) => {
+        const myStoriesArray = await getUserStories();
         this.setState({
           posts: Store.posts.posts,
           postsArray: Store.posts.postsArray,
@@ -121,6 +124,7 @@ class Profile extends Component {
             typeof Store.user.cumulativeViewsUser === 'undefined'
               ? 0
               : Store.user.cumulativeViewsUser,
+          myStoriesArray,
         });
       });
     }
@@ -381,7 +385,7 @@ class Profile extends Component {
       photo,
       name,
       biography,
-      postsArray,
+      myStoriesArray,
       daily,
       refreshing,
       optionsVisible,
@@ -446,6 +450,7 @@ class Profile extends Component {
                 editProfileVisible
                 navigation={this.props.navigation}
                 onChatPress={() => this.goTo('Chat', Store.user)}
+                stories={myStoriesArray}
                 {...influencerProfileProps}
               />
             </View>
