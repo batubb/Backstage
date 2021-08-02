@@ -41,9 +41,10 @@ function StoryImage(props) {
       style={{
         width: '100%',
         height: '100%',
-        borderRadius: (props.profile
-          ? constants.PROFILE_PIC_SIZE
-          : SIZES.storyCircleWidth) / 2,
+        borderRadius:
+          (props.profile
+            ? constants.PROFILE_PIC_SIZE
+            : SIZES.storyCircleWidth) / 2,
         borderWidth: 1.5,
         borderColor: COLORS.backgroundColor,
       }}
@@ -63,7 +64,10 @@ export default function Story(props) {
   return (
     <TouchableOpacity
       onPress={props.onPress}
-      style={{alignItems: 'center', marginRight: SIZES.spacing * 7}}>
+      style={{
+        alignItems: 'center',
+        marginRight: SIZES.spacing * (props.profile ? 0 : 7),
+      }}>
       <StoryCircle
         loading={props.loading}
         text={props.text}
