@@ -15,6 +15,7 @@ import {
 } from './src/services';
 import {constants} from './src/resources';
 import {environment} from './src/lib';
+import Orientation from 'react-native-orientation-locker';
 
 class App extends Component {
   constructor(props) {
@@ -206,6 +207,8 @@ class App extends Component {
     OneSignal.promptForPushNotificationsWithUserResponse((response) => {
       console.log('Prompt response:', response);
     });
+
+    Orientation.lockToPortrait();
 
     this.onIds();
 
