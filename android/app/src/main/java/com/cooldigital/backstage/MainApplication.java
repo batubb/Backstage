@@ -1,16 +1,32 @@
-package com.cooldigital.backstage;
+package com.backstage;
 
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.swmansion.reanimated.ReanimatedPackage;
+import com.swmansion.reanimated.ReanimatedPackage;
+import com.microsoft.codepush.react.CodePush;
+import com.oblador.vectoricons.VectorIconsPackage;
+import com.cmcewen.blurview.BlurViewPackage;
+import com.reactnativecommunity.cameraroll.CameraRollPackage;
+import iyegoroff.RNTextGradient.RNTextGradientPackage;
+import fr.bamlab.rnimageresizer.ImageResizerPackage;
+import com.rnfs.RNFSPackage;
+import com.reactlibrary.RNTestFlightPackage;
+import org.reactnative.camera.RNCameraPackage;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
+import org.wonday.orientation.OrientationPackage;
+import org.wonday.orientation.OrientationActivityLifecycle;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.microsoft.codepush.react.CodePush;
+import com.facebook.react.bridge.JSIModulePackage;
+import com.swmansion.reanimated.ReanimatedJSIModulePackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -32,12 +48,18 @@ public class MainApplication extends Application implements ReactApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
+          packages.add(new OrientationPackage());
           return packages;
         }
 
         @Override
         protected String getJSMainModuleName() {
           return "index";
+        }
+        
+        @Override
+        protected JSIModulePackage getJSIModulePackage() {
+          return new ReanimatedJSIModulePackage();
         }
       };
 
@@ -50,6 +72,7 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
+    registerActivityLifecycleCallbacks(OrientationActivityLifecycle.getInstance());
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
 
@@ -68,7 +91,7 @@ public class MainApplication extends Application implements ReactApplication {
          We use reflection here to pick up the class that initializes Flipper,
         since Flipper library is not available in release mode
         */
-        Class<?> aClass = Class.forName("com.cooldigital.backstage.ReactNativeFlipper");
+        Class<?> aClass = Class.forName("com.backstage.ReactNativeFlipper");
         aClass
             .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
             .invoke(null, context, reactInstanceManager);

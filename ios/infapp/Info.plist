@@ -26,7 +26,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string></string>
+			<string/>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.234737203229-ul71ft0cjbkknvigok3cnbsnrb8dnvph</string>
@@ -65,7 +65,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>We need your camera for uploading content and changing profile information.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>We need your microfon for uploading content.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
