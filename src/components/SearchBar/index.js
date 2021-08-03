@@ -77,9 +77,10 @@ export default class SearchBar extends Component {
               placeholder={text ?? "Search"}
               style={{
                 fontFamily:
-                  Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
+                  Platform.OS === 'ios' ? 'Avenir' : 'SF-Pro-Display-Bold',
                 color: '#FFF',
                 width: width - (showCancelButton ? 150 : 20),
+                top: Platform.OS === 'ios' ? 0 : 2,
                 fontSize: 16,
                 padding: SIZES.padding,
               }}
