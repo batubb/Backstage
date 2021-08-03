@@ -58,6 +58,8 @@ export default class Options extends Component {
   };
 
   render() {
+    const {visible} = this.state;
+    const {list, buttonStyle, cancelPress} = this.props;
 
     if (Platform.OS === 'ios') {
       return null;
