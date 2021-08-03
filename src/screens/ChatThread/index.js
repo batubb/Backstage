@@ -21,12 +21,8 @@ import {
   VerifiedIcon,
 } from '../../components';
 import {constants} from '../../resources';
-import {getUserPosts, checkSubscribtion} from '../../services';
 import Store from '../../store/Store';
-import {timeDifference, generateStreamToken, makeid} from '../../lib';
 import {StackActions} from '@react-navigation/native';
-import database from '@react-native-firebase/database';
-import PostsCard from '../../components/ScreenComponents/ProfileComponents/PostsCard/PostsCard';
 import {
   OverlayProvider as ChatOverlayProvider,
   Channel,
@@ -37,7 +33,6 @@ import {
   Thread as StreamThreadComponent,
 } from 'stream-chat-react-native';
 import {StreamChat} from 'stream-chat';
-import jwt from 'react-native-pure-jwt';
 import {getBottomSpace, getStatusBarHeight} from '../../lib/iPhoneXHelper';
 import {COLORS, SIZES, STREAM_THEME} from '../../resources/theme';
 
@@ -62,8 +57,8 @@ class ChatThread extends Component {
       <SafeAreaView
         style={{flex: 1, backgroundColor: STREAM_THEME.colors.white}}>
         <KeyboardAvoidingView
-          behavior="padding"
-          keyboardVerticalOffset={80 + getBottomSpace()}>
+          behavior={constants.KEYBOARD_BEHAVIOUR}
+          keyboardVerticalOffset={(Platform.OS === 'ios' ? 80 : 0) + getBottomSpace()}>
           <StreamChatComponent
             client={this.streamServerClient}
             i18nInstance={constants.STREAM_I18N}>

@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   Alert,
   KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {Icon} from 'react-native-elements';
@@ -243,8 +244,8 @@ class Chat extends Component {
       <SafeAreaView
         style={{flex: 1, backgroundColor: STREAM_THEME.colors.white}}>
         <KeyboardAvoidingView
-          behavior="padding"
-          keyboardVerticalOffset={85 + getBottomSpace()}>
+          behavior={constants.KEYBOARD_BEHAVIOUR}
+          keyboardVerticalOffset={(Platform.OS === 'ios' ? 85 : 0) + getBottomSpace()}>
           <StreamChatComponent
             client={this.streamServerClient}
             i18nInstance={constants.STREAM_I18N}>
