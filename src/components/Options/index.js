@@ -1,14 +1,20 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, {Component} from 'react';
-import {View, Dimensions, TouchableOpacity, ActionSheetIOS} from 'react-native';
+import {
+  View,
+  Dimensions,
+  TouchableOpacity,
+  ActionSheetIOS,
+  Platform,
+} from 'react-native';
 import Text from '../Text';
 import {BottomSheet} from 'react-native-elements';
 import PropTypes from 'prop-types';
-import { Platform } from 'react-native';
+import { SIZES } from '../../resources/theme';
+import { getBottomSpace } from 'react-native-iphone-x-helper';
 
 const {width, height} = Dimensions.get('window');
-const BOTTOM_PAD = height >= 812 ? 0 : 20;
 
 export default class Options extends Component {
   state = {
@@ -21,7 +27,7 @@ export default class Options extends Component {
     }
   };
 
-  UNSAFE_componentWillUpdate = (nextProps) => {
+  UNSAFE_componentWillUpdate = (nextProps) => {
     if (nextProps.visible) {
       this.openActionSheet();
     }
@@ -34,18 +40,20 @@ export default class Options extends Component {
       if (!this.state.visible) {
         const options = [...list.map((l) => l.title), 'Cancel'];
         this.state.visible = true;
-  
+
         ActionSheetIOS.showActionSheetWithOptions(
           {
             options,
-            destructiveButtonIndex: list.findIndex((option) => option.danger === true),
+            destructiveButtonIndex: list.findIndex(
+              (option) => option.danger === true,
+            ),
             cancelButtonIndex: options.length - 1,
             tintColor: 'white',
             userInterfaceStyle: 'dark',
           },
           (buttonIndex) => {
             this.state.visible = false;
-  
+
             if (buttonIndex === options.length - 1) {
               cancelPress();
             } else {
@@ -54,17 +62,29 @@ export default class Options extends Component {
           },
         );
       }
+    } else if (!this.state.visible) {
+      this.setState({visible: true});
     }
+  };
+
+  closeModal = () => {
+    this.props.cancelPress();
+    this.setState({visible: false});
+  };
+
+  onPressItem = (onPress) => {
+    onPress();
+    this.closeModal();
   };
 
   render() {
     const {visible} = this.state;
-    const {list, buttonStyle, cancelPress} = this.props;
+    const {list, buttonStyle} = this.props;
 
     if (Platform.OS === 'ios') {
       return null;
     }
-    
+
     return (
       <BottomSheet
         isVisible={visible}
@@ -86,7 +106,7 @@ export default class Options extends Component {
                   borderTopRightRadius: i === 0 ? 8 : 0,
                   borderBottomLeftRadius: i === list.length - 1 ? 8 : 0,
                   borderBottomRightRadius: i === list.length - 1 ? 8 : 0,
-                  padding: 10,
+                  padding: SIZES.padding * 1.5,
                   alignItems: 'center',
                 },
                 buttonStyle,
@@ -98,30 +118,28 @@ export default class Options extends Component {
             </View>
           </TouchableOpacity>
         ))}
-        {cancelPress ? (
-          <TouchableOpacity
-            style={{
-              width: width,
-              alignItems: 'center',
-              marginTop: 10,
-              marginBottom: BOTTOM_PAD,
-            }}
-            onPress={cancelPress}>
-            <View
-              style={[
-                {
-                  width: width - 20,
-                  backgroundColor: '#424242',
-                  borderRadius: 8,
-                  padding: 10,
-                  alignItems: 'center',
-                },
-                buttonStyle,
-              ]}>
-              <Text text="Cancel" style={{fontSize: 16}} />
-            </View>
-          </TouchableOpacity>
-        ) : null}
+        <TouchableOpacity
+          style={{
+            width,
+            alignItems: 'center',
+            marginTop: SIZES.padding,
+            marginBottom: getBottomSpace() + SIZES.padding,
+          }}
+          onPress={this.closeModal}>
+          <View
+            style={[
+              {
+                width: width - SIZES.padding * 2,
+                backgroundColor: '#424242',
+                borderRadius: 8,
+                padding: SIZES.padding * 1.5,
+                alignItems: 'center',
+              },
+              buttonStyle,
+            ]}>
+            <Text text="Cancel" style={{fontSize: 16}} />
+          </View>
+        </TouchableOpacity>
       </BottomSheet>
     );
   }
