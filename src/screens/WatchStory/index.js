@@ -68,9 +68,10 @@ class WatchStory extends Component {
 
   componentDidMount = async () => {
     this.bottomSheetRef?.show();
-    const subscribtion = isAdmin(this.state.content.user) || isAdmin(Store.user)
-      ? {subscribtion: true}
-      : await checkSubscribtion(Store.uid, this.state.content.user.uid);
+    const subscribtion =
+      isAdmin(this.state.content.user) || isAdmin(Store.user)
+        ? {subscribtion: true}
+        : await checkSubscribtion(Store.uid, this.state.content.user.uid);
     this.setState({subscribtion});
 
     if (subscribtion.subscribtion) {
@@ -93,6 +94,7 @@ class WatchStory extends Component {
       this.storyLoadingNextAction = null;
     }
   };
+
   deleteVideo = async () => {
     await database()
       .ref('stories')
@@ -123,8 +125,9 @@ class WatchStory extends Component {
     const lastStory = this.state.allStories[this.state.allStories.length - 1];
 
     if (
-      stories[0].user.uid === lastStory.user.uid &&
-      stories.length - 1 === content.id
+      !lastStory.user ||
+      (stories[0].user.uid === lastStory.user.uid &&
+        stories.length - 1 === content.id)
     ) {
       return this.props.navigation.dispatch(StackActions.pop());
     }
