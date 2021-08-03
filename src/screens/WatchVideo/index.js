@@ -362,32 +362,33 @@ class WatchVideo extends Component {
             paused={paused || this.state.subscribeAlert}
             repeat
           />
-          {this.state.video.isLive === 0 ? (
-            <SafeAreaView
-              style={{
-                position: 'absolute',
-                top: - SIZES.spacing - (getBottomSpace() * 0.15),
-                right: SIZES.spacing,
-                display: 'flex',
-                justifyContent: 'flex-start',
-                alignItems: 'flex-end',
-                alignSelf: 'center',
-              }}>
-              <Image
-                source={require('../../images/live_animation_gray.gif')}
-                style={{resizeMode: 'contain', width: 70, height: 100}}
-              />
-            </SafeAreaView>
-          ) : null}
+          {/* {this.state.video.isLive === 0 ? ( */}
+          <SafeAreaView
+            style={{
+              position: 'absolute',
+              top: -SIZES.spacing - getBottomSpace() * 0.15,
+              right: SIZES.spacing,
+              display: 'flex',
+              justifyContent: 'flex-start',
+              alignItems: 'flex-end',
+              alignSelf: 'center',
+            }}>
+            <Image
+              source={require('../../images/live_animation_gray.gif')}
+              style={{resizeMode: 'contain', width: 70, height: 100}}
+            />
+          </SafeAreaView>
+          {/* ) : null} */}
           {this.state.controlsVisible ? (
             <View
               style={{
                 position: 'absolute',
                 width: '90%',
-                height: '98%',
+                height: height - constants.KEYBOARD_VERTICAL_OFFSET,
                 display: 'flex',
                 justifyContent: 'flex-end',
                 alignSelf: 'center',
+                marginTop: Platform.OS === 'ios' ? 0 : '8%',
               }}>
               <View
                 style={{
@@ -539,24 +540,14 @@ class WatchVideo extends Component {
               }
               style={{
                 position: 'absolute',
-                width: '90%',
-                height: 40,
-                display: 'flex',
-                justifyContent: 'flex-end',
-                alignSelf: 'center',
-                alignContent: 'flex-end',
-                alignItems: 'flex-end',
-                bottom: getBottomSpace() * 0.475 + SIZES.padding * 2,
+                right: SIZES.padding * 2,
+                marginTop: height - constants.KEYBOARD_VERTICAL_OFFSET,
               }}>
               <Icon
                 name={!this.state.fullScreen ? 'fullscreen' : 'fullscreen-exit'}
                 color="#FFF"
                 type="material-community"
                 size={28}
-                style={{
-                  justifyContent: 'center',
-                  flex: 1,
-                }}
               />
             </TouchableOpacity>
           )}
@@ -799,6 +790,7 @@ class WatchVideo extends Component {
       sn,
       optionsVisible,
     } = this.state;
+
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
         {video.type === 'video'
