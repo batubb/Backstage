@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Alert,
+  Platform,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {Loading, Header, Button, MyImage} from '../../components';
@@ -255,14 +256,17 @@ class Help extends Component {
           />
         ) : (
           <KeyboardAvoidingView
-            behavior="padding"
-            keyboardVerticalOffset={10}
+            behavior={constants.KEYBOARD_BEHAVIOR}
+            keyboardVerticalOffset={
+              Platform.OS === 'ios'
+                ? 10
+                : constants.KEYBOARD_VERTICAL_OFFSET * 2
+            }
             style={{flex: 1}}>
             <ScrollView
               refreshControl={
                 <RefreshControl refreshing={refreshing} tintColor="white" />
-              }
-              style={{flex: 1}}>
+              }>
               <TextInput
                 placeholder={
                   type === 'Ask a Question'
@@ -280,6 +284,8 @@ class Help extends Component {
                   backgroundColor: COLORS.backgroundColor,
                   minHeight: height * 0.25 < 150 ? 150 : height * 0.25,
                 }}
+                textAlign="left"
+                textAlignVertical="top"
                 underlineColorAndroid="transparent"
                 multiline={true}
                 autoFocus={true}

@@ -8,6 +8,7 @@ import {
   Alert,
   RefreshControl,
   Linking,
+  Platform,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
@@ -73,7 +74,7 @@ class Home extends Component {
   };
 
   showHelpOptions = () => {
-    Alert.alert('Contact Us', undefined, [
+    const alertButtons = [
       {
         text: 'General Feedback',
         onPress: () => this.goTo('Help', 'General Feedback'),
@@ -86,7 +87,12 @@ class Home extends Component {
         text: 'Cancel',
         style: 'cancel',
       },
-    ]);
+    ];
+    Alert.alert(
+      'Contact Us',
+      undefined,
+      Platform.OS === 'ios' ? alertButtons : alertButtons.reverse(),
+    );
   };
 
   render() {
@@ -126,7 +132,7 @@ class Home extends Component {
               text="My Referral Link"
               icon="people"
               iconProps={{
-                type: 'material-icons'
+                type: 'material-icons',
               }}
               onPressFunction={() => this.goTo('MyReferralLink')}
               border
@@ -160,9 +166,7 @@ class Home extends Component {
               icon="pin"
               iconProps={{
                 style: {
-                  transform: [
-                    {rotate: '45deg'}
-                  ],
+                  transform: [{rotate: '45deg'}],
                 },
               }}
               onPressFunction={() => {

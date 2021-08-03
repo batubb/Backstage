@@ -1,4 +1,4 @@
-const {PlatformColor} = require('react-native');
+const {Platform} = require('react-native');
 const {SIZES, COLORS} = require('./theme');
 const {Streami18n} = require('stream-chat-react-native');
 
@@ -21,6 +21,8 @@ const constants = {
   RED: COLORS.red,
   TRANSPARENT_BLACK_COLOR: '#00000041',
   PAGE_LEFT_PADDING: SIZES.spacing * 2,
+  KEYBOARD_BEHAVIOR: Platform.OS === 'ios' ? 'padding' : 'height',
+  KEYBOARD_VERTICAL_OFFSET: 34,
   PROFILE_PIC_SIZE: 100,
   TAB_BAR_HEIGHT: 60,
   DEFAULT_PAGE_WIDTH: '95%',
