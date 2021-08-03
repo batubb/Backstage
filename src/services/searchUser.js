@@ -16,7 +16,7 @@ export default async function searchUser(
 ) {
   const value = await database()
     .ref('users')
-    .orderByChild('name')
+    .orderByChild('username')
     .startAt(search)
     .endAt(search + '\uf8ff')
     .once('value');
