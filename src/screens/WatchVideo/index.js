@@ -42,15 +42,14 @@ import {getBottomSpace} from '../../lib/iPhoneXHelper';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-community/masked-view';
-
-const {width, height} = Dimensions.get('window');
-const SCREEN_DIMENSIONS = Dimensions.get('screen');
-const BOTTOM_PADDING = height >= 812 ? 40 : 20;
+import Orientation from 'react-native-orientation-locker';
 
 const RNHapticFeedbackOptions = {
   enableVibrateFallback: true,
   ignoreAndroidSystemSettings: false,
 };
+
+const BOTTOM_PADDING = Dimensions.get('window') >= 812 ? 40 : 20;
 
 // TODO Canlı yayın izleme eklenecek.
 
@@ -81,7 +80,29 @@ class WatchVideo extends Component {
       isBlurComments: true,
       subscribtion: {subscribtion: false},
       subscribeAlert: false,
+      // currentOrientation: 0, // 0 = PORTRAIT, 1 = LANDSPACE-LEFT, 2 = LANDSPACE-RIGHT
+      WINDOW_DIMENSIONS: {
+        width: Dimensions.get('window').width,
+        height: Dimensions.get('window').height,
+      },
+      SCREEN_DIMENSIONS: {
+        width: Dimensions.get('screen').width,
+        height: Dimensions.get('window').height,
+      },
     };
+
+    Dimensions.addEventListener('change', (e) => {
+      this.setState({
+        WINDOW_DIMENSIONS: {
+          width: e.window.width,
+          height: e.window.height,
+        },
+        SCREEN_DIMENSIONS: {
+          width: e.screen.width,
+          height: e.screen.height,
+        },
+      });
+    });
 
     this.list = [
       {title: 'Share', onPress: this.shareVideo},
@@ -109,6 +130,13 @@ class WatchVideo extends Component {
       isAdmin(this.state.video.user) || isAdmin(Store.user)
         ? {subscribtion: true}
         : await checkSubscribtion(Store.uid, this.state.video.user.uid);
+
+    Orientation.unlockAllOrientations();
+    // Orientation.addOrientationListener(this._onOrientationDidChange);
+
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      Orientation.unlockAllOrientations();
+    });
 
     const influencer = await checkUserInfo(this.state.video.user.uid);
 
@@ -179,6 +207,12 @@ class WatchVideo extends Component {
   };
 
   componentWillUnmount = () => {
+    // Orientation.removeOrientationListener(this._onOrientationDidChange);
+    if (typeof this._unsubscribe === 'function') {
+      this._unsubscribe();
+    }
+    Orientation.lockToPortrait();
+
     Keyboard.removeListener('keyboardDidShow', () => {
       this.setState({keyboard: true});
     });
@@ -189,6 +223,22 @@ class WatchVideo extends Component {
 
     database().ref('comments').child(this.state.video.uid).off();
   };
+
+  // _onOrientationDidChange = () => {
+  //   const currentOrientation = Orientation.getInitialOrientation();
+  //   switch (currentOrientation) {
+  //     case 'LANDSCAPE-LEFT':
+  //       this.setState({currentOrientation: 1, optionsVisible: false});
+  //       break;
+  //     case 'LANDSCAPE-RIGHT':
+  //       this.setState({currentOrientation: 2, optionsVisible: false});
+  //       break;
+  //     default:
+  //       this.setState({currentOrientation: 0, optionsVisible: false});
+  //       break;
+  //   }
+  //   this.forceUpdate();
+  // };
 
   reportVideo = async () => {
     const result = await report(this.state.video);
@@ -242,6 +292,7 @@ class WatchVideo extends Component {
         ]);
         return;
       }
+      Orientation.lockToPortrait();
 
       const replaceActions = StackActions.push(route, {
         video: info,
@@ -324,16 +375,22 @@ class WatchVideo extends Component {
   };
 
   renderVideoPlayer = (video, paused, videoInfo, dk, sn) => {
+    const {
+      months,
+      controlsVisible,
+      fullScreen,
+      subscribeAlert,
+      WINDOW_DIMENSIONS,
+      SCREEN_DIMENSIONS,
+    } = this.state;
     const date = new Date(video.timestamp);
-    const month = this.state.months[date.getMonth()].slice(0, 3);
+    const month = months[date.getMonth()].slice(0, 3);
     const day = date.getDate();
     const year = date.getFullYear();
 
     return (
       <TouchableWithoutFeedback
-        onPress={() =>
-          this.setState({controlsVisible: !this.state.controlsVisible})
-        }>
+        onPress={() => this.setState({controlsVisible: !controlsVisible})}>
         <View
           style={{flex: 1, position: 'absolute'}}
           onPress={() => {
@@ -348,23 +405,27 @@ class WatchVideo extends Component {
             onLoad={() => this.setState({videoLoading: false, paused: false})}
             onProgress={(data) => this.setTime(data)}
             onEnd={() => this.setState({paused: true, controlsVisible: true})}
-            fullScreen={this.state.fullScreen}
-            resizeMode={this.state.fullScreen ? 'cover' : 'contain'}
+            fullScreen={fullScreen}
+            resizeMode={fullScreen ? 'cover' : 'contain'}
             style={[
-              this.state.fullScreen
+              fullScreen
                 ? {
                     flex: 1,
                     width: SCREEN_DIMENSIONS.width,
                     height: SCREEN_DIMENSIONS.height,
                   }
-                : {flex: 1, width: width, height: height},
+                : {
+                    flex: 1,
+                    width: WINDOW_DIMENSIONS.width,
+                    height: WINDOW_DIMENSIONS.height,
+                  },
             ]}
-            paused={paused || this.state.subscribeAlert}
+            paused={paused || subscribeAlert}
             repeat
           />
-          {/* {this.state.video.isLive === 0 ? ( */}
-          <SafeAreaView
-            style={{
+          {this.state.video.isLive === 0 ? (
+           <SafeAreaView
+             style={{
               position: 'absolute',
               top: -SIZES.spacing - getBottomSpace() * 0.15,
               right: SIZES.spacing,
@@ -373,13 +434,13 @@ class WatchVideo extends Component {
               alignItems: 'flex-end',
               alignSelf: 'center',
             }}>
-            <Image
-              source={require('../../images/live_animation_gray.gif')}
-              style={{resizeMode: 'contain', width: 70, height: 100}}
-            />
-          </SafeAreaView>
-          {/* ) : null} */}
-          {this.state.controlsVisible ? (
+              <Image
+                source={require('../../images/live_animation_gray.gif')}
+                style={{resizeMode: 'contain', width: 70, height: 100}}
+              />
+            </SafeAreaView>
+          ) : null}
+          {controlsVisible ? (
             <View
               style={{
                 position: 'absolute',
@@ -488,7 +549,10 @@ class WatchVideo extends Component {
                   marginBottom: getBottomSpace() / 2,
                 }}>
                 <TouchableOpacity
-                  onPress={() => this.setState({paused: !paused})}>
+                  onPress={() => this.setState({paused: !paused})}
+                  style={{
+                    paddingRight: SIZES.padding,
+                  }}>
                   <Icon
                     name={paused ? 'play' : 'pause'}
                     color="#FFF"
@@ -497,7 +561,7 @@ class WatchVideo extends Component {
                   />
                 </TouchableOpacity>
                 <Slider
-                  style={{width: width - 170}}
+                  style={{width: WINDOW_DIMENSIONS.width - 170}}
                   value={videoInfo.currentTime}
                   thumbTintColor="#fff"
                   minimumTrackTintColor="#fff"
@@ -518,14 +582,10 @@ class WatchVideo extends Component {
                   />
                 </View>
                 <TouchableOpacity
-                  onPress={() =>
-                    this.setState({fullScreen: !this.state.fullScreen})
-                  }
-                  style={{bottom: 1}}>
+                  onPress={() => this.setState({fullScreen: !fullScreen})}
+                  style={{bottom: 1, paddingLeft: SIZES.spacing}}>
                   <Icon
-                    name={
-                      !this.state.fullScreen ? 'fullscreen' : 'fullscreen-exit'
-                    }
+                    name={!fullScreen ? 'fullscreen' : 'fullscreen-exit'}
                     color="#FFF"
                     type="material-community"
                     size={28}
@@ -544,7 +604,7 @@ class WatchVideo extends Component {
                 marginTop: height - constants.KEYBOARD_VERTICAL_OFFSET,
               }}>
               <Icon
-                name={!this.state.fullScreen ? 'fullscreen' : 'fullscreen-exit'}
+                name={!fullScreen ? 'fullscreen' : 'fullscreen-exit'}
                 color="#FFF"
                 type="material-community"
                 size={28}
@@ -568,7 +628,11 @@ class WatchVideo extends Component {
           onLoad={() => this.setState({videoLoading: false})}
           onProgress={(data) => this.setTime(data)}
           onEnd={() => this.setState({paused: true})}
-          style={{flex: 1, width: width, height: height}}
+          style={{
+            flex: 1,
+            width: this.state.WINDOW_DIMENSIONS.width,
+            height: this.state.WINDOW_DIMENSIONS.height,
+          }}
           paused={paused}
           repeat
           poster={video.photo}
@@ -585,8 +649,8 @@ class WatchVideo extends Component {
           <SafeAreaView
             style={{
               flex: 1,
-              width: width,
-              height: height,
+              width: this.state.WINDOW_DIMENSIONS.width,
+              height: this.state.WINDOW_DIMENSIONS.height,
               alignItems: 'center',
               justifyContent: 'center',
             }}>
@@ -605,7 +669,11 @@ class WatchVideo extends Component {
             onLoad={() => this.setState({videoLoading: false})}
             onProgress={(data) => this.setTime(data)}
             onEnd={() => this.setState({paused: true, finished: true})}
-            style={{flex: 1, width: width, height: height}}
+            style={{
+              flex: 1,
+              width: this.state.WINDOW_DIMENSIONS.width,
+              height: this.state.WINDOW_DIMENSIONS.height,
+            }}
             paused={false}
           />
         )}
@@ -613,9 +681,9 @@ class WatchVideo extends Component {
           style={{
             position: 'absolute',
             bottom: BOTTOM_PADDING,
-            width,
+            width: this.state.WINDOW_DIMENSIONS.width,
             alignItems: 'center',
-            height,
+            height: this.state.WINDOW_DIMENSIONS.height,
             justifyContent: 'flex-end',
           }}>
           {this.state.keyboard ? (
@@ -625,9 +693,9 @@ class WatchVideo extends Component {
               <View
                 style={{
                   backgroundColor: constants.BACKGROUND_COLOR,
-                  width,
+                  width: this.state.WINDOW_DIMENSIONS.width,
                   alignItems: 'center',
-                  height,
+                  height: this.state.WINDOW_DIMENSIONS.height,
                   opacity: 0.4,
                 }}
               />
@@ -640,12 +708,18 @@ class WatchVideo extends Component {
   };
 
   commentBar = () => {
-    const {comment, comments, isBlurComments} = this.state;
+    const {
+      comment,
+      comments,
+      isBlurComments,
+      WINDOW_DIMENSIONS,
+      keyboard,
+    } = this.state;
 
     return (
       <KeyboardAvoidingView
         behavior="padding"
-        style={{alignItems: 'center', width: width}}>
+        style={{alignItems: 'center', width: WINDOW_DIMENSIONS.width}}>
         <MaskedView
           style={{
             width: '100%',
@@ -690,7 +764,7 @@ class WatchVideo extends Component {
             renderItem={({item, index}) => (
               <View
                 style={{
-                  width: width - 20,
+                  width: WINDOW_DIMENSIONS.width - 20,
                   alignItems: 'flex-start',
                   marginVertical: SIZES.spacing,
                   marginHorizontal: SIZES.padding,
@@ -698,7 +772,7 @@ class WatchVideo extends Component {
                 <View
                   style={{
                     backgroundColor: constants.BAR_COLOR,
-                    opacity: this.state.keyboard ? 1 : 0.75,
+                    opacity: keyboard ? 1 : 0.75,
                     borderRadius: 24,
                     padding: 10,
                   }}>
@@ -725,7 +799,7 @@ class WatchVideo extends Component {
         </MaskedView>
         <View
           style={{
-            width: width - 20,
+            width: WINDOW_DIMENSIONS.width - 20,
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -735,11 +809,11 @@ class WatchVideo extends Component {
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-              width: this.state.keyboard ? width - 20 : width - 70,
+              width: WINDOW_DIMENSIONS.width - (this.state.keyboard ? 20 : 70),
               borderRadius: 24,
               backgroundColor: constants.BAR_COLOR,
               marginTop: 2.5,
-              opacity: this.state.keyboard ? 1 : 0.6,
+              opacity: keyboard ? 1 : 0.6,
             }}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TextInput
@@ -749,7 +823,7 @@ class WatchVideo extends Component {
                   fontFamily:
                     Platform.OS === 'ios' ? 'Avenir' : 'sans-serif-condensed',
                   color: '#FFF',
-                  width: width - 70,
+                  width: WINDOW_DIMENSIONS.width - 70,
                   fontSize: 12,
                   padding: 15,
                 }}

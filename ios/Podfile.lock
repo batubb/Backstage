@@ -305,6 +305,8 @@ PODS:
   - react-native-onesignal (4.1.0):
     - OneSignal (= 3.4.3)
     - React (< 1.0.0, >= 0.13.0)
+  - react-native-orientation-locker (1.3.1):
+    - React-Core
   - react-native-pure-jwt (2.2.2):
     - JWT (~> 3.0.0-beta.11)
     - React
@@ -499,6 +501,7 @@ DEPENDENCIES:
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-nodemediaclient (from `../node_modules/react-native-nodemediaclient`)
   - react-native-onesignal (from `../node_modules/react-native-onesignal`)
+  - react-native-orientation-locker (from `../node_modules/react-native-orientation-locker`)
   - react-native-pure-jwt (from `../node_modules/react-native-pure-jwt`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-text-input-mask (from `../node_modules/react-native-text-input-mask`)
@@ -615,6 +618,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-nodemediaclient"
   react-native-onesignal:
     :path: "../node_modules/react-native-onesignal"
+  react-native-orientation-locker:
+    :path: "../node_modules/react-native-orientation-locker"
   react-native-pure-jwt:
     :path: "../node_modules/react-native-pure-jwt"
   react-native-safe-area-context:
@@ -697,7 +702,7 @@ SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
   CodePush: 3285d39e9865e0a37a415417402bf568ce49268a
-  DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
+  DoubleConversion: cde416483dac037923206447da6e1454df403714
   FBLazyVector: e686045572151edef46010a6f819ade377dfeb4b
   FBReactNativeSpec: 4739c0efea3ae37323c15854d2ea8726099d069e
   Firebase: 54cdc8bc9c9b3de54f43dab86e62f5a76b47034f
@@ -737,6 +742,7 @@ SPEC CHECKSUMS:
   react-native-netinfo: e849fc21ca2f4128a5726c801a82fc6f4a6db50d
   react-native-nodemediaclient: eeb78d795f2fc3d772b2b95f460aa45018d03119
   react-native-onesignal: 6d3d3ac10192c5694049ce8c1ba481e5392c1a73
+  react-native-orientation-locker: 998c0744e26624407dac068c04c605b4af7304a2
   react-native-pure-jwt: a89a3d83e5aab5e7da1d9ef2a97f3b908199966b
   react-native-safe-area-context: b6e0e284002381d2ff29fa4fff42b4d8282e3c94
   react-native-text-input-mask: cffd00848940e7670cf233a99e7be782257935ed
