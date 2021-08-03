@@ -20,8 +20,8 @@ export default class TextComponent extends Component {
         style={[
           {
             fontFamily:
-              Platform.OS === 'ios' ? 'System' : 'sans-serif-condensed',
-            fontSize: 14,
+              Platform.OS === 'ios' ? 'System' : 'Sf-Pro-Display-Bold',
+            fontSize: Platform.OS === 'ios' ? 14 : 16,
             color: COLORS.primaryLabelColor,
             fontWeight: 'bold',
           },
