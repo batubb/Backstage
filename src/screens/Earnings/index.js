@@ -135,13 +135,13 @@ class Earnings extends Component {
 
     const referedUsers =
       typeof updatedUser.referralCode !== 'undefined'
-        ? await (
+        ? (await (
             await database()
               .ref('users')
               .orderByChild('referedBy')
               .equalTo(Store.uid)
               .once('value')
-          ).val()
+          ).val()) || []
         : [];
 
     let referralEarnings = 0;
@@ -332,10 +332,10 @@ class Earnings extends Component {
                   paddingLeft: SIZES.padding * 6,
                 }}>
                 <Text
-                  text={
+                  text={`${
                     clickedPointData.name ||
                     this.months[this.currentMonthIndex - 1]
-                  }
+                  }`}
                   style={{
                     textAlign: 'left',
                     alignSelf: 'flex-start',
@@ -343,11 +343,7 @@ class Earnings extends Component {
                   }}
                 />
                 <Text
-                  text={
-                    clickedPointData.value !== null
-                      ? `$${clickedPointData.value}`
-                      : new Date().getFullYear()
-                  }
+                  text={`${clickedPointData.value || new Date().getFullYear()}`}
                   style={{
                     textAlign: 'left',
                     color: COLORS.secondaryLabelColor,
@@ -393,7 +389,8 @@ class Earnings extends Component {
                   fillShadowGradient: '',
                   labelColor: (opacity = 1) => COLORS.secondaryLabelColor,
                   propsForBackgroundLines: {
-                    strokeDasharray: COLORS.secondaryLabelColor,
+                    strokeDasharray:
+                      Platform.OS === 'ios' ? COLORS.secondaryLabelColor : '',
                     strokeDashoffset: 15,
                   },
                   backgroundColor: COLORS.secondaryLabelColor,

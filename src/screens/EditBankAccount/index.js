@@ -9,6 +9,7 @@ import {
   ScrollView,
   RefreshControl,
   KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
 import {observer} from 'mobx-react';
@@ -45,7 +46,7 @@ class EditBankAccount extends Component {
   }
 
   componentDidMount = async () => {
-    if(checkAndShowInfluencerModal(this.props.navigation)) {
+    if (checkAndShowInfluencerModal(this.props.navigation)) {
       return;
     }
     if (typeof Store.user.bank === 'undefined') {
@@ -143,7 +144,7 @@ class EditBankAccount extends Component {
           marginHorizontal: SIZES.spacing * 6,
           borderRadius: 6,
           backgroundColor: COLORS.systemFill,
-          paddingVertical: SIZES.spacing * 6,
+          paddingVertical: SIZES.spacing * (Platform.OS === 'ios' ? 6 : 1),
           paddingHorizontal: SIZES.spacing * 3,
         }}>
         <TextInput
@@ -188,9 +189,9 @@ class EditBankAccount extends Component {
           />
         ) : (
           <KeyboardAvoidingView
-            behavior="padding"
-            style={{flex: 1}}
-            keyboardVerticalOffset={getBottomSpace()}>
+            behavior={constants.KEYBOARD_BEHAVIOR}
+            keyboardVerticalOffset={constants.KEYBOARD_VERTICAL_OFFSET}
+            style={{flex: 1}}>
             <ScrollView
               style={{flex: 1}}
               refreshControl={
@@ -225,7 +226,7 @@ class EditBankAccount extends Component {
                 }}
                 onPressFunction={() => {}}
                 touchableOpacityProps={{
-                  activeOpacity: 0.8
+                  activeOpacity: 0.8,
                 }}
               />
               {this.renderInput(
@@ -261,9 +262,8 @@ class EditBankAccount extends Component {
                   backgroundColor: COLORS.systemFill,
                 }}
                 textContainerStyle={{
-                  borderTopRightRadius: constants.BORDER_RADIUS,
-                  borderBottomRightRadius: constants.BORDER_RADIUS,
                   backgroundColor: COLORS.systemFill,
+                  paddingVertical: SIZES.spacing,
                 }}
                 defaultCode={this.state.phoneCountryCode}
                 layout="first"
@@ -286,7 +286,7 @@ class EditBankAccount extends Component {
                 }}
                 onPressFunction={() => {}}
                 touchableOpacityProps={{
-                  activeOpacity: 0.8
+                  activeOpacity: 0.8,
                 }}
               />
               {this.renderInput(
