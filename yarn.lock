@@ -7059,10 +7059,9 @@
   "resolved" "https://registry.npmjs.org/react-native-nodemediaclient/-/react-native-nodemediaclient-0.2.14.tgz"
   "version" "0.2.14"
 
-"react-native-onesignal@^4.1.0":
-  "integrity" "sha512-7NRU6eB3UnDyKCjyBHIw5UD0huhTjfDSs+BmerJPmg7DLXdkSoeUROg5MWBcFv3H5b6R3KC9q8gEmrgLaEFqcQ=="
-  "resolved" "https://registry.npmjs.org/react-native-onesignal/-/react-native-onesignal-4.1.0.tgz"
-  "version" "4.1.0"
+"react-native-onesignal@github:OneSignal/react-native-onesignal#5e7380a4":
+  "resolved" "git+ssh://git@github.com/OneSignal/react-native-onesignal.git#5e7380a42325320f46528d5783bc7d95d8717066"
+  "version" "4.0.3"
   dependencies:
     "invariant" "^2.2.2"
 
