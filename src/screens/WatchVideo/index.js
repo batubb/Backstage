@@ -80,7 +80,7 @@ class WatchVideo extends Component {
       isBlurComments: true,
       subscribtion: {subscribtion: false},
       subscribeAlert: false,
-      // currentOrientation: 0, // 0 = PORTRAIT, 1 = LANDSPACE-LEFT, 2 = LANDSPACE-RIGHT
+      currentOrientation: 0, // 0 = PORTRAIT, 1 = LANDSPACE-LEFT, 2 = LANDSPACE-RIGHT
       WINDOW_DIMENSIONS: {
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
@@ -132,7 +132,7 @@ class WatchVideo extends Component {
         : await checkSubscribtion(Store.uid, this.state.video.user.uid);
 
     Orientation.unlockAllOrientations();
-    // Orientation.addOrientationListener(this._onOrientationDidChange);
+    Orientation.addOrientationListener(this._onOrientationDidChange);
 
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       Orientation.unlockAllOrientations();
@@ -207,10 +207,10 @@ class WatchVideo extends Component {
   };
 
   componentWillUnmount = () => {
-    // Orientation.removeOrientationListener(this._onOrientationDidChange);
     if (typeof this._unsubscribe === 'function') {
       this._unsubscribe();
     }
+    Orientation.removeOrientationListener(this._onOrientationDidChange);
     Orientation.lockToPortrait();
 
     Keyboard.removeListener('keyboardDidShow', () => {
@@ -224,21 +224,22 @@ class WatchVideo extends Component {
     database().ref('comments').child(this.state.video.uid).off();
   };
 
-  // _onOrientationDidChange = () => {
-  //   const currentOrientation = Orientation.getInitialOrientation();
-  //   switch (currentOrientation) {
-  //     case 'LANDSCAPE-LEFT':
-  //       this.setState({currentOrientation: 1, optionsVisible: false});
-  //       break;
-  //     case 'LANDSCAPE-RIGHT':
-  //       this.setState({currentOrientation: 2, optionsVisible: false});
-  //       break;
-  //     default:
-  //       this.setState({currentOrientation: 0, optionsVisible: false});
-  //       break;
-  //   }
-  //   this.forceUpdate();
-  // };
+  _onOrientationDidChange = () => {
+    Orientation.getDeviceOrientation((currentOrientation) => {
+      switch (currentOrientation) {
+        case 'LANDSCAPE-LEFT':
+          this.setState({currentOrientation: 1, optionsVisible: false});
+          break;
+        case 'LANDSCAPE-RIGHT':
+          this.setState({currentOrientation: 2, optionsVisible: false});
+          break;
+        default:
+          this.setState({currentOrientation: 0, optionsVisible: false});
+          break;
+      }
+      this.forceUpdate();
+    });
+  };
 
   reportVideo = async () => {
     const result = await report(this.state.video);
@@ -380,6 +381,7 @@ class WatchVideo extends Component {
       controlsVisible,
       fullScreen,
       subscribeAlert,
+      currentOrientation,
       WINDOW_DIMENSIONS,
       SCREEN_DIMENSIONS,
     } = this.state;
@@ -424,16 +426,16 @@ class WatchVideo extends Component {
             repeat
           />
           {this.state.video.isLive === 0 ? (
-           <SafeAreaView
-             style={{
-              position: 'absolute',
-              top: -SIZES.spacing - getBottomSpace() * 0.15,
-              right: SIZES.spacing,
-              display: 'flex',
-              justifyContent: 'flex-start',
-              alignItems: 'flex-end',
-              alignSelf: 'center',
-            }}>
+            <SafeAreaView
+              style={{
+                position: 'absolute',
+                top: -SIZES.spacing - getBottomSpace() * 0.15,
+                right: SIZES.spacing,
+                display: 'flex',
+                justifyContent: 'flex-start',
+                alignItems: 'flex-end',
+                alignSelf: 'center',
+              }}>
               <Image
                 source={require('../../images/live_animation_gray.gif')}
                 style={{resizeMode: 'contain', width: 70, height: 100}}
@@ -445,11 +447,16 @@ class WatchVideo extends Component {
               style={{
                 position: 'absolute',
                 width: '90%',
-                height: height - constants.KEYBOARD_VERTICAL_OFFSET,
+                height:
+                  WINDOW_DIMENSIONS.height - constants.KEYBOARD_VERTICAL_OFFSET,
                 display: 'flex',
                 justifyContent: 'flex-end',
                 alignSelf: 'center',
                 marginTop: Platform.OS === 'ios' ? 0 : '8%',
+                marginBottom:
+                  currentOrientation !== 0 && Platform.OS === 'android'
+                    ? constants.KEYBOARD_VERTICAL_OFFSET
+                    : 0,
               }}>
               <View
                 style={{
@@ -601,7 +608,8 @@ class WatchVideo extends Component {
               style={{
                 position: 'absolute',
                 right: SIZES.padding * 2,
-                marginTop: height - constants.KEYBOARD_VERTICAL_OFFSET,
+                marginTop:
+                  WINDOW_DIMENSIONS.height - constants.KEYBOARD_VERTICAL_OFFSET,
               }}>
               <Icon
                 name={!fullScreen ? 'fullscreen' : 'fullscreen-exit'}
