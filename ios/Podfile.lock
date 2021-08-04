@@ -79,6 +79,7 @@ PODS:
   - nanopb/encode (2.30908.0)
   - NodeMediaClient (2.9.2)
   - OneSignal (3.4.3)
+  - OneSignalXCFramework (3.6.0)
   - PromisesObjC (2.0.0)
   - RCT-Folly (2020.01.13.00):
     - boost-for-react-native
@@ -302,8 +303,8 @@ PODS:
   - react-native-nodemediaclient/RCTNodeMediaClient (0.2.14):
     - NodeMediaClient (= 2.9.2)
     - React
-  - react-native-onesignal (4.1.0):
-    - OneSignal (= 3.4.3)
+  - react-native-onesignal (4.0.3):
+    - OneSignalXCFramework (>= 3.1.1)
     - React (< 1.0.0, >= 0.13.0)
   - react-native-pure-jwt (2.2.2):
     - JWT (~> 3.0.0-beta.11)
@@ -556,6 +557,7 @@ SPEC REPOS:
     - nanopb
     - NodeMediaClient
     - OneSignal
+    - OneSignalXCFramework
     - PromisesObjC
     - SSZipArchive
     - TOCropViewController
@@ -697,16 +699,16 @@ SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
   CodePush: 3285d39e9865e0a37a415417402bf568ce49268a
-  DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
+  DoubleConversion: cde416483dac037923206447da6e1454df403714
   FBLazyVector: e686045572151edef46010a6f819ade377dfeb4b
-  FBReactNativeSpec: 4739c0efea3ae37323c15854d2ea8726099d069e
+  FBReactNativeSpec: 454c480c3f3d291d237d5b3ee4fd8961eff10561
   Firebase: 54cdc8bc9c9b3de54f43dab86e62f5a76b47034f
   FirebaseAuth: 8ef169751d795f20921d425f7b0131cc1c70935c
   FirebaseCore: 31f389c37ac1ea52454a53d3081f2d7019485a4a
   FirebaseCoreDiagnostics: cad03be1904b975f845e632f2720c3337da27faf
   FirebaseDatabase: 38f21731dea277e454060d0d39c1bf2aaa12bbb9
   FirebaseStorage: e6065bcbf70e2a06a8c3ddc66cbe03a395bbddc4
-  glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
+  glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
   GoogleDataTransport: 85fd18ff3019bb85d3f2c551d04c481dedf71fc9
   GoogleUtilities: eea970f4a389963963bffe8d8fabe43540678b9c
   GTMSessionFetcher: 36689134877faeb055b27dfa4ccc9ceaa42e029e
@@ -715,6 +717,7 @@ SPEC CHECKSUMS:
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   NodeMediaClient: 595811d347cfc02dfcda26bb611faf4c7f2be9c5
   OneSignal: e4dfb1912410f302dc9661ce98fc829f6c18ff6a
+  OneSignalXCFramework: ba3a7daeafd11bd6af8dd47e5689870911357d52
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
   RCTRequired: 6d3e854f0e7260a648badd0d44fc364bc9da9728
@@ -736,7 +739,7 @@ SPEC CHECKSUMS:
   react-native-image-resizer: d9fb629a867335bdc13230ac2a58702bb8c8828f
   react-native-netinfo: e849fc21ca2f4128a5726c801a82fc6f4a6db50d
   react-native-nodemediaclient: eeb78d795f2fc3d772b2b95f460aa45018d03119
-  react-native-onesignal: 6d3d3ac10192c5694049ce8c1ba481e5392c1a73
+  react-native-onesignal: 45b6ee53877dae200e75f753c4f77ebc2335559e
   react-native-pure-jwt: a89a3d83e5aab5e7da1d9ef2a97f3b908199966b
   react-native-safe-area-context: b6e0e284002381d2ff29fa4fff42b4d8282e3c94
   react-native-text-input-mask: cffd00848940e7670cf233a99e7be782257935ed
@@ -780,4 +783,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: c73dadb5e8e89c419e77c8dc7c1a28ef2282398d
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.10.2
