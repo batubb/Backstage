@@ -132,7 +132,8 @@ class WatchVideo extends Component {
         : await checkSubscribtion(Store.uid, this.state.video.user.uid);
 
     Orientation.unlockAllOrientations();
-    Orientation.addOrientationListener(this._onOrientationDidChange);
+    this._onOrientationDidChange(); // get initial device orientation
+    Orientation.addDeviceOrientationListener(this._onOrientationDidChange);
 
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       Orientation.unlockAllOrientations();
@@ -210,7 +211,7 @@ class WatchVideo extends Component {
     if (typeof this._unsubscribe === 'function') {
       this._unsubscribe();
     }
-    Orientation.removeOrientationListener(this._onOrientationDidChange);
+    Orientation.removeDeviceOrientationListener(this._onOrientationDidChange);
     Orientation.lockToPortrait();
 
     Keyboard.removeListener('keyboardDidShow', () => {
@@ -226,6 +227,7 @@ class WatchVideo extends Component {
 
   _onOrientationDidChange = () => {
     Orientation.getDeviceOrientation((currentOrientation) => {
+      console.log(currentOrientation);
       switch (currentOrientation) {
         case 'LANDSCAPE-LEFT':
           this.setState({currentOrientation: 1, optionsVisible: false});
@@ -448,15 +450,11 @@ class WatchVideo extends Component {
                 position: 'absolute',
                 width: '90%',
                 height:
-                  WINDOW_DIMENSIONS.height - constants.KEYBOARD_VERTICAL_OFFSET,
+                  WINDOW_DIMENSIONS.height - constants.KEYBOARD_VERTICAL_OFFSET * (currentOrientation !== 0 && Platform.OS === 'android' ? 2.5 : 1),
                 display: 'flex',
                 justifyContent: 'flex-end',
                 alignSelf: 'center',
                 marginTop: Platform.OS === 'ios' ? 0 : '8%',
-                marginBottom:
-                  currentOrientation !== 0 && Platform.OS === 'android'
-                    ? constants.KEYBOARD_VERTICAL_OFFSET
-                    : 0,
               }}>
               <View
                 style={{
@@ -568,7 +566,7 @@ class WatchVideo extends Component {
                   />
                 </TouchableOpacity>
                 <Slider
-                  style={{width: WINDOW_DIMENSIONS.width - 170}}
+                  style={{width: WINDOW_DIMENSIONS.width * 0.75 - (currentOrientation !== 0 && Platform.OS === 'android' ? 0 : SIZES.padding * 5)}}
                   value={videoInfo.currentTime}
                   thumbTintColor="#fff"
                   minimumTrackTintColor="#fff"
@@ -588,7 +586,7 @@ class WatchVideo extends Component {
                     text={`${dk}:${sn}`}
                   />
                 </View>
-                <TouchableOpacity
+                {Platform.OS === 'ios' ? <TouchableOpacity
                   onPress={() => this.setState({fullScreen: !fullScreen})}
                   style={{bottom: 1, paddingLeft: SIZES.spacing}}>
                   <Icon
@@ -597,10 +595,10 @@ class WatchVideo extends Component {
                     type="material-community"
                     size={28}
                   />
-                </TouchableOpacity>
+                </TouchableOpacity> : null}
               </View>
             </View>
-          ) : (
+          ) : Platform.OS === 'ios' ? (
             <TouchableOpacity
               onPress={() =>
                 this.setState({fullScreen: !this.state.fullScreen})
@@ -618,7 +616,7 @@ class WatchVideo extends Component {
                 size={28}
               />
             </TouchableOpacity>
-          )}
+          ) : null}
         </View>
       </TouchableWithoutFeedback>
     );
