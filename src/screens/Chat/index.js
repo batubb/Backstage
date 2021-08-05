@@ -244,8 +244,8 @@ class Chat extends Component {
       <SafeAreaView
         style={{flex: 1, backgroundColor: STREAM_THEME.colors.white}}>
         <KeyboardAvoidingView
-          behavior={constants.KEYBOARD_BEHAVIOUR}
-          keyboardVerticalOffset={(Platform.OS === 'ios' ? 85 : 0) + getBottomSpace()}>
+          behavior={constants.KEYBOARD_BEHAVIOR}
+          keyboardVerticalOffset={85 + getBottomSpace() + (Platform.OS === 'ios' ? 0 : 10)}>
           <StreamChatComponent
             client={this.streamServerClient}
             i18nInstance={constants.STREAM_I18N}>
@@ -384,7 +384,7 @@ class Chat extends Component {
                       fontSize: 15,
                       color: COLORS.gray,
                       paddingLeft: 1,
-                      paddingTop: 1,
+                      top: Platform.OS === 'ios' ? 1 : -2,
                     }}
                   />
                   {user.verified === true ? <VerifiedIcon size={15} /> : null}
