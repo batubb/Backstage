@@ -450,7 +450,7 @@ class WatchVideo extends Component {
                 position: 'absolute',
                 width: '90%',
                 height:
-                  WINDOW_DIMENSIONS.height - constants.KEYBOARD_VERTICAL_OFFSET * (currentOrientation !== 0 && Platform.OS === 'android' ? 2.5 : 1),
+                  WINDOW_DIMENSIONS.height - constants.KEYBOARD_VERTICAL_OFFSET * (currentOrientation !== 0 ? Platform.OS === 'ios' ? 0.5 : 2.5 : 1),
                 display: 'flex',
                 justifyContent: 'flex-end',
                 alignSelf: 'center',
@@ -586,16 +586,18 @@ class WatchVideo extends Component {
                     text={`${dk}:${sn}`}
                   />
                 </View>
-                {Platform.OS === 'ios' ? <TouchableOpacity
-                  onPress={() => this.setState({fullScreen: !fullScreen})}
-                  style={{bottom: 1, paddingLeft: SIZES.spacing}}>
-                  <Icon
-                    name={!fullScreen ? 'fullscreen' : 'fullscreen-exit'}
-                    color="#FFF"
-                    type="material-community"
-                    size={28}
-                  />
-                </TouchableOpacity> : null}
+                {Platform.OS === 'ios' ? (
+                  <TouchableOpacity
+                    onPress={() => this.setState({fullScreen: !fullScreen})}
+                    style={{bottom: 1, paddingLeft: SIZES.spacing}}>
+                    <Icon
+                      name={!fullScreen ? 'fullscreen' : 'fullscreen-exit'}
+                      color="#FFF"
+                      type="material-community"
+                      size={28}
+                    />
+                  </TouchableOpacity>
+                ) : null}
               </View>
             </View>
           ) : Platform.OS === 'ios' ? (
@@ -605,9 +607,8 @@ class WatchVideo extends Component {
               }
               style={{
                 position: 'absolute',
-                right: SIZES.padding * 2,
-                marginTop:
-                  WINDOW_DIMENSIONS.height - constants.KEYBOARD_VERTICAL_OFFSET,
+                right: SIZES.padding * 2 + getBottomSpace(),
+                marginTop: WINDOW_DIMENSIONS.height - constants.KEYBOARD_VERTICAL_OFFSET * (currentOrientation !== 0 ? 2 : 1),
               }}>
               <Icon
                 name={!fullScreen ? 'fullscreen' : 'fullscreen-exit'}
