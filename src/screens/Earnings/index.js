@@ -5,7 +5,7 @@ import {
   ScrollView,
   RefreshControl,
   LogBox,
-  Alert,
+  Alert, Platform,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {Loading, Header, Text, Button, Label} from '../../components';
@@ -386,11 +386,11 @@ class Earnings extends Component {
                   backgroundGradientFromOpacity: 0,
                   backgroundGradientToOpacity: 0,
                   color: (opacity = 1) => COLORS.tertiaryLabelColor,
-                  fillShadowGradient: '',
+                  fillShadowGradient: Platform.OS === 'ios' ? '' : undefined,
                   labelColor: (opacity = 1) => COLORS.secondaryLabelColor,
                   propsForBackgroundLines: {
                     strokeDasharray:
-                      Platform.OS === 'ios' ? COLORS.secondaryLabelColor : '',
+                      Platform.OS === 'ios' ? COLORS.secondaryLabelColor : undefined,
                     strokeDashoffset: 15,
                   },
                   backgroundColor: COLORS.secondaryLabelColor,
