@@ -23,6 +23,10 @@ target 'infapp' do
   pod 'RNTestFlight', :path => '../node_modules/react-native-test-flight'
 
 
+  pod 'RNCMaskedView', :path => '../node_modules/@react-native-community/masked-view'
+
+  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
+
   target 'infappTests' do
     inherit! :complete
     # Pods for testing
