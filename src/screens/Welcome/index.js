@@ -4,7 +4,7 @@ import {observer} from 'mobx-react';
 import {Loading, Header, GradientText} from '../../components';
 import {constants} from '../../resources';
 import {SafeAreaView} from 'react-native';
-import {COLORS} from '../../resources/theme';
+import {COLORS, SIZES} from '../../resources/theme';
 import LinearGradient from 'react-native-linear-gradient';
 import {Icon} from 'react-native-elements';
 import {StackActions} from '@react-navigation/native';

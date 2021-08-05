@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {SafeAreaView} from 'react-native';
+import {Platform, SafeAreaView} from 'react-native';
 import {
   View,
   Dimensions,
@@ -25,15 +25,9 @@ export default function LoginFlowPage(props) {
       <HeaderHeightContext.Consumer>
         {(headerHeight) => (
           <KeyboardAvoidingView
-            {...(Platform.OS === 'ios' ? {behavior: 'padding'} : {})}
-            // you might need sometimes👇
+            behavior={constants.KEYBOARD_BEHAVIOR}
             contentContainerStyle={{flex: 1}}
-            // chances are you might be using react-navigation
-            // if so 👇
-            keyboardVerticalOffset={headerHeight + 64}
-            // You can import Header Component from react-navigation and it has height attached to it
-            // 64 is some extra padding, I feel good, feel free to tweak it
-          >
+            keyboardVerticalOffset={constants.KEYBOARD_VERTICAL_OFFSET}>
             <View
               style={{
                 width: '85%',
@@ -50,7 +44,6 @@ export default function LoginFlowPage(props) {
                 <Text
                   text={props.title}
                   style={{
-                    fontWeight: 'normal',
                     fontSize: SIZES.h1,
                     fontWeight: 'bold',
                     fontFamily: 'SF Pro Display',
@@ -61,7 +54,6 @@ export default function LoginFlowPage(props) {
                     text={props.subtitle}
                     style={{
                       paddingTop: SIZES.spacing,
-                      fontWeight: 'normal',
                       fontSize: SIZES.h4,
                       color: COLORS.secondaryLabelColor,
                       fontWeight: 'bold',

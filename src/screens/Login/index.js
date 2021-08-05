@@ -153,7 +153,11 @@ class Login extends Component {
                 backgroundColor={'transparent'}
               />
             )}
-            <KeyboardAvoidingView behavior="padding" style={{flex: 1}}>
+            <KeyboardAvoidingView
+              behavior={
+                Platform.OS === 'ios' ? constants.KEYBOARD_BEHAVIOR : null
+              }
+              style={{flex: 1}}>
               <View
                 style={{
                   width: '85%',
@@ -198,6 +202,8 @@ class Login extends Component {
                       textContainerStyle={{
                         borderTopRightRadius: BORDER_RADIUS,
                         borderBottomRightRadius: BORDER_RADIUS,
+                        paddingVertical:
+                          SIZES.spacing * (Platform.OS === 'ios' ? 6 : 1),
                       }}
                       defaultCode="US"
                       layout="first"
@@ -260,9 +266,11 @@ class Login extends Component {
                         : phoneExtracted.length === 0
                     }
                     style={{
-                      backgroundColor: !!(confirmation
+                      backgroundColor: confirmation
                         ? confirmationCode.length === 6
-                        : phoneExtracted.length !== 0)
+                          ? '#ffffff'
+                          : '#ffffff50'
+                        : phoneExtracted.length !== 0
                         ? '#ffffff'
                         : '#ffffff50',
                       paddingVertical: SIZES.padding * 1.2,
