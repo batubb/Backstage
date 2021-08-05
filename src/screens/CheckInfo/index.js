@@ -23,7 +23,6 @@ import LoginFlowTextInput from '../../components/ScreenComponents/LoginComponent
 import LinearGradient from 'react-native-linear-gradient';
 import {sleep, regexCheck, handleURLSchemes} from '../../lib';
 import OneSignal from 'react-native-onesignal';
-import {setSelectedLog} from "react-native/Libraries/LogBox/Data/LogBoxData";
 
 class CheckInfo extends Component {
   constructor(props) {
