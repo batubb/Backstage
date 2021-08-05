@@ -2,7 +2,7 @@
 import React from 'react';
 import {constants} from '../../../../resources';
 import {MyImage, Text, Button} from '../../../../components';
-import {View} from 'react-native';
+import {Platform, View} from 'react-native';
 import {SIZES} from '../../../../resources/theme';
 import SubscribeButton from './SubscribeButton';
 import Databar from './Databar';
@@ -98,7 +98,7 @@ export default function ProfileTop(props) {
                   } subscribers`}
                   style={{
                     fontWeight: 'bold',
-                    fontSize: 11,
+                    fontSize: Platform.OS === 'ios' ? 11 : 13,
                   }}
                 />
               </TouchableOpacity>

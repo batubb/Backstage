@@ -26,6 +26,7 @@ export default class HeaderComponent extends React.Component {
       leftButtonIcon,
       leftButtonIconSize,
       title,
+      style,
       centerComponent,
       rightButtonText,
       rightButtonPress,
