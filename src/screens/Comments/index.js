@@ -272,8 +272,8 @@ class Comments extends Component {
     return (
       <SafeAreaView style={{width, alignItems: 'center', flex: 1}}>
         <KeyboardAvoidingView
-          behavior="padding"
-          keyboardVerticalOffset={80 + getBottomSpace()}>
+          behavior={constants.KEYBOARD_BEHAVIOR}
+          keyboardVerticalOffset={80 + getBottomSpace() + (Platform.OS === 'ios' ? 0 : 10)}>
           <FlatList
             data={comments}
             refreshControl={

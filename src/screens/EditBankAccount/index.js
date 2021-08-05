@@ -263,7 +263,8 @@ class EditBankAccount extends Component {
                 }}
                 textContainerStyle={{
                   backgroundColor: COLORS.systemFill,
-                  paddingVertical: SIZES.spacing,
+                  paddingVertical:
+                    SIZES.spacing * (Platform.OS === 'ios' ? 6 : 1),
                 }}
                 defaultCode={this.state.phoneCountryCode}
                 layout="first"
