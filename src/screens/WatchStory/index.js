@@ -246,14 +246,16 @@ class WatchStory extends Component {
           justifyContent: 'center',
         }}>
         <Image
-          style={{
+          style={[{
             flex: 1,
             width,
             height,
             position: 'absolute',
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-          }}
+          }, Platform.OS === 'ios' ? {
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+            } : {}
+          ]}
           source={{uri: content.url}}
           onLoadStart={() => this.setState({loading: true})}
           onLoadEnd={() => {
