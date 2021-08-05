@@ -16,6 +16,7 @@
 		201F4E9826A08E4B0079CCDE /* infapp.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = D4BA35E7266957D400150590 /* infapp.entitlements */; };
 		202C97FE267D4869006DBD2D /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 202C97FD267D4869006DBD2D /* StoreKit.framework */; };
 		212562DF26963C6F00CD0ABA /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 212562DE26963C6F00CD0ABA /* CloudKit.framework */; };
+		21693A3526BC4CFE00FBA8CD /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 21693A3426BC4CFE00FBA8CD /* libPods-OneSignalNotificationServiceExtension.a */; };
 		26EBE7426EA043929435542F /* Oswald-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4546ED7C35C41429F0860CF /* Oswald-SemiBold.ttf */; };
 		2932FA08364B4B978294CF32 /* SF-Pro-Display-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 09B4E2FF7E9E4D26819E29AF /* SF-Pro-Display-Medium.otf */; };
 		2B1E761F45024B22978F7750 /* SF-Pro-Display-RegularItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1C414DD1FD1C403F8AE3BA16 /* SF-Pro-Display-RegularItalic.otf */; };
@@ -38,7 +39,6 @@
 		72DA4104664A4C4D8D1F3D37 /* SF-Pro-Display-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = E34C6A164FFC4A6AB09D22D5 /* SF-Pro-Display-Bold.otf */; };
 		790654F598364966A544BADE /* libPods-infapp-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA05699607500D6A7733F588 /* libPods-infapp-tvOS.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		A4A729851DA8420AC85B2D07 /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16FF89CBE22122CB5E746215 /* libPods-OneSignalNotificationServiceExtension.a */; };
 		B09C60546B374F059B088BC6 /* SF-Pro-Display-SemiboldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 38A4AD08A6724CC9BA008BA9 /* SF-Pro-Display-SemiboldItalic.otf */; };
 		C180DAE9D1274B65860A41B1 /* SF-Pro-Display-BlackItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1CCCCC6AD1FA4D42AA1A82DB /* SF-Pro-Display-BlackItalic.otf */; };
 		CD327BE3332B429FAB04857C /* SF-Pro-Display-ThinItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = D02FC05625AA422AB68BFD8D /* SF-Pro-Display-ThinItalic.otf */; };
@@ -113,6 +113,7 @@
 		202C97FD267D4869006DBD2D /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		20CDB36D267BE9BB00C85307 /* infapp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = infapp.entitlements; path = infapp/infapp.entitlements; sourceTree = "<group>"; };
 		212562DE26963C6F00CD0ABA /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		21693A3426BC4CFE00FBA8CD /* libPods-OneSignalNotificationServiceExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libPods-OneSignalNotificationServiceExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27433C2A34F84226BABD8041 /* SF-Pro-Display-LightItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-LightItalic.otf"; path = "../src/fonts/SF-Pro-Display-LightItalic.otf"; sourceTree = "<group>"; };
 		27D58EB1F3050AF805C81CFC /* Pods-infapp-infappTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-infapp-infappTests.debug.xcconfig"; path = "Target Support Files/Pods-infapp-infappTests/Pods-infapp-infappTests.debug.xcconfig"; sourceTree = "<group>"; };
 		292DBB7E6E9D7EE5003BF27C /* Pods-OneSignalNotificationServiceExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalNotificationServiceExtension.release.xcconfig"; path = "Target Support Files/Pods-OneSignalNotificationServiceExtension/Pods-OneSignalNotificationServiceExtension.release.xcconfig"; sourceTree = "<group>"; };
@@ -215,7 +216,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4A729851DA8420AC85B2D07 /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */,
+				21693A3526BC4CFE00FBA8CD /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,6 +268,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				21693A3426BC4CFE00FBA8CD /* libPods-OneSignalNotificationServiceExtension.a */,
 				212562DE26963C6F00CD0ABA /* CloudKit.framework */,
 				202C97FD267D4869006DBD2D /* StoreKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
@@ -1119,6 +1121,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.1.5;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
