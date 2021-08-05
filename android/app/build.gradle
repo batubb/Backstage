@@ -211,6 +211,11 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
+    // https://getstream.io/chat/docs/sdk/reactnative/basics/troubleshooting/#blurview-crashing
+    implementation('com.eightbitlab:blurview:1.6.6') {
+        force = true
+    }
+
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
