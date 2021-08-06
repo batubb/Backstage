@@ -13,8 +13,9 @@ import {COLORS, SIZES} from '../../../resources/theme';
 import PropTypes from 'prop-types';
 import {HeaderHeightContext} from '@react-navigation/stack';
 import {Icon} from 'react-native-elements';
+import {RFValue} from 'react-native-responsive-fontsize';
 
-const {width} = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 export default function LoginFlowPage(props) {
   return (
@@ -33,7 +34,7 @@ export default function LoginFlowPage(props) {
                 width: '85%',
                 height: '100%',
                 alignSelf: 'center',
-                marginTop: '5%',
+                marginTop: RFValue(height * 0.05),
               }}>
               <View
                 style={{
@@ -44,7 +45,7 @@ export default function LoginFlowPage(props) {
                 <Text
                   text={props.title}
                   style={{
-                    fontSize: SIZES.h1,
+                    fontSize: RFValue(SIZES.h1),
                     fontWeight: 'bold',
                     fontFamily: 'SF Pro Display',
                   }}
@@ -54,7 +55,7 @@ export default function LoginFlowPage(props) {
                     text={props.subtitle}
                     style={{
                       paddingTop: SIZES.spacing,
-                      fontSize: SIZES.h4,
+                      fontSize: RFValue(SIZES.h4),
                       color: COLORS.secondaryLabelColor,
                       fontWeight: 'bold',
                       fontFamily: 'SF Pro Display',
@@ -85,7 +86,7 @@ export default function LoginFlowPage(props) {
                     borderRadius: 12,
                     marginRight: width * 0.03,
                     paddingHorizontal: SIZES.padding * 3.5,
-                    marginTop: SIZES.padding * 5,
+                    marginTop: RFValue(SIZES.padding * 5),
                   }}>
                   <GradientText
                     colors={['#872EC4', '#B150E2']}
@@ -93,7 +94,7 @@ export default function LoginFlowPage(props) {
                     end={{x: 0.7, y: 0}}
                     style={{
                       color: 'black',
-                      fontSize: 27,
+                      fontSize: RFValue(23),
                       fontWeight: 'bold',
                       fontFamily: 'SF Pro Display',
                     }}>
@@ -101,9 +102,12 @@ export default function LoginFlowPage(props) {
                     <Icon
                       name="arrow-right"
                       type="font-awesome-5"
-                      size={25}
-                      color={'#872EC4'}
-                      style={{paddingLeft: 10}}
+                      size={RFValue(20)}
+                      color={COLORS.primary}
+                      style={[
+                        {paddingLeft: 5},
+                        Platform.OS === 'android' ? {top: 2} : null,
+                      ]}
                     />
                   </GradientText>
                 </TouchableOpacity>

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Dimensions, Text, TouchableOpacity} from 'react-native';
+import {View, Dimensions, Text, TouchableOpacity, Platform} from 'react-native';
 import {observer} from 'mobx-react';
 import {Loading, Header, GradientText} from '../../components';
 import {constants} from '../../resources';
@@ -10,6 +10,7 @@ import {Icon} from 'react-native-elements';
 import {StackActions} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import Store from '../../store/Store';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 const {width} = Dimensions.get('window');
 
@@ -33,6 +34,8 @@ class Welcome extends Component {
   }
 
   render() {
+    const isMiniScreen = width < 330;
+
     if (this.state.loading) {
       return (
         <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
@@ -64,7 +67,7 @@ class Welcome extends Component {
             }}>
             <Text
               style={{
-                fontSize: 50,
+                fontSize: RFValue(50),
                 fontWeight: 'bold',
                 color: COLORS.white,
                 bottom: 35,
@@ -76,10 +79,11 @@ class Welcome extends Component {
               style={{
                 justifyContent: 'space-between',
                 position: 'absolute',
-                bottom: 60,
+                bottom: isMiniScreen ? 40 : 60,
                 flex: 1,
-                flexDirection: 'row',
-                marginHorizontal: width * 0.06,
+                flexDirection: isMiniScreen ? 'column' : 'row',
+                paddingHorizontal: width * 0.06,
+                width: '100%',
               }}>
               <TouchableOpacity
                 onPress={() =>
@@ -91,17 +95,17 @@ class Welcome extends Component {
                   paddingVertical: 12,
                   alignItems: 'center',
                   borderRadius: 12,
-                  marginRight: width * 0.03,
+                  marginRight: isMiniScreen ? 0 : width * 0.03,
                 }}>
                 <GradientText
                   colors={['#872EC4', '#B150E2']}
                   start={{x: -0.2, y: 0.7}}
                   end={{x: 0.7, y: 0}}
-                  locations={[0, 0.4, 1]}
+                  locations={[0, 1]}
                   style={{
                     top: 2,
                     color: 'black',
-                    fontSize: 25,
+                    fontSize: RFValue(22),
                     fontWeight: 'bold',
                     fontFamily: 'SF Pro Display',
                   }}>
@@ -117,19 +121,26 @@ class Welcome extends Component {
                   backgroundColor: '#ffffff7D',
                   paddingVertical: 12,
                   alignItems: 'center',
-                  fontFamily: 'SF Pro Display',
                   borderRadius: 12,
-                  marginLeft: width * 0.03,
+                  marginLeft: isMiniScreen ? 0 : width * 0.03,
+                  marginTop: isMiniScreen ? SIZES.padding * 2 : 0,
                 }}>
                 <Text
-                  style={{color: '#ffffff', fontSize: 25, fontWeight: 'bold'}}>
+                  style={{
+                    color: '#ffffff',
+                    fontSize: RFValue(22),
+                    fontWeight: 'bold',
+                  }}>
                   Login
                   <Icon
                     name="arrow-right"
                     type="font-awesome-5"
-                    size={25}
+                    size={RFValue(20)}
                     color={'#ffffff'}
-                    style={{paddingLeft: 5}}
+                    style={[
+                      {paddingLeft: 5},
+                      Platform.OS === 'android' ? {top: 2} : null,
+                    ]}
                   />
                 </Text>
               </TouchableOpacity>

@@ -22,6 +22,7 @@ import PhoneInput from 'react-native-phone-number-input';
 import {COLORS, SIZES} from '../../resources/theme';
 import LinearGradient from 'react-native-linear-gradient';
 import {Icon} from 'react-native-elements';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 const {width, height} = Dimensions.get('window');
 auth().settings.appVerificationDisabledForTesting = false;
@@ -178,7 +179,7 @@ class Login extends Component {
                     }
                     style={{
                       fontWeight: 'bold',
-                      fontSize: 26,
+                      fontSize: RFValue(26),
                       fontFamily: 'SF Pro Display',
                     }}
                   />
@@ -234,6 +235,7 @@ class Login extends Component {
                         textAlign: 'left',
                         fontWeight: 'normal',
                         color: COLORS.white,
+                        fontSize: RFValue(16),
                       }}
                       secondary
                     />
@@ -249,7 +251,7 @@ class Login extends Component {
                           textAlign: 'center',
                           right: SIZES.padding * 0.5,
                           fontWeight: 'normal',
-                          fontSize: 16,
+                          fontSize: RFValue(18),
                           color: COLORS.white,
                         }}
                         secondary
@@ -278,7 +280,7 @@ class Login extends Component {
                       borderRadius: 12,
                       marginRight: width * 0.03,
                       paddingHorizontal: SIZES.padding * 3.5,
-                      marginTop: SIZES.padding * 5,
+                      marginTop: RFValue(SIZES.padding * 5),
                     }}>
                     <GradientText
                       colors={['#872EC4', '#B150E2']}
@@ -286,7 +288,7 @@ class Login extends Component {
                       end={{x: 0.7, y: 0}}
                       style={{
                         color: 'black',
-                        fontSize: 27,
+                        fontSize: RFValue(23),
                         fontWeight: 'bold',
                         fontFamily: 'SF Pro Display',
                       }}>
@@ -294,9 +296,20 @@ class Login extends Component {
                       <Icon
                         name="arrow-right"
                         type="font-awesome-5"
-                        size={25}
-                        color={'#872EC4'}
-                        style={{paddingLeft: 10}}
+                        size={RFValue(20)}
+                        color={
+                          confirmation
+                            ? confirmationCode.length === 6
+                              ? COLORS.primary
+                              : '#ffffff90'
+                            : phoneExtracted.length !== 0
+                            ? COLORS.primary
+                            : '#ffffff90'
+                        }
+                        style={[
+                          {paddingLeft: 5},
+                          Platform.OS === 'android' ? {top: 2} : null,
+                        ]}
                       />
                     </GradientText>
                   </TouchableOpacity>

@@ -10,6 +10,7 @@ import {
   RefreshControl,
   Alert,
   Platform,
+  LogBox,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
