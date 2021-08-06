@@ -27,6 +27,8 @@ target 'infapp' do
 
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
 
+  pod 'RNIap', :path => '../node_modules/react-native-iap'
+
   target 'infappTests' do
     inherit! :complete
     # Pods for testing
