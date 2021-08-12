@@ -142,19 +142,12 @@ class Home extends Component {
         return this.props.navigation.dispatch(replaceActions);
       }
     } else if (route === 'WatchStory') {
-      const userStories = [];
-
-      for (let i = 0; i < this.state.userStoriesArray.length; i++) {
-        const element = this.state.userStoriesArray[i];
-        userStories.push(element.stories);
-      }
-
       const replaceActions = StackActions.push(route, {
         stories: info,
         allStories:
           this.state.myStoriesArray.length === 0
-            ? userStories
-            : [this.state.myStoriesArray, ...userStories],
+            ? this.state.userStoriesArray
+            : [...this.state.myStoriesArray, ...this.state.userStoriesArray],
       });
       return this.props.navigation.dispatch(replaceActions);
     } else if (route === 'AddContent') {

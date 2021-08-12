@@ -77,7 +77,7 @@ class WatchStory extends Component {
     if (subscribtion.subscribtion) {
       const influencer = await checkUserInfo(this.state.content.user.uid);
       this.setState({loading: false, paused: false, influencer});
-      this.startProgressBar();
+      //this.startProgressBar();
     } else {
       Alert.alert('Oops', 'You must become a member to view the content.', [
         {
@@ -126,17 +126,18 @@ class WatchStory extends Component {
 
     if (
       !lastStory.user ||
+      !stories[0].user ||
       (stories[0].user.uid === lastStory.user.uid &&
         stories.length - 1 === content.id)
     ) {
       return this.props.navigation.dispatch(StackActions.pop());
     }
 
-    var x = 0;
+    let x = 0;
 
     for (let i = 0; i < this.state.allStories.length; i++) {
       const element = this.state.allStories[i];
-      if (element[0].user.uid === stories[0].user.uid) {
+      if (element.user.uid === stories[0].user.uid) {
         x = i;
       }
     }
@@ -144,7 +145,7 @@ class WatchStory extends Component {
     if (stories.length - 1 === content.id) {
       return this.setState({
         stories: this.state.allStories[x + 1],
-        content: {...this.state.allStories[x + 1][0], id: 0},
+        content: {...this.state.allStories[x + 1], id: 0},
       });
     }
 
@@ -154,16 +155,16 @@ class WatchStory extends Component {
   previousStory = (stories, content) => {
     const firstStory = this.state.allStories[0];
 
-    if (stories[0].user.uid === firstStory[0].user.uid && content.id === 0) {
+    if (stories[0].user.uid === firstStory.user.uid && content.id === 0) {
       return true;
     }
 
-    var x = 0;
+    let x = 0;
 
     for (let i = 0; i < this.state.allStories.length; i++) {
       const element = this.state.allStories[i];
 
-      if (element[0].user.uid === stories[0].user.uid) {
+      if (element.user.uid === stories[0].user.uid) {
         x = i;
       }
     }
@@ -171,7 +172,7 @@ class WatchStory extends Component {
     if (content.id === 0) {
       return this.setState({
         stories: this.state.allStories[x - 1],
-        content: {...this.state.allStories[x - 1][0], id: 0},
+        content: {...this.state.allStories[x - 1], id: 0},
       });
     }
 
@@ -246,15 +247,19 @@ class WatchStory extends Component {
           justifyContent: 'center',
         }}>
         <Image
-          style={[{
-            flex: 1,
-            width,
-            height,
-            position: 'absolute',
-          }, Platform.OS === 'ios' ? {
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-            } : {}
+          style={[
+            {
+              flex: 1,
+              width,
+              height,
+              position: 'absolute',
+            },
+            Platform.OS === 'ios'
+              ? {
+                  borderTopLeftRadius: 20,
+                  borderTopRightRadius: 20,
+                }
+              : {},
           ]}
           source={{uri: content.url}}
           onLoadStart={() => this.setState({loading: true})}
