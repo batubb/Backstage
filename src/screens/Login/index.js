@@ -235,7 +235,7 @@ class Login extends Component {
                         textAlign: 'left',
                         fontWeight: 'normal',
                         color: COLORS.white,
-                        fontSize: RFValue(16),
+                        fontSize: RFValue(14),
                       }}
                       secondary
                     />

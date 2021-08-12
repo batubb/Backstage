@@ -7,7 +7,7 @@ import codePush from 'react-native-code-push';
 import OneSignal from 'react-native-onesignal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNIap from 'react-native-iap';
-import {Alert} from 'react-native';
+import {Alert, Platform} from 'react-native';
 import database from '@react-native-firebase/database';
 import {
   subscribeInfluencer,
@@ -16,6 +16,10 @@ import {
 import {constants} from './src/resources';
 import {environment} from './src/lib';
 import Orientation from 'react-native-orientation-locker';
+import {ProductPurchase} from 'react-native-iap';
+import {SubscriptionPurchase} from 'react-native-iap';
+import Store from './src/store/Store';
+import {Buffer} from 'buffer';
 
 class App extends Component {
   constructor(props) {
@@ -25,13 +29,75 @@ class App extends Component {
     this.purchaseErrorListener = null;
   }
 
-  validate = async (receipt, originalTransactionIdentifierIOS) => {
-    console.log('in validate', {originalTransactionIdentifierIOS});
-    const receiptBody = {
-      'receipt-data': receipt,
-      password: '2fc108dab79448b4a61f238ba37e4742',
-      originalTransactionId: originalTransactionIdentifierIOS,
-    };
+  validate = async (
+    purchase: ProductPurchase | SubscriptionPurchase,
+    receipt,
+  ) => {
+    const originalTransactionIdentifierIOS = purchase.originalTransactionIdentifierIOS
+      ? purchase.originalTransactionIdentifierIOS
+      : purchase.transactionId;
+
+    console.log('purchase in validate', {purchase, receipt});
+
+    const receiptBody =
+      Platform.OS === 'ios'
+        ? {
+            'receipt-data': receipt,
+            password: '2fc108dab79448b4a61f238ba37e4742',
+            originalTransactionId: originalTransactionIdentifierIOS,
+          }
+        : {
+            message: {
+              data: new Buffer(
+                JSON.stringify({
+                  version: '1.0',
+                  packageName: 'com.cooldigital.backstage',
+                  eventTimeMillis: new Date().getTime(),
+                  subscriptionNotification: {
+                    version: '1.0',
+                    notificationType: 4,
+                    purchaseToken: purchase.purchaseToken,
+                    subscriptionId: purchase.productId,
+                  },
+                }),
+              ).toString('base64'),
+              message_id: '',
+              publish_time: new Date().toLocaleString(),
+              publishTime: new Date().toLocaleString(),
+              messageId: '',
+              userUID: Store.uid,
+              testing: Store.user?.isInTestMode === true,
+            },
+            subscription:
+              'projects/pc-api-6305812914772691251-434/subscriptions/validateAndroidSubscriptions',
+          };
+
+    if (Platform.OS === 'android') {
+      console.log(receiptBody);
+      try {
+        const deliveryReceipt = await fetch(
+          'https://us-central1-backstage-ceb27.cloudfunctions.net/validateAndroid',
+          {
+            headers: {'Content-Type': 'application/json'},
+            method: 'POST',
+            body: JSON.stringify(receiptBody),
+          },
+        );
+        const validatedAndroidData = await deliveryReceipt.json();
+        console.log(
+          'Android receipt received from the server is ',
+          validatedAndroidData,
+        );
+        return {
+          receiptValidated: true,
+          expiryDate: validatedAndroidData.expiryDate,
+        };
+      } catch (error) {
+        console.log('Android caught error ', error);
+        return {receiptValidated: false, expiryDate: 0};
+      }
+    }
+
     try {
       const deliveryReceipt = await fetch(
         'https://us-central1-backstage-ceb27.cloudfunctions.net/validateIOS',
@@ -82,22 +148,36 @@ class App extends Component {
     let followerUID = null;
     let isFollowerInDevelopmentMode = null;
     let infUID = null;
+    let service = Platform.OS === 'android' ? 'google' : 'apple';
     snapshot.forEach((user) => {
       // key is the influencer uid
       // user.val()[key][followerUID] is the user id
       for (const key in user.val()) {
         if (
           user.val()[key]['appStoreOriginalTransactionId'] ===
-          originalTransactionId
+            originalTransactionId ||
+          user.val()[key]['googlePlayOriginalTransactionId'] ===
+            originalTransactionId
         ) {
           console.log('found transaction ', originalTransactionId);
           followerUID = user.val()[key].followerUID;
           infUID = user.val()[key].uid;
           isFollowerInDevelopmentMode = user.val()[key].test ?? null;
+          service =
+            user.val()[key]['googlePlayOriginalTransactionId'] ===
+            originalTransactionId
+              ? 'google'
+              : 'apple';
         }
       }
     });
-    console.log({followerUID, infUID, originalTransactionId, env: environment()});
+    console.log({
+      service,
+      followerUID,
+      infUID,
+      originalTransactionId,
+      env: environment(),
+    });
     if (followerUID && infUID) {
       if (isFollowerInDevelopmentMode === null && environment() !== 'Sandbox') {
         isFollowerInDevelopmentMode =
@@ -107,9 +187,7 @@ class App extends Component {
               .child(followerUID)
               .child('isInTestMode')
               .once('value')
-          ).val()) === true
-            ? true
-            : false;
+          ).val()) === true;
       }
 
       const curEnd = await database()
@@ -121,9 +199,7 @@ class App extends Component {
       const curEndV = Number(curEnd.val());
       var updates = {};
       updates[`followList/${followerUID}/${infUID}/test`] =
-        isFollowerInDevelopmentMode === true || environment() === 'Sandbox'
-          ? true
-          : false;
+        isFollowerInDevelopmentMode === true || environment() === 'Sandbox';
       updates[`followList/${followerUID}/${infUID}/endTimestamp`] = Math.max(
         curEndV,
         expiryDate,
@@ -160,11 +236,14 @@ class App extends Component {
       expiryDate,
     );
     console.log({transactionExistsInDb, originalTransactionId});
-    if (transactionExistsInDb) return;
+    if (transactionExistsInDb) {
+      console.log('purchaseUpdatedListener completed');
+      return;
+    }
     // 2. if it does not, create a new subscription
     console.log('in create sub on db ', originalTransactionId);
     const sub = {
-      type: 'apple',
+      type: Platform.OS === 'android' ? 'google' : 'apple',
       current_period_end: expiryDate,
       originalTransactionId: originalTransactionId,
     };
@@ -220,12 +299,7 @@ class App extends Component {
         try {
           const receipt = purchase.transactionReceipt;
           if (receipt) {
-            const validateRes = await this.validate(
-              receipt,
-              purchase.originalTransactionIdentifierIOS
-                ? purchase.originalTransactionIdentifierIOS
-                : purchase.transactionId,
-            );
+            const validateRes = await this.validate(purchase, receipt);
             const {receiptValidated, expiryDate} = validateRes;
             if (receiptValidated) {
               console.log(
@@ -233,12 +307,12 @@ class App extends Component {
                 validateRes,
                 purchase.originalTransactionIdentifierIOS
                   ? purchase.originalTransactionIdentifierIOS
-                  : purchase.transactionId,
+                  : purchase.purchaseToken,
               );
-              this.updateSubscriptionOnDb(
+              await this.updateSubscriptionOnDb(
                 purchase.originalTransactionIdentifierIOS
                   ? purchase.originalTransactionIdentifierIOS
-                  : purchase.transactionId,
+                  : purchase.purchaseToken,
                 Number(expiryDate),
                 purchase.productId,
               );
@@ -247,17 +321,27 @@ class App extends Component {
         } catch (error) {
           console.log('purchase update listener faced an error ', error);
         }
-        await RNIap.finishTransaction(purchase, false, false);
+        await RNIap.finishTransaction(purchase, false);
       },
     );
 
     this.purchaseErrorListener = RNIap.purchaseErrorListener(async (error) => {
       console.log(error);
       //this.updateSubscriptionOnDb('1000000833092407', '1624726772000');
-      if (error['responseCode'] === '2') {
-        console.log('cancelled by user');
+      if (Platform.OS === 'ios') {
+        if (error['responseCode'] === '2') {
+          console.log('Cancelled by user');
+        } else {
+          Alert.alert(
+            'There has been an error with the purchase. Please try again.',
+          );
+        }
+      } else if (error['code'] === 'E_USER_CANCELLED') {
+        Alert.alert(error['message']);
       } else {
-        Alert.alert('there has been an error with the purchase');
+        Alert.alert(
+          'There has been an error with the purchase. Please try again.',
+        );
       }
     });
   };
@@ -287,6 +371,7 @@ class App extends Component {
       // saving error
     }
   };
+
   render() {
     return (
       <Provider MainStore={MainStore}>

@@ -9,10 +9,7 @@ export default async function subscribeInfluencer(user, influencer, sub) {
   const data = {
     uid: influencer.uid,
     followerUID: user.uid,
-    endTimestamp:
-      sub.type === 'apple'
-        ? sub.current_period_end
-        : sub.current_period_end * 1000,
+    endTimestamp: sub.current_period_end,
     timestamp: new Date().getTime(),
     active: true,
     expired: false,
@@ -23,6 +20,8 @@ export default async function subscribeInfluencer(user, influencer, sub) {
 
   if (sub.type === 'apple') {
     data.appStoreOriginalTransactionId = sub.originalTransactionId;
+  } else if (sub.type === 'google') {
+    data.googlePlayOriginalTransactionId = sub.originalTransactionId;
   }
 
   try {

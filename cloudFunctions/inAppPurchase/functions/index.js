@@ -2,11 +2,29 @@
 const functions = require('firebase-functions');
 const axios = require('axios');
 const admin = require('firebase-admin');
+const {google} = require('googleapis');
+const {JWT} = require('google-auth-library');
+const iap = require('in-app-purchase');
+const account = require('./service-account.json');
 admin.initializeApp(functions.config().firebase);
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
+iap.config({
+  googleServiceAccount: {
+    clientEmail: account.client_email,
+    privateKey: account.private_key,
+  },
+  test: true, // For Apple and Google Play to force Sandbox validation only
+  verbose: false, // Output debug logs to stdout stream
+});
+
+google.options({
+  auth: new JWT(account.client_email, null, account.private_key, [
+    'https://www.googleapis.com/auth/androidpublisher',
+  ]),
+});
+
+const androidGoogleApi = google.androidpublisher({version: 'v3'});
+
 exports.helloWorld2 = functions.https.onRequest(async (request, response) => {
   try {
     const data = JSON.stringify({
@@ -105,6 +123,263 @@ exports.validateIOS = functions.https.onCall(async (d) => {
     };
   }
 });
+
+exports.validateAndroid = functions.https.onRequest(
+  async (request, response) => {
+    if (typeof request.body === 'undefined') {
+      return response.status(204).end();
+    }
+
+    const data =
+      typeof request.body === 'string'
+        ? JSON.parse(request.body)
+        : request.body;
+
+    const bodyToken = data['message']['data'];
+    const decodedData = JSON.parse(Buffer.from(bodyToken, 'base64'));
+
+    functions.logger.log({
+      body: data,
+      decodedData: decodedData,
+    });
+
+    if (typeof decodedData['testNotification'] !== 'undefined') {
+      return response.status(204).end();
+    }
+
+    try {
+      await iap.setup();
+
+      const validationResponse = await iap.validate({
+        packageName: decodedData['packageName'],
+        productId: decodedData['subscriptionNotification']['subscriptionId'],
+        purchaseToken: decodedData['subscriptionNotification']['purchaseToken'],
+        subscription: true,
+      });
+
+      // https://developer.android.com/google/play/billing/rtdn-reference#sub
+      const notificationType =
+        decodedData['subscriptionNotification']['notificationType'];
+
+      const purchaseData = iap.getPurchaseData(validationResponse);
+      const firstPurchaseItem = purchaseData[0];
+
+      const {productId} = firstPurchaseItem;
+      const isCancelled = iap.isCanceled(firstPurchaseItem);
+      const isExpired = iap.isExpired(firstPurchaseItem);
+      const isValidated = iap.isValidated(firstPurchaseItem);
+      const originalTransactionId = firstPurchaseItem.transactionId;
+      const orderId = firstPurchaseItem.orderId;
+      const latestReceipt = purchaseData.transactionReceipt;
+      const startDate = new Date(
+        parseInt(firstPurchaseItem.startTimeMillis, 10),
+      ).getTime();
+      const expiryDate = new Date(
+        parseInt(firstPurchaseItem.expiryTimeMillis, 10),
+      ).getTime();
+      const purchaseDate =
+        typeof firstPurchaseItem.purchaseDate !== 'undefined'
+          ? new Date(firstPurchaseItem.purchaseDate).getTime()
+          : startDate;
+
+      if (validationResponse.acknowledgementState === 0) {
+        androidGoogleApi.purchases.subscriptions.acknowledge({
+          packageName: decodedData['packageName'],
+          subscriptionId:
+            decodedData['subscriptionNotification']['subscriptionId'],
+          token: decodedData['subscriptionNotification']['purchaseToken'],
+        });
+      }
+
+      let userUID = null;
+      let influencerUID = null;
+      let influencerUsername = null;
+      let isUserInDevelopmentMode = false;
+
+      if (typeof data['message']['userUID'] !== 'undefined') {
+        userUID = data['message']['userUID'];
+        const influencer = Object.values(
+          (
+            await admin
+              .database()
+              .ref('users')
+              .orderByChild('appStoreProductId')
+              .equalTo(productId)
+              .once('value')
+          ).val(),
+        )[0];
+        influencerUID = influencer.uid;
+        influencerUsername = influencer.username;
+      } else {
+        const snapshot = await admin.database().ref('followList').once('value');
+        snapshot.forEach((user) => {
+          // key is the influencer uid
+          // user.val()[key][followerUID] is the user id
+          for (let key in user.val()) {
+            if (
+              user.val()[key]['googlePlayOriginalTransactionId'] ===
+              originalTransactionId
+            ) {
+              influencerUID = user.val()[key]['uid'];
+              userUID = user.val()[key]['followerUID'];
+              break;
+            }
+          }
+        });
+      }
+
+      if (!(userUID !== null && influencerUID !== null)) {
+        console.error(
+          'Could not find a matching transaction id for  ' +
+            originalTransactionId,
+        );
+        return response.status(204).end();
+      }
+
+      if (notificationType === 4) {
+        isUserInDevelopmentMode =
+          (
+            await admin
+              .database()
+              .ref('users')
+              .child(userUID)
+              .child('isInTestMode')
+              .once('value')
+          ).val() === true;
+      } else {
+        isUserInDevelopmentMode =
+          (
+            await admin
+              .database()
+              .ref('followList')
+              .child(userUID)
+              .child(influencerUID)
+              .child('test')
+              .once('value')
+          ).val() === true;
+      }
+
+      await admin
+        .database()
+        .ref('followList')
+        .child(userUID)
+        .child(influencerUID)
+        .set({
+          active:
+            notificationType !== 10 &&
+            isExpired === false &&
+            isCancelled === false,
+          cancel: isCancelled === true,
+          expired: notificationType === 10 || isExpired === true,
+          timestamp: startDate,
+          endTimestamp: expiryDate,
+          uid: influencerUID,
+          followerUID: userUID,
+          googlePlayOriginalTransactionId: originalTransactionId,
+          test: data['message']['testing'] === true,
+        });
+
+      await admin
+        .database()
+        .ref('follows')
+        .child(influencerUID)
+        .child(userUID)
+        .set(
+          notificationType !== 10 &&
+            isExpired === false &&
+            isCancelled === false,
+        );
+
+      if (
+        isUserInDevelopmentMode === false &&
+        isExpired === false &&
+        isCancelled === false &&
+        (notificationType === 2 ||
+          notificationType === 4 ||
+          notificationType === 7)
+      ) {
+        await admin
+          .database()
+          .ref('transactions')
+          .child(influencerUID)
+          .child(orderId.replace(/\./g, '-'))
+          .set({
+            environment: 'GooglePlay',
+            followerUID: userUID,
+            originalTransactionId: originalTransactionId,
+            orderId: orderId,
+            purchaseDate: purchaseDate,
+            test: data['message']['testing'] === true,
+          });
+      }
+
+      if (
+        isUserInDevelopmentMode === false &&
+        isExpired === false &&
+        isCancelled === false &&
+        (notificationType === 1 ||
+          notificationType === 2 ||
+          notificationType === 4 ||
+          notificationType === 7)
+      ) {
+        await admin
+          .database()
+          .ref('users')
+          .child(influencerUID)
+          .child('numLifetimeSubscribed')
+          .set(admin.database.ServerValue.increment(1));
+
+        if (notificationType !== 4) {
+          await axios
+            .post(
+              'https://us-central1-backstage-ceb27.cloudfunctions.net/api/sendNotificationToUserDevices',
+              JSON.stringify({
+                type: 'new-subscriber',
+                userUIDs: [influencerUID],
+                replaceContents: undefined,
+                url: `https://www.joinbackstage.co/${influencerUsername}/subscribers/new`,
+              }),
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              },
+            )
+            .then(() => {
+              functions.logger.info('notification send.');
+            })
+            .catch((error) => {
+              functions.logger.error('notification cannot send.', {
+                error,
+                orderId,
+                influencerUID,
+              });
+            });
+        }
+      }
+
+      const responseBody = {
+        notificationType,
+        productId,
+        isCancelled,
+        isExpired,
+        isValidated,
+        originalTransactionId,
+        latestReceipt,
+        startDate,
+        expiryDate,
+        orderId,
+      };
+
+      return response.status(200).send(responseBody);
+    } catch (error) {
+      console.log(error);
+      // In case of an error status like 403 is returned,
+      // google cloud will repeatedly send requests back.
+      return response.status(204).end();
+    }
+  },
+);
 
 exports.getUserAndInfluencerFromOrigTransactionId = functions.https.onRequest(
   async (req, res) => {
@@ -359,7 +634,7 @@ exports.iapStatusUpdate = functions.https.onRequest(async (req, res) => {
 
     // 4. increment numLifetimeSubscribed if it is a new transaction
     if (isNewTransaction && isUserInDevelopmentMode !== true) {
-      admin
+      await admin
         .database()
         .ref('users')
         .child(influencerUID)

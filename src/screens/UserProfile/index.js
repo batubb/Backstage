@@ -205,9 +205,16 @@ class UserProfile extends Component {
   };
 
   requestRNISubscription = async () => {
-    this.setState({purchaseProcessing: true});
+    if (Platform.OS === 'ios') {
+      this.setState({purchaseProcessing: true});
+    }
+
     try {
-      await RNIap.requestSubscription(this.state.products[0].productId);
+      await RNIap.requestSubscription(this.state.products[0].productId)
+        .then((SubscriptionPurchase) => {
+          console.log({SubscriptionPurchase});
+        })
+        .catch((error) => console.log({error}));
       subscribeBottomSheetRef.current?.hide();
       this.setState({loading: true, purchaseProcessing: false});
       await sleep(5000);
@@ -315,7 +322,11 @@ class UserProfile extends Component {
               paddingVertical: SIZES.padding * 5,
             }}>
             <Text
-              text={`${products[0].currency} ${products[0].price}`}
+              text={
+                Platform.OS === 'ios'
+                  ? `${products[0].currency} ${products[0].price}`
+                  : `${products[0].localizedPrice}`
+              }
               style={{
                 marginTop: SCREEN_DIMENSIONS.height * 0.02,
                 fontWeight: 'bold',
@@ -343,7 +354,13 @@ class UserProfile extends Component {
               onPress={() => this.requestRNISubscription()}
             />
             <Text
-              text={`Subscribing to ${user.username} will give you access to this creator's exclusive content and fanroom on Backstage for the subscription period. Content can be in the form of livestreams, videos, or stories. Subscriptions will auto renew, and can be cancelled anytime via Apple App Store.`}
+              text={`Subscribing to ${
+                user.username
+              } will give you access to this creator's exclusive content and fanroom on Backstage for the subscription period. Content can be in the form of livestreams, videos, or stories. Subscriptions will auto renew, and can be cancelled anytime via ${
+                Platform.OS === 'android'
+                  ? 'Google Play Store'
+                  : 'Apple App Store'
+              }.`}
               style={{
                 marginTop: SIZES.padding + SCREEN_DIMENSIONS.height * 0.03,
                 fontWeight: 'bold',
