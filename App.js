@@ -20,6 +20,8 @@ import {ProductPurchase} from 'react-native-iap';
 import {SubscriptionPurchase} from 'react-native-iap';
 import Store from './src/store/Store';
 import {Buffer} from 'buffer';
+import * as Sentry from '@sentry/react-native';
+import __PACKAGE_JSON__ from './package.json';
 
 class App extends Component {
   constructor(props) {
@@ -280,6 +282,8 @@ class App extends Component {
   };
 
   componentDidMount = async () => {
+    this.initSentry();
+
     OneSignal.setLogLevel(6, 0);
     OneSignal.setAppId('9a94991e-d65d-4782-b126-e6c7e3e500c2');
 
@@ -359,6 +363,8 @@ class App extends Component {
     RNIap.endConnection().catch((error) => {
       console.log('error ending connection ', error);
     });
+
+    Sentry.close();
   };
 
   onIds = async () => {
@@ -370,6 +376,18 @@ class App extends Component {
     } catch (e) {
       // saving error
     }
+  };
+
+  initSentry = () => {
+    Sentry.init({
+      dsn:
+        'https://61df52d49bcf407688368a5d708e3429@o954702.ingest.sentry.io/5903895',
+    });
+
+    Sentry.setTags({
+      environment: __DEV__ ? 'development' : 'production',
+      version: __PACKAGE_JSON__.version,
+    });
   };
 
   render() {

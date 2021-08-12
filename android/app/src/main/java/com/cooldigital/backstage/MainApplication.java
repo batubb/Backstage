@@ -16,6 +16,7 @@ import java.util.List;
 import com.microsoft.codepush.react.CodePush;
 import com.facebook.react.bridge.JSIModulePackage;
 import com.swmansion.reanimated.ReanimatedJSIModulePackage;
+import io.sentry.react.RNSentryPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 

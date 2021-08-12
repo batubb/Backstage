@@ -16,6 +16,7 @@ import {Loading, Header, Label} from '../../components';
 import {constants} from '../../resources';
 import auth from '@react-native-firebase/auth';
 import OneSignal from 'react-native-onesignal';
+import * as Sentry from '@sentry/react-native';
 
 class Home extends Component {
   constructor(props) {
@@ -60,6 +61,10 @@ class Home extends Component {
           auth()
             .signOut()
             .then(async () => {
+              Sentry.setUser({
+                id: 'not_logged_in',
+                username: 'anonymous',
+              });
               OneSignal.disablePush(true);
               this.goTo('Welcome');
             })

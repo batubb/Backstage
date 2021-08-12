@@ -23,6 +23,7 @@ import LoginFlowTextInput from '../../components/ScreenComponents/LoginComponent
 import LinearGradient from 'react-native-linear-gradient';
 import {sleep, regexCheck, handleURLSchemes} from '../../lib';
 import OneSignal from 'react-native-onesignal';
+import * as Sentry from '@sentry/react-native';
 
 class CheckInfo extends Component {
   constructor(props) {
@@ -55,6 +56,12 @@ class CheckInfo extends Component {
         deviceState = await OneSignal.getDeviceState();
       }
       await setUserDeviceInfo(Store, deviceState);
+
+      Sentry.setUser({
+        id: Store.uid,
+        username: Store.user.username,
+        data: Store.user,
+      });
 
       //this.setState({loading: false});
       const replaceActions = StackActions.replace('TabBarMenu');

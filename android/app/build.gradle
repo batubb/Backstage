@@ -2,6 +2,7 @@ apply plugin: "com.android.application"
 apply plugin: 'com.google.gms.google-services'
 
 import com.android.build.OutputFile
+import groovy.json.JsonSlurper
 
 buildscript {
     repositories {
@@ -10,6 +11,12 @@ buildscript {
     dependencies {
         classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.12.10, 0.99.99]'
     }
+}
+
+def getVersion() {
+    def inputFile = new File("$rootDir/../package.json")
+    def packageJson = new JsonSlurper().parseText(inputFile.text)
+    return packageJson["version"]
 }
 
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
@@ -95,6 +102,11 @@ project.ext.react = [
 
 apply from: "../../node_modules/react-native/react.gradle"
 apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
+apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
+
+project.ext.sentryCli = [
+        logLevel: "debug"
+]
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -149,7 +161,7 @@ android {
         vectorDrawables.useSupportLibrary = true
 
         versionCode 2
-        versionName "1.0.0"
+        versionName getVersion()
         missingDimensionStrategy 'react-native-camera', 'general'
         missingDimensionStrategy 'store', 'play'
 

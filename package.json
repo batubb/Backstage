@@ -1,6 +1,6 @@
 {
   "name": "infapp",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -25,6 +25,7 @@
     "@react-navigation/material-bottom-tabs": "^5.3.15",
     "@react-navigation/native": "^5.9.2",
     "@react-navigation/stack": "^5.14.2",
+    "@sentry/react-native": "^2.6.2",
     "@stream-io/flat-list-mvcp": "^0.10.1",
     "axios": "^0.21.1",
     "buffer": "^6.0.3",
