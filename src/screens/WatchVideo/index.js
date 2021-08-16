@@ -450,7 +450,13 @@ class WatchVideo extends Component {
                 position: 'absolute',
                 width: '90%',
                 height:
-                  WINDOW_DIMENSIONS.height - constants.KEYBOARD_VERTICAL_OFFSET * (currentOrientation !== 0 ? Platform.OS === 'ios' ? 0.5 : 2.5 : 1),
+                  WINDOW_DIMENSIONS.height -
+                  constants.KEYBOARD_VERTICAL_OFFSET *
+                    (currentOrientation !== 0
+                      ? Platform.OS === 'ios'
+                        ? 0.5
+                        : 2.5
+                      : 1),
                 display: 'flex',
                 justifyContent: 'flex-end',
                 alignSelf: 'center',
@@ -566,7 +572,13 @@ class WatchVideo extends Component {
                   />
                 </TouchableOpacity>
                 <Slider
-                  style={{width: WINDOW_DIMENSIONS.width * 0.75 - (currentOrientation !== 0 && Platform.OS === 'android' ? 0 : SIZES.padding * 5)}}
+                  style={{
+                    width:
+                      WINDOW_DIMENSIONS.width * 0.75 -
+                      (currentOrientation !== 0 && Platform.OS === 'android'
+                        ? 0
+                        : SIZES.padding * 5),
+                  }}
                   value={videoInfo.currentTime}
                   thumbTintColor="#fff"
                   minimumTrackTintColor="#fff"
@@ -607,8 +619,13 @@ class WatchVideo extends Component {
               }
               style={{
                 position: 'absolute',
-                right: SIZES.padding * 2 + getBottomSpace(),
-                marginTop: WINDOW_DIMENSIONS.height - constants.KEYBOARD_VERTICAL_OFFSET * (currentOrientation !== 0 ? 2 : 1),
+                right:
+                  SIZES.padding * 2 +
+                  (currentOrientation !== 0 ? getBottomSpace() : 0),
+                marginTop:
+                  WINDOW_DIMENSIONS.height -
+                  constants.KEYBOARD_VERTICAL_OFFSET *
+                    (currentOrientation !== 0 ? 2 : 2.5),
               }}>
               <Icon
                 name={!fullScreen ? 'fullscreen' : 'fullscreen-exit'}
