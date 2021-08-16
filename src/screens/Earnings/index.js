@@ -5,18 +5,18 @@ import {
   ScrollView,
   RefreshControl,
   LogBox,
-  Alert, Platform,
+  Alert,
+  Platform,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {Loading, Header, Text, Button, Label} from '../../components';
 import {constants} from '../../resources';
 import Store from '../../store/Store';
 import {checkAndShowInfluencerModal} from '../../lib';
+import {checkUserInfo, getUserEarnings} from '../../services';
 import {COLORS, SIZES} from '../../resources/theme';
 import {StackActions} from '@react-navigation/native';
 import {LineChart} from 'react-native-chart-kit';
-import database from '@react-native-firebase/database';
-import {checkUserInfo} from '../../services';
 
 LogBox.ignoreLogs(['"" is not', 'No stops in gradient']);
 
@@ -87,116 +87,12 @@ class Earnings extends Component {
     this.calculateMonths();
     const data = Array(this.state.numShowMonths).fill(0);
 
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
-    currentDate.setDate(1);
-    currentDate.setMonth(currentDate.getMonth() - 4);
-
-    const transactionsData = await database()
-      .ref('transactions')
-      .child(Store.user.uid)
-      .once('value');
-
-    let totalEarnings =
-      parseFloat(
-        updatedUser.price * (updatedUser.numLifetimeSubscribed ?? 0),
-      ) ?? 0;
-    const subscriptionEarnings = totalEarnings;
-
-    let withdrawableBalance =
-      parseFloat(totalEarnings - (updatedUser.lifetimeWithdrawnAmount ?? 0)) ??
-      0;
-
-    if (transactionsData.exists()) {
-      const transactions = Object.values(
-        Object.assign({}, transactionsData.val()),
-      );
-
-      transactions.forEach((transaction) => {
-        if (
-          transaction.test !== true &&
-          transaction.environment !== 'Sandbox'
-        ) {
-          const purchaseDate = new Date(parseInt(transaction.purchaseDate));
-          const purchaseMonthName = this.months[purchaseDate.getMonth()].substr(
-            0,
-            3,
-          );
-          const purchaseMonthIndex = this.renderMonths.findIndex(
-            (m) => m === purchaseMonthName,
-          );
-
-          if (purchaseMonthIndex) {
-            data[purchaseMonthIndex] += parseFloat(updatedUser.price);
-          }
-        }
-      });
-    }
-
-    const referedUsers =
-      typeof updatedUser.referralCode !== 'undefined'
-        ? (await (
-            await database()
-              .ref('users')
-              .orderByChild('referedBy')
-              .equalTo(Store.uid)
-              .once('value')
-          ).val()) || []
-        : [];
-
-    let referralEarnings = 0;
-
-    for (const referedUser of Object.values(Object.assign({}, referedUsers))) {
-      const referedUserTransactionsData = await database()
-        .ref('transactions')
-        .child(referedUser.uid)
-        .once('value');
-
-      let referedUserTotalEarnings = 0;
-
-      const referedUserTransactions = Object.values(
-        Object.assign({}, referedUserTransactionsData.val()),
-      );
-
-      referedUserTransactions.forEach((referedUserTransaction) => {
-        if (
-          referedUserTransaction.test !== true &&
-          referedUserTransaction.environment !== 'Sandbox'
-        ) {
-          const purchaseDate = new Date(
-            parseInt(referedUserTransaction.purchaseDate),
-          );
-          const purchaseMonthName = this.months[purchaseDate.getMonth()].substr(
-            0,
-            3,
-          );
-          const purchaseMonthIndex = this.renderMonths.findIndex(
-            (m) => m === purchaseMonthName,
-          );
-
-          if (purchaseMonthIndex) {
-            data[purchaseMonthIndex] += this.parseFloatToFixed(
-              referedUser.price * 0.05,
-            );
-            referedUserTotalEarnings += this.parseFloatToFixed(
-              referedUser.price * 0.05,
-            );
-          }
-        }
-      });
-
-      totalEarnings += referedUserTotalEarnings;
-      withdrawableBalance += referedUserTotalEarnings;
-      referralEarnings += referedUserTotalEarnings;
-    }
-
-    return {
-      data: data.map((d) => parseFloat(d.toFixed(2))),
-      totalEarnings: this.parseFloatToFixed(totalEarnings),
-      withdrawableBalance: this.parseFloatToFixed(withdrawableBalance),
-      referralEarnings: this.parseFloatToFixed(referralEarnings),
-      subscriptionEarnings: this.parseFloatToFixed(subscriptionEarnings),
-    };
+    return await getUserEarnings(
+      updatedUser,
+      data,
+      this.months,
+      this.renderMonths,
+    );
   };
 
   parseFloatToFixed = (value) => parseFloat(parseFloat(value).toFixed(2));
@@ -390,7 +286,9 @@ class Earnings extends Component {
                   labelColor: (opacity = 1) => COLORS.secondaryLabelColor,
                   propsForBackgroundLines: {
                     strokeDasharray:
-                      Platform.OS === 'ios' ? COLORS.secondaryLabelColor : undefined,
+                      Platform.OS === 'ios'
+                        ? COLORS.secondaryLabelColor
+                        : undefined,
                     strokeDashoffset: 15,
                   },
                   backgroundColor: COLORS.secondaryLabelColor,
