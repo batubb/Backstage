@@ -5,6 +5,7 @@ import {constants} from '../../../../resources';
 import {COLORS, SIZES} from '../../../../resources/theme';
 import {MyImage, Text, VerifiedIcon} from '../../../../components';
 import {Icon} from 'react-native-elements';
+import ContentLoader, {Circle} from 'react-content-loader/native';
 
 function StoryCircle(props) {
   return (
@@ -30,7 +31,33 @@ function StoryCircle(props) {
             : COLORS.primary
           : null,
       }}>
-      {props.children}
+      {props.loading ? (
+        <ContentLoader
+          speed={1}
+          viewBox="0 0 100% 100%"
+          backgroundColor={constants.BAR_COLOR}
+          foregroundColor={'#828181'}>
+          <Circle
+            cx={
+              (props.profile
+                ? constants.PROFILE_PIC_SIZE
+                : SIZES.storyCircleWidth) / 2
+            }
+            cy={
+              (props.profile
+                ? constants.PROFILE_PIC_SIZE
+                : SIZES.storyCircleWidth) / 2
+            }
+            r={
+              (props.profile
+                ? constants.PROFILE_PIC_SIZE
+                : SIZES.storyCircleWidth) / 2
+            }
+          />
+        </ContentLoader>
+      ) : (
+        props.children
+      )}
     </View>
   );
 }
