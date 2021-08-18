@@ -66,6 +66,7 @@ class MyStack extends React.Component {
     super(props);
     this.isNoticationOpened = false;
   }
+
   componentDidMount() {
     Linking.getInitialURL().then(async (url) => {
       if (url) {
@@ -98,9 +99,7 @@ class MyStack extends React.Component {
 
   render() {
     return (
-      <NavigationContainer
-        ref={navigationContainerRef}
-        onReady={this.onNavigationReady}>
+      <NavigationContainer ref={navigationContainerRef}>
         <ChatOverlayProvider
           i18nInstance={constants.STREAM_I18N}
           value={{style: STREAM_THEME}}

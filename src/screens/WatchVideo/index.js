@@ -575,9 +575,9 @@ class WatchVideo extends Component {
                   style={{
                     width:
                       WINDOW_DIMENSIONS.width * 0.75 -
-                      (currentOrientation !== 0 && Platform.OS === 'android'
+                      (currentOrientation !== 0
                         ? 0
-                        : SIZES.padding * 5),
+                        : SIZES.padding * (Platform.OS === 'android' ? 5 : 6)),
                   }}
                   value={videoInfo.currentTime}
                   thumbTintColor="#fff"

@@ -285,7 +285,10 @@ class Rooms extends Component {
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
         <Header title="Rooms" />
-        <SearchBar searchUser={(input) => this.searchUser(input)} />
+        <SearchBar
+          searchUser={(input) => this.searchUser(input)}
+          style={{paddingBottom: SIZES.padding}}
+        />
         {loading ? (
           <Loading
             loadingStyle={{
