@@ -212,14 +212,18 @@ export default class App extends Component {
   };
 
   uploadVideo = async (uri, onname, type = 'photo') => {
-    var ref = storage().ref().child(`videos/${onname}.mp4`);
+    var ref = storage()
+      .refFromURL(Store.currentRegionBucket)
+      .child(`videos/${onname}.mp4`);
     await ref.putFile(uri);
 
     return await ref.getDownloadURL();
   };
 
   uploadThumbnail = async (uri, onname) => {
-    var ref = storage().ref().child(`thumbnails/${onname}.jpg`);
+    var ref = storage()
+      .refFromURL(Store.currentRegionBucket)
+      .child(`thumbnails/${onname}.jpg`);
     await ref.putFile(uri);
 
     return await ref.getDownloadURL();
@@ -227,12 +231,16 @@ export default class App extends Component {
 
   uploadStories = async (uri, onname, type = 'photo') => {
     if (type === 'photo') {
-      var ref = storage().ref().child(`stories/${onname}.jpg`);
+      var ref = storage()
+        .refFromURL(Store.currentRegionBucket)
+        .child(`stories/${onname}.jpg`);
       await ref.putFile(uri);
 
       return await ref.getDownloadURL();
     } else {
-      var ref = storage().ref().child(`stories/${onname}.mp4`);
+      var ref = storage()
+        .refFromURL(Store.currentRegionBucket)
+        .child(`stories/${onname}.mp4`);
       await ref.putFile(uri);
 
       return await ref.getDownloadURL();
@@ -692,9 +700,7 @@ export default class App extends Component {
               />
               <Text
                 text={
-                  this.state.thumbnailUrl !== ''
-                    ? 'Change\nCover'
-                    : 'Cover'
+                  this.state.thumbnailUrl !== '' ? 'Change\nCover' : 'Cover'
                 }
                 style={{
                   paddingLeft: SIZES.spacing * 5,
@@ -1401,7 +1407,7 @@ export default class App extends Component {
                   }}
                 />
               </View>
-            ): null}
+            ) : null}
           </View>
         ) : null}
       </View>

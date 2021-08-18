@@ -22,6 +22,7 @@ import Store from './src/store/Store';
 import {Buffer} from 'buffer';
 import * as Sentry from '@sentry/react-native';
 import __PACKAGE_JSON__ from './package.json';
+import * as RNLocalize from 'react-native-localize';
 
 class App extends Component {
   constructor(props) {
@@ -282,6 +283,11 @@ class App extends Component {
   };
 
   componentDidMount = async () => {
+    const currentCountry = RNLocalize.getCountry();
+    if (Store.currentRegionBucket !== currentCountry) {
+      Store.setCurrentRegionBucket(currentCountry);
+    }
+
     this.initSentry();
 
     OneSignal.setLogLevel(6, 0);

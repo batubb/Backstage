@@ -13,6 +13,11 @@ const constants = {
     '5yq6+WeOBEfgiFapSIQhl8/6qurYypyUER9irR6DMGwIP1JPdh4kkG3tan+LaokI1BtvLnOpAyD',
   MUX_BASE_URL: 'https://api.mux.com',
 
+  STORAGE_BUCKETS: {
+    US: 'gs://backstage-ceb27.appspot.com',
+    EUROPE_WEST1: 'gs://backstage-ceb27-europe-west1',
+  },
+
   //BACKGROUND_COLOR: '#0a0b09',
   BACKGROUND_COLOR: COLORS.backgroundColor,
   //BAR_COLOR: '#333333',
