@@ -34,7 +34,6 @@ function StoryCircle(props) {
       {props.loading ? (
         <ContentLoader
           speed={1}
-          viewBox="0 0 100% 100%"
           backgroundColor={constants.BAR_COLOR}
           foregroundColor={'#828181'}>
           <Circle

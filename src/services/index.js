@@ -41,6 +41,7 @@ import createFeedback from './createFeedback';
 import checkReferenceCode from './checkReferenceCode';
 import getUserStories from './getUserStories';
 import getUserEarnings from './getUserEarnings';
+import processVideo from './processVideo';
 
 module.exports = {
   getDealsData,
@@ -85,4 +86,5 @@ module.exports = {
   checkReferenceCode,
   getUserStories,
   getUserEarnings,
+  processVideo,
 };

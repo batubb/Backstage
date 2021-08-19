@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, TouchableOpacity, View} from 'react-native';
 import {MyImage, Text, VerifiedIcon} from '../../../../components';
 import LinearGradient from 'react-native-linear-gradient';
 import constants from '../../../../resources/constants';
@@ -14,6 +14,20 @@ import {COLORS, SIZES} from '../../../../resources/theme';
 const CARD_BORDER_RADIUS = 6;
 
 export default function PostCard(props) {
+  const processingView = () => (
+    <View style={{flexDirection: 'column'}}>
+      <ActivityIndicator size="small" color="white" />
+      <Text
+        text={
+          props.item.status === 'ERROR'
+            ? 'ERROR'
+            : `%${props.item.loading} Processing`
+        }
+        style={{alignSelf: 'center', paddingTop: SIZES.spacing * 2}}
+      />
+    </View>
+  );
+
   return (
     <TouchableOpacity
       onPress={() => props.onPress(props.item)}
@@ -35,13 +49,38 @@ export default function PostCard(props) {
             color={COLORS.primaryLabelColor}
             size={60}
           />
-        ) : props.item.photo === constants.DEFAULT_PHOTO ? (
+        ) : props.item.thumbnail?.url === constants.DEFAULT_PHOTO ? (
           <Icon
             name="account"
             type="material-community"
             color={COLORS.primaryLabelColor}
             size={82}
           />
+        ) : props.item.loading && !props.item.thumbnail?.url ? (
+          <View
+            style={{
+              borderRadius: CARD_BORDER_RADIUS,
+              height: '100%',
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            {processingView()}
+            <LinearGradient
+              colors={[
+                `rgba(0, 0, 0, ${props.isPersonCard ? '0.35' : '0.4'})`,
+                'rgba(0, 0, 0, 0.0)',
+              ]}
+              start={{x: 0, y: 0.8}}
+              end={{x: 0, y: 0.35}}
+              style={{
+                position: 'absolute',
+                top: 0,
+                width: '100%',
+                height: '100%',
+              }}
+            />
+          </View>
         ) : (
           <>
             <MyImage
@@ -50,22 +89,49 @@ export default function PostCard(props) {
                 height: '100%',
                 width: '100%',
               }}
-              photo={props.item.photo}
+              photo={
+                props.isPersonCard
+                  ? props.item.photo
+                  : props.item.thumbnail?.url
+              }
               gradientComponent={
-                <LinearGradient
-                  colors={[
-                    `rgba(0, 0, 0, ${props.isPersonCard ? '0.35' : '0.4'})`,
-                    'rgba(0, 0, 0, 0.0)',
-                  ]}
-                  start={{x: 0, y: props.isPersonCard ? 0.94 : 0.8}}
-                  end={{x: 0, y: props.isPersonCard ? 0.78 : 0.35}}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    width: '100%',
-                    height: '100%',
-                  }}
-                />
+                <>
+                  <LinearGradient
+                    colors={[
+                      `rgba(0, 0, 0, ${
+                        props.isPersonCard
+                          ? '0.35'
+                          : props.item.loading
+                          ? '0.7'
+                          : '0.4'
+                      })`,
+                      'rgba(0, 0, 0, 0.0)',
+                    ]}
+                    start={{
+                      x: 0,
+                      y: props.isPersonCard
+                        ? 0.94
+                        : props.item.loading
+                        ? 0.7
+                        : 0.8,
+                    }}
+                    end={{
+                      x: 0,
+                      y: props.isPersonCard
+                        ? 0.78
+                        : props.item.loading
+                        ? 0
+                        : 0.35,
+                    }}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      width: '100%',
+                      height: '100%',
+                    }}
+                  />
+                  {props.item.loading ? processingView() : null}
+                </>
               }
             />
           </>

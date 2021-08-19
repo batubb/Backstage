@@ -9,6 +9,7 @@ import {
   RefreshControl,
   TouchableOpacity,
   FlatList,
+  Alert,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
@@ -61,6 +62,7 @@ class Profile extends Component {
       optionsData: null,
       subscriberNumber: 0,
       myStoriesArray: [],
+      processingPosts: [],
     };
 
     this.list = [
@@ -92,11 +94,15 @@ class Profile extends Component {
         });
       });
     } else {
+      const processingPosts = Store.processingPosts.sort(function (a, b) {
+        return b.timestamp - a.timestamp;
+      });
       const posts = await getUserPosts(Store.user.uid, true);
       const subscriberNumber = await getSubscriberCount(Store.user.uid);
       const myStoriesArray = await getUserStories();
       const {postsArray, daily} = setPosts(posts);
       this.setState({
+        processingPosts,
         posts: posts,
         postsArray: postsArray,
         daily: daily,
@@ -105,28 +111,35 @@ class Profile extends Component {
         myStoriesArray,
       });
 
-      this.unsubscribe = this.props.navigation.addListener('focus', async (e) => {
-        const myStoriesArray = await getUserStories();
-        this.setState({
-          posts: Store.posts.posts,
-          postsArray: Store.posts.postsArray,
-          daily: Store.posts.daily,
-          name: typeof Store.user.name === 'undefined' ? '' : Store.user.name,
-          biography:
-            typeof Store.user.biography === 'undefined'
-              ? ''
-              : Store.user.biography,
-          photo:
-            typeof Store.user.photo === 'undefined'
-              ? constants.DEFAULT_PHOTO
-              : Store.user.photo,
-          cumulativeViews:
-            typeof Store.user.cumulativeViewsUser === 'undefined'
-              ? 0
-              : Store.user.cumulativeViewsUser,
-          myStoriesArray,
-        });
-      });
+      this.unsubscribe = this.props.navigation.addListener(
+        'focus',
+        async (e) => {
+          const myStoriesArray = await getUserStories();
+          const processingPosts = Store.processingPosts.sort(function (a, b) {
+            return b.timestamp - a.timestamp;
+          });
+          this.setState({
+            posts: Store.posts.posts,
+            postsArray: Store.posts.postsArray,
+            daily: Store.posts.daily,
+            processingPosts,
+            name: typeof Store.user.name === 'undefined' ? '' : Store.user.name,
+            biography:
+              typeof Store.user.biography === 'undefined'
+                ? ''
+                : Store.user.biography,
+            photo:
+              typeof Store.user.photo === 'undefined'
+                ? constants.DEFAULT_PHOTO
+                : Store.user.photo,
+            cumulativeViews:
+              typeof Store.user.cumulativeViewsUser === 'undefined'
+                ? 0
+                : Store.user.cumulativeViewsUser,
+            myStoriesArray,
+          });
+        },
+      );
     }
   };
 
@@ -145,10 +158,14 @@ class Profile extends Component {
       Store.user.type === 'influencer' ||
       Store.user.type === 'admin'
     ) {
+      const processingPosts = Store.processingPosts.sort(function (a, b) {
+        return b.timestamp - a.timestamp;
+      });
       const posts = await getUserPosts(Store.user.uid, true);
       const subscriberNumber = await getSubscriberCount(Store.user.uid);
       const {postsArray, daily} = setPosts(posts);
       this.setState({
+        processingPosts,
         posts: posts,
         postsArray: postsArray,
         daily: daily,
@@ -163,6 +180,26 @@ class Profile extends Component {
       const replaceActions = StackActions.push(route, {user: info});
       return this.props.navigation.dispatch(replaceActions);
     } else if (route === 'WatchVideo') {
+      if (info.loading && info.status !== 'ERROR') {
+        Alert.alert(
+          'Your video is processing',
+          'The video may not upload properly if you close the app.',
+          [{text: 'Okay'}],
+        );
+        return;
+      } else if (info.loading && info.status === 'ERROR') {
+        Alert.alert(
+          'An error occurred while uploading your video.',
+          'Please try again.',
+          [{text: 'Okay'}],
+        );
+        Store.setProcessingPosts('COMPLETED', {uid: info.uid});
+        const processingPosts = Store.processingPosts.sort(function (a, b) {
+          return b.timestamp - a.timestamp;
+        });
+        this.setState({processingPosts});
+        return;
+      }
       const replaceActions = StackActions.push(route, {video: info});
       return this.props.navigation.dispatch(replaceActions);
     } else if (
@@ -303,7 +340,10 @@ class Profile extends Component {
         <PostsCard
           posts={posts}
           numCols={constants.NUM_POSTS_PER_ROW_PROFILE}
-          extraData={Store.posts}
+          extraData={{
+            ...Store.posts,
+            processing: Store.processingPosts.slice(),
+          }}
           onPress={(item) => this.goTo('WatchVideo', item)}
           showTitle={true}
         />
@@ -390,6 +430,7 @@ class Profile extends Component {
       refreshing,
       optionsVisible,
       cumulativeViews,
+      processingPosts,
     } = this.state;
 
     var influencerProfileProps = {};
@@ -402,6 +443,10 @@ class Profile extends Component {
         subscriberOnPress: () => this.goTo('Subscribers'),
       };
     }
+
+    const posts = daily.concat(processingPosts).sort(function (a, b) {
+      return b.timestamp - a.timestamp;
+    });
 
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
@@ -455,7 +500,7 @@ class Profile extends Component {
               />
             </View>
 
-            <View>{this.renderPosts2(daily)}</View>
+            <View>{this.renderPosts2(posts)}</View>
           </ScrollView>
         )}
         <Options

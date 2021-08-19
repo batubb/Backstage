@@ -3,6 +3,9 @@ import database from '@react-native-firebase/database';
 import {Alert} from 'react-native';
 import constants from '../resources/constants';
 import sendNotificationToUserSubscribers from './sendNotificationToUserSubscribers';
+import * as Sentry from '@sentry/react-native';
+import Store from '../store/Store';
+import {Severity} from '@sentry/react-native';
 
 // isLive:
 // 1: is currently live
@@ -50,6 +53,23 @@ export default async function createVideoData(
     }
     return true;
   } catch (error) {
+    Sentry.captureEvent({
+      user: {
+        id: Store.user.uid,
+        username: Store.user.username,
+        data: Store.user,
+      },
+      message: 'Create Video Data Error',
+      tags: ['video', 'post', 'influencer', 'processing'],
+      level: Severity.Critical,
+      exception: error,
+      contexts: {
+        data,
+        updates,
+      },
+      timestamp: new Date().getTime(),
+      environment: __DEV__,
+    });
     Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
     return false;
   }

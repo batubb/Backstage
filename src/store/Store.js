@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
-import {observable, action} from 'mobx';
+import {observable, action, computed} from 'mobx';
 import {default as editPosts} from '../lib/setPosts';
-import {firebase} from '@react-native-firebase/storage';
 import {constants} from '../resources';
 
 class Store {
@@ -12,6 +11,7 @@ class Store {
   @observable posts = [];
   @observable devices = [];
   @observable currentRegionBucket = constants.STORAGE_BUCKETS.US;
+  @observable processingPosts = [];
 
   @action setUID = (uid) => {
     this.uid = uid;
@@ -47,10 +47,45 @@ class Store {
   };
 
   @action setCurrentRegionBucket = (country) => {
-    if (country === 'US') {
+    if (country !== 'US') {
       this.currentRegionBucket = constants.STORAGE_BUCKETS.US;
     } else {
       this.currentRegionBucket = constants.STORAGE_BUCKETS.EUROPE_WEST1;
+    }
+  };
+
+  @computed getProcessingPost = (uid) => {
+    return this.processingPosts.find((post) => post?.uid === uid);
+  };
+
+  /**
+   * @param {"ADDED", "COMPLETED", "UPDATED", "ERROR"} status
+   * @param {Object} data Post Data
+   */
+  @action setProcessingPosts = (status, data) => {
+    switch (status) {
+      case 'ADDED':
+        this.processingPosts.push(data);
+        break;
+      case 'COMPLETED':
+        this.processingPosts = this.processingPosts.filter(
+          (post) => post.uid !== data.uid,
+        );
+        break;
+      case 'UPDATED':
+        this.processingPosts.forEach((post, i) => {
+          if (post.uid === data.uid) {
+            this.processingPosts[i] = {...post, ...data};
+          }
+        });
+        break;
+      default:
+        this.processingPosts.forEach((post, i) => {
+          if (post.uid === data.uid) {
+            this.processingPosts[i].status = status;
+          }
+        });
+        break;
     }
   };
 }

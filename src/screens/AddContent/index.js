@@ -29,6 +29,7 @@ import {
   getUserPosts,
   checkUserInfo,
   createStoryData,
+  processVideo,
 } from '../../services';
 import {Icon} from 'react-native-elements';
 import {createThumbnail} from 'react-native-create-thumbnail';
@@ -44,6 +45,7 @@ import EditTitlePrompt from '../../components/ScreenComponents/AddContentCompone
 import {TIERS} from '../../resources/constants';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-community/masked-view';
+import RNFS from 'react-native-fs';
 
 const {width, height} = Dimensions.get('window');
 const TOP_PADDING = height >= 812 ? 60 : 40;
@@ -68,7 +70,7 @@ export default class App extends Component {
           : 1,
       thumbnailUrl: '',
       thumbnailWidth: '',
-      thumnailHeight: '',
+      thumbnailHeight: '',
       liveStreamId: '',
       loading: false,
       url: '',
@@ -247,12 +249,24 @@ export default class App extends Component {
     }
   };
 
-  handlevideoPicked = async (url) => {
+  handlevideoPicked = (url) => {
     this.setState({loading: true, paused: true});
 
-    const onname = makeid(40, 'uuid');
+    const uid = makeid(40, 'uuid');
 
-    const data = await this.uploadVideo(url, onname);
+    processVideo(uid, this.state.title, url, {
+      url: this.state.thumbnailUrl,
+      width: this.state.thumbnailWidth,
+      height: this.state.thumbnailHeight,
+    });
+    this.props.navigation.navigate('ProfileMenu', {screen: 'Profile'});
+    Alert.alert(
+      'Your video is processing',
+      'Will be posted automatically after it is prepared. If you close the app, the video may not upload properly.',
+      [{text: 'Okay'}],
+    );
+
+    /*const data = await this.uploadVideo(url, onname);
     const thumbnail =
       this.state.thumbnailUrl !== ''
         ? this.state.thumbnailUrl
@@ -277,8 +291,8 @@ export default class App extends Component {
             ? this.state.thumbnailWidth
             : thumbnail.width,
         height:
-          this.state.thumbnailWidth !== ''
-            ? this.state.thumnailHeight
+          this.state.thumbnailHeight !== ''
+            ? this.state.thumbnailHeight
             : thumbnail.height,
       },
       title: this.state.title,
@@ -293,7 +307,7 @@ export default class App extends Component {
       return Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
     }
 
-    this.setState({loading: false});
+    this.setState({loading: false});*/
   };
 
   onBuffer = (buffer) => {
@@ -519,15 +533,11 @@ export default class App extends Component {
     this.setState({loading: true, paused: true});
     ImagePicker.launchImageLibrary({mediaType: 'photo'}, async (result) => {
       if (!result.didCancel) {
-        const onname = makeid(40, 'uuid');
-        const thumbnailUrl = await this.uploadThumbnail(result.uri, onname);
-        const videoThumbURL = `${constants.VIDEO_THUMB_URL}${onname}_500x500.jpg?alt=media`;
-
         this.setState({
           loading: false,
-          thumbnailUrl: videoThumbURL,
+          thumbnailUrl: result.uri,
           thumbnailWidth: result.width,
-          thumnailHeight: result.height,
+          thumbnailHeight: result.height,
         });
       } else {
         this.setState({loading: false});
@@ -715,7 +725,13 @@ export default class App extends Component {
                   alignItems: 'center',
                   paddingTop: SIZES.padding * 2,
                 }}
-                onPress={() => this.setState({thumbnailUrl: ''})}>
+                onPress={() =>
+                  this.setState({
+                    thumbnailUrl: '',
+                    thumbnailWidth: '',
+                    thumbnailHeight: '',
+                  })
+                }>
                 <Icon
                   name="trash"
                   color="#FFF"
