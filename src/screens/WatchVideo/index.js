@@ -621,7 +621,7 @@ class WatchVideo extends Component {
                 position: 'absolute',
                 right:
                   SIZES.padding * 2 +
-                  (currentOrientation !== 0 ? getBottomSpace() : 0),
+                  (currentOrientation !== 0 ? SIZES.spacing * 8 : 0),
                 marginTop:
                   WINDOW_DIMENSIONS.height -
                   constants.KEYBOARD_VERTICAL_OFFSET *
