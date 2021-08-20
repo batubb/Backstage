@@ -24,6 +24,7 @@ const constants = {
   BAR_COLOR: COLORS.secondaryBackgroundColor,
   BLUE: '#0a84ff',
   RED: COLORS.red,
+  GREEN: '#20E070',
   TRANSPARENT_BLACK_COLOR: '#00000041',
   PAGE_LEFT_PADDING: SIZES.spacing * 2,
   KEYBOARD_BEHAVIOR: Platform.OS === 'ios' ? 'padding' : 'height',

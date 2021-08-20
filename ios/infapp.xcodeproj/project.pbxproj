@@ -15,7 +15,6 @@
 		17D596CED92E45519B210EC1 /* Oswald-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 94CB33515342404590F8E78A /* Oswald-Regular.ttf */; };
 		201F4E9826A08E4B0079CCDE /* infapp.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = D4BA35E7266957D400150590 /* infapp.entitlements */; };
 		202C97FE267D4869006DBD2D /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 202C97FD267D4869006DBD2D /* StoreKit.framework */; };
-		212562DF26963C6F00CD0ABA /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 212562DE26963C6F00CD0ABA /* CloudKit.framework */; };
 		215271C326C583950022AF2B /* libSentry.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 215271C226C583950022AF2B /* libSentry.a */; };
 		26EBE7426EA043929435542F /* Oswald-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4546ED7C35C41429F0860CF /* Oswald-SemiBold.ttf */; };
 		2932FA08364B4B978294CF32 /* SF-Pro-Display-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 09B4E2FF7E9E4D26819E29AF /* SF-Pro-Display-Medium.otf */; };
@@ -95,6 +94,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		210CCA6826CFA3B200C6280D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D40A758F266AA4C9008DF1AE /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -129,6 +138,12 @@
 		202C97FD267D4869006DBD2D /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		20CDB36D267BE9BB00C85307 /* infapp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = infapp.entitlements; path = infapp/infapp.entitlements; sourceTree = "<group>"; };
 		212562DE26963C6F00CD0ABA /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		2131BD7026CEC26F006366AB /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		2131BD7226CEC279006366AB /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		2131BD7426CEC27F006366AB /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		2131BD7626CEC287006366AB /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		2131BD7826CEC28F006366AB /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		2131BD7A26CEC296006366AB /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		215271B426C57DC80022AF2B /* RNSentry.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSentry.xcodeproj; path = "../node_modules/@sentry/react-native/ios/RNSentry.xcodeproj"; sourceTree = "<group>"; };
 		215271C226C583950022AF2B /* libSentry.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSentry.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		27433C2A34F84226BABD8041 /* SF-Pro-Display-LightItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-LightItalic.otf"; path = "../src/fonts/SF-Pro-Display-LightItalic.otf"; sourceTree = "<group>"; };
@@ -207,7 +222,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				215271C326C583950022AF2B /* libSentry.a in Frameworks */,
-				212562DF26963C6F00CD0ABA /* CloudKit.framework in Frameworks */,
 				202C97FE267D4869006DBD2D /* StoreKit.framework in Frameworks */,
 				5DEDF591A3AF2BF002011CAB /* libPods-infapp.a in Frameworks */,
 			);
@@ -294,6 +308,12 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2131BD7A26CEC296006366AB /* MobileCoreServices.framework */,
+				2131BD7826CEC28F006366AB /* QuartzCore.framework */,
+				2131BD7626CEC287006366AB /* AVFoundation.framework */,
+				2131BD7426CEC27F006366AB /* OpenGLES.framework */,
+				2131BD7226CEC279006366AB /* CoreVideo.framework */,
+				2131BD7026CEC26F006366AB /* CoreMedia.framework */,
 				215271C226C583950022AF2B /* libSentry.a */,
 				212562DE26963C6F00CD0ABA /* CloudKit.framework */,
 				202C97FD267D4869006DBD2D /* StoreKit.framework */,
@@ -458,6 +478,7 @@
 				52123656BF55E81D892C7B82 /* [CP] Embed Pods Frameworks */,
 				05E492266A5FCB3483B9642C /* [CP] Copy Pods Resources */,
 				7F129F8ADD5908394AECE274 /* [CP-User] [RNFB] Core Configuration */,
+				210CCA6826CFA3B200C6280D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -542,7 +563,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = V7293GG6Z6;
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1250;
 						ProvisioningStyle = Automatic;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
@@ -1148,6 +1169,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.cooldigital.backstage;
 				PRODUCT_NAME = infapp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "RNVideoProcessing/infapp-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1180,6 +1202,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.cooldigital.backstage;
 				PRODUCT_NAME = infapp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "RNVideoProcessing/infapp-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

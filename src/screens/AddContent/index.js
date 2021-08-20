@@ -32,7 +32,6 @@ import {
   processVideo,
 } from '../../services';
 import {Icon} from 'react-native-elements';
-import {createThumbnail} from 'react-native-create-thumbnail';
 import {SafeAreaView} from 'react-native';
 import {KeyboardAvoidingView} from 'react-native';
 import {RNCamera} from 'react-native-camera';
@@ -45,7 +44,6 @@ import EditTitlePrompt from '../../components/ScreenComponents/AddContentCompone
 import {TIERS} from '../../resources/constants';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-community/masked-view';
-import RNFS from 'react-native-fs';
 
 const {width, height} = Dimensions.get('window');
 const TOP_PADDING = height >= 812 ? 60 : 40;

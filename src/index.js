@@ -4,7 +4,7 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
-import {View, LogBox, Linking} from 'react-native';
+import {View, LogBox, Linking, StatusBar, SafeAreaView} from 'react-native';
 import {Icon} from 'react-native-elements';
 import {constants} from './resources';
 import {STREAM_THEME} from './resources/theme';
@@ -48,6 +48,9 @@ import {COLORS} from './resources/theme';
 import {getBottomSpace, isIphoneX} from './lib/iPhoneXHelper';
 import {handleURLSchemes} from './lib';
 import OneSignal from 'react-native-onesignal';
+import Store from './store/Store';
+import {Text} from './components';
+import {observer} from 'mobx-react';
 
 LogBox.ignoreAllLogs();
 
@@ -97,9 +100,41 @@ class MyStack extends React.Component {
     Linking.removeEventListener('url', (event) => this.onReceivedURL(event));
   }
 
+  renderStatusBar = () => {
+    if (!Store.statusBar.active) {
+      return null;
+    }
+    return (
+      <SafeAreaView
+        style={{
+          height: StatusBar.currentHeight,
+          backgroundColor: Store.statusBar.color,
+        }}>
+        <StatusBar
+          translucent={true}
+          backgroundColor={Store.statusBar.color}
+          animated={true}
+          barStyle="light-content"
+          showHideTransition="fade"
+        />
+        {Store.statusBar.text !== '' ? (
+          <Text
+            text={`${Store.statusBar.text}`}
+            style={{
+              textAlign: 'center',
+              fontSize: 10,
+              bottom: 7,
+            }}
+          />
+        ) : null}
+      </SafeAreaView>
+    );
+  };
+
   render() {
     return (
       <NavigationContainer ref={navigationContainerRef}>
+        {this.renderStatusBar()}
         <ChatOverlayProvider
           i18nInstance={constants.STREAM_I18N}
           value={{style: STREAM_THEME}}
@@ -382,4 +417,4 @@ class TabBarBottom extends React.Component {
   }
 }
 
-export default MyStack;
+export default observer(MyStack);

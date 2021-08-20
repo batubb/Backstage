@@ -7,7 +7,7 @@ import codePush from 'react-native-code-push';
 import OneSignal from 'react-native-onesignal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNIap from 'react-native-iap';
-import {Alert, Platform} from 'react-native';
+import {Alert, AppState, Platform, AppStateStatus} from 'react-native';
 import database from '@react-native-firebase/database';
 import {
   subscribeInfluencer,
@@ -282,7 +282,25 @@ class App extends Component {
     console.log('subs result is ', subResult);
   };
 
+  /**
+   * @param {AppStateStatus} nextAppState
+   * @private
+   */
+  _handleAppStateChange = (nextAppState) => {
+    if (
+      nextAppState === 'inactive' &&
+      Store.processingPosts.filter((post) => post.status !== 'ERROR').length > 0
+    ) {
+      Alert.alert(
+        'Your video is still in progress.',
+        'You can continue when your video is uploading in the background. If you close the app, the video may not upload properly.',
+        [{text: 'Okay'}],
+      );
+    }
+  };
+
   componentDidMount = async () => {
+    AppState.addEventListener('change', this._handleAppStateChange);
     const currentCountry = RNLocalize.getCountry();
     if (Store.currentRegionBucket !== currentCountry) {
       Store.setCurrentRegionBucket(currentCountry);
@@ -357,6 +375,7 @@ class App extends Component {
   };
 
   componentWillUnmount = () => {
+    AppState.removeEventListener('change', this._handleAppStateChange);
     if (this.purchaseUpdatedListener) {
       this.purchaseUpdatedListener.remove();
       this.purchaseUpdatedListener = null;
