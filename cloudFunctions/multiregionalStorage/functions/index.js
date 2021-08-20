@@ -8,7 +8,7 @@ const fse = require('fs-extra');
 admin.initializeApp();
 
 const servers = {
-  EU: 'backstage-ceb27-europe-west1',
+  EU: 'backstage-ceb27-europe-west6',
   US: 'backstage-ceb27.appspot.com',
 };
 
