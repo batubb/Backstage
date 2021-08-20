@@ -36,16 +36,11 @@ class EditProfile extends Component {
         typeof Store.user.photo === 'undefined'
           ? constants.DEFAULT_PHOTO
           : Store.user.photo,
-      name:
-        typeof Store.user.name === 'undefined' ? '' : Store.user.name,
+      name: typeof Store.user.name === 'undefined' ? '' : Store.user.name,
       biography:
-        typeof Store.user.biography === 'undefined'
-          ? ''
-          : Store.user.biography,
+        typeof Store.user.biography === 'undefined' ? '' : Store.user.biography,
       username:
-        typeof Store.user.username === 'undefined'
-          ? ''
-          : Store.user.username,
+        typeof Store.user.username === 'undefined' ? '' : Store.user.username,
       refreshing: false,
       input: '',
       type: this.props.route.params.type,
@@ -55,16 +50,13 @@ class EditProfile extends Component {
   componentDidMount = async () => {
     this.unsubscribe = this.props.navigation.addListener('focus', (e) => {
       this.setState({
-        name:
-          typeof Store.user.name === 'undefined' ? '' : Store.user.name,
+        name: typeof Store.user.name === 'undefined' ? '' : Store.user.name,
         biography:
           typeof Store.user.biography === 'undefined'
             ? ''
             : Store.user.biography,
         username:
-          typeof Store.user.username === 'undefined'
-            ? ''
-            : Store.user.username,
+          typeof Store.user.username === 'undefined' ? '' : Store.user.username,
         photo:
           typeof Store.user.photo === 'undefined'
             ? constants.DEFAULT_PHOTO
@@ -155,7 +147,9 @@ class EditProfile extends Component {
   };
 
   uploadImage = async (uri, onname) => {
-    var ref = storage().ref().child(`users/${onname}.jpg`);
+    var ref = storage()
+      .refFromURL(Store.currentRegionBucket)
+      .child(`users/${onname}.jpg`);
     await ref.putFile(uri);
 
     return await ref.getDownloadURL();

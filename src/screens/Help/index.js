@@ -23,6 +23,7 @@ import {Icon} from 'react-native-elements';
 import Video from 'react-native-video';
 import {createFeedback} from '../../services';
 import storage from '@react-native-firebase/storage';
+import Store from '../../store/Store';
 
 const {width, height} = Dimensions.get('window');
 
@@ -121,7 +122,7 @@ class Help extends Component {
 
   uploadMedia = async (item) => {
     const mediaRef = await storage()
-      .ref()
+      .refFromURL(Store.currentRegionBucket)
       .child(
         `feedbacks/${this.state.uid}/${item.uid}.${
           item.type === 'video' ? 'mp4' : 'jpg'
