@@ -85,9 +85,18 @@ export default function handleURLSchemes(event, {navigation}) {
                 break;
 
               case 'posts':
-                navigation.navigate('SearchMenu', {screen: 'Search'});
+                if (matches[1] === Store.user.username) {
+                  navigation.navigate('ProfileMenu', {screen: 'Profile'});
+                } else {
+                  navigation.navigate('SearchMenu', {screen: 'Search'});
+                }
+
                 if (typeof matches?.[3] !== 'undefined') {
-                  navigation.dispatch(StackActions.push('UserProfile', {user}));
+                  if (matches[1] !== Store.user.username) {
+                    navigation.dispatch(
+                      StackActions.push('UserProfile', {user}),
+                    );
+                  }
 
                   await database()
                     .ref('posts')
