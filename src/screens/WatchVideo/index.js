@@ -236,10 +236,15 @@ class WatchVideo extends Component {
           this.setState({currentOrientation: 2, optionsVisible: false});
           break;
         default:
+          if (
+            currentOrientation === 'FACE-UP' ||
+            currentOrientation === 'FACE-DOWN'
+          ) {
+            return;
+          }
           this.setState({currentOrientation: 0, optionsVisible: false});
           break;
       }
-      this.forceUpdate();
     });
   };
 
@@ -396,7 +401,7 @@ class WatchVideo extends Component {
       <TouchableWithoutFeedback
         onPress={() => this.setState({controlsVisible: !controlsVisible})}>
         <View
-          style={{flex: 1, position: 'absolute'}}
+          style={{flex: 1, position: 'absolute', bottom: 0}}
           onPress={() => {
             console.log('view pressed');
           }}>
