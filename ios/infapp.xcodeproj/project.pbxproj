@@ -16,6 +16,7 @@
 		201F4E9826A08E4B0079CCDE /* infapp.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = D4BA35E7266957D400150590 /* infapp.entitlements */; };
 		202C97FE267D4869006DBD2D /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 202C97FD267D4869006DBD2D /* StoreKit.framework */; };
 		215271C326C583950022AF2B /* libSentry.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 215271C226C583950022AF2B /* libSentry.a */; };
+		2163146126D3FCFE00C1819E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2163146026D3FCFE00C1819E /* GoogleService-Info.plist */; };
 		26EBE7426EA043929435542F /* Oswald-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4546ED7C35C41429F0860CF /* Oswald-SemiBold.ttf */; };
 		2932FA08364B4B978294CF32 /* SF-Pro-Display-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 09B4E2FF7E9E4D26819E29AF /* SF-Pro-Display-Medium.otf */; };
 		2B1E761F45024B22978F7750 /* SF-Pro-Display-RegularItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1C414DD1FD1C403F8AE3BA16 /* SF-Pro-Display-RegularItalic.otf */; };
@@ -146,6 +147,7 @@
 		2131BD7A26CEC296006366AB /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		215271B426C57DC80022AF2B /* RNSentry.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSentry.xcodeproj; path = "../node_modules/@sentry/react-native/ios/RNSentry.xcodeproj"; sourceTree = "<group>"; };
 		215271C226C583950022AF2B /* libSentry.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSentry.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2163146026D3FCFE00C1819E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		27433C2A34F84226BABD8041 /* SF-Pro-Display-LightItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-LightItalic.otf"; path = "../src/fonts/SF-Pro-Display-LightItalic.otf"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* infapp-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "infapp-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* infapp-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "infapp-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -356,6 +358,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				2163146026D3FCFE00C1819E /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* infapp */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* infappTests */,
@@ -654,6 +657,7 @@
 				72DA4104664A4C4D8D1F3D37 /* SF-Pro-Display-Bold.otf in Resources */,
 				57B74CADD9C0439FB1AEB739 /* SF-Pro-Display-BoldItalic.otf in Resources */,
 				4F50997817794F0090EF5289 /* SF-Pro-Display-Heavy.otf in Resources */,
+				2163146126D3FCFE00C1819E /* GoogleService-Info.plist in Resources */,
 				D3F5725AD3854E5785A6FC53 /* SF-Pro-Display-HeavyItalic.otf in Resources */,
 				3BDE414338D44FBCA8F97D37 /* SF-Pro-Display-Light.otf in Resources */,
 				560F2A9FA1E04AE284057FEA /* SF-Pro-Display-LightItalic.otf in Resources */,
