@@ -1,23 +1,38 @@
-/* eslint-disable prettier/prettier */
-import {observable, action, computed} from 'mobx';
+import React from 'react';
+import {observable, action, makeObservable} from 'mobx';
 import {default as editPosts} from '../lib/setPosts';
 import {constants} from '../resources';
-import {sendNotificationToUserDevices} from '../services';
+import sendNotificationToUserDevices from '../services/sendNotificationToUserDevices';
 
 class Store {
   @observable user = null;
   @observable uid = null;
   @observable phone = null;
-  @observable followList = [];
-  @observable posts = [];
   @observable devices = [];
   @observable currentRegionBucket = constants.STORAGE_BUCKETS.US;
-  @observable processingPosts = [];
-  @observable statusBar = {
+  followList = [];
+  posts = [];
+  processingPosts = [];
+  statusBar = {
     active: false,
     color: constants.BLUE,
     text: '',
   };
+
+  constructor() {
+    makeObservable(this, {
+      clearUserData: action,
+      followList: observable,
+      setFollowList: action.bound,
+      posts: observable,
+      setPosts: action.bound,
+      processingPosts: observable,
+      setProcessingPosts: action.bound,
+      statusBar: observable,
+      setStatusBar: action.bound,
+      hideStatusBar: action.bound,
+    });
+  }
 
   @action setUID = (uid) => {
     this.uid = uid;
@@ -31,11 +46,11 @@ class Store {
     this.phone = data;
   };
 
-  @action setFollowList = (data) => {
+  setFollowList = (data) => {
     this.followList = data;
   };
 
-  @action setPosts = (data) => {
+  setPosts = (data) => {
     const {postsArray, daily} = editPosts(data);
     this.posts = {posts: data, postsArray, daily};
   };
@@ -44,12 +59,13 @@ class Store {
     this.devices = data;
   };
 
-  @action clearUserData = () => {
+  clearUserData = () => {
     this.uid = null;
     this.phone = null;
     this.user = null;
     this.followList = null;
     this.posts = null;
+    this.processingPosts = [];
   };
 
   @action setCurrentRegionBucket = (country) => {
@@ -60,18 +76,17 @@ class Store {
     }
   };
 
-  @computed getProcessingPost = (uid) => {
-    return this.processingPosts.find((post) => post?.uid === uid);
-  };
-
   /**
-   * @param {"ADDED", "COMPLETED", "UPDATED", "ERROR"} status
+   * @param {"ADDED", "COMPLETED", "UPDATED", "ERROR", "REMOVE_ERROR"} status
    * @param {Object} data Post Data
    */
-  @action setProcessingPosts = (status, data) => {
+  setProcessingPosts = (status, data) => {
     switch (status) {
       case 'ADDED':
         this.processingPosts.push(data);
+        this.processingPosts.sort(function (a, b) {
+          return b.timestamp - a.timestamp;
+        });
         this.setStatusBar(constants.BLUE, 'Video processing');
         break;
 
@@ -79,6 +94,9 @@ class Store {
         this.processingPosts = this.processingPosts.filter(
           (post) => post.uid !== data.uid,
         );
+        this.processingPosts.sort(function (a, b) {
+          return b.timestamp - a.timestamp;
+        });
         const video_url = `${constants.APP_WEBSITE}/${this.user.username}/posts/${data.uid}`;
         sendNotificationToUserDevices(
           'video-uploaded',
@@ -102,6 +120,19 @@ class Store {
             this.processingPosts[i] = {...post, ...data};
           }
         });
+        this.setStatusBar(constants.BLUE, 'Video uploading');
+        break;
+
+      case 'REMOVE_ERROR':
+        this.processingPosts = this.processingPosts
+          .filter((post) => post.uid !== data.uid)
+          .sort(function (a, b) {
+            return b.timestamp - a.timestamp;
+          });
+        // hide status bar if another video process didn't start
+        if (this.statusBar.text === 'Video could not posted.') {
+          this.hideStatusBar();
+        }
         break;
 
       case 'ERROR':
@@ -111,13 +142,6 @@ class Store {
           }
         });
         this.setStatusBar(constants.RED, 'Video could not posted.');
-
-        setTimeout(() => {
-          // do not hide status bar if another video process starts within 5 seconds.
-          if (this.statusBar.text === 'Video could not posted.') {
-            this.hideStatusBar();
-          }
-        }, 5000);
         break;
 
       default:
@@ -125,7 +149,7 @@ class Store {
     }
   };
 
-  @action setStatusBar = (color = null, text = null) => {
+  setStatusBar = (color = null, text = null) => {
     this.statusBar = {
       active: true,
       color: color || this.statusBar.color,
@@ -133,7 +157,7 @@ class Store {
     };
   };
 
-  @action hideStatusBar = () => {
+  hideStatusBar = () => {
     this.statusBar = {active: false, color: null, text: ''};
   };
 }
