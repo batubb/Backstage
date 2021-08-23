@@ -36,8 +36,8 @@ const constants = {
 
   DEFAULT_PHOTO:
     'http://newgatehotel.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png',
-  USER_PHOTO_THUMB_URL:
-    'https://firebasestorage.googleapis.com/v0/b/backstage-ceb27.appspot.com/o/users%2Fthumbs%2F',
+  USER_PHOTO_THUMB_URL: (bucket) =>
+    `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/users%2Fthumbs%2F`,
   VIDEO_THUMB_URL:
     'https://firebasestorage.googleapis.com/v0/b/backstage-ceb27.appspot.com/o/thumbnails%2Fthumbs%2F',
 

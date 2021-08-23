@@ -178,7 +178,9 @@ class EditProfile extends Component {
 
     let data = await this.uploadImage(url, onname);
 
-    const photoThumbURL = `${constants.USER_PHOTO_THUMB_URL}${onname}_300x300.jpg?alt=media`;
+    const photoThumbURL = `${constants.USER_PHOTO_THUMB_URL(
+      Store.currentRegionBucket.replace('gs://', ''),
+    )}${onname}_300x300.jpg?alt=media`;
 
     var updates = {};
     updates[`users/${Store.user.uid}/photo`] = photoThumbURL;
