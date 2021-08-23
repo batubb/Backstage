@@ -77,7 +77,7 @@ class Store {
   };
 
   /**
-   * @param {"ADDED", "COMPLETED", "UPDATED", "ERROR", "REMOVE_ERROR"} status
+   * @param {"ADDED", "COMPLETED", "UPDATED", "ERROR", "REMOVE"} status
    * @param {Object} data Post Data
    */
   setProcessingPosts = (status, data) => {
@@ -91,11 +91,10 @@ class Store {
         break;
 
       case 'COMPLETED':
-        this.processingPosts = this.processingPosts.filter(
-          (post) => post.uid !== data.uid,
-        );
-        this.processingPosts.sort(function (a, b) {
-          return b.timestamp - a.timestamp;
+        this.processingPosts.forEach((post, i) => {
+          if (post.uid === data.uid) {
+            this.processingPosts[i] = {...post, status, loading: false};
+          }
         });
         const video_url = `${constants.APP_WEBSITE}/${this.user.username}/posts/${data.uid}`;
         sendNotificationToUserDevices(
@@ -123,7 +122,7 @@ class Store {
         this.setStatusBar(constants.BLUE, 'Video uploading');
         break;
 
-      case 'REMOVE_ERROR':
+      case 'REMOVE':
         this.processingPosts = this.processingPosts
           .filter((post) => post.uid !== data.uid)
           .sort(function (a, b) {

@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import database from '@react-native-firebase/database';
 import {Alert} from 'react-native';
 import constants from '../resources/constants';
@@ -7,10 +6,14 @@ import * as Sentry from '@sentry/react-native';
 import Store from '../store/Store';
 import {Severity} from '@sentry/react-native';
 
-// isLive:
-// 1: is currently live
-// 0: is not currently live but was a live video in the past
-// -1: never was a live video
+/**
+ * @param user
+ * @param video
+ * @param {'video', 'live'} type
+ * @param {1, 0, -1} isLive 1 is currently live, 0 s not currently
+ * live but was a live video in the past, -1 never was a live video
+ * @returns {Promise<boolean>} true if operation is successful
+ */
 export default async function createVideoData(
   user,
   video,
@@ -19,14 +22,13 @@ export default async function createVideoData(
 ) {
   const data = {
     active: true,
-    type,
+    type: type,
     timestamp: new Date().getTime(),
     view: 0,
     comment: 0,
-    user,
+    user: user,
     isLive: isLive,
   };
-
   var updates = {};
 
   if (type === 'live') {
@@ -61,7 +63,7 @@ export default async function createVideoData(
       },
       message: 'Create Video Data Error',
       tags: ['video', 'post', 'influencer', 'processing'],
-      level: Severity.Critical,
+      level: __DEV__ ? Severity.Debug : Severity.Critical,
       exception: error,
       contexts: {
         data,

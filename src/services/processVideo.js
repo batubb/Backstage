@@ -21,7 +21,6 @@ export default function processVideo(uid, title, url, thumbnailData) {
     timestamp: new Date().getTime(),
     user: Store.user,
   });
-
   Promise.all([
     // Upload Thumbnail -- BEGIN
     new Promise(async (resolve, reject) => {
@@ -49,7 +48,9 @@ export default function processVideo(uid, title, url, thumbnailData) {
         Store.setProcessingPosts('UPDATED', {
           uid,
           thumbnail,
-          loading: Store.getProcessingPost(uid).loading + 20,
+          loading:
+            Store.processingPosts.find((post) => post?.uid === uid).loading +
+            20,
         });
         resolve(thumbnail);
       } catch (e) {
@@ -69,7 +70,9 @@ export default function processVideo(uid, title, url, thumbnailData) {
         Store.setProcessingPosts('UPDATED', {
           uid,
           uri: videoUri,
-          loading: Store.getProcessingPost(uid).loading + 65,
+          loading:
+            Store.processingPosts.find((post) => post?.uid === uid).loading +
+            65,
         });
         resolve(videoUri);
       } catch (e) {
@@ -89,18 +92,13 @@ export default function processVideo(uid, title, url, thumbnailData) {
           height: values[0]['height'],
         },
       };
-      console.log({video});
 
-      try {
-        const isCreated = await createVideoData(Store.user, video);
-        if (isCreated) {
-          Store.setProcessingPosts('COMPLETED', {uid});
-          await getUserPosts(Store.user.uid, true);
-        } else {
-          Store.setProcessingPosts('ERROR', {uid});
-        }
-      } catch (error) {
-        console.log('error message:', {error});
+      const isCreated = await createVideoData(Store.user, video);
+      if (isCreated) {
+        Store.setProcessingPosts('COMPLETED', {uid});
+        await getUserPosts(Store.user.uid, true);
+      } else {
+        Store.setProcessingPosts('ERROR', {uid});
       }
     })
     .catch((error) => {
@@ -113,7 +111,7 @@ export default function processVideo(uid, title, url, thumbnailData) {
         },
         message: 'Video Processing Error',
         tags: ['video', 'post', 'influencer', 'processing'],
-        level: Severity.Critical,
+        level: __DEV__ ? Severity.Debug : Severity.Critical,
         exception: error,
         contexts: {
           post_uid: uid,
