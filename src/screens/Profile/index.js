@@ -94,9 +94,7 @@ class Profile extends Component {
         });
       });
     } else {
-      const processingPosts = Store.processingPosts.sort(function (a, b) {
-        return b.timestamp - a.timestamp;
-      });
+      const processingPosts = Store.processingPosts;
       const posts = await getUserPosts(Store.user.uid, true);
       const subscriberNumber = await getSubscriberCount(Store.user.uid);
       const myStoriesArray = await getUserStories();
@@ -115,13 +113,13 @@ class Profile extends Component {
         'focus',
         async (e) => {
           const myStoriesArray = await getUserStories();
-          const processingPosts = Store.processingPosts.sort(function (a, b) {
-            return b.timestamp - a.timestamp;
-          });
+          const posts = await getUserPosts(Store.user.uid, true);
+          const {postsArray, daily} = setPosts(posts);
+          const processingPosts = Store.processingPosts;
           this.setState({
-            posts: Store.posts.posts,
-            postsArray: Store.posts.postsArray,
-            daily: Store.posts.daily,
+            posts: posts,
+            postsArray: postsArray,
+            daily: daily,
             processingPosts,
             name: typeof Store.user.name === 'undefined' ? '' : Store.user.name,
             biography:
@@ -158,9 +156,7 @@ class Profile extends Component {
       Store.user.type === 'influencer' ||
       Store.user.type === 'admin'
     ) {
-      const processingPosts = Store.processingPosts.sort(function (a, b) {
-        return b.timestamp - a.timestamp;
-      });
+      const processingPosts = Store.processingPosts;
       const posts = await getUserPosts(Store.user.uid, true);
       const subscriberNumber = await getSubscriberCount(Store.user.uid);
       const {postsArray, daily} = setPosts(posts);
@@ -175,7 +171,7 @@ class Profile extends Component {
     }
   };
 
-  goTo = (route, info = null) => {
+  goTo = async (route, info = null) => {
     if (route === 'UserProfile' || route === 'Chat') {
       const replaceActions = StackActions.push(route, {user: info});
       return this.props.navigation.dispatch(replaceActions);
@@ -193,12 +189,17 @@ class Profile extends Component {
           'Please try again.',
           [{text: 'Okay'}],
         );
-        Store.setProcessingPosts('COMPLETED', {uid: info.uid});
-        const processingPosts = Store.processingPosts.sort(function (a, b) {
-          return b.timestamp - a.timestamp;
-        });
-        this.setState({processingPosts});
+        Store.setProcessingPosts('REMOVE', {uid: info.uid});
+        this.setState({processingPosts: Store.processingPosts});
         return;
+      }
+      if (info.status === 'COMPLETED') {
+        Store.setProcessingPosts('REMOVE', {uid: info.uid});
+        const posts = await getUserPosts(Store.user.uid, true);
+        const replaceActions = StackActions.push(route, {
+          video: posts.find((post) => post.uid === info.uid),
+        });
+        return this.props.navigation.dispatch(replaceActions);
       }
       const replaceActions = StackActions.push(route, {video: info});
       return this.props.navigation.dispatch(replaceActions);
@@ -419,18 +420,13 @@ class Profile extends Component {
     );
   };
 
-  render() {
+  renderProfileTop = () => {
     const {
-      loading,
       photo,
       name,
       biography,
       myStoriesArray,
-      daily,
-      refreshing,
-      optionsVisible,
       cumulativeViews,
-      processingPosts,
     } = this.state;
 
     var influencerProfileProps = {};
@@ -443,6 +439,29 @@ class Profile extends Component {
         subscriberOnPress: () => this.goTo('Subscribers'),
       };
     }
+
+    return (
+      <ProfileTop
+        name={name}
+        photo={photo}
+        biography={biography}
+        editProfileVisible
+        navigation={this.props.navigation}
+        onChatPress={() => this.goTo('Chat', Store.user)}
+        stories={myStoriesArray}
+        {...influencerProfileProps}
+      />
+    );
+  };
+
+  render() {
+    const {
+      loading,
+      daily,
+      refreshing,
+      optionsVisible,
+      processingPosts,
+    } = this.state;
 
     const posts = daily.concat(processingPosts).sort(function (a, b) {
       return b.timestamp - a.timestamp;
@@ -468,40 +487,30 @@ class Profile extends Component {
             textStyle={{marginTop: 10, fontWeight: 'normal'}}
             text="Loading"
           />
+        ) : posts.length === 0 ? (
+          <PostsCard
+            addButton
+            posts={[{uid: 'dummy'}]}
+            numCols={constants.NUM_POSTS_PER_ROW_PROFILE}
+            onPress={() => this.goTo('AddContent')}
+            refreshing={refreshing}
+            onRefresh={this.onRefresh}
+            profileTop={this.renderProfileTop()}
+          />
         ) : (
-          <ScrollView
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={() => this.onRefresh()}
-                tintColor="white"
-              />
-            }
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              width: constants.DEFAULT_PAGE_WIDTH,
-              alignSelf: 'center',
-              marginTop: SIZES.spacing * 5,
-              paddingBottom: SIZES.spacing * 5,
-            }}>
-            <View
-              style={{
-                display: 'flex',
-              }}>
-              <ProfileTop
-                name={name}
-                photo={photo}
-                biography={biography}
-                editProfileVisible
-                navigation={this.props.navigation}
-                onChatPress={() => this.goTo('Chat', Store.user)}
-                stories={myStoriesArray}
-                {...influencerProfileProps}
-              />
-            </View>
-
-            <View>{this.renderPosts2(posts)}</View>
-          </ScrollView>
+          <PostsCard
+            posts={posts}
+            numCols={constants.NUM_POSTS_PER_ROW_PROFILE}
+            extraData={{
+              ...Store.posts,
+              processing: Store.processingPosts.slice(),
+            }}
+            onPress={(item) => this.goTo('WatchVideo', item)}
+            showTitle={true}
+            refreshing={refreshing}
+            onRefresh={this.onRefresh}
+            profileTop={this.renderProfileTop()}
+          />
         )}
         <Options
           list={this.list}

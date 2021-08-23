@@ -1,13 +1,13 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {COLORS, SIZES} from '../../../../resources/theme';
-import {View, FlatList, TouchableOpacity} from 'react-native';
+import {View, FlatList, TouchableOpacity, RefreshControl} from 'react-native';
 import {Icon} from 'react-native-elements';
 import PostCard from './PostCard';
 import Text from '../../../Text';
+import {constants} from '../../../../resources';
 
-// onPress, posts, expired, isPersonCard, numCols, extraData
-
+/// @params onPress, posts, expired, isPersonCard, numCols, extraData, refreshing, onRefresh, profileTop
 export default function PostsCard(props) {
   return (
     <FlatList
@@ -15,6 +15,31 @@ export default function PostsCard(props) {
       keyExtractor={(item) => item.uid}
       extraData={props.extraData}
       numColumns={props.numCols}
+      refreshControl={
+        <RefreshControl
+          refreshing={props.refreshing}
+          onRefresh={() => props?.onRefresh && props.onRefresh()}
+          tintColor="white"
+        />
+      }
+      contentContainerStyle={
+        props.isPersonCard
+          ? {}
+          : {
+              width: constants.DEFAULT_PAGE_WIDTH,
+              alignSelf: 'center',
+              marginTop: SIZES.spacing * 5,
+              paddingBottom: SIZES.spacing * 5,
+            }
+      }
+      ListHeaderComponent={
+        <View
+          style={{
+            display: 'flex',
+          }}>
+          {props.profileTop || null}
+        </View>
+      }
       renderItem={({item, index}) => (
         <View
           style={{

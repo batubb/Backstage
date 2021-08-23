@@ -272,19 +272,6 @@ class UserProfile extends Component {
     );
   };
 
-  renderPosts = (posts) => {
-    return (
-      <PostsCard
-        posts={posts}
-        navigation={this.props.navigation}
-        expired={!this.state.subscribtion.subscribtion}
-        numCols={constants.NUM_POSTS_PER_ROW_PROFILE}
-        extraData={Store.posts}
-        onPress={(item) => this.goTo('WatchVideo', item)}
-      />
-    );
-  };
-
   renderSubscriptionPanel = () => {
     const {products, subscribtion, user} = this.state;
     if (products.length === 0 || subscribtion.subscribtion === true) {
@@ -384,16 +371,49 @@ class UserProfile extends Component {
     );
   };
 
+  renderProfileTop = () => {
+    const {user, subscribtion, userStories} = this.state;
+
+    return (
+      <ProfileTop
+        name={user.name}
+        photo={user.photo}
+        biography={user.biography}
+        subscribeButtonVisible={user.uid !== Store.user.uid}
+        subscribtion={subscribtion}
+        user={user}
+        onSubscribePress={() =>
+          subscribtion.subscribtion
+            ? null
+            : subscribeBottomSheetRef.current?.show()
+        }
+        views={
+          !this.state.user.cumulativeViewsUser
+            ? 0
+            : this.state.user.cumulativeViewsUser
+        }
+        followerNumber={this.state.followerNumber}
+        subscriberNumber={this.state.subscriberNumber}
+        showSubscriberNumber={
+          (Store.uid === user.uid && !isAdmin(user)) ||
+          (isAdmin(Store.user) && Store.uid !== user.uid)
+        }
+        onChatPress={() => this.goTo('Chat', this.state.user)}
+        editProfileVisible={user.uid === Store.user.uid}
+        navigation={this.props.navigation}
+        stories={userStories}
+      />
+    );
+  };
+
   render() {
     const {
       loading,
       refreshing,
       user,
-      subscribtion,
       daily,
       optionsVisible,
       purchaseProcessing,
-      userStories,
     } = this.state;
 
     let headerExtraProps = {};
@@ -426,47 +446,16 @@ class UserProfile extends Component {
             text="Loading"
           />
         ) : (
-          <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={refreshing} tintColor="white" />
-            }
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              width: constants.DEFAULT_PAGE_WIDTH,
-              alignSelf: 'center',
-              marginTop: SIZES.spacing * 5,
-              paddingBottom: SIZES.spacing * 5,
-            }}>
-            <ProfileTop
-              name={user.name}
-              photo={user.photo}
-              biography={user.biography}
-              subscribeButtonVisible={user.uid !== Store.user.uid}
-              subscribtion={subscribtion}
-              user={user}
-              onSubscribePress={() =>
-                subscribtion.subscribtion
-                  ? null
-                  : subscribeBottomSheetRef.current?.show()
-              }
-              views={
-                !this.state.user.cumulativeViewsUser
-                  ? 0
-                  : this.state.user.cumulativeViewsUser
-              }
-              followerNumber={this.state.followerNumber}
-              subscriberNumber={this.state.subscriberNumber}
-              showSubscriberNumber={
-                (Store.uid === user.uid && !isAdmin(user)) ||
-                (isAdmin(Store.user) && Store.uid !== user.uid)
-              }
-              onChatPress={() => this.goTo('Chat', this.state.user)}
-              editProfileVisible={user.uid === Store.user.uid}
-              navigation={this.props.navigation}
-              stories={userStories}
-            />
-            <View>{daily.length !== 0 ? this.renderPosts(daily) : null}</View>
-          </ScrollView>
+          <PostsCard
+            posts={daily}
+            navigation={this.props.navigation}
+            expired={!this.state.subscribtion.subscribtion}
+            numCols={constants.NUM_POSTS_PER_ROW_PROFILE}
+            extraData={Store.posts}
+            onPress={(item) => this.goTo('WatchVideo', item)}
+            refreshing={refreshing}
+            profileTop={this.renderProfileTop()}
+          />
         )}
         <Options
           list={this.list}

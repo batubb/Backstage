@@ -49,11 +49,11 @@ export default class Button extends Component {
         {leftIconProps ? <Icon {...leftIconProps} /> : null}
 
         <Text
-          text={text}
+          text={`${text}`}
           style={
             !this.props.secondary
-              ? [{color: COLORS.white}, textStyle]
-              : [textStyle]
+              ? {color: COLORS.white, ...Object.assign({}, textStyle)}
+              : textStyle
           }
         />
 
