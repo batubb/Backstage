@@ -7,7 +7,7 @@ import PostCard from './PostCard';
 import Text from '../../../Text';
 import {constants} from '../../../../resources';
 
-/// @params onPress, posts, expired, isPersonCard, numCols, extraData, refreshing, onRefresh, profileTop
+/// @params onPress, posts, expired, isPersonCard, numCols, extraData, refreshing, onRefresh, profileTop, style
 export default function PostsCard(props) {
   return (
     <FlatList
@@ -22,6 +22,8 @@ export default function PostsCard(props) {
           tintColor="white"
         />
       }
+      style={props.style || {}}
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={
         props.isPersonCard
           ? {}

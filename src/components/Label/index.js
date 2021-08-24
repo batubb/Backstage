@@ -51,11 +51,11 @@ export default class ProfileLabels extends Component {
               <Text text={text} style={styles.labelText} />
               {secondaryText && (
                 <Text
-                  text={secondaryText}
+                  text={`${secondaryText}`}
                   style={
                     !this.props.secondary
-                      ? [{color: COLORS.white}, secondaryTextStyle]
-                      : [secondaryTextStyle]
+                      ? {color: COLORS.white, ...secondaryTextStyle}
+                      : {...secondaryTextStyle}
                   }
                 />
               )}

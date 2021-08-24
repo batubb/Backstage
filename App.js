@@ -289,7 +289,9 @@ class App extends Component {
   _handleAppStateChange = (nextAppState) => {
     if (
       nextAppState === 'inactive' &&
-      Store.processingPosts.filter((post) => post.status !== 'ERROR').length > 0
+      Store.processingPosts.filter(
+        (post) => post.status !== 'ERROR' && post.status !== 'COMPLETED',
+      ).length > 0
     ) {
       Alert.alert(
         'Your video is still in progress.',

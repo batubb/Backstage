@@ -323,57 +323,62 @@ class Home extends Component {
           width: width,
           marginBottom: SIZES.spacing * 3,
         }}>
-        <ScrollView
+        <FlatList
+          data={this.state.liveArray}
+          keyExtractor={(item) => item.uid}
           horizontal
+          showsHorizontalScrollIndicator={false}
           style={{
             paddingHorizontal: SIZES.spacing,
-          }}>
-          {this.state.loading ? (
-            Array.from({length: 3}).map((x) => <Story loading />)
-          ) : this.state.myStoriesArray.length !== 0 ? (
+          }}
+          ListHeaderComponent={
+            this.state.loading ? (
+              <View style={{flexDirection: 'row'}}>
+                {Array.from({length: 3}).map((x) => (
+                  <Story loading />
+                ))}
+              </View>
+            ) : this.state.myStoriesArray.length !== 0 ? (
+              <Story
+                onPress={() =>
+                  this.goTo('WatchStory', this.state.myStoriesArray)
+                }
+                photo={Store.user.photo}
+                text={'Your Story'}
+              />
+            ) : (
+              <Story
+                onPress={() => this.goTo('AddContent')}
+                addStory
+                text={'Add Story'}
+              />
+            )
+          }
+          renderItem={({item}) => (
             <Story
-              onPress={() => this.goTo('WatchStory', this.state.myStoriesArray)}
-              photo={Store.user.photo}
-              text={'Your Story'}
-            />
-          ) : (
-            <Story
-              onPress={() => this.goTo('AddContent')}
-              addStory
-              text={'Add Story'}
+              onPress={() => this.goTo('WatchVideo', item)}
+              photo={item.user.photo}
+              text={item.user.username}
+              showVerificationIcon={item.user.verified === true}
+              isLive
             />
           )}
-          <FlatList
-            data={this.state.liveArray}
-            keyExtractor={(item) => item.uid}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            renderItem={({item}) => (
-              <Story
-                onPress={() => this.goTo('WatchVideo', item)}
-                photo={item.user.photo}
-                text={item.user.username}
-                showVerificationIcon={item.user.verified === true}
-                isLive
-              />
-            )}
-          />
+        />
 
-          <FlatList
-            data={this.state.userStoriesArray}
-            keyExtractor={(item) => item.uid}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            renderItem={({item}) => (
-              <Story
-                onPress={() => this.goTo('WatchStory', item.stories)}
-                photo={item.photo}
-                text={item.username}
-                showVerificationIcon={item.verified === true}
-              />
-            )}
-          />
-        </ScrollView>
+        <FlatList
+          data={this.state.userStoriesArray}
+          keyExtractor={(item) => item.uid}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          renderItem={({item}) => (
+            <Story
+              onPress={() => this.goTo('WatchStory', item.stories)}
+              photo={item.photo}
+              text={item.username}
+              showVerificationIcon={item.verified === true}
+            />
+          )}
+        />
       </View>
     );
   };

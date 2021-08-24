@@ -69,7 +69,7 @@ class Store {
   };
 
   @action setCurrentRegionBucket = (country) => {
-    if (country !== 'US') {
+    if (country === 'US') {
       this.currentRegionBucket = constants.STORAGE_BUCKETS.US;
     } else {
       this.currentRegionBucket = constants.STORAGE_BUCKETS.EUROPE_WEST;

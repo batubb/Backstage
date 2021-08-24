@@ -6,11 +6,8 @@ import {
   View,
   Dimensions,
   TouchableOpacity,
-  ScrollView,
-  RefreshControl,
   Alert,
   Platform,
-  LogBox,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';

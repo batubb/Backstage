@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, ScrollView, RefreshControl, FlatList} from 'react-native';
+import {View, RefreshControl, FlatList} from 'react-native';
 import {observer} from 'mobx-react';
 import {Loading, Header, Text, Button, Label} from '../../components';
 import {constants} from '../../resources';
@@ -109,78 +109,78 @@ class WithdrawalHistory extends Component {
             text="Loading"
           />
         ) : (
-          <ScrollView
+          <FlatList
+            data={
+              selectedTab === 0 ? pendingWithdrawList : completedWithdrawList
+            }
+            keyExtractor={(item) => item.uid}
+            renderItem={({item}) => this.renderLine(item)}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={() => this.onRefresh()}
                 tintColor="white"
               />
-            }>
-            <View
-              style={{
-                alignItems: 'center',
-                marginVertical: SIZES.padding * 3,
-                marginHorizontal: SIZES.padding * 2,
-                flex: 1,
-                flexDirection: 'row',
-              }}>
-              <Button
-                onPress={() => this.setState({selectedTab: 0})}
-                text="Pending"
-                buttonStyle={{
-                  padding: SIZES.padding,
-                  flex: 1,
-                  marginRight: SIZES.padding * 0.5,
-                  justifyContent: 'center',
+            }
+            ListHeaderComponent={
+              <View
+                style={{
                   alignItems: 'center',
-                  backgroundColor:
-                    selectedTab !== 0 ? COLORS.transparent : COLORS.white,
-                }}
-                textStyle={{
-                  fontSize: SIZES.body3,
-                  color: selectedTab !== 0 ? COLORS.white : COLORS.black,
-                }}
-              />
-              <Button
-                onPress={() => this.setState({selectedTab: 1})}
-                text="Completed"
-                buttonStyle={{
-                  padding: SIZES.padding,
+                  marginVertical: SIZES.padding * 3,
+                  marginHorizontal: SIZES.padding * 2,
                   flex: 1,
-                  marginLeft: SIZES.padding * 0.5,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor:
-                    selectedTab !== 1 ? COLORS.transparent : COLORS.white,
-                }}
-                textStyle={{
-                  fontSize: SIZES.body3,
-                  color: selectedTab !== 1 ? COLORS.white : COLORS.black,
-                }}
-              />
-            </View>
-            <FlatList
-              data={
-                selectedTab === 0 ? pendingWithdrawList : completedWithdrawList
-              }
-              keyExtractor={(item) => item.uid}
-              renderItem={({item}) => this.renderLine(item)}
-              ListEmptyComponent={
-                <Text
-                  text={
-                    selectedTab === 0
-                      ? 'There are no pending withdrawal requests yet'
-                      : 'There are no completed withdrawal requests yet'
-                  }
-                  style={{
-                    color: COLORS.gray,
-                    textAlign: 'center',
+                  flexDirection: 'row',
+                }}>
+                <Button
+                  onPress={() => this.setState({selectedTab: 0})}
+                  text="Pending"
+                  buttonStyle={{
+                    padding: SIZES.padding,
+                    flex: 1,
+                    marginRight: SIZES.padding * 0.5,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor:
+                      selectedTab !== 0 ? COLORS.transparent : COLORS.white,
+                  }}
+                  textStyle={{
+                    fontSize: SIZES.body3,
+                    color: selectedTab !== 0 ? COLORS.white : COLORS.black,
                   }}
                 />
-              }
-            />
-          </ScrollView>
+                <Button
+                  onPress={() => this.setState({selectedTab: 1})}
+                  text="Completed"
+                  buttonStyle={{
+                    padding: SIZES.padding,
+                    flex: 1,
+                    marginLeft: SIZES.padding * 0.5,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor:
+                      selectedTab !== 1 ? COLORS.transparent : COLORS.white,
+                  }}
+                  textStyle={{
+                    fontSize: SIZES.body3,
+                    color: selectedTab !== 1 ? COLORS.white : COLORS.black,
+                  }}
+                />
+              </View>
+            }
+            ListEmptyComponent={
+              <Text
+                text={
+                  selectedTab === 0
+                    ? 'There are no pending withdrawal requests yet'
+                    : 'There are no completed withdrawal requests yet'
+                }
+                style={{
+                  color: COLORS.gray,
+                  textAlign: 'center',
+                }}
+              />
+            }
+          />
         )}
       </View>
     );

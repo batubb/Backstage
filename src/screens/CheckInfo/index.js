@@ -2,7 +2,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, {Component} from 'react';
-import {View, Alert, Linking} from 'react-native';
+import {View, Alert, Linking, LogBox} from 'react-native';
 import {observer} from 'mobx-react';
 import {StackActions} from '@react-navigation/native';
 import {Loading, Header} from '../../components';
@@ -24,6 +24,10 @@ import LinearGradient from 'react-native-linear-gradient';
 import {sleep, regexCheck, handleURLSchemes} from '../../lib';
 import OneSignal from 'react-native-onesignal';
 import * as Sentry from '@sentry/react-native';
+
+LogBox.ignoreLogs([
+  "Warning: Can't perform a React status update on an unmounted component",
+]);
 
 class CheckInfo extends Component {
   constructor(props) {
@@ -63,7 +67,6 @@ class CheckInfo extends Component {
         data: Store.user,
       });
 
-      //this.setState({loading: false});
       const replaceActions = StackActions.replace('TabBarMenu');
       this.props.navigation.dispatch(replaceActions);
 

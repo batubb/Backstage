@@ -5,8 +5,6 @@ import React, {Component} from 'react';
 import {
   View,
   Dimensions,
-  ScrollView,
-  RefreshControl,
   TouchableOpacity,
   FlatList,
   Alert,

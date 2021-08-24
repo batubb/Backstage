@@ -7,7 +7,6 @@ import {
   Dimensions,
   FlatList,
   TouchableOpacity,
-  ScrollView,
   RefreshControl,
 } from 'react-native';
 import {observer} from 'mobx-react';
@@ -19,7 +18,6 @@ import {
   Header,
   MyImage,
   SearchBar,
-  Divider,
   VerifiedIcon,
 } from '../../components';
 import {constants} from '../../resources';
@@ -82,6 +80,11 @@ class Search extends Component {
         isPersonCard
         numCols={3}
         onPress={(item) => this.goTo('UserProfile', item)}
+        refreshing={this.state.refreshing}
+        onRefresh={() => this.onRefresh()}
+        style={{
+          marginHorizontal: SIZES.padding,
+        }}
       />
     );
   };
@@ -91,8 +94,32 @@ class Search extends Component {
       <FlatList
         data={data}
         keyExtractor={(item) => item.uid}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={() => this.onRefresh()}
+            tintColor="white"
+          />
+        }
+        style={{
+          marginHorizontal: SIZES.padding,
+          width: width,
+        }}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        ListEmptyComponent={
+          <Text
+            text="Search Result Not Found"
+            style={{
+              fontSize: 12,
+              color: 'gray',
+              marginTop: 10,
+              textAlign: 'center',
+            }}
+          />
+        }
         renderItem={({item}) => (
-          <View style={{width: width, alignItems: 'center'}}>
+          <View style={{width, alignItems: 'center'}}>
             <TouchableOpacity onPress={() => this.goTo('UserProfile', item)}>
               <View
                 style={{
@@ -129,7 +156,9 @@ class Search extends Component {
                       }}
                     />
                   </View>
-                  {item.type === 'user' || item.type === 'influencer' || isAdmin(item) ? (
+                  {item.type === 'user' ||
+                  item.type === 'influencer' ||
+                  isAdmin(item) ? (
                     <View style={{width: 60, alignItems: 'center'}}>
                       <Icon
                         name="chevron-right"
@@ -197,13 +226,7 @@ class Search extends Component {
   };
 
   render() {
-    const {
-      loading,
-      refreshing,
-      search,
-      trendingsArray,
-      searchArray,
-    } = this.state;
+    const {loading, search, trendingsArray, searchArray} = this.state;
 
     return (
       <View style={{flex: 1, backgroundColor: constants.BACKGROUND_COLOR}}>
@@ -224,32 +247,9 @@ class Search extends Component {
             text="Loading"
           />
         ) : search.length === 0 ? (
-          <>
-            <ScrollView
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={() => this.onRefresh()}
-                  tintColor="white"
-                />
-              }
-              style={{
-                marginHorizontal: SIZES.padding,
-              }}>
-              {this.renderCards(trendingsArray)}
-            </ScrollView>
-          </>
+          this.renderCards(trendingsArray)
         ) : (
-          <View style={{width: width, alignItems: 'center'}}>
-            {searchArray.length === 0 ? (
-              <Text
-                text="Search Result Not Found"
-                style={{fontSize: 12, color: 'gray', marginTop: 10}}
-              />
-            ) : (
-              this.renderSearchTerms(searchArray)
-            )}
-          </View>
+          this.renderSearchTerms(searchArray)
         )}
       </View>
     );

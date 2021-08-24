@@ -6,13 +6,13 @@ import {
   View,
   Dimensions,
   TouchableOpacity,
-  ScrollView,
   RefreshControl,
-  Switch,
   KeyboardAvoidingView,
   SafeAreaView,
   TextInput,
   Platform,
+  FlatList,
+  LogBox,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {
@@ -35,6 +35,10 @@ import Store from '../../store/Store';
 
 const {width, height} = Dimensions.get('window');
 
+LogBox.ignoreLogs([
+  "Warning: Can't perform a React state update on an unmounted component",
+]);
+
 class Rooms extends Component {
   constructor(props) {
     super(props);
@@ -52,11 +56,22 @@ class Rooms extends Component {
   }
 
   componentDidMount = async () => {
-    const userArray = await getTrendingsData(
-      Store.user.uid,
-      !isAdmin(Store.user),
-    );
+    const userArray = await this.getRoomsData();
     this.setState({loading: false, userArray});
+  };
+
+  onRefresh = async () => {
+    if (this.state.search.length > 0) {
+      await this.searchUser(this.state.search);
+      return;
+    }
+    this.setState({refreshing: true});
+    const userArray = await this.getRoomsData();
+    this.setState({refreshing: false, userArray});
+  };
+
+  getRoomsData = async () => {
+    return await getTrendingsData(Store.user.uid, !isAdmin(Store.user));
   };
 
   goTo = (route, info = null) => {
@@ -70,20 +85,14 @@ class Rooms extends Component {
   };
 
   searchUser = async (search) => {
-    if (search.length >= 3) {
-      const searchArray = await searchUser(
-        search,
-        'influencer',
-        null,
-        !isAdmin(Store.user),
-      );
-      this.setState({searchArray, search});
-    } else {
-      this.setState({searchArray: [], search});
-    }
+    const searchArray = await searchUser(
+      search,
+      'influencer',
+      null,
+      !isAdmin(Store.user),
+    );
+    this.setState({searchArray, search});
   };
-
-  changeSwitch = () => {};
 
   renderSearchTerm = (item) => {
     return (
@@ -271,11 +280,9 @@ class Rooms extends Component {
   render() {
     const {
       loading,
-      refreshing,
       userArray,
       searchArray,
       search,
-      anon,
       nameModalVisible,
     } = this.state;
 
@@ -300,53 +307,37 @@ class Rooms extends Component {
             text="Loading"
           />
         ) : (
-          <ScrollView
+          <FlatList
+            data={roomsList}
+            keyExtractor={(item) => item.uid}
             refreshControl={
-              <RefreshControl refreshing={refreshing} tintColor="white" />
-            }>
-            <View
-              style={{
-                width: width,
-                alignItems: 'center',
-                marginTop: SIZES.padding,
-              }}>
-              {/* <View
-                style={{
-                  width: width,
-                  flexDirection: 'row',
-                  padding: 15,
-                  alignItems: 'center',
-                  justifyContent: 'flex-end',
-                }}>
-                <Text
-                  text="Anonymous Mode"
-                  style={{
-                    fontWeight: 'normal',
-                    color: COLORS.secondaryLabelColor,
-                    marginRight: 5,
-                  }}
-                />
-                <Switch
-                  trackColor={{false: COLORS.systemFill, true: COLORS.primary}}
-                  thumbColor={COLORS.secondary}
-                  ios_backgroundColor={COLORS.systemFill}
-                  onChange={() =>
-                    this.setState({
-                      anon: !this.state.anon,
-                      nameModalVisible: this.state.anon ? false : true,
-                      anonData: this.state.anon ? null : this.state.anonData,
-                      nameInput: this.state.anon ? '' : this.state.nameInput,
-                    })
-                  }
-                  value={anon}
-                />
-              </View> */}
-              {isInfluencer(Store.user) || isAdmin(Store.user)
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={() => this.onRefresh()}
+                tintColor="white"
+              />
+            }
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            ListHeaderComponent={
+              (isInfluencer(Store.user) || isAdmin(Store.user)) &&
+              this.state.search === ''
                 ? this.renderSearchTerm(Store.user)
-                : null}
-              {roomsList.map((item) => this.renderSearchTerm(item))}
-            </View>
-          </ScrollView>
+                : null
+            }
+            ListEmptyComponent={
+              <Text
+                text="Search Result Not Found"
+                style={{
+                  fontSize: 12,
+                  color: 'gray',
+                  marginTop: 10,
+                  textAlign: 'center',
+                }}
+              />
+            }
+            renderItem={({item}) => this.renderSearchTerm(item)}
+          />
         )}
         {nameModalVisible ? this.renderNameModal() : null}
       </View>
@@ -355,3 +346,35 @@ class Rooms extends Component {
 }
 
 export default observer(Rooms);
+
+/* <View
+  style={{
+    width: width,
+    flexDirection: 'row',
+    padding: 15,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  }}>
+  <Text
+    text="Anonymous Mode"
+    style={{
+      fontWeight: 'normal',
+      color: COLORS.secondaryLabelColor,
+      marginRight: 5,
+    }}
+  />
+  <Switch
+    trackColor={{false: COLORS.systemFill, true: COLORS.primary}}
+    thumbColor={COLORS.secondary}
+    ios_backgroundColor={COLORS.systemFill}
+    onChange={() =>
+      this.setState({
+        anon: !this.state.anon,
+        nameModalVisible: this.state.anon ? false : true,
+        anonData: this.state.anon ? null : this.state.anonData,
+        nameInput: this.state.anon ? '' : this.state.nameInput,
+      })
+    }
+    value={anon}
+  />
+</View> */

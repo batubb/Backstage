@@ -82,6 +82,7 @@ export default function handleURLSchemes(event, {navigation}) {
             switch (matches[2]) {
               case 'profile':
                 navigation.navigate('ProfileMenu', {screen: 'Profile'});
+                resolve();
                 break;
 
               case 'posts':
