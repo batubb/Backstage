@@ -211,24 +211,6 @@ export default class App extends Component {
     }
   };
 
-  uploadVideo = async (uri, onname, type = 'photo') => {
-    var ref = storage()
-      .refFromURL(Store.currentRegionBucket)
-      .child(`videos/${onname}.mp4`);
-    await ref.putFile(uri);
-
-    return await ref.getDownloadURL();
-  };
-
-  uploadThumbnail = async (uri, onname) => {
-    var ref = storage()
-      .refFromURL(Store.currentRegionBucket)
-      .child(`thumbnails/${onname}.jpg`);
-    await ref.putFile(uri);
-
-    return await ref.getDownloadURL();
-  };
-
   uploadStories = async (uri, onname, type = 'photo') => {
     if (type === 'photo') {
       var ref = storage()
@@ -263,49 +245,6 @@ export default class App extends Component {
       'Will be posted automatically after it is prepared. If you close the app, the video may not upload properly.',
       [{text: 'Okay'}],
     );
-
-    /*const data = await this.uploadVideo(url, onname);
-    const thumbnail =
-      this.state.thumbnailUrl !== ''
-        ? this.state.thumbnailUrl
-        : await createThumbnail({url: url, timeStamp: 10000});
-    const thumbnailUrl =
-      this.state.thumbnailUrl !== ''
-        ? this.state.thumbnailUrl
-        : await this.uploadThumbnail(thumbnail.path, onname);
-
-    const videoThumbURL =
-      this.state.thumbnailUrl !== ''
-        ? this.state.thumbnailUrl
-        : `${constants.VIDEO_THUMB_URL}${onname}_500x500.jpg?alt=media`;
-
-    var video = {
-      uid: onname,
-      url: data,
-      thumbnail: {
-        url: thumbnailUrl,
-        width:
-          this.state.thumbnailWidth !== ''
-            ? this.state.thumbnailWidth
-            : thumbnail.width,
-        height:
-          this.state.thumbnailHeight !== ''
-            ? this.state.thumbnailHeight
-            : thumbnail.height,
-      },
-      title: this.state.title,
-      photo: videoThumbURL,
-    };
-
-    try {
-      await createVideoData(Store.user, video);
-      await getUserPosts(Store.user.uid, true);
-      this.props.navigation.dispatch(StackActions.pop());
-    } catch (error) {
-      return Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
-    }
-
-    this.setState({loading: false});*/
   };
 
   onBuffer = (buffer) => {

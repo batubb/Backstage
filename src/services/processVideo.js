@@ -5,6 +5,7 @@ import createVideoData from './createVideoData';
 import getUserPosts from './getUserPosts';
 import * as Sentry from '@sentry/react-native';
 import {Severity} from '@sentry/react-native';
+import {constants} from '../resources';
 
 /**
  * Start process to upload a video.
@@ -35,15 +36,16 @@ export default function processVideo(uid, title, url, thumbnailData) {
           timeStamp: 10000,
         });
         thumbnailPath = createdThumbnail.path;
-        thumbnail.width = createdThumbnail.width;
-        thumbnail.height = createdThumbnail.height;
       }
       const thumbnailRef = storage()
         .refFromURL(Store.currentRegionBucket)
         .child(`thumbnails/${uid}.jpg`);
       try {
         await thumbnailRef.putFile(thumbnailPath);
-        thumbnail.url = await thumbnailRef.getDownloadURL();
+        thumbnail.originalPhotoUrl = await thumbnailRef.getDownloadURL();
+        thumbnail.url = `${constants.VIDEO_THUMB_URL(
+          Store.currentRegionBucket.replace('gs://', ''),
+        )}${uid}_500x500.jpg?alt=media`;
 
         Store.setProcessingPosts('UPDATED', {
           uid,
@@ -88,8 +90,7 @@ export default function processVideo(uid, title, url, thumbnailData) {
         url: values[1],
         thumbnail: {
           url: values[0]['url'],
-          width: values[0]['width'],
-          height: values[0]['height'],
+          originalPhotoUrl: values[0]['originalPhotoUrl'],
         },
       };
 

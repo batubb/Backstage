@@ -43,6 +43,9 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-community/masked-view';
 import Orientation from 'react-native-orientation-locker';
+import storage from '@react-native-firebase/storage';
+import * as Sentry from '@sentry/react-native';
+import {Severity} from '@sentry/react-native';
 
 const RNHapticFeedbackOptions = {
   enableVibrateFallback: true,
@@ -266,13 +269,57 @@ class WatchVideo extends Component {
 
   deleteVideo = async () => {
     // TODO Video editleme
+    this.setState({optionsVisible: false, loading: true, paused: true});
     await database()
       .ref('posts')
       .child(Store.user.uid)
       .child(this.state.video.uid)
       .set(null);
-    this.setState({optionsVisible: false});
     this.props.navigation.dispatch(StackActions.pop());
+    try {
+      await storage()
+        .refFromURL(
+          'gs://' +
+            this.state.video.url.match(/.*\/v0\/b\/(.*)\/o\/videos.*/s)[1],
+        )
+        .child(`/videos/${this.state.video.uid}.mp4`)
+        .delete();
+      await storage()
+        .refFromURL(
+          'gs://' +
+            this.state.video.thumbnail.url.match(
+              /.*\/v0\/b\/(.*)\/o\/thumbnails.*/s,
+            )[1],
+        )
+        .child(`/thumbnails/${this.state.video.uid}.jpg`)
+        .delete();
+      await storage()
+        .refFromURL(
+          'gs://' +
+            this.state.video.thumbnail.originalPhotoUrl.match(
+              /.*\/v0\/b\/(.*)\/o\/thumbnails.*/s,
+            )[1],
+        )
+        .child(`/thumbnails/thumbs/${this.state.video.uid}_500x500.jpg`)
+        .delete();
+    } catch (error) {
+      Sentry.captureEvent({
+        user: {
+          id: Store.user.uid,
+          username: Store.user.username,
+          data: Store.user,
+        },
+        message: 'Delete Video Assets Error',
+        tags: ['video', 'post', 'influencer', 'delete', 'assets'],
+        level: __DEV__ ? Severity.Debug : Severity.Critical,
+        exception: error,
+        contexts: {
+          data: this.state.video,
+        },
+        timestamp: new Date().getTime(),
+        environment: __DEV__,
+      });
+    }
   };
 
   shareVideo = async () => {
