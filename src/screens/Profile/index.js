@@ -101,7 +101,9 @@ class Profile extends Component {
         processingPosts,
         posts: posts,
         postsArray: postsArray,
-        daily: daily,
+        daily: daily.filter(
+          (d) => !processingPosts.some((p) => p.uid === d.uid),
+        ),
         loading: false,
         subscriberNumber,
         myStoriesArray,
@@ -110,14 +112,16 @@ class Profile extends Component {
       this.unsubscribe = this.props.navigation.addListener(
         'focus',
         async (e) => {
+          const processingPosts = Store.processingPosts;
           const myStoriesArray = await getUserStories();
           const posts = await getUserPosts(Store.user.uid, true);
           const {postsArray, daily} = setPosts(posts);
-          const processingPosts = Store.processingPosts;
           this.setState({
             posts: posts,
             postsArray: postsArray,
-            daily: daily,
+            daily: daily.filter(
+              (d) => !processingPosts.some((p) => p.uid === d.uid),
+            ),
             processingPosts,
             name: typeof Store.user.name === 'undefined' ? '' : Store.user.name,
             biography:
@@ -162,7 +166,9 @@ class Profile extends Component {
         processingPosts,
         posts: posts,
         postsArray: postsArray,
-        daily: daily,
+        daily: daily.filter(
+          (d) => !processingPosts.some((p) => p.uid === d.uid),
+        ),
         refreshing: false,
         subscriberNumber,
       });
@@ -198,6 +204,13 @@ class Profile extends Component {
           video: posts.find((post) => post.uid === info.uid),
         });
         return this.props.navigation.dispatch(replaceActions);
+      }
+      if (
+        Store.processingPosts.some(
+          (p) => p.status === 'COMPLETED' && info.uid === p.uid,
+        )
+      ) {
+        Store.setProcessingPosts('REMOVE', {uid: info.uid});
       }
       const replaceActions = StackActions.push(route, {video: info});
       return this.props.navigation.dispatch(replaceActions);
@@ -253,7 +266,7 @@ class Profile extends Component {
       <FlatList
         data={posts}
         keyExtractor={(item) => item.uid}
-        extraData={Store.posts}
+        extraData={{...Store.posts, processingPosts: Store.processingPosts}}
         numColumns={constants.NUM_POSTS_PER_ROW_PROFILE}
         renderItem={({item, index}) => (
           <View
