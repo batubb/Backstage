@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React from 'react';
+import React, {useEffect} from 'react';
 import {ActivityIndicator, TouchableOpacity, View} from 'react-native';
 import {MyImage, Text, VerifiedIcon} from '../../../../components';
 import LinearGradient from 'react-native-linear-gradient';
@@ -14,6 +14,9 @@ import {COLORS, SIZES} from '../../../../resources/theme';
 const CARD_BORDER_RADIUS = 6;
 
 export default function PostCard(props) {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {}, [props.item?.thumbnail?.url]);
+
   const processingView = () => (
     <View style={{flexDirection: 'column'}}>
       <ActivityIndicator size="small" color="white" />
