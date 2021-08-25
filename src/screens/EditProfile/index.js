@@ -2,21 +2,12 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, {Component} from 'react';
-import {
-  View,
-  Dimensions,
-  PlatformColor,
-  Alert,
-  TextInput,
-  ScrollView,
-  RefreshControl,
-} from 'react-native';
+import {View, Dimensions, Alert} from 'react-native';
 import {observer} from 'mobx-react';
-import {Loading, Header, Button, MyImage, Text} from '../../components';
+import {Loading, Header, MyImage, Text} from '../../components';
 import {constants} from '../../resources';
-import {checkUserInfo, checkUsernameValid} from '../../services';
+import {checkUserInfo} from '../../services';
 import Store from '../../store/Store';
-import {regexCheck} from '../../lib';
 import {StackActions} from '@react-navigation/native';
 import {makeid} from '../../lib';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
@@ -24,8 +15,8 @@ import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
 import {COLORS, SIZES} from '../../resources/theme';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-
-const {width} = Dimensions.get('window');
+import * as Sentry from '@sentry/react-native';
+import {Severity} from '@sentry/react-native';
 
 class EditProfile extends Component {
   constructor(props) {
@@ -116,7 +107,7 @@ class EditProfile extends Component {
     } else {
       Alert.alert('Choose', 'Where would you like to select the photo?', [
         {text: 'Gallery', onPress: () => this.pickImage()},
-        {text: 'Remove Picture', onPress: () => this.updateUserInfo()},
+        {text: 'Remove Picture', onPress: () => this.removeImage()},
         {text: 'Cancel', style: 'cancel'},
       ]);
     }
@@ -155,10 +146,14 @@ class EditProfile extends Component {
     return await ref.getDownloadURL();
   };
 
-  updateUserInfo = async () => {
+  removeImage = async () => {
     this.setState({loading: true});
-    var updates = {};
+    const currentPhotoUrl = Store.user.photo;
+    const currentOriginalPhotoUrl = Store.user.originalPhoto;
+    let updates = {};
     updates[`users/${Store.user.uid}/photo`] = constants.DEFAULT_PHOTO;
+    updates[`users/${Store.user.uid}/originalPhoto`] = null;
+
     try {
       await database().ref().update(updates);
       await checkUserInfo(Store.uid, true);
@@ -167,6 +162,44 @@ class EditProfile extends Component {
       return Alert.alert('Oops', constants.ERROR_ALERT_MSG, [{text: 'Okay'}]);
     }
     this.setState({loading: false});
+
+    try {
+      // Group 1 = BUCKET NAME, Group 2 = PHOTO UID
+      const photoRegex = currentPhotoUrl.match(
+        /.*\/v0\/b\/(.*)\/o\/users.*%2F(.*)_300x300.*/s,
+      );
+      await storage()
+        .refFromURL('gs://' + photoRegex[1])
+        .child(`/users/thumbs/${photoRegex[2]}_300x300.jpg`)
+        .delete();
+      if (currentOriginalPhotoUrl) {
+        const originalPhotoRegex = currentOriginalPhotoUrl.match(
+          /.*\/v0\/b\/(.*)\/o\/users.*%2F(.*).jpg.*/s,
+        );
+        await storage()
+          .refFromURL('gs://' + originalPhotoRegex[1])
+          .child(`/users/${originalPhotoRegex[2]}.jpg`)
+          .delete();
+      }
+    } catch (error) {
+      Sentry.captureEvent({
+        user: {
+          id: Store.user.uid,
+          username: Store.user.username,
+          data: Store.user,
+        },
+        message: 'Delete Profile Image Error',
+        tags: ['video', 'post', 'influencer', 'delete', 'assets'],
+        level: __DEV__ ? Severity.Debug : Severity.Critical,
+        exception: error,
+        contexts: {
+          photo_url: currentPhotoUrl || '__UNKNOWN__',
+          original_photo_url: currentOriginalPhotoUrl || '__UNKNOWN__',
+        },
+        timestamp: new Date().getTime(),
+        environment: __DEV__,
+      });
+    }
   };
 
   handleImagePicked = async (url) => {
@@ -199,16 +232,7 @@ class EditProfile extends Component {
   };
 
   render() {
-    const {
-      loading,
-      refreshing,
-      type,
-      input,
-      photo,
-      name,
-      biography,
-      username,
-    } = this.state;
+    const {loading, photo, name, biography, username} = this.state;
 
     return (
       <View
